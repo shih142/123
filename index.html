@@ -363,45 +363,38 @@
 
     // ==================== 真實 API 呼叫（已準備好） ====================
 async function fetchAndRenderData(isInitial = false) {
-    const playerTag = "#CV9QU9CYJ"; // 這是你的玩家 Tag
-    const proxyElement = document.getElementById('proxyUrl');
+    const playerTag = "#CV9QU9CYJ"; 
+    const proxyInput = document.getElementById('proxyUrl');
     
-    if (!proxyElement) {
-        console.error("找不到 ID 為 proxyUrl 的輸入框");
-        return;
-    }
-
-    const proxy = proxyElement.value.trim();
+    if (!proxyInput) return;
+    const proxy = proxyInput.value.trim();
 
     try {
-        // 1. 發送請求
         const response = await fetch(`${proxy}?tag=${encodeURIComponent(playerTag)}`);
         
-        // 2. 檢查回應狀態
         if (!response.ok) {
             throw new Error(`伺服器回報錯誤: ${response.status}`);
         }
         
-        // 3. 轉換為 JSON
         const data = await response.json();
         
-        // 4. 處理資料與更新 UI (確保這兩個函數你也有定義)
+        // 執行資料處理
         if (typeof processRealApiData === 'function') {
             processRealApiData(data);
         }
+        
+        // 更新畫面
         if (typeof updateDashboardUI === 'function') {
             updateDashboardUI();
         }
         
-        // 5. 提示成功
         if (!isInitial && typeof showToast === 'function') {
             showToast("✅ 真實 API 資料載入成功！");
         }
-        
     } catch (error) {
-        console.error("API 抓取失敗:", error);
+        console.error("API Error:", error);
         if (!isInitial && typeof showToast === 'function') {
-            showToast("❌ 無法連線至 API 代理，請檢查 Vercel 部署");
+            showToast("❌ 無法取得數據");
         }
     }
 }

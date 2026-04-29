@@ -10,7 +10,7 @@ export default async function handler(req, res) {
     const apiKey = process.env.CR_API_KEY; // 在 Vercel 後台設定
 
     const options = {
-        hostname: 'proxy.royaleapi.dev', // 建議用這個代理繞過 IP 限制
+        hostname: 'api.clashroyale.com', // 建議用這個代理繞過 IP 限制
         path: `/v1/players/${tag}`,
         method: 'GET',
         headers: {

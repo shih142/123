@@ -373,7 +373,7 @@ async function fetchAndRenderData(isInitial = false) {
         const response = await fetch(`${proxy}?tag=${encodeURIComponent(playerTag)}`);
         
         if (!response.ok) {
-            throw new Error(`伺服器回報錯誤: ${response.status}`);
+            throw new Error("伺服器回報錯誤:"+ response.status);
         }
         
         const data = await response.json();

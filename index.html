@@ -390,19 +390,22 @@ async function fetchAndRenderData(isInitial = false) {
         console.error("渲染失敗:", error);
     }
 }
-    function processRealApiData(d) {
-        currentPlayer = {
-            name: d.name || currentPlayer.name,
-            tag: d.tag || currentPlayer.tag,
-            trophies: d.trophies || currentPlayer.trophies,
-            bestTrophies: d.bestTrophies || currentPlayer.bestTrophies,
-            wins: d.wins || currentPlayer.wins,
-            losses: d.losses || currentPlayer.losses,
-            threeCrownWins: d.threeCrownWins || currentPlayer.threeCrownWins,
-            level: d.level || currentPlayer.level,
-            clan: d.clan?.name || currentPlayer.clan
-        };
+    function processRealApiData(data) {
+    // 1. 更新基本資訊（例如獎盃）
+    if (data.trophies) {
+        document.getElementById('playerTrophies').innerText = data.trophies;
     }
+
+    // 2. 更新戰鬥紀錄清單
+    if (data.battleLog && Array.isArray(data.battleLog)) {
+        renderBattleLog(data.battleLog); // 👈 這裡會填滿中間那個黑框
+        
+        // 3. 更新曲線圖數據
+        // 假設你的圖表是顯示最近 10 場的聖水差或獎盃變化
+        const elixirData = data.battleLog.map(log => log.team[0].elixirDiff || 0).reverse();
+        updateCharts(elixirData); // 👈 這裡會填滿左邊那個大框
+    }
+}
 
     function simulateRandomBattle() {
         const result = Math.random() > 0.4 ? "WIN" : "LOSS";

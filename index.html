@@ -375,7 +375,7 @@ async function fetchAndRenderData(isInitial = false) {
         if (!response.ok) {
             throw new Error("伺服器回報錯誤:"+ response.status);
         }
-        
+    }
         const data = await response.json();
         
         // 執行資料處理

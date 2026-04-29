@@ -362,7 +362,7 @@
     }
 
     // ==================== 真實 API 呼叫（已準備好） ====================
-    async function fetchAndRenderData(isInitial = false) {
+async function fetchAndRenderData(isInitial = false) {
     const playerTag = "#CV9QU9CYJ"; // 這是你的玩家 Tag
     const proxyElement = document.getElementById('proxyUrl');
     
@@ -404,7 +404,7 @@
             showToast("❌ 無法連線至 API 代理，請檢查 Vercel 部署");
         }
     }
-    }
+}
     function processRealApiData(d) {
         currentPlayer = {
             name: d.name || currentPlayer.name,

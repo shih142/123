@@ -384,7 +384,7 @@
         console.error("API Fetch Failed.", error);
         if (!isInitial) showToast("❌ 無法取得真實數據，請檢查 API Key 或 IP 設定");
     }
-} // 這裡要有一個結束的大括號
+  } // 這裡要有一個結束的大括號
     function processRealApiData(d) {
         currentPlayer = {
             name: d.name || currentPlayer.name,

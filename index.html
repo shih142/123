@@ -363,27 +363,29 @@
 
     // ==================== 真實 API 呼叫（已準備好） ====================
     async function fetchAndRenderData(isInitial = false) {
-    const playerTag = "#CV9QU9CYJ"; 
-    const proxyInput = document.getElementById('proxyUrl');
+    const playerTag = "#CV9QU9CYJ"; // 這是你的玩家 Tag
+    const proxyElement = document.getElementById('proxyUrl');
     
-    if (!proxyInput) {
-        console.error("找不到 proxyUrl 輸入框");
+    if (!proxyElement) {
+        console.error("找不到 ID 為 proxyUrl 的輸入框");
         return;
     }
 
-    const proxy = proxyInput.value.trim();
+    const proxy = proxyElement.value.trim();
 
     try {
+        // 1. 發送請求
         const response = await fetch(`${proxy}?tag=${encodeURIComponent(playerTag)}`);
         
+        // 2. 檢查回應狀態
         if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`API 報錯: ${response.status} - ${errorText}`);
+            throw new Error(`伺服器回報錯誤: ${response.status}`);
         }
         
+        // 3. 轉換為 JSON
         const data = await response.json();
         
-        // 確保這兩個函數名稱在你的腳本中是存在的
+        // 4. 處理資料與更新 UI (確保這兩個函數你也有定義)
         if (typeof processRealApiData === 'function') {
             processRealApiData(data);
         }
@@ -391,14 +393,17 @@
             updateDashboardUI();
         }
         
-        if (!isInitial) {
+        // 5. 提示成功
+        if (!isInitial && typeof showToast === 'function') {
             showToast("✅ 真實 API 資料載入成功！");
         }
+        
     } catch (error) {
-        console.error("API Fetch 失敗:", error);
-        if (!isInitial) {
-            showToast("❌ 無法取得數據，請檢查 Vercel 後台 Logs");
+        console.error("API 抓取失敗:", error);
+        if (!isInitial && typeof showToast === 'function') {
+            showToast("❌ 無法連線至 API 代理，請檢查 Vercel 部署");
         }
+    }
     }
     function processRealApiData(d) {
         currentPlayer = {

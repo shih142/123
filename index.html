@@ -362,42 +362,29 @@
     }
 
     // ==================== 真實 API 呼叫（已準備好） ====================
-    async function fetchAndRenderData(isManualRefresh = false) {
-        const proxy = document.getElementById('proxyUrl').value.trim();
-        const tag = "%23CV9QU9CYJ";
-        const statusEl = document.getElementById('api-status');
+    async function fetchAndRenderData(isInitial = false) {
+    const playerTag = "#CV9QU9CYJ"; 
+    const proxy = document.getElementById('proxyUrl').value.trim(); // 讀取 /api/clash-proxy
+
+    try {
+        // 請仔細檢查這一行，結尾只有一個 ); 
+        const response = await fetch(`${proxy}?tag=${encodeURIComponent(playerTag)}`);
         
-        statusEl.innerHTML = isManualRefresh 
-            ? `<i class="fas fa-sync fa-spin"></i> REFRESHING...` 
-            : `<i class="fas fa-spinner fa-spin"></i> SYNCING...`;
-        statusEl.style.color = "#ff8c00";
-
-        try {
-            const response = await fetch(`/api/clash-proxy?tag=${encodeURIComponent(playerTag)}`);
-            if (!response.ok) throw new Error('API 服務中斷');
-            const data = await response.json);
-            processRealApiData(data);
-            updateDashboardUI();
-        } catch (e) {
-            console.error("API Fetch Failed.", e);
-            statusEl.innerHTML = `🚀 DEMO MODE <span style="color:#ff8c00">(${new Date().toLocaleTimeString('zh-TW')})</span>`;
-            statusEl.style.color = "#ff8c00";
-            showToast('⚠️ Netlify Function 尚未部署 → 已自動使用 Demo Mode');
-            
-            const simulatedData = simulateRandomBattle();
-            const change = parseInt(simulatedData.trophyChange);
-            currentPlayer.trophies += change;
-            if (currentPlayer.trophies > currentPlayer.bestTrophies) currentPlayer.bestTrophies = currentPlayer.trophies;
-            if (simulatedData.result === 'WIN') {
-                currentPlayer.wins++;
-                if (simulatedData.threeCrown) currentPlayer.threeCrownWins++;
-            } else currentPlayer.losses++;
-            recentBattles.unshift(simulatedData);
-            if (recentBattles.length > 10) recentBattles.pop();
+        if (!response.ok) throw new Error('API 服務中斷');
+        
+        const data = await response.json();
+        
+        processRealApiData(data);
+        updateDashboardUI();
+        
+        if (!isInitial) {
+            showToast("✅ 真實 API 資料載入成功！");
         }
-        loadRealPlayer();
+    } catch (error) {
+        console.error("API Fetch Failed.", error);
+        if (!isInitial) showToast("❌ 無法取得真實數據，請檢查 API Key 或 IP 設定");
     }
-
+} // 這裡要有一個結束的大括號
     function processRealApiData(d) {
         currentPlayer = {
             name: d.name || currentPlayer.name,

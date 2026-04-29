@@ -364,27 +364,43 @@
     // ==================== 真實 API 呼叫（已準備好） ====================
     async function fetchAndRenderData(isInitial = false) {
     const playerTag = "#CV9QU9CYJ"; 
-    const proxy = document.getElementById('proxyUrl').value.trim(); // 讀取 /api/clash-proxy
+    const proxyInput = document.getElementById('proxyUrl');
+    
+    if (!proxyInput) {
+        console.error("找不到 proxyUrl 輸入框");
+        return;
+    }
+
+    const proxy = proxyInput.value.trim();
 
     try {
-        // 請仔細檢查這一行，結尾只有一個 ); 
         const response = await fetch(`${proxy}?tag=${encodeURIComponent(playerTag)}`);
         
-        if (!response.ok) throw new Error('API 服務中斷');
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`API 報錯: ${response.status} - ${errorText}`);
+        }
         
         const data = await response.json();
         
-        processRealApiData(data);
-        updateDashboardUI();
+        // 確保這兩個函數名稱在你的腳本中是存在的
+        if (typeof processRealApiData === 'function') {
+            processRealApiData(data);
+        }
+        if (typeof updateDashboardUI === 'function') {
+            updateDashboardUI();
+        }
         
         if (!isInitial) {
             showToast("✅ 真實 API 資料載入成功！");
         }
     } catch (error) {
-        console.error("API Fetch Failed.", error);
-        if (!isInitial) showToast("❌ 無法取得真實數據，請檢查 API Key 或 IP 設定");
+        console.error("API Fetch 失敗:", error);
+        if (!isInitial) {
+            showToast("❌ 無法取得數據，請檢查 Vercel 後台 Logs");
+        }
     }
-  } // 這裡要有一個結束的大括號
+}
     function processRealApiData(d) {
         currentPlayer = {
             name: d.name || currentPlayer.name,

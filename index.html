@@ -373,11 +373,11 @@
         statusEl.style.color = "#ff8c00";
 
         try {
-            const res = await fetch(`${proxy}?tag=${tag}`);
-            if (!res.ok) throw new Error("API 服務中斷");
-            const data = await res.json();
-            showToast('✅ 真實 API 資料載入成功！');
+            const response = await fetch(`/api/clash-proxy?tag=${encodeURIComponent(playerTag)}`);
+            if (!response.ok) throw new Error('API 服務中斷');
+            const data = await response.json);
             processRealApiData(data);
+            updateDashboardUI();
         } catch (e) {
             console.error("API Fetch Failed.", e);
             statusEl.innerHTML = `🚀 DEMO MODE <span style="color:#ff8c00">(${new Date().toLocaleTimeString('zh-TW')})</span>`;

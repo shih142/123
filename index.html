@@ -362,39 +362,32 @@
     }
 
     // ==================== 真實 API 呼叫（已準備好） ====================
+// 在 index.html 找到 fetchAndRenderData 函數
 async function fetchAndRenderData(isInitial = false) {
     const playerTag = "#CV9QU9CYJ"; 
-    const proxyInput = document.getElementById('proxyUrl');
-    
-    if (!proxyInput) return;
-    const proxy = proxyInput.value.trim();
+    const proxy = "/api/clash-proxy";
 
     try {
+        // 同時抓取個人資料與戰鬥紀錄 (假設你的 Proxy 支援自訂路徑，或你建立了兩個 proxy)
+        // 如果你的 Proxy 固定只抓 /v1/players/{tag}，那 battlelog 欄位會是 undefined
         const response = await fetch(`${proxy}?tag=${encodeURIComponent(playerTag)}`);
-        
-        if (!response.ok) {
-            throw new Error("伺服器回報錯誤:"+ response.status);
-        }
         const data = await response.json();
-        
-        // 執行資料處理
-        if (typeof processRealApiData === 'function') {
-            processRealApiData(data);
+
+        console.log("收到的 API 資料:", data); // 👈 檢查 Console 看這裡有沒有 battleLog 欄位
+
+        if (data.battleLog) {
+            // 如果有戰鬥紀錄，才去畫圖和清單
+            renderBattleLog(data.battleLog);
+            updateCharts(data.battleLog);
+        } else {
+            console.warn("這份資料中不含 battleLog，請確認 API 路徑是否包含 /battlelog");
         }
-        
-        // 更新畫面
-        if (typeof updateDashboardUI === 'function') {
-            updateDashboardUI();
-        }
-        
-        if (!isInitial && typeof showToast === 'function') {
-            showToast("✅ 真實 API 資料載入成功！");
-        }
+
+        // 更新 UI
+        updateDashboardUI(data);
+
     } catch (error) {
-        console.error("API Error:", error);
-        if (!isInitial && typeof showToast === 'function') {
-            showToast("❌ 無法取得數據");
-        }
+        console.error("渲染失敗:", error);
     }
 }
     function processRealApiData(d) {

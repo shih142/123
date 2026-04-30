@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEURAL-X OMEGA | V3.0 Pro Evaluation</title>
+    <title>NEURAL-X OMEGA | V3.1 Objective Analytics</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -44,7 +44,6 @@
             background-size: 100% 2px, 3px 100%; z-index: 999; pointer-events: none;
         }
 
-        /* --- 佈局 --- */
         .sidebar { width: 50px; border-right: 1px solid var(--grid-line); display: flex; flex-direction: column; align-items: center; padding-top: 20px; z-index: 10;}
         .sidebar-icon { color: var(--neon-cyan); margin-bottom: 30px; font-size: 18px; cursor: pointer; opacity: 0.5; transition: 0.3s;}
         .sidebar-icon:hover { opacity: 1; text-shadow: 0 0 10px var(--neon-cyan); transform: scale(1.2);}
@@ -52,16 +51,13 @@
         .main-content { flex: 1; padding: 20px; display: flex; flex-direction: column; gap: 15px; overflow-y: auto; z-index: 10;}
         .right-panel { width: 320px; border-left: 1px solid var(--grid-line); padding: 20px; background: var(--panel-bg); display: flex; flex-direction: column; z-index: 10;}
 
-        /* --- 標頭 --- */
         .header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid rgba(0, 243, 255, 0.2); padding-bottom: 10px;}
         .header-title { font-family: 'Orbitron', sans-serif; color: var(--neon-cyan); font-size: 26px; font-weight: 900; letter-spacing: 2px;}
         .header-sub { font-size: 11px; color: var(--neon-magenta); letter-spacing: 1px;}
         .system-status { font-size: 10px; color: #0f0; text-align: right; }
 
-        /* --- 頂部綜合評級面板 --- */
         .eval-dashboard { display: grid; grid-template-columns: 1fr 1.5fr; gap: 15px; }
         
-        /* 玩家主卡片 */
         .player-master-card { border: 1px solid #222; background: linear-gradient(135deg, rgba(0,0,0,0.8), rgba(10,15,30,0.9)); padding: 20px; display: flex; align-items: center; position: relative;}
         .player-master-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--neon-cyan); box-shadow: 0 0 15px var(--neon-cyan); }
         .p-avatar { width: 70px; height: 70px; border: 2px solid #444; display: flex; justify-content: center; align-items: center; font-size: 35px; background: #000; margin-right: 20px;}
@@ -73,7 +69,6 @@
         .ncr-value { font-size: 46px; font-family: 'Orbitron'; font-weight: 900; color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.3);}
         .ncr-grade { font-size: 20px; font-family: 'Orbitron'; font-weight: bold; margin-top: -5px;}
 
-        /* 五維子評級矩陣 */
         .sub-grades-panel { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; background: rgba(0,0,0,0.5); border: 1px solid #222; padding: 15px; align-items: center;}
         .grade-item { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; border-right: 1px solid #222;}
         .grade-item:last-child { border-right: none; }
@@ -81,33 +76,26 @@
         .g-letter { font-size: 28px; font-family: 'Orbitron'; font-weight: bold; text-shadow: 0 0 10px rgba(255,255,255,0.2);}
         .g-score { font-size: 10px; color: #aaa; margin-top: 3px; font-family: 'Share Tech Mono';}
 
-        /* 等級顏色類別 */
         .rank-S { color: var(--rank-s); text-shadow: 0 0 15px var(--rank-s) !important; }
         .rank-A { color: var(--rank-a); text-shadow: 0 0 15px var(--rank-a) !important; }
         .rank-B { color: var(--rank-b); }
         .rank-C { color: var(--rank-c); }
         .rank-D { color: var(--rank-d); }
 
-        /* --- 中段數據模塊 --- */
         .middle-tier { display: grid; grid-template-columns: 1fr 2fr; gap: 15px; flex: 1; min-height: 200px;}
-        
         .panel-box { border: 1px solid #333; padding: 15px; background: rgba(5,8,15,0.8); display: flex; flex-direction: column; position: relative; overflow: hidden;}
         .panel-title { font-size: 11px; color: var(--text-main); margin-bottom: 15px; letter-spacing: 2px; border-bottom: 1px solid #333; padding-bottom: 5px; text-transform: uppercase;}
         
-        /* 雷達圖容器 */
         .chart-container { flex: 1; position: relative; width: 100%; display: flex; justify-content: center; align-items: center; }
 
-        /* 詳細指標條 */
         .metrics-list { display: flex; flex-direction: column; gap: 12px; overflow-y: auto;}
         .metric-row { display: flex; align-items: center; gap: 10px; }
         .m-name { width: 110px; font-size: 10px; color: #888; text-transform: uppercase;}
         .m-bar-bg { flex: 1; height: 6px; background: #111; position: relative; border: 1px solid #222;}
         .m-bar-fill { height: 100%; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
-        .m-value { width: 40px; text-align: right; font-size: 11px; font-weight: bold; color: #fff;}
+        .m-value { width: 45px; text-align: right; font-size: 11px; font-weight: bold; color: #fff;}
 
-        /* --- 底部戰術標籤 & GSR --- */
         .bottom-tier { display: grid; grid-template-columns: 2fr 1fr; gap: 15px; height: 120px;}
-        
         .tags-container { display: flex; flex-wrap: wrap; gap: 10px; align-items: center;}
         .tactical-tag { padding: 5px 10px; border: 1px solid; font-size: 11px; font-family: 'Orbitron'; letter-spacing: 1px; text-transform: uppercase; background: rgba(0,0,0,0.6);}
         
@@ -121,7 +109,6 @@
             100% { box-shadow: inset 0 0 5px rgba(255,0,255,0.1); }
         }
 
-        /* --- 右側控制台 --- */
         .control-header { color: var(--neon-yellow); font-family: 'Orbitron'; font-size: 14px; margin-bottom: 20px; letter-spacing: 1px;}
         .input-group label { display: block; font-size: 9px; color: #777; margin-bottom: 5px; }
         .input-group input { width: 100%; background: #000; border: 1px solid #333; color: var(--neon-cyan); padding: 10px; font-family: 'Share Tech Mono'; margin-bottom: 15px; outline: none; transition: 0.3s;}
@@ -152,11 +139,9 @@
         <header class="header">
             <div>
                 <div class="header-title">NEURAL-X <span style="color: #fff;">EVALUATOR</span></div>
-                <div class="header-sub">V3.0 COMPREHENSIVE COMBAT RATING SYSTEM</div>
+                <div class="header-sub">V3.1 PURE OBJECTIVE MATH ENGINE</div>
             </div>
-            <div class="system-status">
-                SECURE CONNECTION<br>UPTIME: 99.99%
-            </div>
+            <div class="system-status">SECURE CONNECTION<br>UPTIME: 99.99%</div>
         </header>
 
         <section class="eval-dashboard">
@@ -209,7 +194,7 @@
             </div>
 
             <div class="panel-box">
-                <div class="panel-title">RAW TELEMETRY BREAKDOWN</div>
+                <div class="panel-title">OBJECTIVE TELEMETRY BREAKDOWN</div>
                 <div class="metrics-list">
                     <div class="metric-row">
                         <div class="m-name">Base Win Rate</div>
@@ -227,14 +212,14 @@
                         <div class="m-value" id="val-pb">0</div>
                     </div>
                     <div class="metric-row">
-                        <div class="m-name" style="color:var(--neon-yellow);">Challenge Peak</div>
-                        <div class="m-bar-bg"><div class="m-bar-fill" id="bar-chal" style="width:0%; background: var(--neon-yellow);"></div></div>
-                        <div class="m-value" id="val-chal">0</div>
+                        <div class="m-name" style="color:var(--neon-yellow);">W/L Ratio</div>
+                        <div class="m-bar-bg"><div class="m-bar-fill" id="bar-wl" style="width:0%; background: var(--neon-yellow);"></div></div>
+                        <div class="m-value" id="val-wl">0.0x</div>
                     </div>
                     <div class="metric-row">
-                        <div class="m-name" style="color:var(--neon-magenta);">War Experience</div>
-                        <div class="m-bar-bg"><div class="m-bar-fill" id="bar-war" style="width:0%; background: var(--neon-magenta);"></div></div>
-                        <div class="m-value" id="val-war">0</div>
+                        <div class="m-name" style="color:var(--neon-magenta);">P.M.E. (Eff)</div>
+                        <div class="m-bar-bg"><div class="m-bar-fill" id="bar-pme" style="width:0%; background: var(--neon-magenta);"></div></div>
+                        <div class="m-value" id="val-pme">0.0</div>
                     </div>
                     <div class="metric-row">
                         <div class="m-name">Total Matches</div>
@@ -258,7 +243,6 @@
                 <div class="gsr-label">LIVE BIO-STRESS</div>
             </div>
         </section>
-
     </main>
 
     <aside class="right-panel">
@@ -276,23 +260,20 @@
         <button class="btn-init" onclick="executeEvaluation()">RUN ALGORITHM</button>
 
         <div class="terminal-log" id="termLog">
-            <div class="log-line"><span class="log-time">[00:00]</span><span class="log-msg">System initialized.</span></div>
+            <div class="log-line"><span class="log-time">[00:00]</span><span class="log-msg">Objective Math Engine V3.1 loaded.</span></div>
         </div>
     </aside>
 
     <script>
-        // --- 核心系統設定 ---
         Chart.defaults.color = '#777';
         Chart.defaults.font.family = "'Share Tech Mono', monospace";
         let radarChartInstance = null;
         let gsrInterval = null;
 
-        // 日誌函數
         function log(msg, type = 'normal') {
             const term = document.getElementById('termLog');
             const d = new Date();
             const time = `[${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}]`;
-            
             const line = document.createElement('div');
             line.className = 'log-line';
             line.innerHTML = `<span class="log-time">${time}</span> <span class="log-msg ${type}">${msg}</span>`;
@@ -300,40 +281,27 @@
             term.scrollTop = term.scrollHeight;
         }
 
-        // 初始化雷達圖
         function initChart(dataArray) {
             const ctx = document.getElementById('radarChart').getContext('2d');
             if(radarChartInstance) radarChartInstance.destroy();
-
             radarChartInstance = new Chart(ctx, {
                 type: 'radar',
                 data: {
                     labels: ['STR (火力)', 'DEF (防禦)', 'MAC (宏觀)', 'POT (潛力)', 'CST (穩定)'],
                     datasets: [{
-                        data: dataArray,
-                        backgroundColor: 'rgba(0, 243, 255, 0.15)',
-                        borderColor: '#00f3ff',
-                        pointBackgroundColor: '#fff',
-                        pointBorderColor: '#00f3ff',
-                        borderWidth: 1.5
+                        data: dataArray, backgroundColor: 'rgba(0, 243, 255, 0.15)',
+                        borderColor: '#00f3ff', pointBackgroundColor: '#fff',
+                        pointBorderColor: '#00f3ff', borderWidth: 1.5
                     }]
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
-                    scales: {
-                        r: {
-                            angleLines: { color: 'rgba(255, 255, 255, 0.1)' },
-                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
-                            pointLabels: { color: '#a9b4c2', font: { size: 10, family: 'Orbitron' } },
-                            ticks: { display: false, min: 0, max: 100 }
-                        }
-                    }
+                    scales: { r: { angleLines: { color: 'rgba(255, 255, 255, 0.1)' }, grid: { color: 'rgba(255, 255, 255, 0.1)' }, pointLabels: { color: '#a9b4c2', font: { size: 10, family: 'Orbitron' } }, ticks: { display: false, min: 0, max: 100 } } }
                 }
             });
         }
 
-        // 動態 GSR 模擬
         function startGSR(base) {
             if(gsrInterval) clearInterval(gsrInterval);
             const el = document.getElementById('ui-gsr');
@@ -344,7 +312,6 @@
             }, 800);
         }
 
-        // 數值轉評級 S/A/B/C/D
         function getGrade(score) {
             if(score >= 90) return { letter: 'S', class: 'rank-S' };
             if(score >= 75) return { letter: 'A', class: 'rank-A' };
@@ -353,75 +320,68 @@
             return { letter: 'D', class: 'rank-D' };
         }
 
-        // 執行主程式
         async function executeEvaluation() {
             const tag = document.getElementById('playerTag').value.trim();
             const proxy = document.getElementById('proxyUrl').value.trim();
             
             document.getElementById('ui-tag').innerText = tag;
-            log(`Linking to Supercell databanks for ${tag}...`, 'normal');
+            log(`Scanning core mathematical vectors for ${tag}...`, 'normal');
 
             try {
                 const res = await fetch(`${proxy}?tag=${tag.replace('#', '%23')}`);
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 const data = await res.json();
-                log('Payload received. Running V3 algorithm...', 'highlight');
+                log('Payload received. Compiling objective metrics...', 'highlight');
                 processEngine(data);
             } catch (err) {
                 log(`Proxy failure. Loading Pro-Simulation Data.`, 'alert');
-                
-                // 模擬一個頂尖玩家數據
-                processEngine({
-                    name: "OMEGA_PREDATOR", wins: 8520, losses: 5100, 
-                    bestTrophies: 8850, threeCrownWins: 3200, 
-                    challengeMaxWins: 20, warDayWins: 185
-                });
+                processEngine({ name: "OMEGA_MATH_PRO", wins: 6120, losses: 4300, bestTrophies: 8200, threeCrownWins: 2450 });
             }
         }
 
-        // V3.0 演算法核心
         function processEngine(data) {
             document.getElementById('ui-name').innerText = data.name || "UNKNOWN";
 
-            // 1. 萃取基礎參數
+            // 1. 萃取基礎參數 (移除了非客觀指標)
             const wins = data.wins || 0;
             const losses = data.losses || 0;
             const totalMatches = wins + losses || 1;
             const threeCrowns = data.threeCrownWins || 0;
             const pb = data.bestTrophies || 0;
-            const chalWins = data.challengeMaxWins || 0;
-            const warWins = data.warDayWins || 0;
 
             const winRate = wins / totalMatches;
             const threeCrownRate = threeCrowns / (wins || 1);
+            
+            // --- 核心客觀衍生指標 ---
+            // W/L Ratio (戰損比): 純粹的勝負轉換比率
+            const wlRatio = wins / (losses || 1);
+            
+            // P.M.E. (Peak Match Efficiency 爬坡效率): PB / 總場次，數值越高代表上分越有效率，不靠死嗑
+            const pme = pb / totalMatches;
 
             // 2. 計算五維分數 (0-100)
-            // STR (火力): 三冠率佔比極大
             let str = Math.min(100, (threeCrownRate * 180) + (winRate * 20));
-            
-            // DEF (防禦/減傷): 勝率與未被三冠的推算(此處用高勝率代表防禦穩)
             let def = Math.min(100, (winRate * 150));
             
-            // MAC (宏觀/大局觀): 極限盃數與挑戰最高勝場
-            let mac = Math.min(100, (pb / 9000 * 60) + (chalWins / 20 * 40));
+            // 宏觀 (MAC) 改由 PB 和 P.M.E. (爬分效率) 決定
+            // 爬分效率越高 (PME > 1.0通常是怪物/小號)，MAC評分越高
+            let mac = Math.min(100, (pb / 9000 * 70) + (pme * 20));
             
-            // POT (潛力/爆發): 挑戰滿勝是核心指標
-            let pot = Math.min(100, (chalWins / 20 * 80) + (winRate * 20));
+            // 潛力 (POT) 改由 W/L Ratio 和 勝率 決定，W/L 1.5 即可拿到極高分
+            let pot = Math.min(100, (wlRatio * 35) + (winRate * 30));
             
-            // CST (穩定度): 總場次多且勝率大於50%者穩定
             let cst = Math.min(100, (totalMatches > 5000 ? 50 : totalMatches/100) + (winRate > 0.5 ? 50 : winRate*100));
 
             // 3. 計算 N.C.R. (綜合神經戰力)
             const ncr = Math.round((str*0.2) + (def*0.2) + (mac*0.25) + (pot*0.2) + (cst*0.15));
             const overallGrade = getGrade(ncr);
 
-            // 4. 更新 UI - 總評
+            // 4. 更新 UI - 總評 & 五維
             document.getElementById('ui-ncr').innerText = ncr;
             const gradeEl = document.getElementById('ui-ncr-grade');
             gradeEl.innerText = `CLASS ${overallGrade.letter}`;
             gradeEl.className = `ncr-grade ${overallGrade.class}`;
 
-            // 5. 更新 UI - 子評級
             const metrics = [
                 { id: 'str', val: str }, { id: 'def', val: def }, 
                 { id: 'mac', val: mac }, { id: 'pot', val: pot }, { id: 'cst', val: cst }
@@ -435,10 +395,9 @@
                 document.getElementById(`s-${m.id}`).innerText = Math.round(m.val) + ' PTS';
             });
 
-            // 6. 更新雷達圖
             initChart([str, def, mac, pot, cst]);
 
-            // 7. 更新長條圖 Raw Data
+            // 5. 更新長條圖 Raw Data
             document.getElementById('val-winrate').innerText = (winRate*100).toFixed(1)+'%';
             document.getElementById('bar-winrate').style.width = (winRate*100) + '%';
             
@@ -448,27 +407,28 @@
             document.getElementById('val-pb').innerText = pb;
             document.getElementById('bar-pb').style.width = Math.min(100, pb/9000*100) + '%';
 
-            document.getElementById('val-chal').innerText = chalWins;
-            document.getElementById('bar-chal').style.width = Math.min(100, chalWins/20*100) + '%';
+            // 更新 W/L Ratio (2.0x 視為滿版)
+            document.getElementById('val-wl').innerText = wlRatio.toFixed(2) + 'x';
+            document.getElementById('bar-wl').style.width = Math.min(100, (wlRatio/2.0)*100) + '%';
 
-            document.getElementById('val-war').innerText = warWins;
-            document.getElementById('bar-war').style.width = Math.min(100, warWins/300*100) + '%';
+            // 更新 P.M.E. (1.5 視為滿版)
+            document.getElementById('val-pme').innerText = pme.toFixed(2);
+            document.getElementById('bar-pme').style.width = Math.min(100, (pme/1.5)*100) + '%';
 
             document.getElementById('val-matches').innerText = totalMatches;
             document.getElementById('bar-matches').style.width = Math.min(100, totalMatches/20000*100) + '%';
 
-            // 8. 生成 AI 戰術標籤 (Career Tags)
+            // 6. 生成 AI 戰術標籤 (Career Tags)
             const tagsBox = document.getElementById('ui-tags');
             tagsBox.innerHTML = '';
             
             let generatedTags = [];
             if(ncr >= 85) generatedTags.push({text: "APEX PREDATOR", color: "var(--rank-s)"});
-            if(chalWins >= 20) generatedTags.push({text: "TOURNAMENT ELITE", color: "var(--neon-magenta)"});
+            if(wlRatio >= 1.5) generatedTags.push({text: "LETHAL DOMINANCE", color: "var(--neon-yellow)"});
+            if(pme >= 1.0) generatedTags.push({text: "PRODIGY EFFICIENT", color: "var(--neon-magenta)"});
             if(str > def + 20) generatedTags.push({text: "GLASS CANNON", color: "var(--danger-glow)"});
             if(def > str + 20) generatedTags.push({text: "IRON WALL", color: "var(--neon-cyan)"});
-            if(threeCrownRate > 0.4) generatedTags.push({text: "LETHAL FINISHER", color: "var(--danger-glow)"});
-            if(cst > 85) generatedTags.push({text: "UNBREAKABLE", color: "#fff"});
-            if(totalMatches > 10000) generatedTags.push({text: "VETERAN SOUL", color: "var(--neon-yellow)"});
+            if(totalMatches > 10000) generatedTags.push({text: "VETERAN SOUL", color: "var(--text-main)"});
 
             if(generatedTags.length === 0) generatedTags.push({text: "BALANCED FIGHTER", color: "#888"});
 
@@ -482,9 +442,8 @@
                 tagsBox.appendChild(span);
             });
 
-            // 9. 啟動 GSR
             startGSR(str > 70 ? 60 : 35);
-            log('Evaluation Complete. Telemetry updated.', 'success');
+            log('Objective Evaluation Complete.', 'success');
         }
 
         window.onload = () => { initChart([0,0,0,0,0]); startGSR(20); };

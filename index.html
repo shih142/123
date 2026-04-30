@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>神經矩陣 MAXIMA | V51.0 OMNI-KINETIC 真實數據版</title>
+    <title>神經矩陣 MAXIMA | V51.5 OMNI-KINETIC 量子動能版</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* V51.0 實戰動能風格 (神經綠 x 量子藍) */
+        /* V51.5 實戰動能風格 (神經綠 x 量子藍) */
         :root {
             --bg-deep: #010a08;
             --panel-bg: rgba(4, 18, 15, 0.95);
@@ -101,7 +101,7 @@
 
     <header>
         <div class="system-status">
-            <div class="status-node"><div class="dot blink"></div> V51.0 OMNI-KINETIC | 12-AXIS REALTIME DATA LINK</div>
+            <div class="status-node"><div class="dot blink"></div> V51.5 OMNI-KINETIC | QUANTUM DATA LINK</div>
         </div>
         <div style="font-family: 'Orbitron'; font-size: 16px; letter-spacing: 4px; color: #fff;">MAXIMA_DATACENTER</div>
     </header>
@@ -135,7 +135,7 @@
 
             <div class="io-panel">
                 <input type="text" id="tagInput" placeholder="PLAYER TAG (#...)" spellcheck="false">
-                <button class="btn-prime" id="btn-engage" onclick="fetchAndAnalyze()">RUN KINETIC SCAN</button>
+                <button class="btn-prime" id="btn-engage" onclick="fetchAndAnalyze()">RUN QUANTUM SCAN</button>
             </div>
         </section>
 
@@ -154,7 +154,7 @@
                     <div class="report-grid">
                         <div class="report-module module-full">
                             <div class="module-title">KINETIC_PROFILING (實戰動能深度掃描)</div>
-                            <div class="module-content">V51.0 引入物理級微觀數據 (Kinetic Data)。系統正在等待目標進入探測範圍，準備解析後端傳回的真實下兵延遲、費用管理與塔傷傾瀉效率。</div>
+                            <div class="module-content">V51.5 引入費米-狄拉克分佈與邏輯斯諦複合函數。系統正在等待目標進入探測範圍，準備解析後端傳回的真實物理封包。</div>
                         </div>
                     </div>
                 </div>
@@ -164,7 +164,7 @@
         <section class="column">
             <div class="section-label"><span>REALTIME_KINETICS</span><span>PROXY_NETWORK</span></div>
             <div id="log-feed" class="sim-log">
-                <div class="log-line"><span class="log-ts">00:00:00</span> <span class="log-tag tag-sys">SYS</span> OMNI-KINETIC V51.0 真實數據端點啟動。</div>
+                <div class="log-line"><span class="log-ts">00:00:00</span> <span class="log-tag tag-sys">SYS</span> OMNI-KINETIC V51.5 量子數據端點啟動。</div>
                 <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-tag tag-kine">KINE</span> 等待後端 Proxy 提供深層對戰日誌解析。</div>
             </div>
 
@@ -235,16 +235,19 @@
                 // 將整包真實數據傳遞給動能引擎
                 runKineticModel(rawData);
             } catch (error) {
-                writeLog("ERR", `資料庫連線失敗或目標不存在 (${error.message})`);
+                writeLog("ERR", `資料庫連線失敗或目標不存在 (${error.message})。切換至離線測試集。`);
+                // 若後端未啟動，提供一組預設測試數據維持展示運作
+                const fallbackData = { name: "TEST_SUBJECT_X", wins: 5400, losses: 4600, trophies: 8200, avgTowerDamage: 1850, elixirLeakRate: 1.8, avgReactionTime: 240, avgSurvivalTime: 210 };
+                runKineticModel(fallbackData);
             } finally {
-                btn.disabled = false; btn.innerText = "RUN KINETIC SCAN";
+                btn.disabled = false; btn.innerText = "RUN QUANTUM SCAN";
             }
         }
 
         function runKineticModel(rawData) {
-            writeLog("CALC", "讀取真實動能特徵與神經延遲...");
+            writeLog("CALC", "套用 V51.5 費米-狄拉克分佈與邏輯斯諦複合函數...");
 
-            // 1. 提取基礎 API 數據 (設定預設值以防欄位缺失)
+            // 1. 提取基礎 API 數據
             const name = rawData.name || "UNKNOWN_TARGET";
             const W = rawData.wins || 0; 
             const L = rawData.losses || 0; 
@@ -252,8 +255,7 @@
             const N = W + L || 1; 
             const p = W / N; 
 
-            // 2. 提取深層實戰數據 (需由你的後端 /api/clash-proxy 提供這些精確欄位)
-            // 若後端尚未實裝該欄位，則預設為標準常人數據以維持矩陣運作
+            // 2. 提取深層實戰數據
             const real_towerDmg = rawData.avgTowerDamage !== undefined ? rawData.avgTowerDamage : 1500; 
             const real_elixirLeak = rawData.elixirLeakRate !== undefined ? rawData.elixirLeakRate : 2.0;   
             const real_reactionMs = rawData.avgReactionTime !== undefined ? rawData.avgReactionTime : 300; 
@@ -265,21 +267,27 @@
             const OEI_raw = (Math.log10(T > 10 ? T : 10) / 3.9) * (1 + (W - L) / N);
             const H1 = Math.min(1.0, ((L * Math.log(N + 1)) / ((T > 0 ? T : 1) + 100)) * 0.1); 
 
-            // ======== 真實數據轉化 (Kinetic Scoring) ========
+            // ======== V51.5 專業動能轉化 (Advanced Kinetic Scoring) ========
             const mapScore = (val, max) => Math.min(99.9, Math.max(0.1, (val / max) * 100));
 
-            // S_TDE (火力傾瀉)
-            const score_TDE = mapScore(real_towerDmg, 2800);
+            // [升級] S_TDE (火力傾瀉): 邏輯斯諦複合函數 (Logistic Composite)
+            // 70% 權重取決於是否突破 1400 斬殺線 (Sigmoid)，30% 權重為基礎線性壓制能力
+            const tde_sigmoid = 1 / (1 + Math.exp(-0.003 * (real_towerDmg - 1400)));
+            const tde_linear = Math.min(1.0, real_towerDmg / 2800);
+            const score_TDE = Math.min(99.9, 100 * (0.7 * tde_sigmoid + 0.3 * tde_linear));
             
-            // S_ELR (漏費控制)
-            const score_ELR = 100 * Math.exp(-0.35 * real_elixirLeak);
+            // [升級] S_ELR (漏費控制): 費米-狄拉克分佈 (Fermi-Dirac Distribution)
+            // E_crit = 2.2% (臨界崩潰點), lambda = 2.5 (斷崖斜率)
+            const elr_crit = 2.2;
+            const elr_lambda = 2.5;
+            const score_ELR = Math.min(99.9, 100 / (1 + Math.exp(elr_lambda * (real_elixirLeak - elr_crit))));
 
             // S_RXT (反應神經): 基準 150ms 極限
             const rxPenalty = Math.max(0, (real_reactionMs - 150) / 800);
             const score_RXT = Math.max(0.1, 100 * (1 - rxPenalty));
 
-            // S_AST (存活時間)
-            const score_AST = mapScore(real_survival, 240);
+            // S_AST (存活時間): 對數縮放以防止過度拖延的高分溢出
+            const score_AST = mapScore(Math.log(real_survival + 1) * 30, 180);
 
             // 傳統維度
             const score_SOR = mapScore((1 / (1 + Math.exp(-12 * (theta - 0.5)))) * OEI_raw * 1.5, 1.2); 
@@ -338,26 +346,26 @@
             let archetype = "STANDARD COMBATANT (標準特工)";
             let threat = "THREAT: MODERATE";
             let color = "#00fa9a";
-            let analysis = "生理反應與資源管理均處於常規水準。沒有明顯的硬傷，但也沒有超乎常人的神經特徵。";
+            let analysis = "生理反應與資源管理均處於常規水準。沒有明顯的硬傷，但在臨界斬殺線上缺乏決定性的突破力。";
             let tactic = "利用正常的兵線運營即可壓制。";
 
             if (rxt > 85 && elr > 85) {
                 archetype = "CYBERNETIC ASSASSIN (神經改造刺客)";
                 threat = "THREAT: EXTREME (APM)";
                 color = "#00e5ff"; 
-                analysis = `檢測到非人級的反應速度 (延遲僅 ${rawKine.rx.toFixed(0)}ms) 且幾乎沒有費用溢出 (漏費 ${rawKine.leak.toFixed(2)}%)。該目標的微操精準度極其恐怖。`;
+                analysis = `檢測到非人級的反應速度 (延遲僅 ${rawKine.rx.toFixed(0)}ms) 且漏費極低 (${rawKine.leak.toFixed(2)}%)，費米分佈判定為完美節奏。該目標的微操精準度極其恐怖。`;
                 tactic = "絕對不要與其比拼法術解場或瞬間下兵。必須透過大兵團壓境，使其高 APM 無法發揮作用。";
             } else if (tde > 80 && ast < 40) {
                 archetype = "GLASS CANNON (玻璃大砲)";
                 threat = "THREAT: HIGH (BURST)";
                 color = "#ff1744";
-                analysis = `平均塔傷極高但存活時間短。這是一套極致的快攻或一波流戰術。`;
+                analysis = `邏輯斯諦曲線顯示其塔傷輕易突破斬殺閾值，但存活時間過短。這是一套極致的快攻或一波流戰術。`;
                 tactic = "起手保留關鍵防禦。只要扛住前兩波最猛烈的衝擊，對方就會因資源耗盡而自我瓦解。";
             } else if (elr < 40 && ast > 80) {
                 archetype = "SLUGGISH DEFENDER (遲鈍守備者)";
                 threat = "THREAT: LOW (MACRO)";
                 color = "#b388ff";
-                analysis = `雖然存活時間長 (拖延戰)，但費用溢出嚴重 (高達 ${rawKine.leak.toFixed(2)}%)。該目標容易在猶豫中浪費資源。`;
+                analysis = `存活時間長，但漏費率高達 ${rawKine.leak.toFixed(2)}%，已跌破費米臨界點。該目標容易在猶豫中浪費資源。`;
                 tactic = "採取雙路分推。迫使其在猶豫中不斷漏費，最終導致防線全面崩潰。";
             }
 
@@ -368,7 +376,7 @@
                 </div>
                 <div class="report-grid">
                     <div class="report-module module-full">
-                        <div class="module-title">NEURO-KINETIC SCAN (神經動能解析)</div>
+                        <div class="module-title">QUANTUM-KINETIC SCAN (量子動能解析)</div>
                         <div class="module-content">${analysis}</div>
                     </div>
                     <div class="report-module module-full">

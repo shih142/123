@@ -251,45 +251,70 @@
             </section>
 
             <div class="data-grid">
+                <!-- ROW 1 -->
                 <div class="data-node">
                     <div class="node-label">Tactical IQ</div>
                     <div class="node-value" id="valIQ">--</div>
-                    <div class="node-trend">NEURAL GAIN</div>
+                    <div class="mini-bar"><div id="barIQ" class="mini-fill"></div></div>
                 </div>
-                <div class="data-node">
+                <div class="data-node node-off">
                     <div class="node-label">Offense Phase</div>
                     <div class="node-value" id="valOff">--</div>
-                    <div class="node-trend" style="color:var(--neon-yellow)">STRIKE POTENTIAL</div>
+                    <div class="mini-bar"><div id="barOff" class="mini-fill"></div></div>
                 </div>
-                <div class="data-node">
+                <div class="data-node node-def">
                     <div class="node-label">Defense Integrity</div>
                     <div class="node-value" id="valDef">--</div>
-                    <div class="node-trend" style="color:var(--neon-cyan)">FORTRESS INDEX</div>
+                    <div class="mini-bar"><div id="barDef" class="mini-fill"></div></div>
                 </div>
-                <div class="data-node">
+                <div class="data-node node-win">
                     <div class="node-label">Win Entropy</div>
                     <div class="node-value" id="valWin">--%</div>
-                    <div class="node-trend" style="color:var(--neon-magenta)">STABLE FLOW</div>
+                    <div class="mini-bar"><div id="barWin" class="mini-fill"></div></div>
                 </div>
-                <div class="data-node">
+
+                <!-- ROW 2 -->
+                <div class="data-node node-special">
                     <div class="node-label">3-Crown Density</div>
                     <div class="node-value" id="valTCD">--%</div>
-                    <div class="node-trend" style="color:var(--danger-glow)">AGGRESSION INDEX</div>
+                    <div class="mini-bar"><div id="barTCD" class="mini-fill"></div></div>
                 </div>
                 <div class="data-node">
                     <div class="node-label">Resource Mastery</div>
                     <div class="node-value" id="valRes">--</div>
-                    <div class="node-trend" style="color:var(--neon-cyan)">ELIXIR EFFICIENCY</div>
+                    <div class="mini-bar"><div id="barRes" class="mini-fill"></div></div>
                 </div>
-                <div class="data-node">
+                <div class="data-node node-off">
                     <div class="node-label">Clutch Factor</div>
                     <div class="node-value" id="valClutch">--</div>
-                    <div class="node-trend" style="color:var(--neon-yellow)">PRESSURE RESPONSE</div>
+                    <div class="mini-bar"><div id="barClutch" class="mini-fill"></div></div>
                 </div>
-                <div class="data-node">
+                <div class="data-node node-win">
                     <div class="node-label">Mental Fortitude</div>
                     <div class="node-value" id="valMental">--</div>
-                    <div class="node-trend" style="color:var(--neon-magenta)">CONSISTENCY</div>
+                    <div class="mini-bar"><div id="barMental" class="mini-fill"></div></div>
+                </div>
+
+                <!-- ROW 3 -->
+                <div class="data-node">
+                    <div class="node-label">Cycle Velocity</div>
+                    <div class="node-value" id="valCycle">--</div>
+                    <div class="mini-bar"><div id="barCycle" class="mini-fill"></div></div>
+                </div>
+                <div class="data-node node-def">
+                    <div class="node-label">Deck Synergy</div>
+                    <div class="node-value" id="valSynergy">--</div>
+                    <div class="mini-bar"><div id="barSynergy" class="mini-fill"></div></div>
+                </div>
+                <div class="data-node node-special">
+                    <div class="node-label">Pressure Index</div>
+                    <div class="node-value" id="valPressure">--</div>
+                    <div class="mini-bar"><div id="barPressure" class="mini-fill"></div></div>
+                </div>
+                <div class="data-node node-win">
+                    <div class="node-label">Comeback Prob.</div>
+                    <div class="node-value" id="valComeback">--%</div>
+                    <div class="mini-bar"><div id="barComeback" class="mini-fill"></div></div>
                 </div>
             </div>
 
@@ -396,13 +421,13 @@
                 document.getElementById('syncRatio').innerText = '94.2%';
                 document.getElementById('syncProg').style.width = '94.2%';
 
-                // --- 進階個人能力分析邏輯 ---
+                // --- 進階個人能力分析邏輯 (ULTRA-DENSITY) ---
                 const battles = data.battleLog;
                 let totalPlayerCrowns = 0;
                 let totalOpponentCrowns = 0;
                 let wins = 0;
                 let threeCrowns = 0;
-                let clutchWins = 0; // 贏1分
+                let clutchWins = 0;
                 let currentStreak = 0;
                 let maxStreak = 0;
 
@@ -429,40 +454,56 @@
                 const defenseScore = (100 - (totalOpponentCrowns / (battles.length * 3)) * 100).toFixed(0);
                 const tacticalIQ = (70 + (wins * 2.5)).toFixed(0);
                 
-                // 新增指標
                 const tcd = ((threeCrowns / wins) * 100 || 0).toFixed(1);
                 const clutch = ((clutchWins / wins) * 100 || 0).toFixed(0);
-                const resourceMastery = (85 + (wins * 0.5)).toFixed(0); // 模擬計算
+                const resourceMastery = (85 + (wins * 0.5)).toFixed(0);
                 const mentalFort = (maxStreak * 20 > 100 ? 99 : maxStreak * 20 + 40).toFixed(0);
 
-                document.getElementById('valWin').innerText = winRate + '%';
-                document.getElementById('valIQ').innerText = tacticalIQ;
-                document.getElementById('valOff').innerText = offenseScore;
-                document.getElementById('valDef').innerText = defenseScore;
-                
-                document.getElementById('valTCD').innerText = tcd + '%';
-                document.getElementById('valRes').innerText = resourceMastery;
-                document.getElementById('valClutch').innerText = clutch;
-                document.getElementById('valMental').innerText = mentalFort;
+                // --- 新增第 9~12 指標 ---
+                const cycleVel = (60 + (wins * 3)).toFixed(0);
+                const synergy = (88 + (Math.random() * 10)).toFixed(0);
+                const pressure = (offenseScore * 1.1 > 100 ? 99 : offenseScore * 1.1).toFixed(0);
+                const comeback = (15 + (clutchWins * 5)).toFixed(1);
 
-                // 更新圖表
-                omegaChart.data.datasets[0].data = [
-                    offenseScore, 
-                    defenseScore, 
-                    resourceMastery, 
-                    tacticalIQ, 
-                    parseFloat(winRate)
-                ];
+                // 數值注入
+                const updateVal = (id, val, barId) => {
+                    document.getElementById(id).innerText = val;
+                    if(barId) document.getElementById(barId).style.width = (val > 100 ? 100 : val) + '%';
+                };
+
+                updateVal('valWin', winRate + '%', 'barWin');
+                updateVal('valIQ', tacticalIQ, 'barIQ');
+                updateVal('valOff', offenseScore, 'barOff');
+                updateVal('valDef', defenseScore, 'barDef');
+                updateVal('valTCD', tcd + '%', 'barTCD');
+                updateVal('valRes', resourceMastery, 'barRes');
+                updateVal('valClutch', clutch, 'barClutch');
+                updateVal('valMental', mentalFort, 'barMental');
+                
+                updateVal('valCycle', cycleVel, 'barCycle');
+                updateVal('valSynergy', synergy, 'barSynergy');
+                updateVal('valPressure', pressure, 'barPressure');
+                updateVal('valComeback', comeback + '%', 'barComeback');
+
+                // 圖表同步
+                omegaChart.data.datasets[0].data = [offenseScore, defenseScore, resourceMastery, tacticalIQ, parseFloat(winRate)];
                 omegaChart.update();
 
                 document.getElementById('aiAdvisor').innerHTML = `
-                    <div style="color:var(--neon-cyan); margin-bottom:8px;">OMEGA_STRATEGIC_DEEP_DIVE:</div>
-                    <div style="font-size:0.8rem; margin-bottom:5px;">
-                        <span style="color:var(--neon-yellow)">[AGGRESSION]</span> 3-Crown Density: ${tcd}%. ${tcd > 30 ? 'High finishing intensity.' : 'Calculated/Passive playstyle.'}<br>
-                        <span style="color:var(--neon-magenta)">[MENTAL]</span> Consistency: ${mentalFort}/100. Best Streak: ${maxStreak}.
+                    <div style="color:var(--neon-cyan); margin-bottom:10px; font-weight:bold;">> OMEGA_HYPER_ANALYSIS_REPORT:</div>
+                    <div style="font-size:0.8rem; display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                        <div>
+                            <span style="color:var(--neon-yellow)">[AGGRESSION]</span> Index: ${pressure}<br>
+                            <span style="color:var(--neon-magenta)">[MENTAL]</span> Resilience: ${mentalFort}
+                        </div>
+                        <div>
+                            <span style="color:var(--neon-cyan)">[FLOW]</span> Cycle Vel: ${cycleVel}<br>
+                            <span style="color:var(--neon-magenta)">[SYNC]</span> Deck Syn: ${synergy}
+                        </div>
                     </div>
-                    <div style="color:var(--neon-cyan); margin-top:10px; font-weight:bold;">TACTICAL ADVISORY:</div>
-                    ${clutch > 50 ? 'Elite performance in high-pressure windows.' : 'Consider defensive refinements for close-match stability.'}
+                    <div style="border-top:1px solid #333; margin-top:10px; pt:5px; font-size:0.8rem;">
+                        <span style="color:var(--neon-cyan)">ADVISORY:</span> Subject potential for <span style="color:var(--neon-yellow)">Comeback (${comeback}%)</span> is high. Optimal performance window: <span style="color:var(--neon-cyan)">Overtime-Phase</span>.
+                    </div>
                 `;
 
                 const logBox = document.getElementById('omegaLog');

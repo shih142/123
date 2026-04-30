@@ -3,107 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>神經矩陣 MAXIMA | V13.0 實時代理接入</title>
+    <title>神經矩陣 MAXIMA | V14.1 終極實戰代理版</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --bg-deep: #05070a;
-            --panel-bg: rgba(10, 15, 20, 0.98);
-            --holo-cyan: #00e5ff;
-            --apex-gold: #ffc800;
-            --aggressive-red: #ff3300;
-            --pure-white: #f0f5fa;
-            --muted-gold: #826a4a;
-            --grid: rgba(0, 229, 255, 0.05);
+            --bg-deep: #020406;
+            --panel-bg: rgba(5, 10, 15, 0.98);
+            --neon-blue: #00f2ff;
+            --aggressive-red: #ff2a00;
+            --gold-leaf: #d4af37;
+            --text-main: #e0e6ed;
+            --border-glow: rgba(0, 242, 255, 0.3);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             background-color: var(--bg-deep);
-            color: var(--pure-white);
-            font-family: 'Share Tech Mono', 'Microsoft JhengHei', sans-serif;
+            color: var(--text-main);
+            font-family: 'Share Tech Mono', sans-serif;
             height: 100vh; display: flex; overflow: hidden;
-            background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-            background-size: 40px 40px;
+            background-image: radial-gradient(circle at center, #0a1520 0%, #020406 100%);
         }
 
-        .layout-grid { display: grid; grid-template-columns: 320px 1fr 320px; gap: 20px; width: 100%; height: 100%; padding: 20px; }
-        .panel { background: var(--panel-bg); border: 1px solid rgba(0, 229, 255, 0.2); position: relative; display: flex; flex-direction: column; }
-        .panel-header { padding: 12px; border-bottom: 1px solid var(--holo-cyan); font-family: 'Orbitron'; font-size: 11px; letter-spacing: 2px; display: flex; justify-content: space-between; background: rgba(0,229,255,0.1); font-weight: bold; }
+        .layout-grid { display: grid; grid-template-columns: 350px 1fr 350px; gap: 15px; width: 100%; height: 100%; padding: 15px; }
+        .panel { background: var(--panel-bg); border: 1px solid var(--border-glow); position: relative; display: flex; flex-direction: column; overflow: hidden; }
         
-        .ncr-display { padding: 25px; text-align: center; border-bottom: 1px solid rgba(0, 229, 255, 0.1); }
-        .ncr-value { font-family: 'Orbitron'; font-size: 64px; font-weight: 900; color: var(--holo-cyan); text-shadow: 0 0 30px rgba(0, 229, 255, 0.6); }
+        .panel-header { padding: 10px 15px; border-bottom: 1px solid var(--border-glow); font-family: 'Orbitron'; font-size: 10px; letter-spacing: 2px; display: flex; justify-content: space-between; background: linear-gradient(90deg, rgba(0,242,255,0.1), transparent); }
         
-        .metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 15px; }
-        .metric-node { background: rgba(0,0,0,0.3); border: 1px solid rgba(0, 229, 255, 0.1); padding: 12px; opacity: 0; transform: translateY(10px); transition: 0.5s; }
-        .metric-node.visible { opacity: 1; transform: translateY(0); }
-        .mn-title { font-size: 10px; color: var(--muted-gold); margin-bottom: 5px; }
-        .mn-val { font-family: 'Orbitron'; font-size: 22px; color: var(--pure-white); }
-        .mn-val.bonus { color: var(--aggressive-red); text-shadow: 0 0 15px var(--aggressive-red); }
+        .ncr-section { padding: 30px 15px; text-align: center; border-bottom: 1px solid rgba(0,242,255,0.1); }
+        .ncr-title { font-family: 'Orbitron'; font-size: 12px; color: var(--gold-leaf); margin-bottom: 10px; }
+        .ncr-value { font-family: 'Orbitron'; font-size: 72px; font-weight: 900; line-height: 1; color: var(--neon-blue); text-shadow: 0 0 25px rgba(0,242,255,0.5); }
 
-        .charts-container { display: flex; justify-content: center; align-items: center; flex: 1; padding: 20px; }
-        .chart-box { width: 100%; height: 100%; position: relative; }
+        .stats-wall { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border-glow); flex: 1; }
+        .stat-item { background: var(--bg-deep); padding: 20px 15px; display: flex; flex-direction: column; justify-content: center; }
+        .stat-label { font-size: 10px; color: #556677; margin-bottom: 5px; text-transform: uppercase; }
+        .stat-val { font-family: 'Orbitron'; font-size: 24px; color: var(--text-main); }
+        .stat-val.active { color: var(--aggressive-red); text-shadow: 0 0 10px rgba(255,42,0,0.4); }
 
-        .report-box { padding: 20px; font-size: 13px; line-height: 1.8; color: #ccc; background: rgba(0,0,0,0.3); border-top: 1px solid rgba(0, 229, 255, 0.2); height: 180px; overflow-y: auto; }
-        .hl { color: var(--holo-cyan); font-weight: bold; }
+        .main-display { display: flex; flex-direction: column; gap: 15px; }
+        .chart-container { background: rgba(0,0,0,0.5); flex: 1; min-height: 400px; padding: 20px; border: 1px solid rgba(0,242,255,0.1); }
+        .report-console { height: 200px; background: rgba(0,0,0,0.8); border: 1px solid rgba(0,242,255,0.2); padding: 15px; font-size: 13px; color: #8899aa; overflow-y: auto; line-height: 1.6; }
+
+        .control-panel { padding: 20px; }
+        .input-box { width: 100%; background: #000; border: 1px solid var(--border-glow); padding: 12px; color: var(--neon-blue); font-family: 'Orbitron'; font-size: 16px; margin-bottom: 10px; text-align: center; outline: none; transition: 0.3s; }
+        .input-box:focus { border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(0,242,255,0.3); }
+        
+        .btn-prime { width: 100%; padding: 15px; background: var(--neon-blue); color: #000; border: none; font-family: 'Orbitron'; font-weight: 900; cursor: pointer; transition: 0.3s; clip-path: polygon(0 0, 90% 0, 100% 30%, 100% 100%, 10% 100%, 0 70%); }
+        .btn-prime:hover { background: #fff; transform: scale(1.02); }
+        .btn-prime:disabled { background: #334455; cursor: not-allowed; transform: none; clip-path: none; border-radius: 5px; }
+
+        .math-box { font-size: 10px; color: #445566; padding: 10px; border-top: 1px solid rgba(0,242,255,0.1); }
         .hl-red { color: var(--aggressive-red); font-weight: bold; }
-
-        .control-group { padding: 20px; }
-        input { background: #000; border: 1px solid var(--holo-cyan); color: var(--holo-cyan); padding: 15px; font-family: 'Share Tech Mono'; width: 100%; margin-bottom: 10px; font-size: 18px; text-align: center; letter-spacing: 3px; outline: none; }
-        
-        button { background: rgba(0, 229, 255, 0.1); border: 1px solid var(--holo-cyan); color: var(--holo-cyan); padding: 12px; font-family: 'Share Tech Mono'; width: 100%; cursor: pointer; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; transition: 0.3s; }
-        button:hover { background: var(--holo-cyan); color: #000; box-shadow: 0 0 20px var(--holo-cyan); }
-        button:disabled { border-color: #333; color: #333; cursor: not-allowed; opacity: 0.5; }
-        
-        .term-log { flex: 1; padding: 15px; font-size: 11px; color: #445566; overflow-y: auto; font-family: 'Share Tech Mono'; border-top: 1px solid rgba(0, 229, 255, 0.1); }
-        .log-warn { color: var(--aggressive-red); }
-        .log-success { color: var(--holo-cyan); }
+        .hl-gold { color: var(--gold-leaf); font-weight: bold; }
+        .hl-blue { color: var(--neon-blue); font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div class="layout-grid">
         <div class="panel">
-            <div class="panel-header"><span>LIVE_DATA_STREAM</span><span>PROXY_LINK_UP</span></div>
-            <div class="ncr-display">
-                <div id="ui-name" style="font-size: 18px; margin-bottom: 10px; font-family: 'Orbitron'; letter-spacing: 1px;">AWAITING</div>
-                <div id="ui-ncr" class="ncr-value">0.00</div>
-                <div id="ui-class" style="font-size: 11px; color: var(--holo-cyan); margin-top: 10px; font-weight: bold;">[ SYSTEM_READY ]</div>
+            <div class="panel-header"><span>NEURAL_ID</span><span>V14.1_PROXY_SYNC</span></div>
+            <div class="ncr-section">
+                <div class="ncr-title">MVI - MAXIMA VALUE INDEX</div>
+                <div id="ui-ncr" class="ncr-value">00.0</div>
+                <div id="ui-name" style="margin-top:15px; font-size: 14px; letter-spacing: 2px;">AWAITING_TAG</div>
             </div>
-            <div class="term-log" id="ui-log">> 實時 Proxy 模組已載入...</div>
+            <div class="stats-wall">
+                <div class="stat-item"><div class="stat-label">Offense (STR)</div><div id="val-str" class="stat-val">--</div></div>
+                <div class="stat-item"><div class="stat-label">Defense (DEF)</div><div id="val-def" class="stat-val">--</div></div>
+                <div class="stat-item"><div class="stat-label">Micro (MIC)</div><div id="val-mic" class="stat-val">--</div></div>
+                <div class="stat-item"><div class="stat-label">Macro (MAC)</div><div id="val-mac" class="stat-val">--</div></div>
+            </div>
+            <div id="ui-log" style="padding: 15px; font-size: 10px; color: #556677; flex: 1; font-family: 'Share Tech Mono'; overflow-y: auto; line-height: 1.5;">
+                > 系統初始化完畢。<br>> Z-Score 正規化引擎待命。<br>> 等待 Proxy 端點建立連結...
+            </div>
+        </div>
+
+        <div class="panel main-display">
+            <div class="panel-header"><span>HEURISTIC_DATA_VISUALIZATION</span><span>LIVE_FEED</span></div>
+            <div class="chart-container">
+                <canvas id="mainRadar"></canvas>
+            </div>
+            <div id="ui-report" class="report-console">
+                請輸入玩家標籤並啟動數據抓取。系統將實時運算目標的多維度戰鬥特徵。
+            </div>
         </div>
 
         <div class="panel">
-            <div class="panel-header"><span>NEURAL_MATRIX_ANALYSIS</span><span>V13.0</span></div>
-            <div class="charts-container">
-                <div class="chart-box"><canvas id="radarChart"></canvas></div>
-            </div>
-            <div class="metrics-grid">
-                <div class="metric-node" id="node-1"><div class="mn-title">激進進攻 (STR)</div><div class="mn-val" id="val-str">0</div></div>
-                <div class="metric-node" id="node-2"><div class="mn-title">防禦係數 (DEF)</div><div class="mn-val" id="val-def">0</div></div>
-                <div class="metric-node" id="node-3"><div class="mn-title">微操精度 (MIC)</div><div class="mn-val" id="val-mic">0</div></div>
-                <div class="metric-node" id="node-4"><div class="mn-title">宏觀營運 (MAC)</div><div class="mn-val" id="val-mac">0</div></div>
-                <div class="metric-node" id="node-5"><div class="mn-title">心理韌性 (PSY)</div><div class="mn-val" id="val-psy">0</div></div>
-                <div class="metric-node" id="node-6"><div class="mn-title">穩定性 (CST)</div><div class="mn-val" id="val-cst">0</div></div>
-            </div>
-            <div class="report-box" id="ui-report">請輸入有效標籤以進行實時解構。</div>
-        </div>
-
-        <div class="panel">
-            <div class="panel-header"><span>COMMAND_CONSOLE</span><span>PROXY_ACTIVE</span></div>
-            <div class="control-group">
-                <label style="font-size: 10px; color: var(--holo-cyan); font-weight: bold; margin-bottom: 8px; display: block;">PROXY_ENDPOINT</label>
-                <input type="text" id="proxyUrl" value="/api/clash-proxy" style="font-size: 12px; margin-bottom: 15px; letter-spacing: 1px;">
+            <div class="panel-header"><span>COMMAND_CENTER</span><span>API_LINK</span></div>
+            <div class="control-panel">
+                <label style="font-size: 9px; color: var(--gold-leaf); margin-bottom: 5px; display: block;">PROXY_ENDPOINT (URL)</label>
+                <input type="text" id="proxyInput" value="/api/clash-proxy" class="input-box" style="font-size: 12px; height: 35px; margin-bottom: 20px;">
                 
-                <label style="font-size: 10px; color: var(--holo-cyan); font-weight: bold; margin-bottom: 8px; display: block;">PLAYER_TAG</label>
-                <input type="text" id="playerTag" placeholder="#CV9QU9CYJ">
-                <button id="btn-run" onclick="fetchAndAnalyze()">執行實時解構</button>
+                <label style="font-size: 9px; color: var(--gold-leaf); margin-bottom: 5px; display: block;">TARGET_PLAYER_TAG</label>
+                <input type="text" id="tagInput" placeholder="#CV9QU9CYJ" class="input-box" maxlength="15">
+                
+                <button id="btn-run" class="btn-prime" onclick="quantumAnalysis()">啟動實時解構</button>
             </div>
-            <div style="padding: 0 20px; font-size: 10px; color: #445566; line-height: 1.5;">
-                * V13.0 算法公式：<br>
-                $$STR = \min\left(100, \text{Score}_{raw} \times 1.15\right)$$
-                (條件：勝率 > 54% 且 三冠率 > 40%)
+            
+            <div class="math-box">
+                $$Z\_Score = \frac{x - \mu}{\sigma}$$<br>
+                $$STR = \left( \frac{100}{1 + e^{-Z_{offense}}} \right) \cdot \Psi$$<br>
+                $$\Psi = 1.15 \text{ (if WR>54\% & 3C>40\%)}$$
+            </div>
+            
+            <div style="padding: 20px; font-size: 10px; color: #445566; line-height: 1.4;">
+                * 系統將透過 Proxy 向官方發送請求。<br>
+                * 非線性歸一化將消除極端數據的畸變。
             </div>
         </div>
     </div>
@@ -113,113 +120,159 @@
         let isProcessing = false;
 
         function initCharts() {
-            const ctxR = document.getElementById('radarChart').getContext('2d');
-            radarChart = new Chart(ctxR, {
+            const ctx = document.getElementById('mainRadar').getContext('2d');
+            radarChart = new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: ['STR', 'DEF', 'MIC', 'MAC', 'PSY', 'CST'],
-                    datasets: [{ 
-                        data: [0,0,0,0,0,0], 
-                        backgroundColor: 'rgba(0, 229, 255, 0.1)', 
-                        borderColor: '#00e5ff', 
-                        borderWidth: 2, pointRadius: 3, pointBackgroundColor: '#fff'
+                    labels: ['進攻強度 (STR)', '防禦深度 (DEF)', '微操精度 (MIC)', '戰略營運 (MAC)', '抗壓韌性 (PSY)', '數據穩定性 (CST)'],
+                    datasets: [{
+                        data: [0,0,0,0,0,0],
+                        backgroundColor: 'rgba(0, 242, 255, 0.1)',
+                        borderColor: '#00f2ff',
+                        borderWidth: 2,
+                        pointRadius: 3,
+                        pointBackgroundColor: '#00f2ff'
                     }]
                 },
-                options: { 
-                    responsive: true, maintainAspectRatio: false, 
-                    scales: { r: { grid: { color: 'rgba(0,229,255,0.1)' }, angleLines: { color: 'rgba(0,229,255,0.1)' }, ticks: { display: false, min: 0, max: 100 }, pointLabels: { color: '#00e5ff', font: { size: 12, weight: 'bold' } } } },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: { 
+                        r: { 
+                            grid: { color: 'rgba(0,242,255,0.1)' }, 
+                            angleLines: { color: 'rgba(0,242,255,0.2)' },
+                            ticks: { display: false, max: 100, min: 0 },
+                            pointLabels: { color: '#8899aa', font: { size: 11, family: 'Orbitron', weight: 'bold' } }
+                        } 
+                    },
                     plugins: { legend: { display: false } }
                 }
             });
         }
 
-        async function fetchAndAnalyze() {
+        async function quantumAnalysis() {
             if (isProcessing) return;
-            const tag = document.getElementById('playerTag').value.trim().replace('#', '');
-            const proxy = document.getElementById('proxyUrl').value;
+            const tagInput = document.getElementById('tagInput').value.trim();
+            const tag = tagInput.replace('#', '').toUpperCase();
+            const proxy = document.getElementById('proxyInput').value;
             const log = document.getElementById('ui-log');
             const btn = document.getElementById('btn-run');
-
-            if (!tag) return alert("請輸入標籤！");
-
+            
+            if(!tag) return alert("請輸入有效的玩家標籤！");
+            
             isProcessing = true;
             btn.disabled = true;
-            log.innerHTML += `<br>> 請求數據: #${tag}...`;
-
+            btn.innerText = "資料同步中...";
+            log.innerHTML += `<br>> 建立 Proxy 連結: #${tag}...`;
+            
             try {
-                // 發送到你的 Proxy 中間層
+                // 正式啟用 fetch 發送請求到 Proxy
                 const response = await fetch(`${proxy}?tag=${tag}`);
-                if (!response.ok) throw new Error("數據抓取失敗，請檢查 Proxy 狀態");
                 
+                if (!response.ok) {
+                    throw new Error(`伺服器回應錯誤 (狀態碼: ${response.status})`);
+                }
+
                 const data = await response.json();
-                log.innerHTML += `<br><span class="log-success">> 連結成功: 獲取到 ${data.name} 的數據。</span>`;
                 
-                processData(data);
-            } catch (error) {
-                log.innerHTML += `<br><span class="log-warn">> 錯誤: ${error.message}</span>`;
+                if (!data || !data.name) {
+                    throw new Error("抓取成功但資料格式無效，請檢查 Proxy 回傳的 JSON 結構。");
+                }
+
+                log.innerHTML += `<br><span style="color:var(--neon-blue)">> 握手成功。載入目標 [ ${data.name} ] 的原始數據。</span>`;
+                
+                // 進入專業算法處理
+                processProfessionalLogic(data);
+
+            } catch (e) {
+                log.innerHTML += `<br><span class="hl-red">> 錯誤: ${e.message}</span>`;
             } finally {
                 isProcessing = false;
                 btn.disabled = false;
+                btn.innerText = "啟動實時解構";
             }
         }
 
-        function processData(data) {
-            const wins = data.wins;
-            const losses = data.losses;
+        function processProfessionalLogic(data) {
+            // 防呆處理：確保 API 缺漏欄位時系統不會崩潰
+            const wins = data.wins || 0;
+            const losses = data.losses || 0;
             const total = wins + losses;
-            const wr = wins / total;
-            const tcw = data.threeCrownWins;
-            const rawConvRate = (tcw / wins);
-            const pb = data.bestTrophies;
-
-            // --- 激進 STR 算法 ---
-            const convScore = Math.pow(rawConvRate, 0.8) * 100;
-            const difficulty = (pb / 9000) * 100;
-            const purity = (tcw / total) * 100;
-
-            let str = (convScore * 0.65) + (difficulty * 0.20) + (purity * 0.15);
+            const wr = total > 0 ? (wins / total) : 0;
+            const tcw = data.threeCrownWins || 0;
+            const raw3C = wins > 0 ? (tcw / wins) : 0;
+            const pb = data.bestTrophies || 0;
             
-            let hasBonus = false;
-            if (wr > 0.54 && rawConvRate > 0.40) {
-                str *= 1.15;
-                hasBonus = true;
-                document.getElementById('ui-log').innerHTML += `<br><span class="log-warn">> [CRITICAL] 觸發 15% 激進加乘！</span>`;
+            // 由於官方 API 頂層可能不直接給 challengeMaxWins，這裡做 Fallback 預估
+            const challengeWins = data.challengeMaxWins || Math.min(20, Math.floor(pb / 500));
+
+            const log = document.getElementById('ui-log');
+
+            // 1. Z-Score 歸一化 (對標全球頂尖模型基準)
+            const zOffense = (raw3C - 0.22) / 0.08;
+            const zConsistency = (wr - 0.51) / 0.05;
+
+            // 2. STR S型曲線權重映射 (Sigmoid)
+            let strBase = 1 / (1 + Math.exp(-zOffense)) * 100;
+            
+            // 3. PB 難度係數 (平方加重)
+            const difficultyScale = Math.pow(pb / 9000, 2); 
+
+            // 4. 協同因子獎勵 (激進判定)
+            let synergyBonus = 1.0;
+            let isAggressiveElite = false;
+            
+            if (wr > 0.54 && raw3C > 0.40) {
+                synergyBonus = 1.15;
+                isAggressiveElite = true;
+                log.innerHTML += `<br><span class="hl-gold">> [SYNERGY_OVERRIDE] 滿足雙高門檻，觸發 1.15x 激進增益。</span>`;
             }
-            str = Math.min(100, str);
 
-            // --- 其他數值演算 ---
-            let def = Math.min(100, ((wins - tcw)/wins * 60) + (wr * 40));
-            let mic = Math.min(100, (pb / 9000 * 45) + ( (1 - rawConvRate) * wr * 110 ) );
-            let mac = Math.min(100, (pb / 90) + (wr * 10));
-            let psy = Math.min(100, (pb > 8000 ? 98 : pb/85));
-            let cst = Math.min(100, (Math.log10(total) * 18));
+            // 最終 STR 合成 (限制在 100)
+            let strFinal = strBase * 0.7 + (difficultyScale * 30);
+            strFinal *= synergyBonus;
+            strFinal = Math.min(100, strFinal);
 
-            const scores = [str, def, mic, mac, psy, cst];
+            // 5. 其他專業維度演算
+            let def = Math.min(100, (1 - raw3C) * 80 + (wr * 20));
+            let mic = Math.min(100, (pb / 90) + (challengeWins * 2));
+            let mac = Math.min(100, (wr * 120) * (pb / 9000));
+            let psy = Math.min(100, (pb > 8500 ? 98 : pb/90));
+            let cst = Math.min(100, 50 + (zConsistency * 15));
 
-            // UI 渲染
-            document.getElementById('ui-name').innerText = data.name;
-            const ids = ['val-str', 'val-def', 'val-mic', 'val-mac', 'val-psy', 'val-cst'];
+            renderUI(data.name, [strFinal, def, mic, mac, psy, cst], isAggressiveElite, {wr, raw3C, pb});
+        }
+
+        function renderUI(name, scores, isElite, raw) {
+            document.getElementById('ui-name').innerText = name;
+            
+            // MVI (Maxima Value Index)
+            const mvi = (scores.reduce((a,b)=>a+b)/6).toFixed(1);
+            document.getElementById('ui-ncr').innerText = mvi;
+            
+            const ids = ['val-str', 'val-def', 'val-mic', 'val-mac'];
             ids.forEach((id, i) => {
                 const el = document.getElementById(id);
                 el.innerText = Math.round(scores[i]);
-                el.classList.remove('bonus');
-                if (i === 0 && hasBonus) el.classList.add('bonus');
-                document.getElementById(`node-${i+1}`).classList.add('visible');
+                el.classList.remove('active');
+                if(i === 0 && isElite) el.classList.add('active'); // STR 激進高亮
             });
 
             radarChart.data.datasets[0].data = scores;
             radarChart.update();
 
-            const mvi = (scores.reduce((a, b) => a + b) / 600) * 100;
-            document.getElementById('ui-ncr').innerText = mvi.toFixed(2);
-            document.getElementById('ui-class').innerText = hasBonus ? "高威脅進攻體" : "常規數據主體";
-
-            document.getElementById('ui-report').innerHTML = `
-                <span class="hl">實時解構完畢:</span><br>
-                目標：${data.name} (#${document.getElementById('playerTag').value})<br>
-                勝率：${(wr*100).toFixed(1)}% | 三冠比：${(rawConvRate*100).toFixed(1)}%<br>
-                ${hasBonus ? '<span class="hl-red">檢測到極端進攻傾向，已注入補償係數。</span>' : '進攻數值表現平穩。'}
-            `;
+            let report = `<span class="hl-blue">[ 實時量子解構報告 ]</span><br><br>`;
+            report += `受測目標在 PB (<span class="hl-gold">${raw.pb}</span>) 區間展現出 <span class="hl-red">${(raw.raw3C*100).toFixed(1)}%</span> 的三冠轉換純度。<br>`;
+            report += `全局勝率為 <span class="hl-gold">${(raw.wr*100).toFixed(1)}%</span>。<br><br>`;
+            
+            if(isElite) {
+                report += `<span class="hl-red">>> 警告：偵測到「極端掠食者」特徵。</span><br>`;
+                report += `目標的進攻意圖與實質勝率產生了正向協同效應 (Synergy > 1.0)。建議在防守端投入額外資源。`;
+            } else {
+                report += `經 Z-Score 歸一化判定，目標進攻數據處於常態分佈範圍。未觸發協同係數補償。`;
+            }
+            
+            document.getElementById('ui-report').innerHTML = report;
+            document.getElementById('ui-log').innerHTML += `<br>> 運算完成。雷達圖譜已更新。`;
         }
 
         window.onload = initCharts;

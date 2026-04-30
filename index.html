@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>神經矩陣 MAXIMA | V52.0 NEURAL-ARCHITECT</title>
+    <title>神經矩陣 MAXIMA | V52.5 PSYCH-PROFILING</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -98,7 +98,7 @@
 
     <header>
         <div class="system-status">
-            <div class="status-node"><div class="dot blink"></div> V52.0 NEURAL-ARCHITECT | DEEP ANALYSIS ACTIVE</div>
+            <div class="status-node"><div class="dot blink"></div> V52.5 PSYCH-PROFILING | DEEP ANALYSIS ACTIVE</div>
         </div>
         <div style="font-family: 'Orbitron'; font-size: 16px; letter-spacing: 4px; color: #fff;">MAXIMA_DATACENTER</div>
     </header>
@@ -128,7 +128,7 @@
 
             <div class="io-panel">
                 <input type="text" id="tagInput" placeholder="PLAYER TAG (#...)" spellcheck="false">
-                <button class="btn-prime" id="btn-engage" onclick="fetchAndAnalyze()">INITIATE NEURAL SCAN</button>
+                <button class="btn-prime" id="btn-engage" onclick="fetchAndAnalyze()">INITIATE PSYCH SCAN</button>
             </div>
         </section>
 
@@ -147,7 +147,7 @@
                     <div class="report-grid">
                         <div class="report-module module-full">
                             <div class="module-title">NEURAL_ENGINE_STATUS (引擎狀態)</div>
-                            <div class="module-content">V52.0 深度特徵映射引擎已就緒。正在等待目標座標以模擬神經行為邏輯...</div>
+                            <div class="module-content">V52.5 心理側寫引擎已就緒。正在等待目標座標以模擬行為與情緒狀態...</div>
                         </div>
                     </div>
                 </div>
@@ -157,8 +157,8 @@
         <section class="column">
             <div class="section-label"><span>BEHAVIORAL_LOG</span><span>LOG_FEED</span></div>
             <div id="log-feed" class="sim-log">
-                <div class="log-line"><span class="log-ts">00:00:00</span> <span class="log-tag tag-sys">SYS</span> 神經架構優化完成。</div>
-                <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-tag tag-pred">PRED</span> 模式規律分析基準：Shannon Entropy。</div>
+                <div class="log-line"><span class="log-ts">00:00:00</span> <span class="log-tag tag-sys">SYS</span> 神經架構擴充完成。</div>
+                <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-tag tag-pred">PRED</span> 心理狀態側寫 (Tilt & Flow) 模組已掛載。</div>
             </div>
 
             <div class="data-box">
@@ -222,10 +222,11 @@
                 runNeuralModel(rawData);
             } catch (error) {
                 writeLog("ERR", `數據流中斷。切換至神經模擬集。`);
+                // 使用帶有玻璃心特徵的測試資料
                 const fallbackData = { name: "NEURAL_GHOST_88", wins: 7100, losses: 2900, trophies: 9200 };
                 runNeuralModel(fallbackData);
             } finally {
-                btn.disabled = false; btn.innerText = "INITIATE NEURAL SCAN";
+                btn.disabled = false; btn.innerText = "INITIATE PSYCH SCAN";
             }
         }
 
@@ -286,10 +287,26 @@
 
         function generateNeuralReport(scores, stats) {
             const rc = document.getElementById('report-container');
-            const [sor, mcr, rce, tpg, cfi, prd, tdr] = scores;
+            const [sor, mcr, rce, tpg, cfi, prd, tdr, bcf, oei] = scores;
 
             let archetype, threat, color, analysis, tactic, neural_logic;
 
+            // --- 心理狀態側寫 (Psychological Profiling) ---
+            const tilt_prob = Math.max(2.0, 100 - cfi - (bcf * 0.15)); // 抗壓越低，崩盤率越高
+            const focus_level = Math.min(99.9, (mcr * 0.5) + (prd * 0.5)); // 微操與預判的綜合專注度
+            
+            let psy_label = "COGNITIVE STABLE (認知穩定)";
+            let psy_color = "#00fa9a";
+            
+            if (tilt_prob > 65) {
+                psy_label = "TILT WARNING (易受挫 / 崩盤邊緣)";
+                psy_color = "#ff0055";
+            } else if (focus_level > 85) {
+                psy_label = "FLOW STATE (心流極意 / 高度集中)";
+                psy_color = "#00e5ff";
+            }
+
+            // --- 特徵映射引擎 (Feature Mapping) ---
             if (prd > 88 && mcr > 85) {
                 archetype = "NEURAL PHANTOM (神經幽靈)";
                 threat = "CRITICAL / S-RANK";
@@ -311,6 +328,14 @@
                 analysis = "極高的轉化效率。目標擅長捕捉對手每一點聖水浪費，並將其轉化為致命的防守反擊。";
                 tactic = "嚴控聖水溢出。寧可少下一張牌，也絕對不能在進攻節奏中斷後讓對手留有過多餘費。";
                 neural_logic = "資源掠奪演算法 (Resource Seizure)";
+            } else if (tilt_prob > 70) {
+                // 新增：玻璃心玩家專屬特徵
+                archetype = "FRAGILE EGO (情緒化操縱者)";
+                threat = "UNSTABLE / TIER-3";
+                color = "#ff0055";
+                analysis = "情緒極易受到戰局波動影響。一旦開局處於劣勢或核心進攻被完美化解，其出牌邏輯將會迅速崩壞。";
+                tactic = "使用『心理戰擊潰』。在成功防守後發送特定表情符號施壓，迫使其在焦躁下交出錯誤的法術或強行虧費進攻。";
+                neural_logic = "情緒干擾溢出 (Emotional Overflow)";
             } else {
                 archetype = "STANDARD OPERATIVE (標準特工)";
                 threat = "STABLE / TIER-2";
@@ -331,9 +356,12 @@
                         <div class="module-title">AI NEURAL LOGIC (神經邏輯)</div>
                         <div class="module-content" style="color: ${color}; font-weight: bold;">${neural_logic}</div>
                     </div>
-                    <div class="report-module">
-                        <div class="module-title">THREAT_ESTIMATION (威脅預演)</div>
-                        <div class="module-content">雙倍聖水期的不可預測性：${Math.round(prd * 1.1)}%</div>
+                    <div class="report-module" style="border-bottom: 2px solid ${psy_color}; background: linear-gradient(180deg, transparent, ${psy_color}10);">
+                        <div class="module-title" style="color: ${psy_color};">PSYCH_PROFILING (心理狀態)</div>
+                        <div class="module-content">
+                            <strong style="color:${psy_color}; letter-spacing: 1px;">[ ${psy_label} ]</strong><br>
+                            <span style="font-size: 10px; color: var(--text-dim);">TILT_PROB: ${tilt_prob.toFixed(1)}% | FOCUS: ${focus_level.toFixed(1)}%</span>
+                        </div>
                     </div>
                     <div class="report-module module-full">
                         <div class="module-title">BEHAVIORAL_PROFILE (行為特徵描述)</div>
@@ -345,7 +373,7 @@
                     </div>
                 </div>
             `;
-            writeLog("CORE", `神經特徵映射完成：[${archetype}]`);
+            writeLog("CORE", `心理側寫完成：崩盤率 ${tilt_prob.toFixed(1)}%，特徵映射 [${archetype}]。`);
         }
 
         function writeLog(tag, msg) {

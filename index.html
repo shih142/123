@@ -376,35 +376,60 @@
                 document.getElementById('syncRatio').innerText = '94.2%';
                 document.getElementById('syncProg').style.width = '94.2%';
 
-                // --- 進階攻守分析邏輯 ---
+                // --- 進階個人能力分析邏輯 ---
                 const battles = data.battleLog;
                 let totalPlayerCrowns = 0;
                 let totalOpponentCrowns = 0;
                 let wins = 0;
+                let threeCrowns = 0;
+                let clutchWins = 0; // 贏1分
+                let currentStreak = 0;
+                let maxStreak = 0;
 
-                battles.forEach(b => {
+                battles.forEach((b, index) => {
                     const p = b.team[0].crowns;
                     const o = b.opponent[0].crowns;
                     totalPlayerCrowns += p;
                     totalOpponentCrowns += o;
-                    if (p > o) wins++;
+                    
+                    if (p > o) {
+                        wins++;
+                        currentStreak++;
+                        if (p === 3) threeCrowns++;
+                        if (p - o === 1) clutchWins++;
+                    } else {
+                        if (currentStreak > maxStreak) maxStreak = currentStreak;
+                        currentStreak = 0;
+                    }
+                    if (index === battles.length - 1 && currentStreak > maxStreak) maxStreak = currentStreak;
                 });
 
                 const winRate = ((wins / battles.length) * 100).toFixed(1);
                 const offenseScore = ((totalPlayerCrowns / (battles.length * 3)) * 100).toFixed(0);
                 const defenseScore = (100 - (totalOpponentCrowns / (battles.length * 3)) * 100).toFixed(0);
                 const tacticalIQ = (70 + (wins * 2.5)).toFixed(0);
+                
+                // 新增指標
+                const tcd = ((threeCrowns / wins) * 100 || 0).toFixed(1);
+                const clutch = ((clutchWins / wins) * 100 || 0).toFixed(0);
+                const resourceMastery = (85 + (wins * 0.5)).toFixed(0); // 模擬計算
+                const mentalFort = (maxStreak * 20 > 100 ? 99 : maxStreak * 20 + 40).toFixed(0);
 
                 document.getElementById('valWin').innerText = winRate + '%';
                 document.getElementById('valIQ').innerText = tacticalIQ;
                 document.getElementById('valOff').innerText = offenseScore;
                 document.getElementById('valDef').innerText = defenseScore;
+                
+                document.getElementById('valTCD').innerText = tcd + '%';
+                document.getElementById('valRes').innerText = resourceMastery;
+                document.getElementById('valClutch').innerText = clutch;
+                document.getElementById('valMental').innerText = mentalFort;
 
-                // 更新圖表 (0: Aggression, 1: Neural-Sync, 2: Elixir-Flux, 3: Tactical-IQ, 4: Stability)
+                // 更新圖表
                 omegaChart.data.datasets[0].data = [
                     offenseScore, 
                     defenseScore, 
-                    92, 
+                    resourceMastery, 
                     tacticalIQ, 
                     parseFloat(winRate)
                 ];
@@ -413,11 +438,11 @@
                 document.getElementById('aiAdvisor').innerHTML = `
                     <div style="color:var(--neon-cyan); margin-bottom:8px;">OMEGA_STRATEGIC_DEEP_DIVE:</div>
                     <div style="font-size:0.8rem; margin-bottom:5px;">
-                        <span style="color:var(--neon-yellow)">[OFFENSE]</span> Rating: ${offenseScore}/100. ${offenseScore > 60 ? 'High pressure maintained.' : 'Potential lack of finishing power.'}<br>
-                        <span style="color:var(--neon-cyan)">[DEFENSE]</span> Integrity: ${defenseScore}/100. ${defenseScore > 80 ? 'Iron-clad perimeter detected.' : 'Vulnerabilities in counter-push window.'}
+                        <span style="color:var(--neon-yellow)">[AGGRESSION]</span> 3-Crown Density: ${tcd}%. ${tcd > 30 ? 'High finishing intensity.' : 'Calculated/Passive playstyle.'}<br>
+                        <span style="color:var(--neon-magenta)">[MENTAL]</span> Consistency: ${mentalFort}/100. Best Streak: ${maxStreak}.
                     </div>
-                    <div style="color:var(--neon-magenta); margin-top:10px; font-weight:bold;">TACTICAL ADVISORY:</div>
-                    ${defenseScore < 70 ? 'Prioritize defensive elixir conservation.' : 'Current defense is optimal. Accelerate cycle pressure.'}
+                    <div style="color:var(--neon-cyan); margin-top:10px; font-weight:bold;">TACTICAL ADVISORY:</div>
+                    ${clutch > 50 ? 'Elite performance in high-pressure windows.' : 'Consider defensive refinements for close-match stability.'}
                 `;
 
                 const logBox = document.getElementById('omegaLog');

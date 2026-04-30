@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>神經矩陣 MAXIMA | V35.0 實時戰局終端</title>
+    <title>神經矩陣 MAXIMA | V35.1 實時戰局終端 (單一路由)</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -109,7 +109,7 @@
 
     <div class="layout-grid">
         <div id="panel-stats" class="panel">
-            <div class="panel-header"><span>NEURAL_ENGINE</span><span>V35.0_REAL_BATTLELOG</span></div>
+            <div class="panel-header"><span>NEURAL_ENGINE</span><span>V35.1_UNIFIED_ROUTER</span></div>
             <div id="ncr-container" class="ncr-section">
                 <div class="ncr-title">MAXIMA VALUE INDEX (MVI)</div>
                 <div id="ui-ncr" class="ncr-value">00.0</div>
@@ -141,7 +141,7 @@
                     <span class="rep-threat" style="color:#8877aa;">THREAT: --</span>
                 </div>
                 <div class="rep-body">
-                    等待輸入。V35.0 已實裝「真實戰局追蹤協議」，系統將直接掃描 Battlelog 解析連勝/連敗趨勢。
+                    等待輸入。V35.1 已實裝「單一路由架構」，系統將透過統一的 API 閘道進行數據解析。
                 </div>
             </div>
         </div>
@@ -152,18 +152,16 @@
                 <label style="font-size: 10px; color: #776699; margin-bottom: 5px; display: block; text-align: center;">TARGET_PLAYER_TAG</label>
                 <input type="text" id="tagInput" placeholder="ENTER TAG" class="input-box">
                 
-                <label style="font-size: 10px; color: #776699; margin-bottom: 5px; display: block; text-align: center;">PROFILE_PROXY_ROUTER</label>
+                <label style="font-size: 10px; color: #776699; margin-bottom: 5px; display: block; text-align: center;">UNIFIED_PROXY_ROUTER</label>
                 <input type="text" id="proxyInput" value="/api/clash-proxy" class="input-box">
-
-                <label style="font-size: 10px; color: #776699; margin-bottom: 5px; display: block; text-align: center;">BATTLELOG_PROXY_ROUTER</label>
-                <input type="text" id="proxyBattlelogInput" value="/api/clash-battlelog" class="input-box">
                 
                 <button id="btn-run" class="btn-prime" onclick="fetchLiveData()">INITIATE SCAN</button>
             </div>
             <div class="math-box">
-                [ V35.0 Real-time Battlelog Array ]<br>
-                Fetching Array[0...n] -> Comparing team[0].crowns vs opponent[0].crowns.<br>
-                Instant Tilt computation based on raw real match history.
+                [ V35.1 Unified Router ]<br>
+                1. Profile: ?tag={TAG}<br>
+                2. Battlelog: ?tag={TAG}&type=battlelog<br>
+                Multiplexing network payload through a single gateway node.
             </div>
         </div>
     </div>
@@ -247,8 +245,7 @@
         async function fetchLiveData() {
             if (isProcessing) return;
             const tag = document.getElementById('tagInput').value.trim().toUpperCase().replace('#', '');
-            const proxyProfile = document.getElementById('proxyInput').value.trim();
-            const proxyBattlelog = document.getElementById('proxyBattlelogInput').value.trim();
+            const proxy = document.getElementById('proxyInput').value.trim();
             if(!tag) return;
             
             isProcessing = true;
@@ -256,10 +253,10 @@
             document.getElementById('ncr-container').classList.remove('tilt-active');
             
             try {
-                // V35.0 雙線程並行抓取
+                // V35.1 統一使用單一 proxy 路由，附加參數來區分端點
                 const [profileRes, battlelogRes] = await Promise.all([
-                    fetch(`${proxyProfile}?tag=${tag}`),
-                    fetch(`${proxyBattlelog}?tag=${tag}`)
+                    fetch(`${proxy}?tag=${tag}`),
+                    fetch(`${proxy}?tag=${tag}&type=battlelog`)
                 ]);
 
                 const rawJson = await profileRes.json();
@@ -286,7 +283,7 @@
 
             } catch (e) {
                 console.error("TELEMETRY FAILED:", e);
-                document.getElementById('ui-report').innerHTML = `<div class="rep-body" style="color:var(--alert-red);">【錯誤】資料截獲失敗。請確認代理路由器 (Proxy Router) 是否正確配置。</div>`;
+                document.getElementById('ui-report').innerHTML = `<div class="rep-body" style="color:var(--alert-red);">【錯誤】資料截獲失敗。請確認統一代理路由器 (Unified Proxy Router) 是否正確配置。</div>`;
             } finally {
                 isProcessing = false;
                 document.getElementById('btn-run').innerText = "INITIATE SCAN";
@@ -317,7 +314,6 @@
             const zEXE = (tcwRate - expectedTCR) / 0.05;
             let exeScore = 100 / (1 + Math.exp(-zEXE));
 
-            // V34.0/V35.0 Tilt Factor
             const zPSY_base = (zEND * 0.50) - (zEXE * 0.30) + (zMIC * 0.20) + 0.5;
             let psyScoreBase = Math.min(99.9, 100 / (1 + Math.exp(-zPSY_base))); 
             

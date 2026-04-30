@@ -2,8 +2,8 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>神經矩陣 MAXIMA | V26.0 量子變異協議</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>神經矩陣 MAXIMA | V27.0 自適應戰術終端</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -20,56 +20,114 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        /* 解除 100vh 鎖定，允許手機端自然滾動 */
         body {
             background-color: var(--bg-deep);
             color: var(--text-main);
             font-family: 'Share Tech Mono', sans-serif;
-            height: 100vh; display: flex; overflow: hidden;
+            min-height: 100vh; 
+            overflow-x: hidden;
             background-image: 
                 linear-gradient(var(--grid-color) 1px, transparent 1px), 
                 linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
             background-size: 30px 30px;
         }
 
-        .layout-grid { display: grid; grid-template-columns: 360px 1fr 360px; gap: 20px; width: 100%; height: 100%; padding: 20px; }
-        .panel { background: var(--panel-bg); border: 1px solid var(--border-glow); position: relative; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 0 30px rgba(157, 0, 255, 0.05); }
+        /* 基礎佈局：預設為手機端的單欄彈性佈局 */
+        .layout-grid { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 15px; 
+            padding: 15px; 
+            width: 100%; 
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .panel { 
+            background: var(--panel-bg); 
+            border: 1px solid var(--border-glow); 
+            position: relative; 
+            display: flex; 
+            flex-direction: column; 
+            overflow: hidden; 
+            box-shadow: 0 0 30px rgba(157, 0, 255, 0.05); 
+            border-radius: 4px;
+        }
         
-        .panel-header { padding: 12px 18px; border-bottom: 1px solid var(--border-glow); font-family: 'Orbitron'; font-size: 10px; letter-spacing: 2px; display: flex; justify-content: space-between; color: var(--laser-cyan); background: linear-gradient(90deg, rgba(0,255,204,0.1), transparent); }
+        .panel-header { padding: 12px 15px; border-bottom: 1px solid var(--border-glow); font-family: 'Orbitron'; font-size: 10px; letter-spacing: 1px; display: flex; justify-content: space-between; color: var(--laser-cyan); background: linear-gradient(90deg, rgba(0,255,204,0.1), transparent); }
         
-        .ncr-section { padding: 40px 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .ncr-section { padding: 30px 15px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .ncr-title { font-family: 'Orbitron'; font-size: 11px; color: #aa88cc; margin-bottom: 10px; letter-spacing: 1px; }
-        .ncr-value { font-family: 'Orbitron'; font-size: 84px; font-weight: 900; color: #fff; text-shadow: 0 0 25px rgba(157, 0, 255, 0.6); line-height: 1; }
+        .ncr-value { font-family: 'Orbitron'; font-size: 64px; font-weight: 900; color: #fff; text-shadow: 0 0 25px rgba(157, 0, 255, 0.6); line-height: 1; }
 
         .stats-wall { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: rgba(255,255,255,0.05); flex: 1; }
-        .stat-item { background: var(--bg-deep); padding: 20px; display: flex; flex-direction: column; justify-content: center; }
-        .stat-label { font-size: 10px; color: #776699; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
-        .stat-val { font-family: 'Orbitron'; font-size: 28px; color: var(--text-main); transition: 0.3s; }
+        .stat-item { background: var(--bg-deep); padding: 15px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        .stat-label { font-size: 9px; color: #776699; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
+        .stat-val { font-family: 'Orbitron'; font-size: 24px; color: var(--text-main); transition: 0.3s; }
         
         .stat-val.active-mic { color: var(--laser-cyan); text-shadow: 0 0 15px rgba(0,255,204,0.6); font-weight: bold; }
 
-        .chart-container { flex: 1; padding: 30px; position: relative; background: radial-gradient(circle at center, rgba(157,0,255,0.05) 0%, transparent 70%); }
-        .report-console { height: 260px; background: rgba(0,0,0,0.6); border-top: 1px solid var(--border-glow); padding: 20px; font-size: 13px; color: #bbaadd; overflow-y: auto; line-height: 1.8; }
+        /* 手機端圖表需確保最小高度 */
+        .chart-container { flex: 1; padding: 20px; position: relative; background: radial-gradient(circle at center, rgba(157,0,255,0.05) 0%, transparent 70%); min-height: 300px; }
+        .report-console { min-height: 180px; max-height: 300px; background: rgba(0,0,0,0.6); border-top: 1px solid var(--border-glow); padding: 15px; font-size: 12px; color: #bbaadd; overflow-y: auto; line-height: 1.6; }
 
-        .input-box { width: 100%; background: #000; border: 1px solid #331a4d; padding: 15px; color: var(--quantum-purple); font-family: 'Orbitron'; font-size: 14px; margin-bottom: 15px; outline: none; text-align: center; transition: 0.3s; }
+        /* 觸控優化：加大按鈕與輸入框 */
+        .input-box { width: 100%; background: #000; border: 1px solid #331a4d; padding: 15px; color: var(--quantum-purple); font-family: 'Orbitron'; font-size: 16px; margin-bottom: 15px; outline: none; text-align: center; transition: 0.3s; border-radius: 4px; -webkit-appearance: none; }
         .input-box:focus { border-color: var(--laser-cyan); box-shadow: 0 0 15px rgba(0,255,204,0.2); color: var(--laser-cyan); }
         
-        .btn-prime { width: 100%; padding: 18px; background: rgba(157,0,255,0.1); color: #fff; border: 1px solid var(--quantum-purple); font-family: 'Orbitron'; font-weight: bold; cursor: pointer; transition: 0.3s; letter-spacing: 2px; }
-        .btn-prime:hover { background: var(--quantum-purple); box-shadow: 0 0 25px rgba(157,0,255,0.6); }
+        .btn-prime { width: 100%; padding: 18px; background: rgba(157,0,255,0.1); color: #fff; border: 1px solid var(--quantum-purple); font-family: 'Orbitron'; font-size: 14px; font-weight: bold; cursor: pointer; transition: 0.3s; letter-spacing: 2px; border-radius: 4px; -webkit-appearance: none; }
+        .btn-prime:hover, .btn-prime:active { background: var(--quantum-purple); box-shadow: 0 0 25px rgba(157,0,255,0.6); }
 
-        .math-box { font-size: 10px; color: #8877aa; padding: 20px; border-top: 1px solid var(--border-glow); line-height: 1.8; background: rgba(0,0,0,0.4); }
+        .math-box { font-size: 10px; color: #8877aa; padding: 15px; border-top: 1px solid var(--border-glow); line-height: 1.6; background: rgba(0,0,0,0.4); }
         .hl-cyan { color: var(--laser-cyan); font-weight: bold; }
         .hl-purple { color: var(--quantum-purple); font-weight: bold; }
+
+        /* =========================================
+           RWD: PC 端大螢幕專屬佈局
+           ========================================= */
+        @media (min-width: 1024px) {
+            body { height: 100vh; overflow: hidden; }
+            .layout-grid { 
+                display: grid; 
+                grid-template-columns: 360px 1fr 360px; 
+                gap: 20px; 
+                padding: 20px; 
+                height: 100%; 
+            }
+            .ncr-value { font-size: 84px; }
+            .stat-val { font-size: 28px; }
+            .stat-item { padding: 20px; align-items: flex-start; text-align: left; }
+            .chart-container { padding: 30px; }
+            .report-console { height: 260px; max-height: none; padding: 20px; font-size: 13px; }
+            
+            /* 恢復 PC 端的預設視覺順序 */
+            #panel-stats { order: 1; }
+            #panel-radar { order: 2; }
+            #panel-input { order: 3; }
+        }
+
+        /* =========================================
+           RWD: 手機端資訊層級重組 (Z-Axis Reordering)
+           ========================================= */
+        @media (max-width: 1023px) {
+            /* 在手機端，將輸入框移到最上方，方便立即操作 */
+            #panel-input { order: 1; }
+            #panel-stats { order: 2; }
+            #panel-radar { order: 3; }
+        }
     </style>
 </head>
 <body>
 
     <div class="layout-grid">
-        <div class="panel">
-            <div class="panel-header"><span>NEURAL_ENGINE</span><span>V26.0_QUANTUM_MIC</span></div>
+        <div id="panel-stats" class="panel">
+            <div class="panel-header"><span>NEURAL_ENGINE</span><span>V27.0_MOBILE_UX</span></div>
             <div class="ncr-section">
                 <div class="ncr-title">MAXIMA VALUE INDEX (MVI)</div>
                 <div id="ui-ncr" class="ncr-value">00.0</div>
-                <div id="ui-name" style="margin-top:20px; font-size: 14px; letter-spacing: 3px; color: var(--laser-cyan);">AWAITING_TELEMETRY</div>
+                <div id="ui-name" style="margin-top:15px; font-size: 14px; letter-spacing: 3px; color: var(--laser-cyan);">AWAITING_TELEMETRY</div>
             </div>
             <div class="stats-wall">
                 <div class="stat-item"><div class="stat-label">Offense (STR)</div><div id="val-str" class="stat-val">--</div></div>
@@ -79,42 +137,40 @@
             </div>
         </div>
 
-        <div class="panel">
+        <div id="panel-radar" class="panel">
             <div class="panel-header"><span>RADAR_VISUALIZATION</span><span>VARIANCE_COMPRESSION</span></div>
             <div class="chart-container">
                 <canvas id="mainRadar"></canvas>
             </div>
             <div id="ui-report" class="report-console">
-                [ 系統就緒 ]<br>V26.0 已徹底移除微操算法中的皇冠偏見。微操精度 (MIC) 現在由「高壓變異數壓縮矩陣」純粹經由勝率溢出與環境容錯率進行反推計算。
+                [ 系統就緒 ]<br>V27.0 觸控協議已啟動。介面已根據當前設備視網膜解析度與螢幕寬度進行動態重構。量子變異數壓縮矩陣待命中。
             </div>
         </div>
 
-        <div class="panel">
-            <div class="panel-header"><span>COMMAND_NODE</span><span>PROXY_ROUTER</span></div>
-            <div style="padding: 25px;">
-                <label style="font-size: 9px; color: #776699; margin-bottom: 8px; display: block;">TARGET_PLAYER_TAG</label>
+        <div id="panel-input" class="panel">
+            <div class="panel-header"><span>COMMAND_NODE</span><span>TACTICAL_INPUT</span></div>
+            <div style="padding: 20px;">
+                <label style="font-size: 10px; color: #776699; margin-bottom: 8px; display: block; text-align: center;">TARGET_PLAYER_TAG</label>
                 <input type="text" id="tagInput" placeholder="ENTER TAG" class="input-box">
                 
-                <label style="font-size: 9px; color: #776699; margin-bottom: 8px; display: block;">ROUTER_PATH</label>
+                <label style="font-size: 10px; color: #776699; margin-bottom: 8px; display: block; text-align: center;">ROUTER_PATH</label>
                 <input type="text" id="proxyInput" value="/api/clash-proxy" class="input-box">
                 
                 <button id="btn-run" class="btn-prime" onclick="fetchLiveData()">INITIATE SCAN</button>
             </div>
             
             <div class="math-box">
-                [ V26.0 Quantum Micro Model ]<br><br>
-                <span class="hl-purple">1. Dynamic Variance (容錯壓縮):</span><br>
-                σ(MMR) = 0.04 * e^(-0.0008 * (MMR - 1600))<br><br>
-                <span class="hl-cyan">2. Limit Deviation (極限溢出):</span><br>
+                [ V26.0 Quantum Math Core ]<br>
+                σ(MMR) = 0.04 * e^(-0.0008 * (MMR - 1600))<br>
                 Δ_WR = Actual_WR - Expected_WR<br>
-                Z_MIC = Δ_WR / σ(MMR)<br><br>
-                3. MIC_Score = 100 / (1 + e^(-(Z_MIC * 1.5)))<br>
-                * No Crown Data Utilized in MIC.
+                Z_MIC = Δ_WR / σ(MMR)<br>
+                MIC = 100 / (1 + e^(-(Z_MIC * 1.5)))
             </div>
         </div>
     </div>
 
     <script>
+        // JavaScript 核心邏輯完全繼承 V26.0，無刪減
         let radarChart;
         let isProcessing = false;
 
@@ -134,16 +190,28 @@
                     }]
                 },
                 options: {
-                    responsive: true, maintainAspectRatio: false,
+                    responsive: true, 
+                    maintainAspectRatio: false, // 確保圖表在手機端能填滿容器而不變形
                     scales: { 
                         r: { 
                             grid: { color: 'rgba(255,255,255,0.05)' }, 
                             angleLines: { color: 'rgba(255,255,255,0.1)' },
                             ticks: { display: false, max: 100, min: 0 },
-                            pointLabels: { color: '#bbaadd', font: { size: 11, family: 'Orbitron' } }
+                            pointLabels: { 
+                                color: '#bbaadd', 
+                                font: { size: window.innerWidth < 1024 ? 9 : 11, family: 'Orbitron' } 
+                            }
                         } 
                     },
                     plugins: { legend: { display: false } }
+                }
+            });
+            
+            // 監聽視窗大小改變，動態調整雷達圖字體
+            window.addEventListener('resize', () => {
+                if(radarChart) {
+                    radarChart.options.scales.r.pointLabels.font.size = window.innerWidth < 1024 ? 9 : 11;
+                    radarChart.update();
                 }
             });
         }
@@ -155,7 +223,7 @@
             if(!tag) return;
             
             isProcessing = true;
-            document.getElementById('btn-run').innerText = "CALCULATING COMPRESSION...";
+            document.getElementById('btn-run').innerText = "SCANNING...";
             
             try {
                 const response = await fetch(`${proxy}?tag=${tag}`);
@@ -191,41 +259,23 @@
             const wr = data.wins / total;
             const mmr = data.mmr;
 
-            // --- 基礎環境參數 ---
             const ewr = 0.50 + 0.05 * Math.tanh((mmr - 1600) / 450);
             const deltaWR = wr - ewr;
             const zBase = (mmr - 1600) / 350; 
 
-            // ==========================================
-            // 🔥 NEW MIC: V26.0 量子變異數壓縮 (Quantum Variance)
-            // 完全不使用 threeCrownWins
-            // ==========================================
-            
-            // 1. 動態標準差 (Dynamic Standard Deviation)
-            // 在 1600 分，標準差是 4% (0.04)
-            // 隨著 MMR 提升，容錯率呈指數級下降 (衰減係數 0.0008)
-            // 到 2400 分時，標準差被壓縮到約 2.1%
             const sigmaMMR = 0.04 * Math.exp(-0.0008 * Math.max(0, mmr - 1600));
-
-            // 2. 極限溢出值 (Limit Z-Score)
-            // 計算玩家的勝率溢出，等於幾個被極度壓縮的標準差？
             const zMIC = deltaWR / sigmaMMR;
-
-            // 3. 微操評分映射 (1.5 為放大張力係數)
             let micScore = 100 / (1 + Math.exp(-(zMIC * 1.5)));
 
-            // --- DEF (防禦) 保持 V24.0 的客觀性 ---
             const zDeltaStandard = deltaWR / 0.035; 
             const zDEF = (zBase * 0.40) + (zDeltaStandard * 0.60);
             let defScore = 100 / (1 + Math.exp(-zDEF));
 
-            // --- STR (進攻) 依然保留三冠作為破甲火力衡量 ---
             const tcwRate = data.threeCrownWins / data.wins;
             const z3C = (tcwRate - 0.20) / 0.10;
             const zSTR = (z3C * 0.60) + (zBase * 0.40);
             let strScore = 100 / (1 + Math.exp(-zSTR));
 
-            // --- 輔助維度 ---
             let mac = 100 / (1 + Math.exp(-(zDeltaStandard * 1.5 + zBase * 0.5))); 
             let psy = Math.min(99.9, 100 / (1 + Math.exp(-zBase))); 
             let cst = 100 / (1 + Math.exp(-(deltaWR * 25))); 
@@ -261,20 +311,25 @@
             radarChart.update();
 
             let report = `<span style="color:${hlColor}">[ V26.0 量子微操解析報告 ]</span><br><br>`;
-            report += `環境壓縮標準差 $\\sigma(MMR)$：<span class="hl-purple">${(raw.sigmaMMR*100).toFixed(2)}%</span><br>`;
+            report += `環境壓縮標準差 $\\sigma$：<span class="hl-purple">${(raw.sigmaMMR*100).toFixed(2)}%</span><br>`;
             report += `勝率溢出 $\\Delta WR$：${(raw.deltaWR*100).toFixed(2)}%<br>`;
             report += `極限偏離值 $Z_{MIC}$：<span class="hl-cyan">${raw.zMIC.toFixed(2)} $\\sigma$</span><br><br>`;
             
             report += `>> <span style="color:#fff">分析結論：</span><br>`;
             if (raw.zMIC > 1.5) {
-                report += `偵測到<span class="hl-cyan">超越環境極限的絕對微操 (Z > 1.5)</span>。在當前分段容錯率被極度壓縮的情況下，目標依然能強行打破系統的勝率收斂，證明其擁有頂級的細節處理與下牌精度，且不受任何流派風格影響。`;
+                report += `偵測到超越環境極限的絕對微操。在當前分段容錯率被極度壓縮的情況下，目標依然能強行打破系統的勝率收斂，證明其擁有頂級的細節處理。`;
             } else if (raw.zMIC > 0) {
                 report += `微操精度優良。能克服當前分段的配對引力，產生正向的微操紅利。`;
             } else {
-                report += `微操精度受系統引力壓制。數據顯示其勝率未能突破當前分段的物理極限，代表在同分段中，其微操細節並未佔據絕對優勢。`;
+                report += `微操精度受系統引力壓制。其勝率未能突破當前分段的物理極限，代表在同分段中，其微操細節並未佔據絕對優勢。`;
             }
             
             document.getElementById('ui-report').innerHTML = report;
+            
+            // 在手機端，執行完掃描後自動向下滾動一點，讓使用者看到數據
+            if (window.innerWidth < 1024) {
+                document.getElementById('panel-stats').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
         }
 
         window.onload = initCharts;

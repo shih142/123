@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEURAL-X OMEGA | Advanced System</title>
+    <title>NEURAL-X OMEGA | Bio-Sync System</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -65,36 +65,41 @@
 
         /* --- 數據網格 --- */
         .data-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
-        .data-node { border: 1px solid #333; padding: 10px; background: rgba(0,0,0,0.4); display: flex; flex-direction: column; justify-content: space-between; }
+        .data-node { border: 1px solid #333; padding: 10px; background: rgba(0,0,0,0.4); display: flex; flex-direction: column; justify-content: space-between; transition: all 0.3s ease;}
         .node-title { font-size: 9px; color: #777; text-transform: uppercase; letter-spacing: 1px; }
         .node-value { font-size: 24px; font-weight: bold; font-family: 'Orbitron', sans-serif; margin: 5px 0; }
         .mini-bar { height: 2px; width: 100%; background: rgba(255,255,255,0.1); margin-top: 5px; }
-        .mini-fill { height: 100%; width: 70%; }
+        .mini-fill { height: 100%; width: 70%; transition: width 0.3s ease;}
 
-        /* 狀態顏色 (修復版) */
+        /* 狀態顏色 */
         .node-def { border-left: 2px solid var(--neon-cyan); }
-        .node-def .node-value { color: var(--neon-cyan); }
-        .node-def .mini-fill { background: var(--neon-cyan); }
+        .node-def .node-value { color: var(--neon-cyan); text-shadow: 0 0 5px rgba(0,243,255,0.5); }
+        .node-def .mini-fill { background: var(--neon-cyan); box-shadow: 0 0 5px var(--neon-cyan); }
 
         .node-off { border-left: 2px solid var(--neon-yellow); } 
-        .node-off .node-value { color: var(--neon-yellow); }
-        .node-off .mini-fill { background: var(--neon-yellow); }
+        .node-off .node-value { color: var(--neon-yellow); text-shadow: 0 0 5px rgba(255,222,0,0.5); }
+        .node-off .mini-fill { background: var(--neon-yellow); box-shadow: 0 0 5px var(--neon-yellow); }
 
         .node-win { border-left: 2px solid var(--neon-magenta); } 
-        .node-win .node-value { color: var(--neon-magenta); }
-        .node-win .mini-fill { background: var(--neon-magenta); }
+        .node-win .node-value { color: var(--neon-magenta); text-shadow: 0 0 5px rgba(255,0,255,0.5); }
+        .node-win .mini-fill { background: var(--neon-magenta); box-shadow: 0 0 5px var(--neon-magenta); }
 
-        .node-special { border-left: 2px solid var(--danger-glow); } 
-        .node-special .node-value { color: var(--danger-glow); }
-        .node-special .mini-fill { background: var(--danger-glow); }
+        .node-special { border-left: 2px solid var(--danger-glow); animation: pulse-border 1.5s infinite; } 
+        .node-special .node-value { color: var(--danger-glow); text-shadow: 0 0 8px var(--danger-glow); }
+        .node-special .mini-fill { background: var(--danger-glow); box-shadow: 0 0 8px var(--danger-glow); }
 
-        /* --- 底部儀表板 (三欄配置) --- */
+        @keyframes pulse-border {
+            0% { box-shadow: -2px 0 5px rgba(255,42,42,0.2); }
+            50% { box-shadow: -2px 0 15px rgba(255,42,42,0.8); }
+            100% { box-shadow: -2px 0 5px rgba(255,42,42,0.2); }
+        }
+
+        /* --- 底部儀表板 --- */
         .bottom-panels { display: grid; grid-template-columns: 1fr 1fr 1.5fr; gap: 15px; flex: 1; }
         .panel-box { border: 1px solid var(--grid-line); padding: 15px; background: var(--panel-bg); display: flex; flex-direction: column;}
         .panel-title { font-size: 12px; color: var(--text-main); margin-bottom: 10px; letter-spacing: 1px; }
         .chart-container { flex: 1; position: relative; width: 100%; display: flex; justify-content: center; align-items: center; min-height: 120px; }
         
-        /* 戰術進階長條圖 */
         .tactical-box { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
         .tac-row { display: flex; flex-direction: column; gap: 5px; }
         .tac-label { font-size: 10px; display: flex; justify-content: space-between; color: #a9b4c2; }
@@ -106,7 +111,6 @@
         .bias-atk { background: var(--danger-glow); height: 100%; display: flex; align-items: center; padding-left: 5px; font-size: 8px; color:#fff; transition: width 0.5s; overflow: hidden; white-space: nowrap;}
         .bias-def { background: var(--neon-cyan); height: 100%; display: flex; justify-content: flex-end; align-items: center; padding-right: 5px; font-size: 8px; color:#000; transition: width 0.5s; overflow: hidden; white-space: nowrap;}
 
-        /* AI 顧問文字 */
         .advisor-text { font-size: 12px; line-height: 1.6; color: #a9b4c2; }
         .advisor-highlight { color: var(--neon-cyan); font-weight: bold; }
         .advisor-yellow { color: var(--neon-yellow); }
@@ -141,7 +145,7 @@
     <main class="main-content">
         <div class="header-title">
             <div>
-                NEURAL-X OMEGA <span style="font-size: 12px; color: var(--neon-cyan);">V16.0.TACTICAL</span>
+                NEURAL-X OMEGA <span style="font-size: 12px; color: var(--neon-cyan);">V17.0.BIO-SYNC</span>
                 <div class="header-sub">[ STATUS: QUANTUM SYNC ESTABLISHED ]</div>
             </div>
             <div class="header-coords">
@@ -184,7 +188,7 @@
                 <div class="mini-bar"><div class="mini-fill" style="width: 0%;"></div></div>
             </div>
             
-            <div class="data-node node-special">
+            <div class="data-node node-win">
                 <div class="node-title">3-Crown Wins</div>
                 <div class="node-value" id="val-3crown">0</div>
                 <div class="mini-bar"><div class="mini-fill" style="width: 100%;"></div></div>
@@ -199,7 +203,7 @@
                 <div class="node-value" id="val-war">0</div>
                 <div class="mini-bar"><div class="mini-fill" style="width: 100%;"></div></div>
             </div>
-            <div class="data-node node-win">
+            <div class="data-node node-def">
                 <div class="node-title">Experience Tier</div>
                 <div class="node-value" id="val-exp">0</div>
                 <div class="mini-bar"><div class="mini-fill" style="width: 100%;"></div></div>
@@ -215,15 +219,16 @@
                 <div class="node-value" id="val-achieve">0</div>
                 <div class="mini-bar"><div class="mini-fill" style="width: 25%;"></div></div>
             </div>
-            <div class="data-node node-special">
+            <div class="data-node node-win">
                 <div class="node-title">3-Crown Efficiency</div>
                 <div class="node-value" id="val-eff">0%</div>
                 <div class="mini-bar"><div class="mini-fill" style="width: 100%;"></div></div>
             </div>
-            <div class="data-node node-win">
-                <div class="node-title">System Stability</div>
-                <div class="node-value" id="val-stab">0%</div>
-                <div class="mini-bar"><div class="mini-fill" style="width: 100%;"></div></div>
+            
+            <div class="data-node node-def" id="gsr-node">
+                <div class="node-title">GSR (BIO-STRESS)</div>
+                <div class="node-value" id="val-gsr" style="font-family: 'Share Tech Mono';">0.0 µS</div>
+                <div class="mini-bar"><div class="mini-fill" id="bar-gsr" style="width: 0%;"></div></div>
             </div>
         </div>
 
@@ -287,7 +292,7 @@
         <div class="panel-title" style="margin-top: 30px;">LIVE SYSTEM FEED</div>
         <div class="live-feed" id="sysFeed">
             <div class="feed-line">SYSTEM READY...</div>
-            <div class="feed-line">AWAITING INPUT...</div>
+            <div class="feed-line">Bio-Sensors calibrating...</div>
         </div>
         
         <div style="margin-top: auto; font-size: 8px; color: #555; text-align: right;">
@@ -299,6 +304,7 @@
         Chart.defaults.color = '#777';
         Chart.defaults.font.family = "'Share Tech Mono', monospace";
         let radarChartInstance = null;
+        let gsrInterval = null; // 控制 GSR 跳動的計時器
 
         function initChart(dataArray) {
             const ctx = document.getElementById('radarChart').getContext('2d');
@@ -307,7 +313,7 @@
             radarChartInstance = new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: ['OFFENSE', 'DEFENSE', 'STABILITY', 'EXP', 'PEAK'],
+                    labels: ['OFFENSE', 'DEFENSE', 'STRESS', 'EXP', 'PEAK'],
                     datasets: [{
                         label: 'Combat Stats',
                         data: dataArray,
@@ -348,6 +354,34 @@
             feed.scrollTop = feed.scrollHeight;
         }
 
+        // 【新增】GSR 動態模擬系統
+        function startGSRSimulation(baseStress) {
+            if(gsrInterval) clearInterval(gsrInterval);
+            
+            const gsrValueEl = document.getElementById('val-gsr');
+            const gsrBarEl = document.getElementById('bar-gsr');
+            const gsrNode = document.getElementById('gsr-node');
+
+            gsrInterval = setInterval(() => {
+                // 在基準壓力上下隨機浮動 -10 到 +15
+                let currentGSR = baseStress + (Math.random() * 25 - 10);
+                if (currentGSR > 99.9) currentGSR = 99.9;
+                if (currentGSR < 12.0) currentGSR = 12.0;
+                
+                gsrValueEl.innerText = currentGSR.toFixed(1) + ' µS';
+                gsrBarEl.style.width = currentGSR + '%';
+                
+                // 根據壓力指數改變 UI 顏色 (紅/黃/藍)
+                if (currentGSR > 85) {
+                    gsrNode.className = 'data-node node-special';
+                } else if (currentGSR > 60) {
+                    gsrNode.className = 'data-node node-off';
+                } else {
+                    gsrNode.className = 'data-node node-def';
+                }
+            }, 800); // 每 0.8 秒更新一次，模擬心跳頻率
+        }
+
         async function initiateAudit() {
             let tag = document.getElementById('playerTag').value.trim();
             const proxy = document.getElementById('proxyUrl').value.trim();
@@ -357,7 +391,6 @@
             logFeed(`> Routing through proxy...`, 'cyan');
 
             try {
-                // 發送真實請求 (處理 # 號轉換)
                 const requestUrl = `${proxy}?tag=${tag.replace('#', '%23')}`;
                 const response = await fetch(requestUrl);
                 
@@ -366,7 +399,6 @@
                 const rawData = await response.json();
                 logFeed('> Target acquired. Decoding data...', 'cyan');
 
-                // 資料格式映射 (根據官方 API 結構)
                 const mappedData = {
                     name: rawData.name || "UNKNOWN",
                     wins: rawData.wins || 0,
@@ -384,13 +416,12 @@
                 document.getElementById('playerName').innerText = mappedData.name;
                 document.getElementById('playerRank').innerText = "DATA SYNCED";
                 updateUI(mappedData);
-                logFeed('> UI Telemetry Updated.', 'cyan');
+                logFeed('> Bio-Telemetry Linked.', 'cyan');
 
             } catch (error) {
                 logFeed(`> API Fetch Failed: ${error.message}`, 'error');
                 logFeed('> [WARNING] FALLBACK TO SIMULATION DATA', 'yellow');
                 
-                // 為了視覺展示，載入假資料 (讓測試時即使沒後端也不會空轉)
                 const mockData = {
                     name: "SIMULATION_MODE", wins: 850, losses: 420, bestTrophies: 7100, 
                     donations: 120, threeCrownWins: 550, challengeMaxWins: 15, warDayWins: 80, 
@@ -405,12 +436,10 @@
         }
 
         function updateUI(data) {
-            // 1. 基礎計算
             const totalMatches = data.wins + data.losses || 1;
             const winRate = ((data.wins / totalMatches) * 100).toFixed(1);
             const threeCrownRate = ((data.threeCrownWins / (data.wins || 1)) * 100).toFixed(1);
 
-            // 更新上方面板
             document.getElementById('val-wins').innerText = data.wins;
             document.getElementById('val-pb').innerText = data.bestTrophies;
             document.getElementById('val-donations').innerText = data.donations;
@@ -422,9 +451,8 @@
             document.getElementById('val-cards').innerText = data.cardsFound;
             document.getElementById('val-achieve').innerText = data.achievementScore;
             document.getElementById('val-eff').innerText = threeCrownRate + '%';
-            document.getElementById('val-stab').innerText = winRate > 50 ? 'STABLE' : 'UNSTABLE';
 
-            // 2. 攻守演算法
+            // 攻守演算法
             let offenseScore = Math.min(100, (data.threeCrownWins / (data.wins || 1)) * 3.3 * 100).toFixed(0);
             let defenseScore = Math.min(100, (winRate * 1.5) - 20).toFixed(0); 
             if (defenseScore < 0) defenseScore = 0;
@@ -433,28 +461,29 @@
             const atkRatio = ((Number(offenseScore) / totalCombatScore) * 100).toFixed(0);
             const defRatio = 100 - atkRatio;
 
-            // 更新戰術長條圖
             document.getElementById('val-off-score').innerText = offenseScore;
             document.getElementById('bar-off').style.width = offenseScore + '%';
-            
             document.getElementById('val-def-score').innerText = defenseScore;
             document.getElementById('bar-def').style.width = defenseScore + '%';
-
             document.getElementById('bias-atk-bar').style.width = atkRatio + '%';
             document.getElementById('bias-atk-bar').innerText = `ATK ${atkRatio}%`;
             document.getElementById('bias-def-bar').style.width = defRatio + '%';
             document.getElementById('bias-def-bar').innerText = `${defRatio}% DEF`;
 
-            // 3. AI 總評
+            // 啟動 GSR 模擬 (越偏向攻擊型，壓力基準越高)
+            const baseStress = 50 + (atkRatio * 0.3);
+            startGSRSimulation(baseStress);
+
+            // AI 總評
             let combatStyle = "BALANCED (均衡型)";
             let conclusion = "Subject displays highly adaptable combat protocols.";
             if (atkRatio > 60) {
                 combatStyle = "AGGRESSIVE RUSHER (狂犬突擊型)";
-                conclusion = "Subject prioritizes heavy penetration. Warning: High risk of counter-attacks.";
+                conclusion = "Subject prioritizes heavy penetration. Warning: Elevated stress detected.";
                 document.getElementById('adv-style').style.color = "var(--danger-glow)";
             } else if (defRatio > 60) {
                 combatStyle = "IRON WALL (鐵壁防禦型)";
-                conclusion = "Subject utilizes counter-push mechanics. Excellent damage mitigation.";
+                conclusion = "Subject utilizes counter-push mechanics. Vital signs stable.";
                 document.getElementById('adv-style').style.color = "var(--neon-cyan)";
             } else {
                 document.getElementById('adv-style').style.color = "var(--neon-yellow)";
@@ -465,11 +494,11 @@
             document.getElementById('adv-survive').innerText = defenseScore + ' PT';
             document.getElementById('adv-conclusion').innerText = conclusion;
 
-            // 4. 更新雷達圖 (火力, 防禦, 穩定, 經驗, 極限)
+            // 更新雷達圖 (將 STABILITY 替換為 STRESS 壓力承受度)
             const chartData = [
                 offenseScore, 
                 defenseScore, 
-                winRate, 
+                baseStress, 
                 Math.min(100, (data.expLevel / 60) * 100), 
                 Math.min(100, (data.bestTrophies / 9000) * 100) 
             ];
@@ -477,7 +506,8 @@
         }
 
         window.onload = () => {
-            initChart([0, 0, 0, 0, 0]); // 初始化空圖表
+            initChart([0, 0, 0, 0, 0]); 
+            startGSRSimulation(30); // 待機時保持低壓力
         };
     </script>
 </body>

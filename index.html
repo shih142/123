@@ -3,36 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEURAL-X OMEGA | V5.0 AEGIS PROTOCOL</title>
+    <title>神經矩陣 OMEGA | V6.0 諸神黃昏</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --bg-deep: #010205;
-            --panel-bg: rgba(3, 5, 10, 0.75);
+            --bg-deep: #050101;
+            --panel-bg: rgba(10, 3, 3, 0.8);
             --neon-cyan: #00f3ff;
             --neon-magenta: #ff00ff;
             --neon-yellow: #ffde00;
-            --danger-glow: #ff2a2a;
+            --danger-glow: #ff003c;
+            --lethal-orange: #ff5500;
             --success-green: #00ff66;
             --shield-blue: #4a90e2;
-            --text-main: #c7d2fe;
-            --grid: rgba(0, 243, 255, 0.03);
+            --text-main: #e2c7c7;
+            --grid: rgba(255, 0, 60, 0.03);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
         ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-thumb { background: var(--shield-blue); }
+        ::-webkit-scrollbar-thumb { background: var(--danger-glow); }
 
         body {
             background-color: var(--bg-deep);
             color: var(--text-main);
-            font-family: 'Share Tech Mono', monospace;
+            font-family: 'Share Tech Mono', 'Microsoft JhengHei', sans-serif;
             height: 100vh;
             display: flex;
             overflow: hidden;
             background-image: 
-                radial-gradient(circle at 50% 0%, rgba(74, 144, 226, 0.1), transparent 50%),
+                radial-gradient(circle at 50% 0%, rgba(255, 0, 60, 0.1), transparent 50%),
                 linear-gradient(var(--grid) 1px, transparent 1px),
                 linear-gradient(90deg, var(--grid) 1px, transparent 1px);
             background-size: 100% 100%, 30px 30px, 30px 30px;
@@ -46,64 +47,69 @@
 
         .layout-grid { display: grid; grid-template-columns: 320px 1fr 320px; gap: 20px; width: 100%; height: 100%; padding: 20px; z-index: 10; }
 
-        .panel { background: var(--panel-bg); border: 1px solid rgba(74, 144, 226, 0.2); backdrop-filter: blur(10px); display: flex; flex-direction: column; overflow: hidden; position: relative; box-shadow: inset 0 0 20px rgba(0,0,0,0.5);}
-        .panel::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, var(--shield-blue), transparent); }
-        .panel-header { padding: 12px 15px; border-bottom: 1px solid rgba(74, 144, 226, 0.15); font-family: 'Orbitron'; font-size: 11px; color: var(--neon-cyan); letter-spacing: 2px; display: flex; justify-content: space-between; background: rgba(0,0,0,0.3);}
+        .panel { background: var(--panel-bg); border: 1px solid rgba(255, 0, 60, 0.2); backdrop-filter: blur(10px); display: flex; flex-direction: column; overflow: hidden; position: relative; box-shadow: inset 0 0 20px rgba(0,0,0,0.8);}
+        .panel::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, var(--danger-glow), transparent); }
+        .panel-header { padding: 12px 15px; border-bottom: 1px solid rgba(255, 0, 60, 0.15); font-family: 'Orbitron', 'Microsoft JhengHei'; font-size: 12px; color: #fff; letter-spacing: 2px; display: flex; justify-content: space-between; background: rgba(0,0,0,0.5); font-weight: bold;}
+        .panel-header span:last-child { color: var(--danger-glow); text-shadow: 0 0 5px var(--danger-glow); }
 
         /* 左側欄位 */
         .left-col { display: flex; flex-direction: column; gap: 20px; }
         .profile-card { padding: 20px; text-align: center; }
-        .avatar-glitch { width: 100px; height: 100px; border: 2px solid var(--shield-blue); margin: 0 auto 15px; display: flex; justify-content: center; align-items: center; font-size: 40px; background: rgba(74,144,226,0.05); box-shadow: 0 0 20px rgba(74,144,226,0.2); position: relative; }
+        .avatar-glitch { width: 100px; height: 100px; border: 2px solid var(--danger-glow); margin: 0 auto 15px; display: flex; justify-content: center; align-items: center; font-size: 40px; background: rgba(255,0,60,0.05); box-shadow: 0 0 20px rgba(255,0,60,0.2); position: relative; }
         .p-name { font-family: 'Orbitron'; font-size: 24px; color: #fff; font-weight: 900; text-transform: uppercase; margin-bottom: 5px; }
         .p-tag { color: var(--neon-magenta); font-size: 12px; }
 
         .ncr-display { margin-top: 20px; padding: 15px; border: 1px solid #333; background: #000; position: relative; overflow: hidden;}
-        .ncr-title { font-size: 10px; color: #777; margin-bottom: 5px;}
+        .ncr-title { font-size: 11px; color: #777; margin-bottom: 5px; font-weight: bold;}
         .ncr-value { font-family: 'Orbitron'; font-size: 60px; font-weight: 900; line-height: 1; text-shadow: 0 0 15px rgba(255,255,255,0.2); transition: all 1s ease-out;}
         
-        .threat-level { margin-top: 15px; padding: 10px; border: 1px dashed var(--danger-glow); text-align: center; background: rgba(255,42,42,0.05);}
-        .threat-text { font-family: 'Orbitron'; font-size: 14px; font-weight: bold; color: var(--danger-glow); letter-spacing: 3px; animation: blink 2s infinite;}
+        .threat-level { margin-top: 15px; padding: 10px; border: 1px dashed var(--danger-glow); text-align: center; background: rgba(255,0,60,0.05);}
+        .threat-text { font-family: 'Microsoft JhengHei'; font-size: 14px; font-weight: bold; color: var(--danger-glow); letter-spacing: 3px; animation: blink 1.5s infinite;}
 
-        /* 中間：圖表與升級版 8 核心矩陣 */
+        /* 中間：圖表與升級版 10 核心矩陣 */
         .mid-col { display: flex; flex-direction: column; gap: 20px; }
         .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; height: 280px; }
         .chart-box { padding: 15px; display: flex; justify-content: center; align-items: center; position: relative; }
         
-        /* 改為 4x2 的 8 核心矩陣 */
-        .metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; flex: 1; }
-        .metric-node { background: rgba(0,0,0,0.6); border: 1px solid #222; padding: 15px; display: flex; flex-direction: column; justify-content: space-between; border-left: 3px solid var(--neon-cyan); opacity: 0; transform: translateY(20px); transition: all 0.5s ease-out; position: relative; overflow: hidden;}
-        .metric-node::after { content: ''; position: absolute; top: 0; right: 0; width: 30px; height: 30px; background: linear-gradient(135deg, transparent 50%, rgba(255,255,255,0.03) 50%); }
+        /* 10 核心矩陣 (5x2) */
+        .metrics-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; flex: 1; }
+        .metric-node { background: rgba(0,0,0,0.6); border: 1px solid #222; padding: 12px; display: flex; flex-direction: column; justify-content: space-between; border-left: 3px solid #555; opacity: 0; transform: translateY(20px); transition: all 0.5s ease-out; position: relative; overflow: hidden;}
+        .metric-node::after { content: ''; position: absolute; top: 0; right: 0; width: 25px; height: 25px; background: linear-gradient(135deg, transparent 50%, rgba(255,255,255,0.03) 50%); }
         .metric-node.visible { opacity: 1; transform: translateY(0); }
-        .metric-node.defense-node { border-left-color: var(--shield-blue); background: rgba(74,144,226,0.05); border: 1px solid rgba(74,144,226,0.2);}
         
-        .mn-title { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 1px;}
-        .mn-val { font-family: 'Orbitron'; font-size: 24px; font-weight: bold; color: #fff; margin-top: 10px;}
-        .mn-sub { font-size: 9px; color: var(--neon-yellow); margin-top: 5px; }
+        /* 陣營顏色區分 */
+        .defense-node { border-left-color: var(--shield-blue); background: rgba(74,144,226,0.05); border-right: 1px solid rgba(74,144,226,0.1);}
+        .offense-node { border-left-color: var(--danger-glow); background: rgba(255,0,60,0.05); border-right: 1px solid rgba(255,0,60,0.1); box-shadow: inset 0 0 10px rgba(255,0,60,0.05);}
+        .neutral-node { border-left-color: var(--neon-cyan); }
+        
+        .mn-title { font-size: 11px; color: #888; font-weight: bold; letter-spacing: 1px;}
+        .mn-val { font-family: 'Orbitron'; font-size: 20px; font-weight: bold; color: #fff; margin-top: 8px;}
+        .mn-sub { font-size: 10px; color: #666; margin-top: 5px; }
 
         /* 右側欄位 */
         .right-col { display: flex; flex-direction: column; gap: 20px; }
         .control-form { padding: 20px; }
-        .input-group label { display: block; font-size: 10px; color: #777; margin-bottom: 5px; }
-        .input-group input { width: 100%; background: rgba(0,0,0,0.8); border: 1px solid #333; color: var(--neon-cyan); padding: 12px; font-family: 'Share Tech Mono'; margin-bottom: 20px; outline: none; transition: 0.3s; font-size: 14px;}
-        .input-group input:focus { border-color: var(--shield-blue); box-shadow: inset 0 0 15px rgba(74,144,226,0.3); }
+        .input-group label { display: block; font-size: 11px; color: #777; margin-bottom: 5px; font-weight: bold;}
+        .input-group input { width: 100%; background: rgba(0,0,0,0.8); border: 1px solid #333; color: var(--danger-glow); padding: 12px; font-family: 'Share Tech Mono'; margin-bottom: 20px; outline: none; transition: 0.3s; font-size: 14px;}
+        .input-group input:focus { border-color: var(--danger-glow); box-shadow: inset 0 0 15px rgba(255,0,60,0.3); }
         
-        .btn-exe { width: 100%; background: rgba(74,144,226,0.1); border: 1px solid var(--shield-blue); color: var(--shield-blue); padding: 15px; font-family: 'Orbitron'; font-weight: 900; font-size: 14px; letter-spacing: 2px; cursor: pointer; transition: all 0.3s; text-transform: uppercase; text-shadow: 0 0 5px var(--shield-blue);}
-        .btn-exe:hover { background: rgba(74,144,226,0.3); box-shadow: 0 0 20px rgba(74,144,226,0.6); color: #fff;}
+        .btn-exe { width: 100%; background: rgba(255,0,60,0.1); border: 1px solid var(--danger-glow); color: var(--danger-glow); padding: 15px; font-family: 'Microsoft JhengHei'; font-weight: 900; font-size: 15px; letter-spacing: 2px; cursor: pointer; transition: all 0.3s; text-transform: uppercase; text-shadow: 0 0 5px var(--danger-glow);}
+        .btn-exe:hover { background: var(--danger-glow); color: #000; box-shadow: 0 0 25px rgba(255,0,60,0.8); }
         
         .terminal-panel { flex: 1; display: flex; flex-direction: column; }
-        .terminal-screen { flex: 1; padding: 15px; overflow-y: auto; font-size: 11px; line-height: 1.5; color: var(--shield-blue); }
+        .terminal-screen { flex: 1; padding: 15px; overflow-y: auto; font-size: 12px; line-height: 1.6; color: var(--danger-glow); }
         .log-line { margin-bottom: 4px; opacity: 0; animation: fadeIn 0.1s forwards; }
-        .sys-warn { color: var(--danger-glow); }
         .sys-info { color: var(--neon-cyan); }
-        .sys-def { color: var(--success-green); font-weight: bold; }
+        .sys-def { color: var(--shield-blue); }
+        .sys-off { color: var(--lethal-orange); font-weight: bold;}
 
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
         @keyframes fadeIn { to { opacity: 1; } }
         
         .glitch-text { position: relative; }
         .glitch-text::before, .glitch-text::after { content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; }
-        .glitch-text::before { left: 2px; text-shadow: -1px 0 red; clip: rect(24px, 550px, 90px, 0); animation: glitch-anim 2s infinite linear alternate-reverse; }
-        .glitch-text::after { left: -2px; text-shadow: -1px 0 blue; clip: rect(85px, 550px, 140px, 0); animation: glitch-anim 2.5s infinite linear alternate-reverse; }
+        .glitch-text::before { left: 2px; text-shadow: -1px 0 #ff003c; clip: rect(24px, 550px, 90px, 0); animation: glitch-anim 2s infinite linear alternate-reverse; }
+        .glitch-text::after { left: -2px; text-shadow: -1px 0 #00f3ff; clip: rect(85px, 550px, 140px, 0); animation: glitch-anim 2.5s infinite linear alternate-reverse; }
         @keyframes glitch-anim {
             0% { clip: rect(20px, 9999px, 21px, 0); }
             20% { clip: rect(45px, 9999px, 56px, 0); }
@@ -119,87 +125,98 @@
     <div class="layout-grid">
         <div class="left-col">
             <div class="panel">
-                <div class="panel-header"><span>SUBJECT ID</span><span>[ ACTIVE ]</span></div>
+                <div class="panel-header"><span>目標識別碼</span><span>[ 即時連線 ]</span></div>
                 <div class="profile-card">
-                    <div class="avatar-glitch">🛡️</div>
-                    <div class="p-name" id="ui-name">AWAITING...</div>
-                    <div class="p-tag" id="ui-tag">NO_TARGET</div>
+                    <div class="avatar-glitch">⚔️</div>
+                    <div class="p-name" id="ui-name">等待輸入...</div>
+                    <div class="p-tag" id="ui-tag">無目標</div>
                     
                     <div class="ncr-display">
-                        <div class="ncr-title">N.C.R (AEGIS CALIBRATED)</div>
+                        <div class="ncr-title">N.C.R (諸神黃昏核心)</div>
                         <div class="ncr-value glitch-text" data-text="00" id="ui-ncr">00</div>
-                        <div style="font-family: 'Orbitron'; color: var(--neon-cyan); margin-top: 5px;" id="ui-class">CLASS D</div>
+                        <div style="font-family: 'Microsoft JhengHei'; font-weight: bold; color: var(--danger-glow); margin-top: 5px;" id="ui-class">未分級</div>
                     </div>
 
                     <div class="threat-level">
-                        <div style="font-size: 9px; color: #888;">AI THREAT ASSESSMENT</div>
-                        <div class="threat-text" id="ui-threat">UNKNOWN</div>
+                        <div style="font-size: 10px; color: #888;">AI 威脅評估</div>
+                        <div class="threat-text" id="ui-threat">未知</div>
                     </div>
                 </div>
             </div>
 
             <div class="panel" style="flex:1;">
-                <div class="panel-header"><span>AEGIS TACTICAL PROFILE</span></div>
-                <div style="padding: 15px; display: flex; flex-wrap: wrap; gap: 10px;" id="ui-tags"></div>
+                <div class="panel-header"><span>AI 戰鬥輪廓分析</span><span>[ 戰術標籤 ]</span></div>
+                <div style="padding: 15px; display: flex; flex-wrap: wrap; gap: 8px;" id="ui-tags"></div>
             </div>
         </div>
 
         <div class="mid-col">
             <div class="charts-row">
                 <div class="panel chart-box">
-                    <div class="panel-header" style="position:absolute; top:0; left:0; width:100%; border:none;">PENTA-RADAR</div>
+                    <div class="panel-header" style="position:absolute; top:0; left:0; width:100%; border:none; background:transparent;">五維雷達圖</div>
                     <canvas id="radarChart"></canvas>
                 </div>
                 <div class="panel chart-box">
-                    <div class="panel-header" style="position:absolute; top:0; left:0; width:100%; border:none;">TACTICAL BIAS</div>
+                    <div class="panel-header" style="position:absolute; top:0; left:0; width:100%; border:none; background:transparent;">戰術傾向</div>
                     <canvas id="doughnutChart"></canvas>
                 </div>
             </div>
 
             <div class="panel" style="flex: 1;">
-                <div class="panel-header"><span>8-CORE TELEMETRY MATRIX</span><span>[ V5.0 ADV. DEFENSE ]</span></div>
+                <div class="panel-header"><span>10核心湮滅矩陣</span><span>[ V6.0 雙核引擎 ]</span></div>
                 <div style="padding: 15px; display: flex; flex-direction: column; height: 100%;">
                     <div class="metrics-grid" id="metrics-container">
-                        <div class="metric-node" id="node-1">
-                            <div class="mn-title">W/L RATIO</div>
+                        <div class="metric-node neutral-node" id="node-1">
+                            <div class="mn-title">勝負比 (W/L)</div>
                             <div class="mn-val" id="val-wl" style="color:var(--neon-yellow);">0.00x</div>
-                            <div class="mn-sub">Kill/Death Dominance</div>
+                            <div class="mn-sub">擊殺/死亡壓制力</div>
                         </div>
-                        <div class="metric-node" id="node-2">
-                            <div class="mn-title">P.M.E.</div>
-                            <div class="mn-val" id="val-pme" style="color:var(--neon-magenta);">0.00</div>
-                            <div class="mn-sub">Peak Efficiency</div>
-                        </div>
-                        <div class="metric-node" id="node-3">
-                            <div class="mn-title">3-CROWN RATE</div>
-                            <div class="mn-val" id="val-3c" style="color:var(--danger-glow);">0.0%</div>
-                            <div class="mn-sub">Lethality Index</div>
-                        </div>
-                        <div class="metric-node" id="node-4">
-                            <div class="mn-title">WIN RATE</div>
+                        <div class="metric-node neutral-node" id="node-2">
+                            <div class="mn-title">勝率 (WIN RATE)</div>
                             <div class="mn-val" id="val-wr">0.0%</div>
-                            <div class="mn-sub">Base Stability</div>
+                            <div class="mn-sub">基礎穩定度</div>
                         </div>
-                        
-                        <div class="metric-node defense-node" id="node-5">
-                            <div class="mn-title">ZERO-BREACH (Z.B.R)</div>
-                            <div class="mn-val" id="val-zbr" style="color:var(--shield-blue);">0.0%</div>
-                            <div class="mn-sub" style="color:#aaa;">Est. Shutout Rate</div>
+                        <div class="metric-node neutral-node" id="node-3">
+                            <div class="mn-title">巔峰效率 (P.M.E)</div>
+                            <div class="mn-val" id="val-pme" style="color:var(--neon-magenta);">0.00</div>
+                            <div class="mn-sub">盃數勝場轉換率</div>
                         </div>
-                        <div class="metric-node defense-node" id="node-6">
-                            <div class="mn-title">TOWER RETENTION (T.R.I)</div>
-                            <div class="mn-val" id="val-tri" style="color:var(--success-green);">00</div>
-                            <div class="mn-sub" style="color:#aaa;">Defense Core Index</div>
-                        </div>
-                        <div class="metric-node" id="node-7">
-                            <div class="mn-title">TROPHY PEAK</div>
+                        <div class="metric-node neutral-node" id="node-4">
+                            <div class="mn-title">歷史最高盃數</div>
                             <div class="mn-val" id="val-pb" style="color:var(--neon-cyan);">0</div>
-                            <div class="mn-sub">System Limit</div>
+                            <div class="mn-sub">系統極限值</div>
                         </div>
-                        <div class="metric-node" id="node-8">
-                            <div class="mn-title">TOTAL MATCHES</div>
-                            <div class="mn-val" id="val-matches" style="color:#888;">0</div>
-                            <div class="mn-sub">Data Sample Size</div>
+                        <div class="metric-node neutral-node" id="node-5">
+                            <div class="mn-title">總對戰場次</div>
+                            <div class="mn-val" id="val-matches" style="color:#aaa;">0</div>
+                            <div class="mn-sub">數據樣本數</div>
+                        </div>
+
+                        <div class="metric-node defense-node" id="node-6">
+                            <div class="mn-title">絕對零封率 (Z.B.R)</div>
+                            <div class="mn-val" id="val-zbr" style="color:var(--shield-blue);">0.0%</div>
+                            <div class="mn-sub" style="color:var(--shield-blue);">預估完封機率</div>
+                        </div>
+                        <div class="metric-node defense-node" id="node-7">
+                            <div class="mn-title">皇家塔存活 (T.R.I)</div>
+                            <div class="mn-val" id="val-tri" style="color:var(--success-green);">00</div>
+                            <div class="mn-sub" style="color:var(--shield-blue);">防禦核心指數</div>
+                        </div>
+
+                        <div class="metric-node offense-node" id="node-8">
+                            <div class="mn-title">三冠轉換率</div>
+                            <div class="mn-val" id="val-3c" style="color:#ff2a2a;">0.0%</div>
+                            <div class="mn-sub" style="color:var(--danger-glow);">基礎侵略比例</div>
+                        </div>
+                        <div class="metric-node offense-node" id="node-9">
+                            <div class="mn-title">絕對破防 (O.P.I)</div>
+                            <div class="mn-val" id="val-opi" style="color:var(--danger-glow);">0.0%</div>
+                            <div class="mn-sub" style="color:var(--danger-glow);">完全輾壓機率</div>
+                        </div>
+                        <div class="metric-node offense-node" id="node-10">
+                            <div class="mn-title">斬殺執行力 (L.E.X)</div>
+                            <div class="mn-val" id="val-lex" style="color:var(--lethal-orange);">00</div>
+                            <div class="mn-sub" style="color:var(--danger-glow);">致命一擊本能</div>
                         </div>
                     </div>
                 </div>
@@ -208,31 +225,31 @@
 
         <div class="right-col">
             <div class="panel control-form">
-                <div class="panel-header" style="margin-bottom: 20px; padding:0; border:none; color:#fff;">SYSTEM OVERRIDE</div>
+                <div class="panel-header" style="margin-bottom: 20px; padding:0; border:none; background:transparent;">系統覆寫</div>
                 <div class="input-group">
-                    <label>API PROXY ENDPOINT</label>
+                    <label>API 代理節點 (PROXY)</label>
                     <input type="text" id="proxyUrl" value="/api/clash-proxy">
                 </div>
                 <div class="input-group">
-                    <label>TARGET SUBJECT TAG</label>
+                    <label>目標玩家標籤 (TAG)</label>
                     <input type="text" id="playerTag" value="#CV9QU9CYJ">
                 </div>
-                <button class="btn-exe" id="btn-run" onclick="initiateAegisSequence()">EXECUTE AEGIS PROTOCOL</button>
+                <button class="btn-exe" id="btn-run" onclick="initiateRagnarokSequence()">執行諸神黃昏協議</button>
             </div>
 
             <div class="panel terminal-panel">
-                <div class="panel-header"><span>DECRYPTION LOG</span><span>[ LIVE ]</span></div>
+                <div class="panel-header"><span>戰鬥日誌</span><span>[ 詳盡 ]</span></div>
                 <div class="terminal-screen" id="termLog">
-                    <div class="log-line">> AEGIS V5.0 DEFENSE ENGINE READY.</div>
-                    <div class="log-line">> WAITING FOR TARGET INPUT...</div>
+                    <div class="log-line">> 諸神黃昏 V6.0 雙核引擎已就緒。</div>
+                    <div class="log-line">> 等待操作員輸入指令...</div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        Chart.defaults.color = '#888';
-        Chart.defaults.font.family = "'Share Tech Mono', monospace";
+        Chart.defaults.color = '#777';
+        Chart.defaults.font.family = "'Share Tech Mono', 'Microsoft JhengHei', sans-serif";
         
         let radarChart, doughnutChart;
         let isProcessing = false;
@@ -244,31 +261,31 @@
             radarChart = new Chart(ctxR, {
                 type: 'radar',
                 data: {
-                    labels: ['STR', 'DEF', 'MAC', 'POT', 'CST'],
+                    labels: ['武力(STR)', '防禦(DEF)', '營運(MAC)', '潛力(POT)', '穩定(CST)'],
                     datasets: [{
-                        data: [0,0,0,0,0], backgroundColor: 'rgba(74, 144, 226, 0.15)',
-                        borderColor: '#4a90e2', borderWidth: 2, pointBackgroundColor: '#fff', pointRadius: 2
+                        data: [0,0,0,0,0], backgroundColor: 'rgba(255, 0, 60, 0.15)',
+                        borderColor: '#ff003c', borderWidth: 2, pointBackgroundColor: '#fff', pointRadius: 2
                     }]
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
-                    scales: { r: { angleLines: { color: 'rgba(74, 144, 226, 0.2)' }, grid: { color: 'rgba(74, 144, 226, 0.2)' }, pointLabels: { color: '#ccc', font: { size: 10, family: 'Orbitron' } }, ticks: { display: false, min: 0, max: 100 } } }
+                    scales: { r: { angleLines: { color: 'rgba(255,0,60,0.2)' }, grid: { color: 'rgba(255,0,60,0.2)' }, pointLabels: { color: '#ccc', font: { size: 10, family: 'Microsoft JhengHei', weight: 'bold' } }, ticks: { display: false, min: 0, max: 100 } } }
                 }
             });
 
             doughnutChart = new Chart(ctxD, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Aggression', 'Defense', 'Macro'],
+                    labels: ['進攻', '防守', '營運'],
                     datasets: [{
                         data: [33, 33, 34],
-                        backgroundColor: ['#ff2a2a', '#4a90e2', '#ffde00'],
+                        backgroundColor: ['#ff003c', '#4a90e2', '#ffde00'],
                         borderWidth: 0, hoverOffset: 4
                     }]
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false, cutout: '75%',
-                    plugins: { legend: { position: 'bottom', labels: { color: '#888', font: {size: 9} } } }
+                    plugins: { legend: { position: 'bottom', labels: { color: '#888', font: {size: 11, family: 'Microsoft JhengHei', weight: 'bold'} } } }
                 }
             });
         }
@@ -297,18 +314,18 @@
             document.getElementById('ui-ncr').innerText = "00";
             document.getElementById('ui-ncr').setAttribute('data-text', "00");
             document.getElementById('ui-ncr').style.color = "#fff";
-            document.getElementById('ui-threat').innerText = "SCANNING...";
+            document.getElementById('ui-threat').innerText = "掃描中...";
             document.getElementById('ui-threat').style.color = "#888";
             document.getElementById('ui-tags').innerHTML = '';
             radarChart.data.datasets[0].data = [0,0,0,0,0]; radarChart.update();
             doughnutChart.data.datasets[0].data = [33,33,34]; doughnutChart.update();
         }
 
-        async function initiateAegisSequence() {
+        async function initiateRagnarokSequence() {
             if(isProcessing) return;
             isProcessing = true;
             const btn = document.getElementById('btn-run');
-            btn.innerText = "CALCULATING...";
+            btn.innerText = "數據武裝化中...";
             btn.style.borderColor = "#444"; btn.style.color = "#444"; btn.style.background = "transparent";
             
             const tag = document.getElementById('playerTag').value.trim();
@@ -317,31 +334,31 @@
             resetUI();
             document.getElementById('termLog').innerHTML = '';
             
-            await tLog(`> INIT: AEGIS PROTOCOL FOR [${tag}]`, 'sys-info');
-            await sleep(300);
+            await tLog(`> 正在對 [${tag}] 啟動諸神黃昏協議`, 'sys-info');
+            await sleep(200);
 
             let playerData;
             try {
-                await tLog(`> FETCHING DATABANKS VIA PROXY...`);
+                await tLog(`> 正在駭入主機資料庫...`);
                 const res = await fetch(`${proxy}?tag=${tag.replace('#', '%23')}`);
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 playerData = await res.json();
-                await tLog(`> DATA SECURED. RUNNING DEFENSE ALGORITHMS...`, 'success');
+                await tLog(`> 數據獲取成功。點燃運算引擎...`, 'sys-off');
             } catch (err) {
-                await tLog(`> PROXY ERROR. USING SIMULATED HIGH-TIER DATA...`, 'sys-warn');
-                // 模擬一個防守型大神 (勝率高，但三冠少)
-                playerData = { name: "IRON_BASTION", wins: 7200, losses: 3800, bestTrophies: 8650, threeCrownWins: 1150 };
+                await tLog(`> 偵測到代理防火牆。執行繞道程序 (載入模擬極端數據)...`);
+                // 模擬一個極度暴力的進攻型玩家 (勝率高，三冠極多)
+                playerData = { name: "BLOOD_GOD", wins: 8500, losses: 4100, bestTrophies: 8800, threeCrownWins: 4250 };
             }
 
             await runMathEngine(playerData);
             
-            btn.innerText = "EXECUTE AEGIS PROTOCOL";
-            btn.style.borderColor = "var(--shield-blue)"; btn.style.color = "var(--shield-blue)"; btn.style.background = "rgba(74,144,226,0.1)";
+            btn.innerText = "執行諸神黃昏協議";
+            btn.style.borderColor = "var(--danger-glow)"; btn.style.color = "var(--danger-glow)"; btn.style.background = "rgba(255,0,60,0.1)";
             isProcessing = false;
         }
 
         async function runMathEngine(data) {
-            document.getElementById('ui-name').innerText = data.name || "UNKNOWN";
+            document.getElementById('ui-name').innerText = data.name || "未知";
             document.getElementById('ui-tag').innerText = document.getElementById('playerTag').value;
 
             // 1. 基礎參數
@@ -356,67 +373,78 @@
             const wlRatio = wins / (losses || 1);
             const pme = pb / totalMatches;
 
-            // 2. 終極防守數據運算 (V5.0 核心)
-            // Z.B.R (絕對零封率估算): 非三冠勝場佔總場次的比例加權。防守大師的三冠率極低。
+            // 2. V5.0 防禦數據 (Z.B.R & T.R.I)
             const non3CrownWins = wins - threeCrowns;
-            const zbrRaw = (non3CrownWins / totalMatches);
-            const zbrDisplay = Math.min(100, zbrRaw * 100 * 1.15); // 加權放大以利閱讀
-
-            // T.R.I (皇家塔存活指數): 基於戰損比與總勝場的防禦韌性轉換 (滿分 100)
+            const zbrDisplay = Math.min(100, (non3CrownWins / totalMatches) * 100 * 1.15);
             const triScore = Math.min(100, (wlRatio * 35) + (non3CrownWins / (wins||1) * 40));
+
+            // 3. V6.0 終極進攻數據 (O.P.I & L.E.X)
+            // O.P.I (絕對破防指數)：整個生涯中，把對手打到三冠的純粹機率
+            const opiRaw = (threeCrowns / totalMatches) * 100;
+            
+            // L.E.X (斬殺執行力)：複合計算刺客本能 (三冠率加權 + 勝率保底 + 戰損比擴張)
+            const lexScore = Math.min(100, (threeCrownRate * 120) + (winRate * 40) + (wlRatio * 15));
 
             const nodesData = [
                 { id: 'val-wl', val: wlRatio.toFixed(2) + 'x' },
-                { id: 'val-pme', val: pme.toFixed(3) },
-                { id: 'val-3c', val: (threeCrownRate*100).toFixed(1) + '%' },
                 { id: 'val-wr', val: (winRate*100).toFixed(1) + '%' },
+                { id: 'val-pme', val: pme.toFixed(3) },
+                { id: 'val-pb', val: pb },
+                { id: 'val-matches', val: totalMatches },
                 { id: 'val-zbr', val: zbrDisplay.toFixed(1) + '%' },
                 { id: 'val-tri', val: Math.round(triScore) },
-                { id: 'val-pb', val: pb },
-                { id: 'val-matches', val: totalMatches }
+                { id: 'val-3c', val: (threeCrownRate*100).toFixed(1) + '%' },
+                { id: 'val-opi', val: opiRaw.toFixed(1) + '%' },
+                { id: 'val-lex', val: Math.round(lexScore) }
             ];
 
-            await tLog(`> INJECTING 8-CORE MATRIX...`);
-            for(let i=0; i<8; i++) {
+            await tLog(`> 正在填充 10 核心矩陣...`);
+            for(let i=0; i<10; i++) {
                 document.getElementById(nodesData[i].id).innerText = nodesData[i].val;
                 document.getElementById(`node-${i+1}`).classList.add('visible');
-                await sleep(100);
+                await sleep(50);
             }
 
-            await tLog(`> CALCULATING DEFENSIVE TELEMETRY...`, 'sys-def');
+            await tLog(`> 計算神盾防禦協議...`, 'sys-def');
+            await tLog(`> 計算致命斬殺指數...`, 'sys-off');
             
-            // 五維計算 (防禦權重巨幅提升)
-            let str = Math.min(100, (threeCrownRate * 220) + (winRate * 10));
-            // DEF 完全由 ZBR 和 TRI 決定
+            // 五維計算 (進攻與防禦的雙核撕裂)
+            let str = Math.min(100, (lexScore * 0.5) + (opiRaw * 2.0) + (winRate*10)); // 火力被 LEX 和 OPI 重新定義
             let def = Math.min(100, (triScore * 0.6) + (zbrDisplay * 0.8)); 
             let mac = Math.min(100, (pb / 9000 * 60) + (pme * 30));
             let pot = Math.min(100, (wlRatio * 40) + (winRate * 30));
             let cst = Math.min(100, (totalMatches > 8000 ? 50 : totalMatches/160) + (winRate > 0.5 ? 50 : winRate*100));
 
+            // 動態雷達圖顏色 (偏重防守就藍，偏重進攻就紅)
+            const radarColor = str > def ? '#ff003c' : (def > str ? '#4a90e2' : '#ffde00');
+            const radarBg = str > def ? 'rgba(255, 0, 60, 0.15)' : (def > str ? 'rgba(74, 144, 226, 0.15)' : 'rgba(255, 222, 0, 0.15)');
+            
+            radarChart.data.datasets[0].borderColor = radarColor;
+            radarChart.data.datasets[0].backgroundColor = radarBg;
             radarChart.data.datasets[0].data = [str, def, mac, pot, cst];
             radarChart.update();
-            await sleep(300);
+            await sleep(200);
 
-            // 戰術傾向 (攻擊 vs 防守 vs 營運)
+            // 戰術傾向
             let sum = str + def + mac;
             doughnutChart.data.datasets[0].data = [str/sum*100, def/sum*100, mac/sum*100];
             doughnutChart.update();
-            await sleep(300);
+            await sleep(200);
 
-            await tLog(`> COMPILING N.C.R FINAL RATING...`, 'sys-info');
+            await tLog(`> 編譯最終諸神黃昏評級...`);
             
-            const ncr = Math.round((str*0.15) + (def*0.3) + (mac*0.2) + (pot*0.2) + (cst*0.15)); // 防禦佔比調高至 30%
+            const ncr = Math.round((str*0.3) + (def*0.2) + (mac*0.2) + (pot*0.15) + (cst*0.15)); // 在 Ragnarok 引擎中，火力權重最高
             const ncrEl = document.getElementById('ui-ncr');
             const classEl = document.getElementById('ui-class');
             
             ncrEl.innerText = ncr;
             ncrEl.setAttribute('data-text', ncr);
 
-            let rankClass = "CLASS D", color = "#666", threat = "LOW DANGER";
-            if(ncr >= 90) { rankClass = "CLASS S"; color = "var(--shield-blue)"; threat = "AEGIS-LEVEL (IMPENETRABLE)"; }
-            else if(ncr >= 75) { rankClass = "CLASS A"; color = "var(--neon-magenta)"; threat = "ALPHA-LEVEL (SEVERE)"; }
-            else if(ncr >= 60) { rankClass = "CLASS B"; color = "var(--neon-cyan)"; threat = "BETA-LEVEL (ELEVATED)"; }
-            else if(ncr >= 45) { rankClass = "CLASS C"; color = "var(--success-green)"; threat = "GAMMA-LEVEL (MODERATE)"; }
+            let rankClass = "級別 D", color = "#666", threat = "低度危險";
+            if(ncr >= 90) { rankClass = "級別 S"; color = str > def ? "var(--danger-glow)" : "var(--shield-blue)"; threat = str > def ? "末日級 (絕對湮滅)" : "神盾級 (堅不可摧)"; }
+            else if(ncr >= 75) { rankClass = "級別 A"; color = "var(--lethal-orange)"; threat = "阿爾法級 (極度危險)"; }
+            else if(ncr >= 60) { rankClass = "級別 B"; color = "var(--neon-cyan)"; threat = "貝塔級 (威脅升高)"; }
+            else if(ncr >= 45) { rankClass = "級別 C"; color = "var(--success-green)"; threat = "伽馬級 (中度威脅)"; }
 
             ncrEl.style.color = color;
             ncrEl.style.textShadow = `0 0 30px ${color}`;
@@ -428,26 +456,34 @@
             threatEl.style.color = color;
             if(ncr >= 90) threatEl.style.borderColor = color;
 
-            // 智能標籤 (新增防禦系標籤)
+            // 智能標籤 (進攻 vs 防禦 互斥邏輯)
             const tagsBox = document.getElementById('ui-tags');
             let tags = [];
-            if(def >= 85) tags.push({t: "ABSOLUTE_WALL", c: "var(--shield-blue)"});
-            if(zbrDisplay > 60) tags.push({t: "CHOKE_ARTIST", c: "var(--success-green)"});
-            if(wlRatio >= 1.6) tags.push({t: "MATH_ANOMALY", c: "var(--neon-yellow)"});
-            if(str > def + 30) tags.push({t: "RECKLESS_AGGRO", c: "var(--danger-glow)"});
-            if(def > str + 30) tags.push({t: "SIEGE_MASTER", c: "var(--shield-blue)"});
-            if(tags.length === 0) tags.push({t: "STANDARD_MODEL", c: "#888"});
+            
+            // 頂級標籤
+            if(opiRaw >= 35) tags.push({t: "抹殺者", c: "var(--danger-glow)"});
+            if(lexScore >= 85) tags.push({t: "處刑人", c: "var(--lethal-orange)"});
+            if(def >= 85 && str < 60) tags.push({t: "嘆息之牆", c: "var(--shield-blue)"});
+            
+            // 風格標籤
+            if(str > def + 35) tags.push({t: "狂戰士", c: "var(--danger-glow)"});
+            else if(def > str + 35) tags.push({t: "攻城機器", c: "var(--shield-blue)"});
+            else if(Math.abs(str - def) < 10 && ncr > 70) tags.push({t: "完美平衡", c: "var(--neon-yellow)"});
+
+            if(wlRatio >= 1.6) tags.push({t: "數據異常", c: "var(--neon-magenta)"});
+            if(tags.length === 0) tags.push({t: "標準量產型", c: "#888"});
 
             tags.forEach(tag => {
                 const span = document.createElement('div');
-                span.style.padding = "5px 10px"; span.style.border = `1px solid ${tag.c}`;
-                span.style.color = tag.c; span.style.fontSize = "10px";
-                span.style.fontFamily = "Orbitron"; span.style.background = "rgba(0,0,0,0.5)";
+                span.style.padding = "4px 8px"; span.style.border = `1px solid ${tag.c}`;
+                span.style.color = tag.c; span.style.fontSize = "11px";
+                span.style.fontWeight = "bold";
+                span.style.fontFamily = "'Microsoft JhengHei', sans-serif"; span.style.background = "rgba(0,0,0,0.6)";
                 span.innerText = `[ ${tag.t} ]`;
                 tagsBox.appendChild(span);
             });
 
-            await tLog(`> AEGIS EVALUATION COMPLETE. ALL SYSTEMS SECURE.`, 'sys-def');
+            await tLog(`> 諸神黃昏協議執行完畢。目標掃描完成。`, 'sys-info');
         }
 
         window.onload = initCharts;

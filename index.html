@@ -418,91 +418,73 @@
                 
                 document.getElementById('pName').innerText = data.name || 'UNKNOWN_ENTITY';
                 document.getElementById('pTag').innerText = data.tag || tag;
-                document.getElementById('syncRatio').innerText = '94.2%';
-                document.getElementById('syncProg').style.width = '94.2%';
+                document.getElementById('syncRatio').innerText = '99.8%'; // Career sync is higher
+                document.getElementById('syncProg').style.width = '99.8%';
 
-                // --- 進階個人能力分析邏輯 (ULTRA-DENSITY) ---
-                const battles = data.battleLog;
-                let totalPlayerCrowns = 0;
-                let totalOpponentCrowns = 0;
-                let wins = 0;
-                let threeCrowns = 0;
-                let clutchWins = 0;
-                let currentStreak = 0;
-                let maxStreak = 0;
+                // --- 生涯統計數據提取 ---
+                const wins = data.wins || 0;
+                const losses = data.losses || 0;
+                const threeCrowns = data.threeCrownWins || 0;
+                const bestTrophies = data.bestTrophies || data.trophies || 0;
+                const donations = data.donations || 0;
+                const challengeMax = data.challengeMaxWins || 0;
+                const cards = data.cards ? data.cards.length : 110;
+                const level = data.expLevel || 0;
+                const warWins = data.warDayWins || 0;
 
-                battles.forEach((b, index) => {
-                    const p = b.team[0].crowns;
-                    const o = b.opponent[0].crowns;
-                    totalPlayerCrowns += p;
-                    totalOpponentCrowns += o;
-                    
-                    if (p > o) {
-                        wins++;
-                        currentStreak++;
-                        if (p === 3) threeCrowns++;
-                        if (p - o === 1) clutchWins++;
-                    } else {
-                        if (currentStreak > maxStreak) maxStreak = currentStreak;
-                        currentStreak = 0;
-                    }
-                    if (index === battles.length - 1 && currentStreak > maxStreak) maxStreak = currentStreak;
-                });
+                const winRate = ((wins / (wins + losses)) * 100 || 0).toFixed(1);
+                const efficiency = ((threeCrowns / wins) * 100 || 0).toFixed(0);
+                const legacyScore = (wins * 0.5 + donations * 0.01 + bestTrophies * 0.1).toFixed(0);
+                const stability = (90 + (wins / 500)).toFixed(1); // 歷史穩定性模擬
 
-                const winRate = ((wins / battles.length) * 100).toFixed(1);
-                const offenseScore = ((totalPlayerCrowns / (battles.length * 3)) * 100).toFixed(0);
-                const defenseScore = (100 - (totalOpponentCrowns / (battles.length * 3)) * 100).toFixed(0);
-                const tacticalIQ = (70 + (wins * 2.5)).toFixed(0);
-                
-                const tcd = ((threeCrowns / wins) * 100 || 0).toFixed(1);
-                const clutch = ((clutchWins / wins) * 100 || 0).toFixed(0);
-                const resourceMastery = (85 + (wins * 0.5)).toFixed(0);
-                const mentalFort = (maxStreak * 20 > 100 ? 99 : maxStreak * 20 + 40).toFixed(0);
-
-                // --- 新增第 9~12 指標 ---
-                const cycleVel = (60 + (wins * 3)).toFixed(0);
-                const synergy = (88 + (Math.random() * 10)).toFixed(0);
-                const pressure = (offenseScore * 1.1 > 100 ? 99 : offenseScore * 1.1).toFixed(0);
-                const comeback = (15 + (clutchWins * 5)).toFixed(1);
-
-                // 數值注入
-                const updateVal = (id, val, barId) => {
+                // 數值注入 (Career Edition)
+                const updateVal = (id, val, barId, max = 100) => {
                     document.getElementById(id).innerText = val;
-                    if(barId) document.getElementById(barId).style.width = (val > 100 ? 100 : val) + '%';
+                    if(barId) {
+                        const percent = (parseFloat(val) / max) * 100;
+                        document.getElementById(barId).style.width = (percent > 100 ? 100 : percent) + '%';
+                    }
                 };
 
-                updateVal('valWin', winRate + '%', 'barWin');
-                updateVal('valIQ', tacticalIQ, 'barIQ');
-                updateVal('valOff', offenseScore, 'barOff');
-                updateVal('valDef', defenseScore, 'barDef');
-                updateVal('valTCD', tcd + '%', 'barTCD');
-                updateVal('valRes', resourceMastery, 'barRes');
-                updateVal('valClutch', clutch, 'barClutch');
-                updateVal('valMental', mentalFort, 'barMental');
+                updateVal('valWins', wins, 'barWins', 5000);
+                updateVal('valPB', bestTrophies, 'barPB', 9000);
+                updateVal('valDonations', donations, 'barDonations', 100000);
+                updateVal('valWinRate', winRate + '%', 'barWinRate', 100);
                 
-                updateVal('valCycle', cycleVel, 'barCycle');
-                updateVal('valSynergy', synergy, 'barSynergy');
-                updateVal('valPressure', pressure, 'barPressure');
-                updateVal('valComeback', comeback + '%', 'barComeback');
+                updateVal('val3C', threeCrowns, 'bar3C', 3000);
+                updateVal('valChallenge', challengeMax, 'barChallenge', 12);
+                updateVal('valWar', warWins, 'barWar', 500);
+                updateVal('valLevel', level, 'barLevel', 15);
+                
+                updateVal('valCards', cards, 'barCards', 115);
+                updateVal('valLegacy', legacyScore, 'barLegacy', 10000);
+                updateVal('valEff', efficiency, 'barEff', 100);
+                updateVal('valStability', stability + '%', 'barStability', 100);
 
-                // 圖表同步
-                omegaChart.data.datasets[0].data = [offenseScore, defenseScore, resourceMastery, tacticalIQ, parseFloat(winRate)];
+                // 圖表同步 (生涯重點維度)
+                omegaChart.data.datasets[0].data = [
+                    (bestTrophies / 9000) * 100, 
+                    (wins / 5000) * 100, 
+                    (donations / 100000) * 100, 
+                    parseFloat(winRate), 
+                    parseFloat(stability)
+                ];
                 omegaChart.update();
 
                 document.getElementById('aiAdvisor').innerHTML = `
-                    <div style="color:var(--neon-cyan); margin-bottom:10px; font-weight:bold;">> OMEGA_HYPER_ANALYSIS_REPORT:</div>
+                    <div style="color:var(--neon-cyan); margin-bottom:10px; font-weight:bold;">> CAREER_LEGACY_PROFILE:</div>
                     <div style="font-size:0.8rem; display:grid; grid-template-columns:1fr 1fr; gap:10px;">
                         <div>
-                            <span style="color:var(--neon-yellow)">[AGGRESSION]</span> Index: ${pressure}<br>
-                            <span style="color:var(--neon-magenta)">[MENTAL]</span> Resilience: ${mentalFort}
+                            <span style="color:var(--neon-yellow)">[VETERAN_SCORE]</span> ${legacyScore}<br>
+                            <span style="color:var(--neon-magenta)">[EFFICIENCY]</span> ${efficiency}% (3-Crown)
                         </div>
                         <div>
-                            <span style="color:var(--neon-cyan)">[FLOW]</span> Cycle Vel: ${cycleVel}<br>
-                            <span style="color:var(--neon-magenta)">[SYNC]</span> Deck Syn: ${synergy}
+                            <span style="color:var(--neon-cyan)">[DONATIONS]</span> ${donations}<br>
+                            <span style="color:var(--neon-magenta)">[MASTERY]</span> ${cards} Cards Found
                         </div>
                     </div>
                     <div style="border-top:1px solid #333; margin-top:10px; pt:5px; font-size:0.8rem;">
-                        <span style="color:var(--neon-cyan)">ADVISORY:</span> Subject potential for <span style="color:var(--neon-yellow)">Comeback (${comeback}%)</span> is high. Optimal performance window: <span style="color:var(--neon-cyan)">Overtime-Phase</span>.
+                        <span style="color:var(--neon-cyan)">LONG-TERM_ADVISORY:</span> Subject is a <span style="color:var(--neon-yellow)">${wins > 2000 ? 'Seasoned Elite' : 'Rising Prospect'}</span>. Career stability is ${stability}%. Recommendation: Focus on <span style="color:var(--neon-cyan)">Challenge Peak</span> expansion to maximize Legacy Score.
                     </div>
                 `;
 
@@ -512,6 +494,24 @@
                     const isWin = b.team[0].crowns > b.opponent[0].crowns;
                     logBox.innerHTML += `
                         <div style="display:grid; grid-template-columns: 80px 1fr 100px; padding:12px; border-bottom:1px solid #222; font-size:0.85rem;">
+                            <span style="color:${isWin ? 'var(--neon-cyan)' : 'var(--danger-glow)'}">${isWin ? 'WIN' : 'LOSS'}</span>
+                            <span style="color:#aaa;">vs ${b.opponent[0].name}</span>
+                            <span style="text-align:right; font-family:'Fira Code';">${b.team[0].crowns} - ${b.opponent[0].crowns}</span>
+                        </div>
+                    `;
+                });
+
+                logTerminal("Neural Link Established successfully.", "cmd");
+            } catch (err) {
+                logTerminal(`CRITICAL_ERROR: ${err.message}`, 'cmd');
+            }
+        }
+
+        window.onload = initOmega;
+    </script>
+</body>
+</html>
+display:grid; grid-template-columns: 80px 1fr 100px; padding:12px; border-bottom:1px solid #222; font-size:0.85rem;">
                             <span style="color:${isWin ? 'var(--neon-cyan)' : 'var(--danger-glow)'}">${isWin ? 'WIN' : 'LOSS'}</span>
                             <span style="color:#aaa;">vs ${b.opponent[0].name}</span>
                             <span style="text-align:right; font-family:'Fira Code';">${b.team[0].crowns} - ${b.opponent[0].crowns}</span>

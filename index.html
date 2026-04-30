@@ -3,84 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>神經矩陣 MAXIMA | V49.0 APEX-MANIFOLD 拓樸流形版</title>
+    <title>神經矩陣 MAXIMA | V50.0 OMNI-DIMENSION 全維度版</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* V49.0 拓樸流形風格 (量子藍 x 空間紫) */
+        /* V50.0 全維度風格 (量子藍 x 拓樸紫 x 琥珀金) */
         :root {
-            --bg-deep: #030712;
+            --bg-deep: #020617;
             --panel-bg: rgba(9, 14, 25, 0.95);
             --stat-primary: #00e5ff;
-            --stat-secondary: #b388ff; /* 拓樸紫 */
-            --stat-alert: #ff1744;
+            --stat-secondary: #b388ff;
+            --stat-tertiary: #fbbf24; /* 新增抗壓/微操高亮色 */
             --text-main: #f1f5f9;
             --text-dim: #64748b;
-            --border-glow: rgba(179, 136, 255, 0.2);
-            --neon-shadow: 0 0 15px rgba(179, 136, 255, 0.3);
+            --border-glow: rgba(0, 229, 255, 0.2);
+            --neon-shadow: 0 0 15px rgba(0, 229, 255, 0.3);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; cursor: default; }
         
         body {
-            background-color: var(--bg-deep);
-            color: var(--text-main);
+            background-color: var(--bg-deep); color: var(--text-main);
             font-family: 'Share Tech Mono', 'Noto Sans TC', sans-serif;
             min-height: 100vh; overflow-x: hidden; display: flex; flex-direction: column;
-            background-image: 
-                radial-gradient(circle at 50% 50%, rgba(179, 136, 255, 0.05) 0%, transparent 50%),
-                linear-gradient(rgba(0, 229, 255, 0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 229, 255, 0.02) 1px, transparent 1px);
-            background-size: 100% 100%, 40px 40px, 40px 40px;
+            background-image: linear-gradient(rgba(0, 229, 255, 0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 229, 255, 0.02) 1px, transparent 1px);
+            background-size: 30px 30px;
         }
 
-        header { padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--stat-secondary); background: rgba(3, 7, 18, 0.95); box-shadow: var(--neon-shadow); }
-        .system-status { display: flex; gap: 20px; font-size: 12px; color: var(--stat-secondary); font-weight: bold; letter-spacing: 2px; }
+        header { padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--stat-tertiary); background: rgba(2, 6, 23, 0.95); box-shadow: 0 0 15px rgba(251, 191, 36, 0.2); }
+        .system-status { display: flex; gap: 20px; font-size: 12px; color: var(--stat-tertiary); font-weight: bold; letter-spacing: 2px; }
         .status-node { display: flex; align-items: center; gap: 6px; }
-        .dot { width: 8px; height: 8px; background: var(--stat-secondary); border-radius: 50%; box-shadow: 0 0 8px var(--stat-secondary); }
+        .dot { width: 8px; height: 8px; background: var(--stat-tertiary); border-radius: 50%; box-shadow: 0 0 8px var(--stat-tertiary); }
         .blink { animation: pulse 2s infinite; }
 
         main { display: grid; grid-template-columns: 380px 1fr 340px; flex: 1; gap: 2px; }
-        .column { background: var(--panel-bg); display: flex; flex-direction: column; position: relative; border-right: 1px solid rgba(179, 136, 255, 0.1); }
+        .column { background: var(--panel-bg); display: flex; flex-direction: column; position: relative; border-right: 1px solid rgba(0, 229, 255, 0.1); }
+        .section-label { padding: 12px 15px; font-family: 'Orbitron'; font-size: 11px; background: linear-gradient(90deg, rgba(0, 229, 255, 0.1), transparent); color: var(--stat-primary); border-bottom: 1px solid rgba(0, 229, 255, 0.2); display: flex; justify-content: space-between; text-transform: uppercase; letter-spacing: 1.5px; }
 
-        .section-label { padding: 12px 15px; font-family: 'Orbitron'; font-size: 11px; background: linear-gradient(90deg, rgba(179, 136, 255, 0.1), transparent); color: var(--stat-secondary); border-bottom: 1px solid rgba(179, 136, 255, 0.2); display: flex; justify-content: space-between; text-transform: uppercase; letter-spacing: 1.5px; }
+        .hero-stats { padding: 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .hero-value { font-family: 'Orbitron'; font-size: 72px; font-weight: 900; color: #fff; line-height: 0.8; margin-bottom: 10px; text-shadow: 0 0 20px rgba(0, 229, 255, 0.4); }
+        .hero-name { font-family: 'Orbitron'; font-size: 18px; color: var(--stat-tertiary); letter-spacing: 4px; font-weight: bold;}
 
-        .hero-stats { padding: 30px 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .hero-value { font-family: 'Orbitron'; font-size: 88px; font-weight: 900; color: #fff; line-height: 0.8; margin-bottom: 15px; text-shadow: 0 0 20px rgba(179, 136, 255, 0.4); }
-        .hero-name { font-family: 'Orbitron'; font-size: 18px; color: var(--stat-primary); letter-spacing: 4px; font-weight: bold;}
-
-        .data-matrix { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: rgba(179, 136, 255, 0.1); }
-        .cell { background: var(--bg-deep); padding: 20px 10px; text-align: center; position: relative; transition: 0.3s; }
+        /* 擴展為 8 格矩陣 */
+        .data-matrix { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: rgba(0, 229, 255, 0.1); }
+        .cell { background: var(--bg-deep); padding: 15px 5px; text-align: center; position: relative; transition: 0.3s; }
         .cell:hover { background: #0a0f1c; }
-        .cell-label { font-size: 10px; color: var(--text-dim); margin-bottom: 8px; letter-spacing: 1px; font-weight: bold; }
-        .cell-val { font-family: 'Orbitron'; font-size: 28px; color: #fff; }
+        .cell-label { font-size: 10px; color: var(--text-dim); margin-bottom: 6px; letter-spacing: 0.5px; font-weight: bold; }
+        .cell-val { font-family: 'Orbitron'; font-size: 24px; color: #fff; }
         
         .highlight-synth::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--stat-primary); }
         .highlight-synth .cell-val { color: var(--stat-primary); text-shadow: 0 0 10px rgba(0, 229, 255, 0.2); }
-        
         .highlight-topo::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--stat-secondary); }
         .highlight-topo .cell-val { color: var(--stat-secondary); text-shadow: 0 0 10px rgba(179, 136, 255, 0.3); }
+        .highlight-omni::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--stat-tertiary); }
+        .highlight-omni .cell-val { color: var(--stat-tertiary); text-shadow: 0 0 10px rgba(251, 191, 36, 0.3); }
 
         .vis-container { flex: 1; display: flex; flex-direction: column; padding: 20px; position: relative; min-height: 400px; }
         #radarWrapper { flex: 1; min-height: 380px; }
 
-        .report-overlay { background: rgba(3, 7, 18, 0.9); border: 1px solid var(--stat-secondary); padding: 25px; margin-top: 15px; font-size: 13px; position: relative; border-top: 4px solid var(--stat-secondary); box-shadow: inset 0 0 20px rgba(179,136,255,0.05), 0 5px 15px rgba(0,0,0,0.5); backdrop-filter: blur(8px); display: flex; flex-direction: column; gap: 15px; }
-        .report-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid rgba(179, 136, 255, 0.2); padding-bottom: 10px; }
+        .report-overlay { background: rgba(2, 6, 23, 0.9); border: 1px solid var(--stat-tertiary); padding: 20px; margin-top: 10px; font-size: 13px; border-top: 4px solid var(--stat-tertiary); box-shadow: inset 0 0 20px rgba(251,191,36,0.05), 0 5px 15px rgba(0,0,0,0.5); backdrop-filter: blur(8px); display: flex; flex-direction: column; gap: 15px; }
+        .report-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid rgba(251, 191, 36, 0.2); padding-bottom: 10px; }
         #ui-archetype { font-family: 'Orbitron'; font-size: 18px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; }
         .threat-level { font-family: 'Orbitron'; font-size: 12px; padding: 3px 8px; border-radius: 3px; }
-        .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .report-module { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(179, 136, 255, 0.1); padding: 12px; }
+        .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .report-module { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); padding: 12px; }
         .module-title { font-family: 'Share Tech Mono'; color: var(--stat-primary); font-size: 11px; margin-bottom: 8px; letter-spacing: 1px; display: flex; align-items: center; gap: 5px; }
-        .module-title::before { content: "▸"; color: var(--stat-secondary); }
+        .module-title::before { content: "▸"; color: var(--stat-tertiary); }
         .module-content { color: #cbd5e1; line-height: 1.5; font-size: 12px; }
         .module-full { grid-column: span 2; }
 
-        .io-panel { padding: 20px; border-top: 1px solid var(--border-glow); background: rgba(0,0,0,0.4); }
-        input { width: 100%; background: #030712; border: 1px solid #1e293b; padding: 15px; color: #fff; font-family: 'Orbitron'; font-size: 16px; outline: none; transition: 0.3s; text-align: center; letter-spacing: 2px; }
-        input:focus { border-color: var(--stat-secondary); box-shadow: var(--neon-shadow); }
-        
-        .btn-prime { width: 100%; padding: 18px; margin-top: 10px; background: rgba(179, 136, 255, 0.05); color: var(--stat-secondary); font-family: 'Orbitron'; font-weight: 900; font-size: 14px; border: 1px solid var(--stat-secondary); cursor: pointer; letter-spacing: 2px; transition: 0.2s; }
-        .btn-prime:hover:not(:disabled) { background: var(--stat-secondary); color: #000; box-shadow: var(--neon-shadow); }
+        .io-panel { padding: 15px; border-top: 1px solid var(--border-glow); background: rgba(0,0,0,0.4); }
+        input { width: 100%; background: #020617; border: 1px solid #1e293b; padding: 12px; color: #fff; font-family: 'Orbitron'; font-size: 14px; outline: none; transition: 0.3s; text-align: center; letter-spacing: 2px; }
+        input:focus { border-color: var(--stat-primary); box-shadow: var(--neon-shadow); }
+        .btn-prime { width: 100%; padding: 15px; margin-top: 10px; background: rgba(0, 229, 255, 0.05); color: var(--stat-primary); font-family: 'Orbitron'; font-weight: 900; font-size: 14px; border: 1px solid var(--stat-primary); cursor: pointer; letter-spacing: 2px; transition: 0.2s; }
+        .btn-prime:hover:not(:disabled) { background: var(--stat-primary); color: #000; box-shadow: var(--neon-shadow); }
 
         .sim-log { flex: 1; font-family: 'Share Tech Mono'; font-size: 11px; padding: 15px; color: var(--text-dim); overflow-y: auto; max-height: 300px; }
         .log-line { margin-bottom: 8px; border-left: 2px solid #334155; padding-left: 10px; line-height: 1.4; }
@@ -88,30 +84,30 @@
         .log-tag { padding: 2px 5px; border-radius: 2px; font-size: 9px; margin-right: 8px; text-transform: uppercase; font-weight: bold; color:#000; }
         .tag-sys { background: #64748b; color: #fff; }
         .tag-calc { background: var(--stat-primary); }
-        .tag-topo { background: var(--stat-secondary); }
+        .tag-omni { background: var(--stat-tertiary); }
 
         ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: var(--stat-secondary); }
+        ::-webkit-scrollbar-thumb { background: var(--stat-tertiary); }
 
-        .data-box { padding: 15px; background: rgba(179,136,255,0.02); border: 1px solid rgba(179,136,255,0.15); margin-top: auto; font-family: 'Orbitron'; }
+        .data-box { padding: 15px; background: rgba(251,191,36,0.02); border: 1px solid rgba(251,191,36,0.15); margin-top: auto; font-family: 'Orbitron'; }
         .d-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 12px; }
         .d-label { color: var(--text-dim); }
         .d-val { color: #fff; font-weight: bold; }
+        @keyframes pulse { 0% { opacity: 0.3; } 50% { opacity: 1; } 100% { opacity: 0.3; } }
     </style>
 </head>
 <body>
 
     <header>
         <div class="system-status">
-            <div class="status-node"><div class="dot blink"></div> V49.0 APEX-MANIFOLD | ALGEBRAIC TOPOLOGY</div>
-            <div class="status-node">ALGORITHM: PERSISTENT HOMOLOGY PROXY</div>
+            <div class="status-node"><div class="dot blink"></div> V50.0 OMNI-DIMENSION | 8-AXIS CAPABILITY MATRIX</div>
         </div>
         <div style="font-family: 'Orbitron'; font-size: 16px; letter-spacing: 4px; color: #fff;">MAXIMA_DATACENTER</div>
     </header>
 
     <main>
         <section class="column">
-            <div class="section-label"><span>SYNTHESIZED_METRICS</span><span>DATA_STREAM</span></div>
+            <div class="section-label"><span>OMNI_METRICS</span><span>DATA_STREAM</span></div>
             <div class="hero-stats">
                 <div class="hero-value" id="ui-mvi">00</div>
                 <div class="hero-name" id="ui-name">AWAITING_INPUT</div>
@@ -119,22 +115,27 @@
             </div>
 
             <div class="data-matrix">
-                <div class="cell highlight-synth"><div class="cell-label">SYNTH-OFFENSE (SOR)</div><div class="cell-val" id="val-str">--</div></div>
-                <div class="cell highlight-synth"><div class="cell-label">TACTICAL-DEF (TDR)</div><div class="cell-val" id="val-def">--</div></div>
-                <div class="cell"><div class="cell-label">BAYESIAN CONF (B-CF)</div><div class="cell-val" id="val-mic">--</div></div>
-                <div class="cell"><div class="cell-label">OBJECTIVE BASE (OEI)</div><div class="cell-val" id="val-mac">--</div></div>
-                <div class="cell highlight-topo"><div class="cell-label">TOPO-GEOMETRY (TPG)</div><div class="cell-val" id="val-tpg">--</div></div>
-                <div class="cell"><div class="cell-label">1D HOLE DENSITY (H1)</div><div class="cell-val" id="val-h1" style="color: var(--text-dim);">--</div></div>
+                <div class="cell highlight-synth"><div class="cell-label">SYNTH-OFFENSE (SOR)</div><div class="cell-val" id="val-sor">--</div></div>
+                <div class="cell highlight-synth"><div class="cell-label">TACTICAL-DEF (TDR)</div><div class="cell-val" id="val-tdr">--</div></div>
+                
+                <div class="cell highlight-omni"><div class="cell-label">MICRO-CTRL (MCR)</div><div class="cell-val" id="val-mcr">--</div></div>
+                <div class="cell highlight-omni"><div class="cell-label">CLUTCH-FAC (CFI)</div><div class="cell-val" id="val-cfi">--</div></div>
+                
+                <div class="cell highlight-topo"><div class="cell-label">TOPO-GEOMET (TPG)</div><div class="cell-val" id="val-tpg">--</div></div>
+                <div class="cell"><div class="cell-label">RES-CONV (RCE)</div><div class="cell-val" id="val-rce">--</div></div>
+                
+                <div class="cell"><div class="cell-label">BAYES-CONF (B-CF)</div><div class="cell-val" id="val-bcf">--</div></div>
+                <div class="cell"><div class="cell-label">OBJ-BASE (OEI)</div><div class="cell-val" id="val-oei">--</div></div>
             </div>
 
             <div class="io-panel">
                 <input type="text" id="tagInput" placeholder="PLAYER TAG (#...)" spellcheck="false">
-                <button class="btn-prime" id="btn-engage" onclick="fetchAndAnalyze()">MAP TOPOLOGY PROTOCOL</button>
+                <button class="btn-prime" id="btn-engage" onclick="fetchAndAnalyze()">RUN OMNI-SCAN PROTOCOL</button>
             </div>
         </section>
 
         <section class="column">
-            <div class="section-label"><span>MANIFOLD_VECTORS</span><span>RADAR_PLOT</span></div>
+            <div class="section-label"><span>OCTAGONAL_VECTORS</span><span>RADAR_PLOT</span></div>
             <div class="vis-container">
                 <div id="radarWrapper">
                     <canvas id="mainChart"></canvas>
@@ -147,8 +148,8 @@
                     </div>
                     <div class="report-grid">
                         <div class="report-module module-full">
-                            <div class="module-title">TOPOLOGICAL_ANALYSIS (流形解析)</div>
-                            <div class="module-content">系統已載入代數拓樸模型。將透過玩家勝負場次與盃數的非線性關聯，投射出爬分軌跡的幾何特徵，偵測隱藏在數據中的「拓樸孔洞（無效勝負循環）」。</div>
+                            <div class="module-title">OMNI_ANALYSIS (全維度解析)</div>
+                            <div class="module-content">系統已載入八極能力矩陣 (Octagonal Omni-Matrix)。新增微操極限 (MCR)、逆境抗壓 (CFI) 與資源轉化 (RCE) 維度，全方位掃描目標的隱藏戰術天賦。</div>
                         </div>
                     </div>
                 </div>
@@ -158,15 +159,15 @@
         <section class="column">
             <div class="section-label"><span>ANALYSIS_LOG</span><span>PROXY_NETWORK</span></div>
             <div id="log-feed" class="sim-log">
-                <div class="log-line"><span class="log-ts">00:00:00</span> <span class="log-tag tag-sys">SYS</span> APEX-MANIFOLD V49.0 拓樸核心上線。</div>
-                <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-tag tag-topo">TOPO</span> 持續同調代理 (Persistent Homology Proxy) 引擎就緒。</div>
+                <div class="log-line"><span class="log-ts">00:00:00</span> <span class="log-tag tag-sys">SYS</span> OMNI-DIMENSION V50.0 核心上線。</div>
+                <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-tag tag-omni">OMNI</span> 微操與抗壓分析引擎預熱完成。</div>
             </div>
 
             <div class="data-box">
                 <div class="d-row"><span class="d-label">Raw Win Rate (p)</span><span class="d-val" id="sub-p">--</span></div>
-                <div class="d-row"><span class="d-label">Betti-1 Hole Proxy (H1)</span><span class="d-val" id="sub-h1" style="color: var(--stat-secondary);">--</span></div>
-                <div class="d-row"><span class="d-label">Euler Char Proxy (χ)</span><span class="d-val" id="sub-euler">--</span></div>
-                <div class="d-row"><span class="d-label">Topo Resonance (τ)</span><span class="d-val" id="sub-tau">--</span></div>
+                <div class="d-row"><span class="d-label">Micro-Control Proxy</span><span class="d-val" id="sub-mcr" style="color: var(--stat-tertiary);">--</span></div>
+                <div class="d-row"><span class="d-label">Clutch Resilience</span><span class="d-val" id="sub-cfi" style="color: var(--stat-tertiary);">--</span></div>
+                <div class="d-row"><span class="d-label">Resource Efficiency</span><span class="d-val" id="sub-rce">--</span></div>
             </div>
         </section>
     </main>
@@ -180,25 +181,26 @@
             chart = new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: ['SOR(綜合進攻)', 'TDR(戰術防守)', 'B-CF(貝氏置信)', 'OEI(客觀底盤)', 'TPG(拓樸幾何)', 'ASI(頂點合成)'],
+                    // 擴展為 8 維
+                    labels: ['SOR(綜合進攻)', 'TDR(戰術防守)', 'MCR(微操極限)', 'RCE(資源轉化)', 'TPG(拓樸幾何)', 'CFI(逆境抗壓)', 'B-CF(貝氏置信)', 'OEI(客觀底盤)'],
                     datasets: [{
-                        label: 'MANIFOLD_VECTOR',
-                        data: [0,0,0,0,0,0],
-                        backgroundColor: 'rgba(179, 136, 255, 0.15)',
-                        borderColor: '#b388ff',
+                        label: 'OMNI_VECTOR',
+                        data: [0,0,0,0,0,0,0,0],
+                        backgroundColor: 'rgba(0, 229, 255, 0.1)',
+                        borderColor: '#fbbf24',
                         borderWidth: 2,
-                        pointRadius: 4,
+                        pointRadius: 3,
                         pointBackgroundColor: '#fff',
-                        pointBorderColor: '#b388ff'
+                        pointBorderColor: '#fbbf24'
                     }]
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false,
                     scales: {
                         r: {
-                            angleLines: { color: 'rgba(179, 136, 255, 0.15)' },
-                            grid: { color: 'rgba(179, 136, 255, 0.15)' },
-                            pointLabels: { color: '#94a3b8', font: { family: 'Share Tech Mono', size: 11, weight: 'bold' } },
+                            angleLines: { color: 'rgba(255, 255, 255, 0.05)' },
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            pointLabels: { color: '#94a3b8', font: { family: 'Share Tech Mono', size: 10, weight: 'bold' } },
                             ticks: { display: false, max: 100, min: 0 }
                         }
                     },
@@ -209,139 +211,124 @@
 
         async function fetchAndAnalyze() {
             let tagRaw = document.getElementById('tagInput').value.trim();
-            if(!tagRaw) return writeLog("TOPO", "請輸入實體座標 (玩家標籤) 以投射拓樸流形。");
+            if(!tagRaw) return writeLog("OMNI", "請輸入實體座標 (玩家標籤)。");
 
             const btn = document.getElementById('btn-engage');
-            btn.disabled = true; btn.innerText = "MAPPING TOPOLOGY...";
+            btn.disabled = true; btn.innerText = "SCANNING DIMENSIONS...";
 
             let tagClean = tagRaw.replace('#', '');
-            writeLog("SYS", `擷取空間座標 [#${tagClean}]，啟動同調代理運算...`);
+            writeLog("SYS", `擷取全維度數據 [#${tagClean}]...`);
             
             try {
                 const response = await fetch(`/api/clash-proxy?tag=${encodeURIComponent('#'+tagClean)}`);
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const rawData = await response.json();
-                runManifoldModel({ name: rawData.name || "UNKNOWN", wins: rawData.wins || 0, losses: rawData.losses || 0, trophies: rawData.trophies || 0 });
+                runOmniModel({ name: rawData.name || "UNKNOWN", wins: rawData.wins || 0, losses: rawData.losses || 0, trophies: rawData.trophies || 0 });
             } catch (error) {
-                writeLog("TOPO", `API 未響應。載入預設 [拓樸畸變體] 測試數據。`);
-                // 測試數據：勝率普通，但場次極多盃數偏低 (代表充滿拓樸孔洞)
-                runManifoldModel({ name: "TOPOLOGICAL_ANOMALY", wins: 12000, losses: 11500, trophies: 6500 });
+                writeLog("OMNI", `API 未響應。載入 [全能型職業選手] 測試矩陣。`);
+                runOmniModel({ name: "OMNI_PRO_PLAYER", wins: 8500, losses: 5200, trophies: 8200 });
             } finally {
-                btn.disabled = false; btn.innerText = "MAP TOPOLOGY PROTOCOL";
+                btn.disabled = false; btn.innerText = "RUN OMNI-SCAN PROTOCOL";
             }
         }
 
-        // V49.0 加入代數拓樸運算
-        function runManifoldModel(data) {
-            writeLog("CALC", "計算貝蒂數代理與歐拉特徵...");
+        function runOmniModel(data) {
+            writeLog("CALC", "執行八極能力特徵映射...");
 
-            const W = data.wins;
-            const L = data.losses;
-            const N = W + L || 1; 
-            const T = data.trophies;
+            const W = data.wins; const L = data.losses; const N = W + L || 1; const T = data.trophies;
             const p = W / N; 
 
-            // 1. 基礎貝氏與 S 曲線
+            // 基礎參數
             const theta = (W + 50) / (N + 100);
             const WLB = Math.max(0, (p + 1.92/N - 1.96*Math.sqrt((p*(1-p))/N + 0.96/(N*N))) / (1 + 3.84/N));
-            const OEI = (Math.log10(T > 10 ? T : 10) / 3.9) * (1 + (W - L) / N);
+            const OEI_raw = (Math.log10(T > 10 ? T : 10) / 3.9) * (1 + (W - L) / N);
             const sigmoidMod = 1 / (1 + Math.exp(-12 * (theta - 0.5)));
 
-            // 2. 拓樸幾何核心 (Algebraic Topology Proxy)
-            // H1 (Betti-1 Proxy): 1維拓樸孔洞密度。敗場越多、總場次越多、盃數越低，孔洞越大。
+            // 拓樸參數 H1
             const H1_raw = (L * Math.log(N + 1)) / ((T > 0 ? T : 1) + 100);
-            const H1 = Math.min(1.0, H1_raw * 0.1); // 正規化
+            const H1 = Math.min(1.0, H1_raw * 0.1); 
+
+            // ================= 新增維度 =================
+            // 1. 微操極限 MCR
+            const MCR_calc = (W / (L + 1)) * Math.log(T + 1) * 1.5;
             
-            // Euler Characteristic Proxy: 流形結構完整性
-            const eulerChar = (W - L) - (H1 * 1000); 
+            // 2. 資源轉化 RCE (每場對戰獲得的盃數效率)
+            const RCE_calc = (T / (N + 1)) * p * 15;
 
-            // TPG (Topological Geometry Index): 指數衰減映射，孔洞越多分數越低
-            const k_topo = 4.5;
-            const TPG_raw = Math.exp(-k_topo * H1);
+            // 3. 逆境抗壓 CFI (高威爾遜極限 + 低拓樸孔洞)
+            const CFI_calc = (WLB / (p || 1)) * Math.exp(-4 * H1) * 100;
 
-            // ==========================================
-            const SOR_raw = sigmoidMod * OEI * 1.5; 
-            const TDR_raw = Math.sqrt(WLB * (1 - L/N)) * OEI * 1.2;
-            const B_CF = Math.max(0.1, 1 - (1.96 * Math.sqrt((theta * (1 - theta)) / (N + 100))));
-
+            // ================= 正規化映射 (0~100) =================
             const mapScore = (val, max) => Math.min(99.9, Math.max(0.1, (val / max) * 100));
 
-            const score_SOR = mapScore(SOR_raw, 1.2); 
-            const score_TDR = mapScore(TDR_raw, 0.8);
-            const score_BCF = mapScore(B_CF, 1.0); 
-            const score_OEI = mapScore(OEI, 1.2);
-            
-            // 將拓樸幾何轉為百分制評分
-            const score_TPG = TPG_raw * 100;
-            
-            // 新版 ASI 演算法：加入拓樸權重 (TPG 作為動態調節因子)
-            const base_ASI = (score_SOR * 0.45) + (score_TDR * 0.35) + (score_OEI * 0.2);
-            // 如果拓樸幾何極差(充滿無效循環)，ASI 會受到懲罰；反之則有微小加成
-            const topo_multiplier = 0.8 + (TPG_raw * 0.4); // 0.8x ~ 1.2x
-            const score_ASI = Math.min(99.9, base_ASI * topo_multiplier);
+            const score_SOR = mapScore(sigmoidMod * OEI_raw * 1.5, 1.2); 
+            const score_TDR = mapScore(Math.sqrt(WLB * (1 - L/N)) * OEI_raw * 1.2, 0.8);
+            const score_MCR = mapScore(MCR_calc, 25);  // 微操
+            const score_RCE = mapScore(RCE_calc, 12);  // 轉化
+            const score_TPG = mapScore(Math.exp(-4.5 * H1), 1.0); // 拓樸
+            const score_CFI = mapScore(CFI_calc, 95);  // 抗壓
+            const score_BCF = mapScore(Math.max(0.1, 1 - (1.96 * Math.sqrt((theta * (1 - theta)) / (N + 100)))), 1.0); 
+            const score_OEI = mapScore(OEI_raw, 1.2);
 
-            const scores = [score_SOR, score_TDR, score_BCF, score_OEI, score_TPG, score_ASI];
-            updateDashboard(data, scores, p, H1, eulerChar, TPG_raw);
+            // 綜合頂點指數 ASI
+            const score_ASI = (score_SOR*0.15) + (score_TDR*0.15) + (score_MCR*0.2) + (score_RCE*0.1) + (score_TPG*0.1) + (score_CFI*0.15) + (score_OEI*0.15);
+
+            const scores = [score_SOR, score_TDR, score_MCR, score_RCE, score_TPG, score_CFI, score_BCF, score_OEI];
+            updateDashboard(data, scores, p, MCR_calc, CFI_calc, RCE_calc, score_ASI);
         }
 
-        function updateDashboard(data, scores, p, h1, euler, tau) {
-            const asi = scores[5]; 
-            const tpg = scores[4];
-            
+        function updateDashboard(data, scores, p, mcr_raw, cfi_raw, rce_raw, asi) {
             document.getElementById('ui-mvi').innerText = Math.round(asi);
             document.getElementById('ui-name').innerText = data.name.toUpperCase();
             
-            document.getElementById('val-str').innerText = scores[0].toFixed(1);
-            document.getElementById('val-def').innerText = scores[1].toFixed(1);
-            document.getElementById('val-mic').innerText = scores[2].toFixed(1);
-            document.getElementById('val-mac').innerText = scores[3].toFixed(1);
-            document.getElementById('val-tpg').innerText = tpg.toFixed(1);
-            document.getElementById('val-h1').innerText = h1.toFixed(3);
+            document.getElementById('val-sor').innerText = scores[0].toFixed(1);
+            document.getElementById('val-tdr').innerText = scores[1].toFixed(1);
+            document.getElementById('val-mcr').innerText = scores[2].toFixed(1);
+            document.getElementById('val-rce').innerText = scores[3].toFixed(1);
+            document.getElementById('val-tpg').innerText = scores[4].toFixed(1);
+            document.getElementById('val-cfi').innerText = scores[5].toFixed(1);
+            document.getElementById('val-bcf').innerText = scores[6].toFixed(1);
+            document.getElementById('val-oei').innerText = scores[7].toFixed(1);
 
             document.getElementById('sub-p').innerText = (p * 100).toFixed(2) + "%";
-            document.getElementById('sub-h1').innerText = h1.toFixed(3);
-            document.getElementById('sub-euler').innerText = euler.toFixed(0);
-            document.getElementById('sub-tau').innerText = tau.toFixed(3);
+            document.getElementById('sub-mcr').innerText = mcr_raw.toFixed(2);
+            document.getElementById('sub-cfi').innerText = cfi_raw.toFixed(2);
+            document.getElementById('sub-rce').innerText = rce_raw.toFixed(2);
 
             chart.data.datasets[0].data = scores;
             chart.update();
 
-            generateTopoReport(scores[0], scores[1], asi, tpg, h1);
+            generateOmniReport(scores, asi);
         }
 
-        function generateTopoReport(sor, tdr, asi, tpg, h1) {
+        function generateOmniReport(scores, asi) {
             const rc = document.getElementById('report-container');
-            let archetype = "STABLE MANIFOLD (穩定流形)";
-            let threat = "THREAT: MODERATE";
-            let color = "#82b1ff";
-            let analysis = "爬分軌跡符合標準歐拉特徵，未檢測出明顯的無效勝負循環。數據流形平滑。";
-            let weakness = "流形結構過於標準，缺乏破局的突變爆發力。";
-            let counter = "採用標準戰術應對即可。";
+            const [sor, tdr, mcr, rce, tpg, cfi, bcf, oei] = scores;
 
-            if (tpg < 40 && h1 > 0.6) {
-                archetype = "TOPOLOGICAL ANOMALY (拓樸畸變體)";
-                threat = "THREAT: LOW (TILT LOOP)";
-                color = "#ff1744"; 
-                analysis = `檢測到大量的 1 維拓樸孔洞 (H1: ${h1.toFixed(2)})。該目標陷入了嚴重的勝負折疊，耗費極大場次卻無法提升盃數，代表其心理狀態或戰術邏輯存在致命迴圈。`;
-                weakness = "心態極度脆弱（處於 Tilt 狀態）。容易在逆風時做出非理性的激進防守，導致崩盤。";
-                counter = "開局給予高壓試探。一旦他們在初期處於劣勢，其拓樸結構極易自我坍塌，放棄抵抗。";
-                writeLog("TOPO", "警告：偵測到軌跡中的拓樸孔洞過多，目標處於 Tilt 循環。");
-            } 
-            else if (asi >= 85 && tpg > 85) {
-                archetype = "FLAWLESS GEOMETRY (完美幾何)";
-                threat = "THREAT: EXTREME";
-                color = "#00e5ff"; 
-                analysis = `拓樸幾何指數 (TPG: ${tpg.toFixed(1)}) 極高，爬分軌跡近乎為一條無折疊的平滑射線。勝率與盃數轉化率達到了數學極限。`;
-                weakness = "理論上無結構性弱點。唯一盲點是未曾經歷過「拓樸坍塌」，可能對極端的混亂陣型缺乏適應力。";
-                counter = "必須引入「混沌」。使用高度非主流或不可預測的卡組，迫使對手離開其完美的演算軌跡。";
-            }
-            else if (sor > tdr + 15) {
-                archetype = "ASYMMETRIC PROJECTILE (非對稱投射物)";
-                threat = "THREAT: HIGH (OFFENSIVE)";
-                color = "#b388ff"; 
-                analysis = "軌跡流形呈現出強烈的向外張力（進攻大於防守）。";
-                weakness = "防禦基底 (WLB) 不足以支撐其張力。";
-                counter = "避其鋒芒，防守反推。";
+            let archetype = "BALANCED COMBATANT (均衡戰鬥員)";
+            let threat = "THREAT: MODERATE";
+            let color = "#00e5ff";
+            let analysis = "八極能力矩陣顯示發展均衡。";
+            let feature = "無明顯短板，但缺乏破局特長。";
+
+            if (mcr > 85 && cfi > 80) {
+                archetype = "CLUTCH MICRO-MASTER (極限微操大師)";
+                threat = "THREAT: EXTREME (LATE GAME)";
+                color = "#fbbf24"; 
+                analysis = `微操極限 (MCR: ${mcr.toFixed(1)}) 與逆境抗壓 (CFI: ${cfi.toFixed(1)}) 突破閾值。這意味著該目標在倒數階段或落後時，能透過細節操作打出不可思議的翻盤。`;
+                feature = "心態如磐石，越是殘局越難纏。";
+            } else if (sor > 80 && rce > 80) {
+                archetype = "EFFICIENT AGGRESSOR (高效掠奪者)";
+                threat = "THREAT: HIGH (TEMPO)";
+                color = "#ff1744";
+                analysis = `資源轉化率極高 (RCE: ${rce.toFixed(1)})。這類玩家不依賴堆疊場次，而是透過強大的進攻節奏快速終結比賽，上分效率驚人。`;
+                feature = "善於滾雪球，一旦拿到優勢就會窒息式壓制。";
+            } else if (tdr > 80 && cfi < 50) {
+                archetype = "FRAGILE BASTION (脆皮堡壘)";
+                threat = "THREAT: MODERATE (DEFENSIVE)";
+                color = "#b388ff";
+                analysis = "防守數據華麗，但抗壓指數偏低。順風局防守滴水不漏，但一旦被破塔，心態極易引發崩盤與無效循環。";
+                feature = "無法承受持續的高壓嘲諷或快攻混亂。";
             }
 
             rc.innerHTML = `
@@ -351,19 +338,16 @@
                 </div>
                 <div class="report-grid">
                     <div class="report-module module-full">
-                        <div class="module-title">TOPOLOGICAL_ANALYSIS (流形解析)</div>
+                        <div class="module-title">OMNI_PROFILING (全維度解析)</div>
                         <div class="module-content">${analysis}</div>
                     </div>
-                    <div class="report-module">
-                        <div class="module-title">STRUCTURAL_FLAW (結構性盲區)</div>
-                        <div class="module-content">${weakness}</div>
-                    </div>
-                    <div class="report-module">
-                        <div class="module-title">COUNTER_TOPOLOGY (反制拓樸)</div>
-                        <div class="module-content">${counter}</div>
+                    <div class="report-module module-full">
+                        <div class="module-title">TACTICAL_SIGNATURE (戰術特徵)</div>
+                        <div class="module-content">${feature}</div>
                     </div>
                 </div>
             `;
+            writeLog("OMNI", `能力矩陣掃描完成：評定為 [${archetype}]`);
         }
 
         function writeLog(tag, msg) {
@@ -371,7 +355,7 @@
             const div = document.createElement('div'); div.className = 'log-line';
             const now = new Date(); const ts = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
             let tagClass = 'tag-sys';
-            if(tag === 'CALC') tagClass = 'tag-calc'; if(tag === 'TOPO') tagClass = 'tag-topo';
+            if(tag === 'CALC') tagClass = 'tag-calc'; if(tag === 'OMNI') tagClass = 'tag-omni';
             div.innerHTML = `<span class="log-ts">${ts}</span><span class="log-tag ${tagClass}">${tag}</span> ${msg}`;
             feed.prepend(div);
             if(feed.children.length > LOG_LIMIT) feed.lastChild.remove();

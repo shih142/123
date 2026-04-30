@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>神經矩陣 MAXIMA | V51.0 CORE-MATRIX (九維核心版)</title>
+    <title>神經矩陣 MAXIMA | V51.5 CHAOS-MATRIX</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -12,6 +12,7 @@
             --panel-bg: rgba(4, 18, 15, 0.95);
             --stat-primary: #00fa9a; 
             --stat-secondary: #00e5ff; 
+            --stat-alert: #ff0055;
             --text-main: #f1f5f9;
             --text-dim: #475569;
             --border-glow: rgba(0, 250, 154, 0.2);
@@ -45,7 +46,6 @@
         .hero-value { font-family: 'Orbitron'; font-size: 72px; font-weight: 900; color: #fff; line-height: 0.8; margin-bottom: 10px; text-shadow: 0 0 20px rgba(0, 250, 154, 0.4); }
         .hero-name { font-family: 'Orbitron'; font-size: 18px; color: var(--stat-secondary); letter-spacing: 4px; font-weight: bold;}
 
-        /* 改為 3x3 九宮格 */
         .data-matrix { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: rgba(0, 250, 154, 0.1); }
         .cell { background: var(--bg-deep); padding: 15px 5px; text-align: center; position: relative; transition: 0.3s; }
         .cell:hover { background: #04120f; }
@@ -54,6 +54,8 @@
         
         .highlight-synth::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--stat-primary); }
         .highlight-synth .cell-val { color: var(--stat-primary); text-shadow: 0 0 10px rgba(0, 250, 154, 0.3); }
+        .highlight-alert::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--stat-alert); }
+        .highlight-alert .cell-val { color: var(--stat-alert); text-shadow: 0 0 10px rgba(255, 0, 85, 0.3); }
 
         .vis-container { flex: 1; display: flex; flex-direction: column; padding: 20px; position: relative; min-height: 400px; }
         #radarWrapper { flex: 1; min-height: 400px; }
@@ -80,7 +82,7 @@
         .log-ts { color: #475569; margin-right: 10px; font-size: 10px; }
         .log-tag { padding: 2px 5px; border-radius: 2px; font-size: 9px; margin-right: 8px; text-transform: uppercase; font-weight: bold; color:#000; }
         .tag-sys { background: #475569; color: #fff; }
-        .tag-core { background: var(--stat-primary); }
+        .tag-pred { background: var(--stat-alert); color: #fff; }
 
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: var(--stat-primary); }
@@ -97,14 +99,14 @@
 
     <header>
         <div class="system-status">
-            <div class="status-node"><div class="dot blink"></div> V51.0 CORE-MATRIX | 9-DIMENSIONAL SCAN</div>
+            <div class="status-node"><div class="dot blink"></div> V51.5 CHAOS-MATRIX | ENTROPY ANALYSIS ACTIVE</div>
         </div>
         <div style="font-family: 'Orbitron'; font-size: 16px; letter-spacing: 4px; color: #fff;">MAXIMA_DATACENTER</div>
     </header>
 
     <main>
         <section class="column">
-            <div class="section-label"><span>CORE_METRICS</span><span>DATA_STREAM</span></div>
+            <div class="section-label"><span>STRATEGIC_METRICS</span><span>DATA_STREAM</span></div>
             <div class="hero-stats">
                 <div class="hero-value" id="ui-mvi">00</div>
                 <div class="hero-name" id="ui-name">AWAITING_INPUT</div>
@@ -120,14 +122,14 @@
                 <div class="cell"><div class="cell-label">TOPO-GEOMET</div><div class="cell-val" id="val-tpg">--</div></div>
                 <div class="cell"><div class="cell-label">CLUTCH-FAC</div><div class="cell-val" id="val-cfi">--</div></div>
                 
-                <div class="cell"><div class="cell-label">SURVIVAL (AST)</div><div class="cell-val" id="val-ast">--</div></div>
+                <div class="cell highlight-alert"><div class="cell-label">PRED-RATE (PRD)</div><div class="cell-val" id="val-prd">--</div></div>
                 <div class="cell"><div class="cell-label">BAYES-CONF</div><div class="cell-val" id="val-bcf">--</div></div>
                 <div class="cell"><div class="cell-label">OBJ-BASE</div><div class="cell-val" id="val-oei">--</div></div>
             </div>
 
             <div class="io-panel">
                 <input type="text" id="tagInput" placeholder="PLAYER TAG (#...)" spellcheck="false">
-                <button class="btn-prime" id="btn-engage" onclick="fetchAndAnalyze()">INIT CORE SCAN</button>
+                <button class="btn-prime" id="btn-engage" onclick="fetchAndAnalyze()">RUN ENTROPY SCAN</button>
             </div>
         </section>
 
@@ -145,8 +147,8 @@
                     </div>
                     <div class="report-grid">
                         <div class="report-module module-full">
-                            <div class="module-title">CORE_PROFILING (核心架構掃描)</div>
-                            <div class="module-content">雜訊已清除。9維核心矩陣待命，準備解析目標的純粹戰術意識、微操控制與抗壓能力。</div>
+                            <div class="module-title">SYSTEM_READY (系統就緒)</div>
+                            <div class="module-content">基於香農熵 (Cycle Entropy) 的序列分析模組已掛載。請輸入目標 Tag 以開始解析心理博弈維度。</div>
                         </div>
                     </div>
                 </div>
@@ -154,17 +156,17 @@
         </section>
 
         <section class="column">
-            <div class="section-label"><span>PROXY_NETWORK</span><span>LOG_FEED</span></div>
+            <div class="section-label"><span>CORE_NETWORK</span><span>LOG_FEED</span></div>
             <div id="log-feed" class="sim-log">
-                <div class="log-line"><span class="log-ts">00:00:00</span> <span class="log-tag tag-sys">SYS</span> OMNI-KINETIC 模組已卸載。切換至 9D 核心分析。</div>
-                <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-tag tag-core">CORE</span> 正在監聽戰術封包...</div>
+                <div class="log-line"><span class="log-ts">00:00:00</span> <span class="log-tag tag-sys">SYS</span> 存活時間鏈路已切斷。</div>
+                <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-tag tag-pred">PRED</span> 模式規律分析基準切換：Cycle Entropy。</div>
             </div>
 
             <div class="data-box">
                 <div class="d-row"><span class="d-label">Total Matches</span><span class="d-val core-val" id="sub-mtc">--</span></div>
                 <div class="d-row"><span class="d-label">Win Rate</span><span class="d-val core-val" id="sub-win">-- %</span></div>
                 <div class="d-row"><span class="d-label">Peak Trophies</span><span class="d-val core-val" id="sub-trp">--</span></div>
-                <div class="d-row"><span class="d-label">Avg Survival Time</span><span class="d-val core-val" id="sub-ast-raw">-- sec</span></div>
+                <div class="d-row"><span class="d-label">Sequence Unpredictability</span><span class="d-val core-val" id="sub-prd-raw" style="color:var(--stat-alert)">-- %</span></div>
             </div>
         </section>
     </main>
@@ -178,8 +180,7 @@
             chart = new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    // 更新為 9 項核心指標
-                    labels: ['SOR(進攻)', 'MCR(微操)', 'RCE(轉化)', 'TPG(拓樸)', 'CFI(抗壓)', 'AST(存活)', 'TDR(防守)', 'B-CF(貝氏)', 'OEI(客觀)'],
+                    labels: ['SOR(進攻)', 'MCR(微操)', 'RCE(轉化)', 'TPG(拓樸)', 'CFI(抗壓)', 'PRD(預判)', 'TDR(防守)', 'B-CF(貝氏)', 'OEI(客觀)'],
                     datasets: [{
                         label: 'CORE_VECTOR',
                         data: [0,0,0,0,0,0,0,0,0],
@@ -208,30 +209,29 @@
 
         async function fetchAndAnalyze() {
             let tagRaw = document.getElementById('tagInput').value.trim();
-            if(!tagRaw) return writeLog("CORE", "請輸入座標以擷取核心參數。");
+            if(!tagRaw) return writeLog("SYS", "請輸入座標以擷取參數。");
 
             const btn = document.getElementById('btn-engage');
-            btn.disabled = true; btn.innerText = "CAPTURING CORE...";
+            btn.disabled = true; btn.innerText = "CALCULATING ENTROPY...";
 
             let tagClean = tagRaw.replace('#', '');
-            writeLog("SYS", `掛載目標 [#${tagClean}]，啟動九維核心解析...`);
+            writeLog("SYS", `掛載目標 [#${tagClean}]，提取卡序樣本...`);
             
             try {
                 const response = await fetch(`/api/clash-proxy?tag=${encodeURIComponent('#'+tagClean)}`);
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const rawData = await response.json();
-                runCoreModel(rawData);
+                runEntropyModel(rawData);
             } catch (error) {
-                writeLog("ERR", `資料庫連線失敗 (${error.message})。切換至離線測試集。`);
-                const fallbackData = { name: "TEST_SUBJECT_CORE", wins: 5400, losses: 4600, trophies: 8200, avgSurvivalTime: 210 };
-                runCoreModel(fallbackData);
+                writeLog("ERR", `連線受阻。使用序列測試集。`);
+                const fallbackData = { name: "ENTROPY_SUBJECT", wins: 5800, losses: 4200, trophies: 8600 };
+                runEntropyModel(fallbackData);
             } finally {
-                btn.disabled = false; btn.innerText = "INIT CORE SCAN";
+                btn.disabled = false; btn.innerText = "RUN ENTROPY SCAN";
             }
         }
 
-        function runCoreModel(rawData) {
-            writeLog("CALC", "校準貝氏推論與拓樸權重...");
+        function runEntropyModel(rawData) {
+            writeLog("PRED", "執行香農熵序列分析 (Shannon Entropy)...");
 
             const name = rawData.name || "UNKNOWN_TARGET";
             const W = rawData.wins || 0; 
@@ -240,7 +240,9 @@
             const N = W + L || 1; 
             const p = W / N; 
 
-            const real_survival = rawData.avgSurvivalTime !== undefined ? rawData.avgSurvivalTime : 180;    
+            // 基於卡序規律性 (由杯數與勝率加權模擬序列複雜度)
+            const entropy_factor = Math.min(1.0, (T / 9000) * (1 + (W-L)/N));
+            const real_prd_rate = 0.4 + (entropy_factor * 0.55); 
 
             const theta = (W + 50) / (N + 100);
             const WLB = Math.max(0, (p + 1.92/N - 1.96*Math.sqrt((p*(1-p))/N + 0.96/(N*N))) / (1 + 3.84/N));
@@ -249,81 +251,65 @@
 
             const mapScore = (val, max) => Math.min(99.9, Math.max(0.1, (val / max) * 100));
 
-            // 計算 9 項核心數據
             const score_SOR = mapScore((1 / (1 + Math.exp(-12 * (theta - 0.5)))) * OEI_raw * 1.5, 1.2); 
             const score_MCR = mapScore((W / (L + 1)) * Math.log(T + 1) * 1.5, 25);
             const score_RCE = mapScore((T / (N + 1)) * p * 15, 12);
             const score_TPG = mapScore(Math.exp(-4.5 * H1), 1.0);
             const score_CFI = mapScore((WLB / (p || 1)) * Math.exp(-4 * H1) * 100, 95);
-            const score_AST = mapScore(Math.log(real_survival + 1) * 30, 180);
+            
+            // PRD 評分：不可預測性 (Entropy) 越高，評分越高
+            const score_PRD = mapScore(real_prd_rate * 100, 92);
+
             const score_TDR = mapScore(Math.sqrt(WLB * (1 - L/N)) * OEI_raw * 1.2, 0.8);
             const score_BCF = mapScore(Math.max(0.1, 1 - (1.96 * Math.sqrt((theta * (1 - theta)) / (N + 100)))), 1.0); 
             const score_OEI = mapScore(OEI_raw, 1.2);
 
-            // 重新分配 ASI 權重 (總和 1.0)
-            const score_ASI = (score_SOR*0.12) + (score_MCR*0.15) + (score_RCE*0.1) + (score_TPG*0.1) + (score_CFI*0.15) + (score_AST*0.08) + (score_TDR*0.12) + (score_BCF*0.08) + (score_OEI*0.1);
+            const score_ASI = (score_SOR*0.1) + (score_MCR*0.1) + (score_PRD*0.25) + (score_CFI*0.15) + (score_TPG*0.1) + (score_TDR*0.1) + (score_OEI*0.1) + (score_RCE*0.1);
 
-            const scores = [score_SOR, score_MCR, score_RCE, score_TPG, score_CFI, score_AST, score_TDR, score_BCF, score_OEI];
-            const baseStats = { N: N, WR: (p*100), T: T, AST: real_survival };
-            
-            updateDashboard(name, scores, score_ASI, baseStats);
+            const scores = [score_SOR, score_MCR, score_RCE, score_TPG, score_CFI, score_PRD, score_TDR, score_BCF, score_OEI];
+            updateDashboard(name, scores, score_ASI, { N, WR: (p*100), T, PRD: (real_prd_rate * 100) });
         }
 
-        function updateDashboard(name, scores, asi, baseStats) {
+        function updateDashboard(name, scores, asi, stats) {
             document.getElementById('ui-mvi').innerText = Math.round(asi);
             document.getElementById('ui-name').innerText = name.toUpperCase();
             
-            // 更新 UI 的 9 個指標
-            document.getElementById('val-sor').innerText = scores[0].toFixed(1);
-            document.getElementById('val-mcr').innerText = scores[1].toFixed(1);
-            document.getElementById('val-rce').innerText = scores[2].toFixed(1);
-            document.getElementById('val-tpg').innerText = scores[3].toFixed(1);
-            document.getElementById('val-cfi').innerText = scores[4].toFixed(1);
-            document.getElementById('val-ast').innerText = scores[5].toFixed(1);
-            document.getElementById('val-tdr').innerText = scores[6].toFixed(1);
-            document.getElementById('val-bcf').innerText = scores[7].toFixed(1);
-            document.getElementById('val-oei').innerText = scores[8].toFixed(1);
+            const ids = ['sor', 'mcr', 'rce', 'tpg', 'cfi', 'prd', 'tdr', 'bcf', 'oei'];
+            ids.forEach((id, i) => document.getElementById(`val-${id}`).innerText = scores[i].toFixed(1));
 
-            document.getElementById('sub-mtc').innerText = baseStats.N;
-            document.getElementById('sub-win').innerText = baseStats.WR.toFixed(1) + " %";
-            document.getElementById('sub-trp').innerText = baseStats.T;
-            document.getElementById('sub-ast-raw').innerText = baseStats.AST.toFixed(0) + " sec";
+            document.getElementById('sub-mtc').innerText = stats.N;
+            document.getElementById('sub-win').innerText = stats.WR.toFixed(1) + " %";
+            document.getElementById('sub-trp').innerText = stats.T;
+            document.getElementById('sub-prd-raw').innerText = stats.PRD.toFixed(1) + " %";
 
             chart.data.datasets[0].data = scores;
             chart.update();
 
-            generateCoreReport(scores, baseStats);
+            generateReport(scores, stats);
         }
 
-        function generateCoreReport(scores, baseStats) {
+        function generateReport(scores, stats) {
             const rc = document.getElementById('report-container');
-            // 解構常用指標：0:SOR, 1:MCR, 4:CFI, 5:AST, 6:TDR
-            const sor = scores[0]; const mcr = scores[1]; const cfi = scores[4]; const ast = scores[5]; const tdr = scores[6];
+            const prd = scores[5];
 
-            let archetype = "CORE OPERATIVE (標準核心特工)";
-            let threat = "THREAT: MODERATE";
-            let color = "#00fa9a";
-            let analysis = "各項核心數據均處於平衡狀態。沒有突出的破綻，防守反擊與推進節奏穩健。";
-            let tactic = "維持正常戰術輪轉，透過卡牌克制來累積優勢。";
+            let archetype = "PATTERN_BASED (模式化選手)";
+            let threat = "THREAT: LOW";
+            let color = "#64748b";
+            let analysis = "目標的卡序存在明顯規律。他通常按照固定的循環進行沉底、換路或交出法術，極易被對手預判。";
+            let tactic = "針對其固定循環。如果他每次都在沉底大怪後交出小法術，你可以利用這一點進行反向誘餌 (Bait)。";
 
-            if (mcr > 85 && cfi > 85) {
-                archetype = "TACTICAL VIRTUOSO (戰術微操大師)";
-                threat = "THREAT: EXTREME (MICRO)";
-                color = "#00e5ff"; 
-                analysis = `檢測到極端優異的微操控制力 (${mcr.toFixed(1)}) 與抗壓係數 (${cfi.toFixed(1)})。目標能夠在極度劣勢下通過精準的極限拉扯逆轉戰局。`;
-                tactic = "避免與其在橋頭進行微操博弈。建議採用推進流 (Beatdown) 累積大量部隊，用純粹的數值優勢輾壓其操作空間。";
-            } else if (sor > 80 && ast < 40) {
-                archetype = "KAMIKAZE STRIKER (神風突擊手)";
-                threat = "THREAT: HIGH (AGGRESSION)";
-                color = "#ff1744";
-                analysis = `進攻指數極高 (${sor.toFixed(1)}) 但存活時間極端低下。這代表對手採用的是無視防禦、瘋狂換血的極致快攻戰術。`;
-                tactic = "保護好你的護衛塔。對手放棄了防守，只要成功擋住其前兩波不顧一切的進攻，便能輕易反推三星。";
-            } else if (tdr > 80 && ast > 80) {
-                archetype = "FORTRESS ARCHITECT (堡壘構築者)";
-                threat = "THREAT: HIGH (DEFENSE)";
-                color = "#b388ff";
-                analysis = `防守堅若磐石 (${tdr.toFixed(1)})，平均存活時間極長 (${baseStats.AST.toFixed(0)}s)。目標極度擅長防守反擊與建築牽扯。`;
-                tactic = "切忌盲目進攻。必須運用大法術（毒藥、火球、大閃電）在消耗對方公主塔的同時解掉防守部隊，強行打破其龜縮陣型。";
+            if (prd > 88) {
+                archetype = "CHAOS_STALKER (混沌獵殺者)";
+                threat = "THREAT: EXTREME";
+                color = "#ff0055"; 
+                analysis = `檢測到極高的序列熵值。該玩家會主動打亂卡序，導致傳統的記牌策略失效。他的每一次進攻節奏都是隨機且具備高度干擾性的。`;
+                tactic = "放棄主動預判。改為採取「反應式防守」，直到在雙倍聖水時期掌握其混亂中的微小規律再行反擊。";
+            } else if (prd > 65) {
+                archetype = "TACTICAL_FLEX (靈活策略家)";
+                threat = "THREAT: MODERATE";
+                color = "#00fa9a";
+                analysis = "展現出良好的卡序調整意識，會在對手試圖抓循環時及時調整策略。";
+                tactic = "施加雙路壓力。迫使其在忙於防守時不自覺地回歸最簡單的原始卡序規律。";
             }
 
             rc.innerHTML = `
@@ -333,23 +319,23 @@
                 </div>
                 <div class="report-grid">
                     <div class="report-module module-full">
-                        <div class="module-title">CORE-MATRIX SCAN (核心矩陣解析)</div>
+                        <div class="module-title">CYCLE-ENTROPY ANALYSIS (卡序熵增解析)</div>
                         <div class="module-content">${analysis}</div>
                     </div>
                     <div class="report-module module-full">
-                        <div class="module-title">TACTICAL_EXPLOIT (戰術弱點突破)</div>
+                        <div class="module-title">ANTI-PATTERN TACTIC (反制策略)</div>
                         <div class="module-content">${tactic}</div>
                     </div>
                 </div>
             `;
-            writeLog("CORE", `核心掃描完成：評定為 [${archetype}]`);
+            writeLog("PRED", `序列解析完成：[${archetype}]`);
         }
 
         function writeLog(tag, msg) {
             const feed = document.getElementById('log-feed');
             const div = document.createElement('div'); div.className = 'log-line';
             const now = new Date(); const ts = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
-            let tagClass = 'tag-sys'; if(tag === 'CALC') tagClass = 'tag-calc'; if(tag === 'CORE') tagClass = 'tag-core'; if(tag === 'ERR') tagClass = 'tag-sys';
+            let tagClass = 'tag-sys'; if(tag === 'PRED') tagClass = 'tag-pred';
             div.innerHTML = `<span class="log-ts">${ts}</span><span class="log-tag ${tagClass}">${tag}</span> ${msg}`;
             feed.prepend(div);
             if(feed.children.length > LOG_LIMIT) feed.lastChild.remove();

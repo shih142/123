@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEURAL-X OMEGA v15.2 | Quantum Analysis Protocol</title>
+    <title>NEURAL-X OMEGA v15.2 | Career Analysis Protocol</title>
     <link rel="icon" href="data:,">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -129,18 +129,28 @@
         .data-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
+            gap: 12px;
             margin-bottom: 25px;
         }
         .data-node {
-            background: rgba(255,255,255,0.03);
-            border-left: 3px solid var(--neon-cyan);
-            padding: 15px;
+            background: rgba(255,255,255,0.02);
+            border-left: 2px solid var(--neon-cyan);
+            padding: 12px;
             position: relative;
+            overflow: hidden;
+            transition: 0.3s;
         }
-        .node-label { font-size: 0.7rem; color: #888; text-transform: uppercase; margin-bottom: 5px; }
-        .node-value { font-family: 'Fira Code'; font-size: 1.8rem; color: var(--neon-cyan); }
-        .node-trend { font-size: 0.7rem; color: var(--neon-magenta); }
+        .data-node:hover { background: rgba(0, 243, 255, 0.05); border-left-width: 4px; }
+        .node-label { font-size: 0.65rem; color: #666; text-transform: uppercase; margin-bottom: 4px; font-weight: bold; }
+        .node-value { font-family: 'Fira Code'; font-size: 1.4rem; color: var(--neon-cyan); line-height: 1.2; }
+        
+        .mini-bar { height: 2px; background: #111; width: 100%; margin-top: 6px; position: relative; }
+        .mini-fill { height: 100%; width: 0%; background: var(--neon-cyan); transition: 1.2s cubic-bezier(0.1, 0.9, 0.2, 1); }
+
+        .node-off { border-color: var(--neon-yellow); } .node-off .node-value, .node-off .mini-fill { color: var(--neon-yellow); background: var(--neon-yellow); }
+        .node-def { border-color: var(--neon-cyan); }
+        .node-win { border-color: var(--neon-magenta); } .node-win .node-value, .node-win .mini-fill { color: var(--neon-magenta); background: var(--neon-magenta); }
+        .node-special { border-color: var(--danger-glow); } .node-special .node-value, .node-special .mini-fill { color: var(--danger-glow); background: var(--danger-glow); }
 
         .visual-matrix {
             display: grid;
@@ -251,76 +261,76 @@
             </section>
 
             <div class="data-grid">
-                <!-- ROW 1 -->
+                <!-- ROW 1: CORE HISTORY -->
                 <div class="data-node">
-                    <div class="node-label">Tactical IQ</div>
-                    <div class="node-value" id="valIQ">--</div>
-                    <div class="mini-bar"><div id="barIQ" class="mini-fill"></div></div>
+                    <div class="node-label">Career Total Wins</div>
+                    <div class="node-value" id="valWins">--</div>
+                    <div class="mini-bar"><div id="barWins" class="mini-fill"></div></div>
                 </div>
                 <div class="data-node node-off">
-                    <div class="node-label">Offense Phase</div>
-                    <div class="node-value" id="valOff">--</div>
-                    <div class="mini-bar"><div id="barOff" class="mini-fill"></div></div>
+                    <div class="node-label">Best Trophies (PB)</div>
+                    <div class="node-value" id="valPB">--</div>
+                    <div class="mini-bar"><div id="barPB" class="mini-fill"></div></div>
                 </div>
                 <div class="data-node node-def">
-                    <div class="node-label">Defense Integrity</div>
-                    <div class="node-value" id="valDef">--</div>
-                    <div class="mini-bar"><div id="barDef" class="mini-fill"></div></div>
+                    <div class="node-label">Total Donations</div>
+                    <div class="node-value" id="valDonations">--</div>
+                    <div class="mini-bar"><div id="barDonations" class="mini-fill"></div></div>
                 </div>
                 <div class="data-node node-win">
-                    <div class="node-label">Win Entropy</div>
-                    <div class="node-value" id="valWin">--%</div>
-                    <div class="mini-bar"><div id="barWin" class="mini-fill"></div></div>
+                    <div class="node-label">Career Win Rate</div>
+                    <div class="node-value" id="valWinRate">--%</div>
+                    <div class="mini-bar"><div id="barWinRate" class="mini-fill"></div></div>
                 </div>
 
-                <!-- ROW 2 -->
+                <!-- ROW 2: PEAK ACHIEVEMENTS -->
                 <div class="data-node node-special">
-                    <div class="node-label">3-Crown Density</div>
-                    <div class="node-value" id="valTCD">--%</div>
-                    <div class="mini-bar"><div id="barTCD" class="mini-fill"></div></div>
+                    <div class="node-label">3-Crown Power</div>
+                    <div class="node-value" id="val3C">--</div>
+                    <div class="mini-bar"><div id="bar3C" class="mini-fill"></div></div>
                 </div>
                 <div class="data-node">
-                    <div class="node-label">Resource Mastery</div>
-                    <div class="node-value" id="valRes">--</div>
-                    <div class="mini-bar"><div id="barRes" class="mini-fill"></div></div>
+                    <div class="node-label">Challenge Peak</div>
+                    <div class="node-value" id="valChallenge">--</div>
+                    <div class="mini-bar"><div id="barChallenge" class="mini-fill"></div></div>
                 </div>
                 <div class="data-node node-off">
-                    <div class="node-label">Clutch Factor</div>
-                    <div class="node-value" id="valClutch">--</div>
-                    <div class="mini-bar"><div id="barClutch" class="mini-fill"></div></div>
+                    <div class="node-label">War Day Wins</div>
+                    <div class="node-value" id="valWar">--</div>
+                    <div class="mini-bar"><div id="barWar" class="mini-fill"></div></div>
                 </div>
                 <div class="data-node node-win">
-                    <div class="node-label">Mental Fortitude</div>
-                    <div class="node-value" id="valMental">--</div>
-                    <div class="mini-bar"><div id="barMental" class="mini-fill"></div></div>
+                    <div class="node-label">Experience Tier</div>
+                    <div class="node-value" id="valLevel">--</div>
+                    <div class="mini-bar"><div id="barLevel" class="mini-fill"></div></div>
                 </div>
 
-                <!-- ROW 3 -->
+                <!-- ROW 3: LEGACY METRICS -->
                 <div class="data-node">
-                    <div class="node-label">Cycle Velocity</div>
-                    <div class="node-value" id="valCycle">--</div>
-                    <div class="mini-bar"><div id="barCycle" class="mini-fill"></div></div>
+                    <div class="node-label">Cards Unlocked</div>
+                    <div class="node-value" id="valCards">--</div>
+                    <div class="mini-bar"><div id="barCards" class="mini-fill"></div></div>
                 </div>
                 <div class="data-node node-def">
-                    <div class="node-label">Deck Synergy</div>
-                    <div class="node-value" id="valSynergy">--</div>
-                    <div class="mini-bar"><div id="barSynergy" class="mini-fill"></div></div>
+                    <div class="node-label">Achievement Score</div>
+                    <div class="node-value" id="valLegacy">--</div>
+                    <div class="mini-bar"><div id="barLegacy" class="mini-fill"></div></div>
                 </div>
                 <div class="data-node node-special">
-                    <div class="node-label">Pressure Index</div>
-                    <div class="node-value" id="valPressure">--</div>
-                    <div class="mini-bar"><div id="barPressure" class="mini-fill"></div></div>
+                    <div class="node-label">Efficiency Index</div>
+                    <div class="node-value" id="valEff">--</div>
+                    <div class="mini-bar"><div id="barEff" class="mini-fill"></div></div>
                 </div>
                 <div class="data-node node-win">
-                    <div class="node-label">Comeback Prob.</div>
-                    <div class="node-value" id="valComeback">--%</div>
-                    <div class="mini-bar"><div id="barComeback" class="mini-fill"></div></div>
+                    <div class="node-label">Historical Stability</div>
+                    <div class="node-value" id="valStability">--%</div>
+                    <div class="mini-bar"><div id="barStability" class="mini-fill"></div></div>
                 </div>
             </div>
 
             <div class="visual-matrix">
                 <div class="panel">
-                    <div style="color:var(--neon-cyan); font-size:0.8rem; margin-bottom:15px; font-family:'Orbitron';">NEURAL COMPETENCY MAP</div>
+                    <div style="color:var(--neon-cyan); font-size:0.8rem; margin-bottom:15px; font-family:'Orbitron';">CAREER POTENTIAL RADAR</div>
                     <div style="height:250px;"><canvas id="omegaRadar"></canvas></div>
                 </div>
                 <div class="panel" style="display:flex; flex-direction:column;">
@@ -333,7 +343,7 @@
             </div>
 
             <div class="panel">
-                <div style="color:#888; font-size:0.8rem; margin-bottom:15px; font-family:'Orbitron';">BATTLE LOG ANALYSIS</div>
+                <div style="color:#888; font-size:0.8rem; margin-bottom:15px; font-family:'Orbitron';">RECENT ENCOUNTERS ANALYSIS</div>
                 <div id="omegaLog"></div>
             </div>
         </main>
@@ -385,9 +395,9 @@
             omegaChart = new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: ['AGGRESSION', 'NEURAL-SYNC', 'ELIXIR-FLUX', 'TACTICAL-IQ', 'STABILITY'],
+                    labels: ['PB', 'WINS', 'DONATIONS', 'WIN RATE', 'STABILITY'],
                     datasets: [{
-                        data: [40, 30, 50, 45, 60],
+                        data: [0, 0, 0, 0, 0],
                         backgroundColor: 'rgba(0, 243, 255, 0.2)',
                         borderColor: '#00f3ff',
                         borderWidth: 2,
@@ -418,7 +428,7 @@
                 
                 document.getElementById('pName').innerText = data.name || 'UNKNOWN_ENTITY';
                 document.getElementById('pTag').innerText = data.tag || tag;
-                document.getElementById('syncRatio').innerText = '99.8%'; // Career sync is higher
+                document.getElementById('syncRatio').innerText = '99.8%';
                 document.getElementById('syncProg').style.width = '99.8%';
 
                 // --- 生涯統計數據提取 ---
@@ -435,14 +445,17 @@
                 const winRate = ((wins / (wins + losses)) * 100 || 0).toFixed(1);
                 const efficiency = ((threeCrowns / wins) * 100 || 0).toFixed(0);
                 const legacyScore = (wins * 0.5 + donations * 0.01 + bestTrophies * 0.1).toFixed(0);
-                const stability = (90 + (wins / 500)).toFixed(1); // 歷史穩定性模擬
+                const stability = (90 + (wins / 5000) * 10 > 100 ? 99.8 : 90 + (wins / 5000) * 10).toFixed(1);
 
-                // 數值注入 (Career Edition)
+                // 數值注入
                 const updateVal = (id, val, barId, max = 100) => {
-                    document.getElementById(id).innerText = val;
-                    if(barId) {
-                        const percent = (parseFloat(val) / max) * 100;
-                        document.getElementById(barId).style.width = (percent > 100 ? 100 : percent) + '%';
+                    const el = document.getElementById(id);
+                    if(el) el.innerText = val;
+                    const bar = document.getElementById(barId);
+                    if(bar) {
+                        const numericVal = parseFloat(val);
+                        const percent = (numericVal / max) * 100;
+                        bar.style.width = (percent > 100 ? 100 : percent) + '%';
                     }
                 };
 
@@ -450,18 +463,16 @@
                 updateVal('valPB', bestTrophies, 'barPB', 9000);
                 updateVal('valDonations', donations, 'barDonations', 100000);
                 updateVal('valWinRate', winRate + '%', 'barWinRate', 100);
-                
                 updateVal('val3C', threeCrowns, 'bar3C', 3000);
                 updateVal('valChallenge', challengeMax, 'barChallenge', 12);
                 updateVal('valWar', warWins, 'barWar', 500);
                 updateVal('valLevel', level, 'barLevel', 15);
-                
                 updateVal('valCards', cards, 'barCards', 115);
                 updateVal('valLegacy', legacyScore, 'barLegacy', 10000);
                 updateVal('valEff', efficiency, 'barEff', 100);
                 updateVal('valStability', stability + '%', 'barStability', 100);
 
-                // 圖表同步 (生涯重點維度)
+                // 圖表同步
                 omegaChart.data.datasets[0].data = [
                     (bestTrophies / 9000) * 100, 
                     (wins / 5000) * 100, 
@@ -484,40 +495,24 @@
                         </div>
                     </div>
                     <div style="border-top:1px solid #333; margin-top:10px; pt:5px; font-size:0.8rem;">
-                        <span style="color:var(--neon-cyan)">LONG-TERM_ADVISORY:</span> Subject is a <span style="color:var(--neon-yellow)">${wins > 2000 ? 'Seasoned Elite' : 'Rising Prospect'}</span>. Career stability is ${stability}%. Recommendation: Focus on <span style="color:var(--neon-cyan)">Challenge Peak</span> expansion to maximize Legacy Score.
+                        <span style="color:var(--neon-cyan)">LONG-TERM_ADVISORY:</span> Subject is a <span style="color:var(--neon-yellow)">${wins > 2000 ? 'Seasoned Elite' : 'Rising Prospect'}</span>. Career stability is ${stability}%.
                     </div>
                 `;
 
                 const logBox = document.getElementById('omegaLog');
-                logBox.innerHTML = '';
-                data.battleLog.slice(0, 5).forEach(b => {
-                    const isWin = b.team[0].crowns > b.opponent[0].crowns;
-                    logBox.innerHTML += `
-                        <div style="display:grid; grid-template-columns: 80px 1fr 100px; padding:12px; border-bottom:1px solid #222; font-size:0.85rem;">
-                            <span style="color:${isWin ? 'var(--neon-cyan)' : 'var(--danger-glow)'}">${isWin ? 'WIN' : 'LOSS'}</span>
-                            <span style="color:#aaa;">vs ${b.opponent[0].name}</span>
-                            <span style="text-align:right; font-family:'Fira Code';">${b.team[0].crowns} - ${b.opponent[0].crowns}</span>
-                        </div>
-                    `;
-                });
-
-                logTerminal("Neural Link Established successfully.", "cmd");
-            } catch (err) {
-                logTerminal(`CRITICAL_ERROR: ${err.message}`, 'cmd');
-            }
-        }
-
-        window.onload = initOmega;
-    </script>
-</body>
-</html>
-display:grid; grid-template-columns: 80px 1fr 100px; padding:12px; border-bottom:1px solid #222; font-size:0.85rem;">
-                            <span style="color:${isWin ? 'var(--neon-cyan)' : 'var(--danger-glow)'}">${isWin ? 'WIN' : 'LOSS'}</span>
-                            <span style="color:#aaa;">vs ${b.opponent[0].name}</span>
-                            <span style="text-align:right; font-family:'Fira Code';">${b.team[0].crowns} - ${b.opponent[0].crowns}</span>
-                        </div>
-                    `;
-                });
+                if(data.battleLog && data.battleLog.length > 0) {
+                    logBox.innerHTML = '';
+                    data.battleLog.slice(0, 5).forEach(b => {
+                        const isWin = b.team[0].crowns > b.opponent[0].crowns;
+                        logBox.innerHTML += `
+                            <div style="display:grid; grid-template-columns: 80px 1fr 100px; padding:12px; border-bottom:1px solid #222; font-size:0.85rem;">
+                                <span style="color:${isWin ? 'var(--neon-cyan)' : 'var(--danger-glow)'}">${isWin ? 'WIN' : 'LOSS'}</span>
+                                <span style="color:#aaa;">vs ${b.opponent[0].name}</span>
+                                <span style="text-align:right; font-family:'Fira Code';">${b.team[0].crowns} - ${b.opponent[0].crowns}</span>
+                            </div>
+                        `;
+                    });
+                }
 
                 logTerminal("Neural Link Established successfully.", "cmd");
             } catch (err) {

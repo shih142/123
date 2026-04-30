@@ -3,21 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>神經矩陣 MAXIMA | V21.0 堅壁協議</title>
+    <title>神經矩陣 MAXIMA | V22.0 絕對數據協議</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --bg-deep: #020608;
-            --panel-bg: rgba(5, 12, 18, 0.95);
-            --neon-blue: #00e5ff;
-            --aegis-cyan: #00ffcc; /* V21.0 強化防禦青色 */
-            --aggressive-red: #ff1100;
-            --equalizer-purple: #b300ff;
+            --bg-deep: #020406;
+            --panel-bg: rgba(5, 8, 12, 0.95);
+            --neon-blue: #0088ff;
+            --aegis-cyan: #00ffa6;
+            --aggressive-red: #ff3300;
+            --equalizer-purple: #9900ff;
             --gold-leaf: #d4af37;
-            --text-main: #e0e6ed;
-            --border-glow: rgba(0, 255, 204, 0.35);
-            --grid-line: rgba(255, 255, 255, 0.03);
+            --text-main: #d0dce8;
+            --border-glow: rgba(0, 136, 255, 0.3);
+            --grid-line: rgba(255, 255, 255, 0.02);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -35,33 +35,33 @@
         .layout-grid { display: grid; grid-template-columns: 350px 1fr 350px; gap: 15px; width: 100%; height: 100%; padding: 15px; }
         .panel { background: var(--panel-bg); border: 1px solid var(--border-glow); position: relative; display: flex; flex-direction: column; overflow: hidden; backdrop-filter: blur(5px); }
         
-        .panel-header { padding: 10px 15px; border-bottom: 1px solid var(--border-glow); font-family: 'Orbitron'; font-size: 11px; letter-spacing: 2px; display: flex; justify-content: space-between; background: linear-gradient(90deg, rgba(0,255,204,0.15), transparent); font-weight: bold; }
+        .panel-header { padding: 10px 15px; border-bottom: 1px solid var(--border-glow); font-family: 'Orbitron'; font-size: 11px; letter-spacing: 2px; display: flex; justify-content: space-between; background: linear-gradient(90deg, rgba(0,136,255,0.1), transparent); font-weight: bold; }
         
-        .ncr-section { padding: 30px 15px; text-align: center; border-bottom: 1px solid rgba(0,255,204,0.15); }
+        .ncr-section { padding: 30px 15px; text-align: center; border-bottom: 1px solid rgba(0,136,255,0.15); }
         .ncr-title { font-family: 'Orbitron'; font-size: 11px; color: var(--gold-leaf); margin-bottom: 10px; letter-spacing: 1px; }
-        .ncr-value { font-family: 'Orbitron'; font-size: 72px; font-weight: 900; line-height: 1; color: var(--aegis-cyan); text-shadow: 0 0 25px rgba(0,255,204,0.6); }
+        .ncr-value { font-family: 'Orbitron'; font-size: 72px; font-weight: 900; line-height: 1; color: #ffffff; text-shadow: 0 0 20px rgba(0,136,255,0.6); }
 
         .stats-wall { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border-glow); flex: 1; }
         .stat-item { background: var(--bg-deep); padding: 20px 15px; display: flex; flex-direction: column; justify-content: center; }
-        .stat-label { font-size: 10px; color: #668888; margin-bottom: 5px; text-transform: uppercase; }
+        .stat-label { font-size: 10px; color: #557799; margin-bottom: 5px; text-transform: uppercase; }
         .stat-val { font-family: 'Orbitron'; font-size: 24px; color: var(--text-main); transition: 0.3s; }
         
-        .stat-val.active-str { color: var(--aggressive-red); text-shadow: 0 0 12px rgba(255,17,0,0.6); font-weight: bold; }
-        .stat-val.active-def { color: var(--aegis-cyan); text-shadow: 0 0 15px rgba(0,255,204,0.8); font-weight: bold; }
+        .stat-val.active-str { color: var(--aggressive-red); text-shadow: 0 0 12px rgba(255,51,0,0.6); font-weight: bold; }
+        .stat-val.active-def { color: var(--aegis-cyan); text-shadow: 0 0 15px rgba(0,255,166,0.8); font-weight: bold; }
 
         .main-display { display: flex; flex-direction: column; gap: 15px; }
-        .chart-container { background: rgba(0,0,0,0.4); flex: 1; min-height: 400px; padding: 20px; border: 1px solid rgba(0,255,204,0.1); }
-        .report-console { height: 210px; background: rgba(0,0,0,0.7); border: 1px solid rgba(0,255,204,0.2); padding: 15px; font-size: 13px; color: #99cccc; overflow-y: auto; line-height: 1.7; }
+        .chart-container { background: rgba(0,0,0,0.4); flex: 1; min-height: 400px; padding: 20px; border: 1px solid rgba(0,136,255,0.1); }
+        .report-console { height: 210px; background: rgba(0,0,0,0.7); border: 1px solid rgba(0,136,255,0.2); padding: 15px; font-size: 13px; color: #aabbcc; overflow-y: auto; line-height: 1.7; }
 
         .control-panel { padding: 20px; overflow-y: auto; }
-        .input-box { width: 100%; background: #000; border: 1px solid var(--border-glow); padding: 12px; color: var(--aegis-cyan); font-family: 'Orbitron'; font-size: 13px; margin-bottom: 12px; text-align: center; outline: none; transition: 0.3s; }
-        .input-box:focus { border-color: var(--aegis-cyan); box-shadow: 0 0 15px rgba(0,255,204,0.3); }
+        .input-box { width: 100%; background: #000; border: 1px solid var(--border-glow); padding: 12px; color: var(--neon-blue); font-family: 'Orbitron'; font-size: 13px; margin-bottom: 12px; text-align: center; outline: none; transition: 0.3s; }
+        .input-box:focus { border-color: var(--aegis-cyan); box-shadow: 0 0 15px rgba(0,255,166,0.3); }
         
-        .btn-prime { width: 100%; padding: 15px; background: var(--aegis-cyan); color: #000; border: none; font-family: 'Orbitron'; font-weight: 900; letter-spacing: 1px; cursor: pointer; transition: 0.3s; clip-path: polygon(0 0, 95% 0, 100% 25%, 100% 100%, 5% 100%, 0 75%); }
-        .btn-prime:hover { background: #fff; transform: scale(1.02); }
-        .btn-prime:disabled { background: #224444; color: #557777; cursor: not-allowed; transform: none; clip-path: none; border-radius: 4px; }
+        .btn-prime { width: 100%; padding: 15px; background: var(--border-glow); color: #fff; border: 1px solid var(--neon-blue); font-family: 'Orbitron'; font-weight: 900; letter-spacing: 1px; cursor: pointer; transition: 0.3s; }
+        .btn-prime:hover { background: var(--neon-blue); color: #000; box-shadow: 0 0 20px rgba(0,136,255,0.5); }
+        .btn-prime:disabled { background: #112233; color: #445566; border-color: #223344; cursor: not-allowed; box-shadow: none; }
 
-        .math-box { font-size: 10px; color: #77aaaa; padding: 15px; border-top: 1px solid rgba(0,255,204,0.2); line-height: 1.8; background: rgba(0,0,0,0.5); font-family: 'Share Tech Mono', monospace; }
+        .math-box { font-size: 10px; color: #6688aa; padding: 15px; border-top: 1px solid rgba(0,136,255,0.2); line-height: 1.8; background: rgba(0,0,0,0.5); font-family: 'Share Tech Mono', monospace; }
         .hl-red { color: var(--aggressive-red); font-weight: bold; }
         .hl-cyan { color: var(--aegis-cyan); font-weight: bold; }
         .hl-gold { color: var(--gold-leaf); font-weight: bold; }
@@ -72,7 +72,7 @@
 
     <div class="layout-grid">
         <div class="panel">
-            <div class="panel-header"><span>NEURAL_ID</span><span>V21.0_AEGIS_PROTOCOL</span></div>
+            <div class="panel-header"><span>NEURAL_ID</span><span>V22.0_ANALYTICS_CORE</span></div>
             <div class="ncr-section">
                 <div class="ncr-title">MAXIMA VALUE INDEX (MVI)</div>
                 <div id="ui-ncr" class="ncr-value">00.0</div>
@@ -84,18 +84,18 @@
                 <div class="stat-item"><div class="stat-label">Micro (MIC)</div><div id="val-mic" class="stat-val">--</div></div>
                 <div class="stat-item"><div class="stat-label">Macro (MAC)</div><div id="val-mac" class="stat-val">--</div></div>
             </div>
-            <div id="ui-log" style="padding: 15px; font-size: 10px; color: #77aaaa; flex: 1; overflow-y: auto; line-height: 1.5;">
-                > V21.0 堅壁防禦矩陣已載入。<br>> 防禦演算法重心已轉移至 MMR 與極限拉扯能力。
+            <div id="ui-log" style="padding: 15px; font-size: 10px; color: #7799bb; flex: 1; overflow-y: auto; line-height: 1.5;">
+                > V22.0 客觀分析引擎已啟動。<br>> 系統已切換至「絕對控制機率 (ACP)」與 Sigmoid 常態收斂模型。
             </div>
         </div>
 
         <div class="panel main-display">
-            <div class="panel-header"><span>HEURISTIC_VISUALIZATION</span><span>COMBAT_MATRIX_SCAN</span></div>
+            <div class="panel-header"><span>HEURISTIC_VISUALIZATION</span><span>SIGMOID_DISTRIBUTION</span></div>
             <div class="chart-container">
                 <canvas id="mainRadar"></canvas>
             </div>
             <div id="ui-report" class="report-console">
-                系統待命。攻防兩端均已實裝最新權重，準備進行深度解析。
+                等待數據匯入。將根據大樣本統計學進行客觀評分。
             </div>
         </div>
 
@@ -105,19 +105,20 @@
                 <label style="font-size: 9px; color: var(--gold-leaf); margin-bottom: 5px; display: block;">PLAYER_TAG</label>
                 <input type="text" id="tagInput" placeholder="例如: CV9QU9CYJ" class="input-box" maxlength="15">
                 
-                <label style="font-size: 9px; color: #668888; margin-bottom: 5px; display: block;">ROUTER_ENDPOINT</label>
+                <label style="font-size: 9px; color: #557799; margin-bottom: 5px; display: block;">ROUTER_ENDPOINT</label>
                 <input type="text" id="proxyInput" value="/api/clash-proxy" class="input-box">
                 
-                <button id="btn-run" class="btn-prime" onclick="fetchLiveData()">啟動深度解析</button>
+                <button id="btn-run" class="btn-prime" onclick="fetchLiveData()">啟動客觀解析</button>
             </div>
             
             <div class="math-box">
-                [ Aegis Defense Model V21 ]<br><br>
-                Z<sub>ctrl</sub> = (Control_Rate - 0.80) / 0.08<br>
-                Z<sub>mmr</sub> = (PoL_Rating - 1600) / 300<br><br>
-                Z<sub>def_comp</sub> = (Z<sub>ctrl</sub>*0.4) + (Z<sub>surv</sub>*0.2) + (Z<sub>mmr</sub>*0.4)<br>
-                DEF Base = 100 / (1 + e<sup>-Z<sub>def_comp</sub></sup>)<br><br>
-                Φ (Ironclad) = 1.20 if (WR>54% & Ctrl>80% & MMR>1850)
+                [ V22.0 Defense Protocol ]<br><br>
+                Total = Wins + Losses<br>
+                ACP = (Wins - 3C_Wins) / Total<br><br>
+                Z_ACP = (ACP - 0.40) / 0.08<br>
+                Z_MMR = (MMR - 1600) / 300<br><br>
+                Z_DEF = (Z_ACP * 0.65) + (Z_MMR * 0.35)<br>
+                DEF_Score = 100 / (1 + e^(-Z_DEF))
             </div>
         </div>
     </div>
@@ -131,11 +132,11 @@
             radarChart = new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: ['破甲進攻 (STR)', '堅壁防禦 (DEF)', '微操精度 (MIC)', '戰略營運 (MAC)', '抗壓韌性 (PSY)', '數據穩定性 (CST)'],
+                    labels: ['破甲進攻 (STR)', '絕對防禦 (DEF)', '微操精度 (MIC)', '戰略營運 (MAC)', '抗壓韌性 (PSY)', '數據穩定性 (CST)'],
                     datasets: [{
                         data: [0,0,0,0,0,0],
-                        backgroundColor: 'rgba(0, 255, 204, 0.1)',
-                        borderColor: '#00ffcc',
+                        backgroundColor: 'rgba(0, 136, 255, 0.1)',
+                        borderColor: '#0088ff',
                         borderWidth: 2,
                         pointRadius: 3,
                         pointBackgroundColor: '#fff'
@@ -145,10 +146,10 @@
                     responsive: true, maintainAspectRatio: false,
                     scales: { 
                         r: { 
-                            grid: { color: 'rgba(0,255,204,0.1)' }, 
-                            angleLines: { color: 'rgba(0,255,204,0.2)' },
+                            grid: { color: 'rgba(255,255,255,0.05)' }, 
+                            angleLines: { color: 'rgba(255,255,255,0.05)' },
                             ticks: { display: false, max: 100, min: 0 },
-                            pointLabels: { color: '#99cccc', font: { size: 11, family: 'Orbitron', weight: 'bold' } }
+                            pointLabels: { color: '#aabbcc', font: { size: 11, family: 'Orbitron', weight: 'bold' } }
                         } 
                     },
                     plugins: { legend: { display: false } }
@@ -171,7 +172,7 @@
             isProcessing = true;
             btn.disabled = true;
             btn.innerText = "連線後端路由...";
-            log.innerHTML += `<br>> 鎖定目標: #${tag}，執行 V21.0 掃描...`;
+            log.innerHTML += `<br>> 鎖定目標: #${tag}，抽取大數據特徵...`;
             
             try {
                 const fetchUrl = `${proxy}?tag=${tag}`;
@@ -207,7 +208,7 @@
             } finally {
                 isProcessing = false;
                 btn.disabled = false;
-                btn.innerText = "啟動深度解析";
+                btn.innerText = "啟動客觀解析";
                 log.scrollTop = log.scrollHeight;
             }
         }
@@ -216,73 +217,75 @@
             const wins = data.wins;
             const losses = data.losses;
             const total = wins + losses;
-            const wr = total > 0 ? (wins / total) : 0;
             const tcw = data.threeCrownWins;
-            const raw3C = wins > 0 ? (tcw / wins) : 0;
-            const controlRate = wins > 0 ? ((wins - tcw) / wins) : 0; // 1冠/2冠勝率
             const pb = data.bestTrophies;
             const mmr = data.polRating; 
-            
             const log = document.getElementById('ui-log');
-            const difficultyScale = Math.pow(pb / 9000, 2); 
             
-            const zMmr = (mmr - 1600) / 300;
+            if (total === 0) return alert("數據不足：總對局數為零。");
+
+            // 基礎存活指標
+            const wr = wins / total;
             const zSurv = (wr - 0.50) / 0.05;   
+            const zMmr = (mmr - 1600) / 300;
 
-            // --- STR 破甲進攻運算 (保持 V18.0 邏輯) ---
-            const z3C = (raw3C - 0.22) / 0.08;
-            const zOffComposite = (z3C * 0.50) + (zMmr * 0.50);
-            let strBase = 1 / (1 + Math.exp(-zOffComposite)) * 100;
-            let strSynergy = 1.0;
-            let isAggressive = false;
+            // --- STR 破甲進攻運算 (絕對三冠率) ---
+            const absolute3CRate = tcw / total; 
+            const z3C = (absolute3CRate - 0.12) / 0.05; // 假設平均玩家打100場有12場三冠
+            const zOffComposite = (z3C * 0.65) + (zMmr * 0.35);
+            let strFinal = 100 / (1 + Math.exp(-zOffComposite)); 
             
-            if (wr > 0.54 && raw3C > 0.25 && mmr >= 1800) {
-                strSynergy = 1.15;
-                isAggressive = true;
-                log.innerHTML += `<br><span class="hl-red">> [ARMOR_PIERCING] 偵測到破甲特徵。</span>`;
-            }
-            let strFinal = Math.min(100, ((strBase * 0.65) + (difficultyScale * 35)) * strSynergy);
-
-            // --- DEF 堅壁防守運算 (V21.0 全新升級) ---
-            // 提升了防守控制率的標準 (0.78 -> 0.80)，並大幅拉高 MMR 與控制率的權重比 (0.4 / 0.2 / 0.4)
-            const zCtrl = (controlRate - 0.80) / 0.08; 
-            const zDefComposite = (zCtrl * 0.40) + (zSurv * 0.20) + (zMmr * 0.40);
-            let defBase = 1 / (1 + Math.exp(-zDefComposite)) * 100;
-            let defSynergy = 1.0;
-            let isIronclad = false;
+            // --- DEF 絕對防禦運算 (ACP: Absolute Control Probability) ---
+            // 核心概念：在「所有打過的對局」中，能成功依靠控制(1/2冠)取勝的機率
+            const acp = (wins - tcw) / total;
             
-            // 更嚴格的高端局極限拉扯判定
-            if (wr > 0.54 && controlRate >= 0.80 && mmr >= 1850) {
-                defSynergy = 1.20; // 1.2倍終極防禦增益
-                isIronclad = true;
-                log.innerHTML += `<br><span class="hl-cyan">> [AEGIS_ACTIVATED] 偵測到極限防守拉扯能力。</span>`;
-            }
-            let defFinal = Math.min(100, ((defBase * 0.65) + (difficultyScale * 35)) * defSynergy);
+            // 根據專業天梯統計：頂尖玩家 ACP 約為 0.40 ~ 0.50，標準差約 0.08
+            const zAcp = (acp - 0.40) / 0.08; 
+            
+            // 客觀權重：控制能力佔 65%，環境壓力 (MMR) 佔 35%
+            const zDefComposite = (zAcp * 0.65) + (zMmr * 0.35);
+            
+            // 透過 Sigmoid 函數自然轉換為 0-100 分，移除任何人為賦予的倍率
+            let defFinal = 100 / (1 + Math.exp(-zDefComposite));
 
-            // 輔助維度
-            let mic = Math.min(100, (mmr / 25) + (pb / 150)); 
-            let mac = Math.min(100, (wr * 120) * (mmr / 2000));
+            // 特徵標籤判定 (僅供報告顯示，不影響數值)
+            let isAggressive = (strFinal > 85);
+            let isIronclad = (defFinal > 85);
+
+            if (isAggressive) log.innerHTML += `<br><span class="hl-red">> 統計特徵：頂級破壞力 (σ > 1.5)</span>`;
+            if (isIronclad) log.innerHTML += `<br><span class="hl-cyan">> 統計特徵：頂級防守率 (σ > 1.5)</span>`;
+
+            // 輔助維度 (客觀化)
+            let mic = 100 / (1 + Math.exp(-((mmr - 1800) / 400))); // 高分段微操壓力
+            let mac = 100 / (1 + Math.exp(-((wr - 0.5) * 10 + (mmr - 1500) / 500))); 
             let psy = Math.min(100, (mmr > 2000 ? 98 : mmr/22));
             let cst = Math.min(100, 50 + (zSurv * 15)); 
 
-            renderUI(data.name, [strFinal, defFinal, mic, mac, psy, cst], isAggressive, isIronclad, {wr, raw3C, controlRate, mmr});
+            // 分數微調修正極端值
+            strFinal = Math.max(10, Math.min(99.9, strFinal));
+            defFinal = Math.max(10, Math.min(99.9, defFinal));
+            mic = Math.max(10, Math.min(99.9, mic));
+            mac = Math.max(10, Math.min(99.9, mac));
+
+            renderUI(data.name, [strFinal, defFinal, mic, mac, psy, cst], isAggressive, isIronclad, {wr, absolute3CRate, acp, mmr});
         }
 
         function renderUI(name, scores, isAggressive, isIronclad, raw) {
             document.getElementById('ui-name').innerText = name;
             document.getElementById('ui-ncr').innerText = (scores.reduce((a,b)=>a+b)/6).toFixed(1);
             
-            document.getElementById('val-str').innerText = Math.round(scores[0]);
-            document.getElementById('val-def').innerText = Math.round(scores[1]);
+            document.getElementById('val-str').innerText = scores[0].toFixed(1);
+            document.getElementById('val-def').innerText = scores[1].toFixed(1);
             document.getElementById('val-mic').innerText = Math.round(scores[2]);
             document.getElementById('val-mac').innerText = Math.round(scores[3]);
 
             document.getElementById('val-str').className = 'stat-val' + (isAggressive ? ' active-str' : '');
             document.getElementById('val-def').className = 'stat-val' + (isIronclad ? ' active-def' : '');
 
-            let radarColor = '#00ffcc';
-            let radarBg = 'rgba(0, 255, 204, 0.15)';
-            if (isAggressive && !isIronclad) { radarColor = '#ff1100'; radarBg = 'rgba(255, 17, 0, 0.15)'; }
+            let radarColor = '#0088ff';
+            let radarBg = 'rgba(0, 136, 255, 0.15)';
+            if (isIronclad && !isAggressive) { radarColor = '#00ffa6'; radarBg = 'rgba(0, 255, 166, 0.15)'; }
+            else if (isAggressive && !isIronclad) { radarColor = '#ff3300'; radarBg = 'rgba(255, 51, 0, 0.15)'; }
             else if (isAggressive && isIronclad) { radarColor = '#d4af37'; radarBg = 'rgba(212, 175, 55, 0.15)'; }
             
             radarChart.data.datasets[0].borderColor = radarColor;
@@ -291,19 +294,21 @@
             radarChart.data.datasets[0].data = scores;
             radarChart.update();
 
-            let report = `<span style="color:var(--aegis-cyan)">[ V21.0 攻防矩陣解析報告 ]</span><br><br>`;
-            report += `全局生存率：<span class="hl-gold">${(raw.wr*100).toFixed(1)}%</span><br>`;
-            report += `非三冠控制率：<span class="hl-cyan">${(raw.controlRate*100).toFixed(1)}%</span> (極限拉扯指標)<br>`;
-            report += `PoL 排位積分：<span class="hl-purple">${raw.mmr} MMR</span><br><br>`;
+            let report = `<span style="color:var(--neon-blue)">[ 絕對數據分析報告 ]</span><br><br>`;
+            report += `全局勝率 (WR)：<span class="hl-gold">${(raw.wr*100).toFixed(1)}%</span><br>`;
+            report += `絕對三冠率 (A3C)：<span class="hl-red">${(raw.absolute3CRate*100).toFixed(1)}%</span><br>`;
+            report += `絕對控制率 (ACP)：<span class="hl-cyan">${(raw.acp*100).toFixed(1)}%</span><br>`;
+            report += `排位積分 (MMR)：<span class="hl-purple">${raw.mmr}</span><br><br>`;
             
+            report += `>> <span style="color:#aabbcc">分析結論：</span><br>`;
             if (isAggressive && isIronclad) {
-                report += `<span class="hl-gold">>> 終極檢定：【絕對領域 (Singularity)】</span><br>目標同時具備撕裂防線的狂暴與滴水不漏的營運，這是最可怕的頂尖玩家型態。`;
+                report += `數據顯示該玩家在防守端與進攻端的標準差 (Z-Score) 皆遠超常態分配，展現出極具統治力的全能數據。`;
             } else if (isAggressive) {
-                report += `<span class="hl-red">>> 進攻檢定：【狂戰士 (Berserker)】</span><br>數據顯示強大的三冠破壞力。`;
+                report += `根據絕對三冠率 (A3C) 統計，該玩家偏好高風險、高報酬的破防戰術。`;
             } else if (isIronclad) {
-                report += `<span class="hl-cyan">>> 防守檢定：【堅壁大師 (Aegis Master)】</span><br>高達 80%+ 的控制率與高 MMR，證明這是一位精通算費與拉扯的控制型牌組大師。`;
+                report += `根據絕對控制率 (ACP) 統計，該玩家具備優異的防禦體系，能在總對局中穩定拿下低耗損勝利。`;
             } else {
-                report += `目標攻防數據處於均衡發展階段。`;
+                report += `各項統計機率落於常態分配標準差 (1σ) 之內，屬均衡發育型玩家。`;
             }
             
             document.getElementById('ui-report').innerHTML = report;

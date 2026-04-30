@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>神經矩陣 MAXIMA | V14.1 終極實戰代理版</title>
+    <title>神經矩陣 MAXIMA | V15.0 鐵壁協議</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -11,6 +11,7 @@
             --bg-deep: #020406;
             --panel-bg: rgba(5, 10, 15, 0.98);
             --neon-blue: #00f2ff;
+            --aegis-cyan: #00ffaa; /* 新增防禦專屬色 */
             --aggressive-red: #ff2a00;
             --gold-leaf: #d4af37;
             --text-main: #e0e6ed;
@@ -38,8 +39,11 @@
         .stats-wall { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border-glow); flex: 1; }
         .stat-item { background: var(--bg-deep); padding: 20px 15px; display: flex; flex-direction: column; justify-content: center; }
         .stat-label { font-size: 10px; color: #556677; margin-bottom: 5px; text-transform: uppercase; }
-        .stat-val { font-family: 'Orbitron'; font-size: 24px; color: var(--text-main); }
-        .stat-val.active { color: var(--aggressive-red); text-shadow: 0 0 10px rgba(255,42,0,0.4); }
+        .stat-val { font-family: 'Orbitron'; font-size: 24px; color: var(--text-main); transition: 0.3s; }
+        
+        /* 狀態高亮 */
+        .stat-val.active-str { color: var(--aggressive-red); text-shadow: 0 0 10px rgba(255,42,0,0.5); font-weight: bold; }
+        .stat-val.active-def { color: var(--aegis-cyan); text-shadow: 0 0 10px rgba(0,255,170,0.5); font-weight: bold; }
 
         .main-display { display: flex; flex-direction: column; gap: 15px; }
         .chart-container { background: rgba(0,0,0,0.5); flex: 1; min-height: 400px; padding: 20px; border: 1px solid rgba(0,242,255,0.1); }
@@ -53,17 +57,17 @@
         .btn-prime:hover { background: #fff; transform: scale(1.02); }
         .btn-prime:disabled { background: #334455; cursor: not-allowed; transform: none; clip-path: none; border-radius: 5px; }
 
-        .math-box { font-size: 10px; color: #445566; padding: 10px; border-top: 1px solid rgba(0,242,255,0.1); }
+        .math-box { font-size: 9px; color: #445566; padding: 10px; border-top: 1px solid rgba(0,242,255,0.1); line-height: 1.5; }
         .hl-red { color: var(--aggressive-red); font-weight: bold; }
+        .hl-cyan { color: var(--aegis-cyan); font-weight: bold; }
         .hl-gold { color: var(--gold-leaf); font-weight: bold; }
-        .hl-blue { color: var(--neon-blue); font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div class="layout-grid">
         <div class="panel">
-            <div class="panel-header"><span>NEURAL_ID</span><span>V14.1_PROXY_SYNC</span></div>
+            <div class="panel-header"><span>NEURAL_ID</span><span>V15.0_AEGIS</span></div>
             <div class="ncr-section">
                 <div class="ncr-title">MVI - MAXIMA VALUE INDEX</div>
                 <div id="ui-ncr" class="ncr-value">00.0</div>
@@ -76,41 +80,38 @@
                 <div class="stat-item"><div class="stat-label">Macro (MAC)</div><div id="val-mac" class="stat-val">--</div></div>
             </div>
             <div id="ui-log" style="padding: 15px; font-size: 10px; color: #556677; flex: 1; font-family: 'Share Tech Mono'; overflow-y: auto; line-height: 1.5;">
-                > 系統初始化完畢。<br>> Z-Score 正規化引擎待命。<br>> 等待 Proxy 端點建立連結...
+                > 鐵壁協議 V15.0 載入完成。<br>> 攻防雙軌 Z-Score 引擎待命。
             </div>
         </div>
 
         <div class="panel main-display">
-            <div class="panel-header"><span>HEURISTIC_DATA_VISUALIZATION</span><span>LIVE_FEED</span></div>
+            <div class="panel-header"><span>HEURISTIC_VISUALIZATION</span><span>DUAL_CORE_SCAN</span></div>
             <div class="chart-container">
                 <canvas id="mainRadar"></canvas>
             </div>
             <div id="ui-report" class="report-console">
-                請輸入玩家標籤並啟動數據抓取。系統將實時運算目標的多維度戰鬥特徵。
+                請輸入玩家標籤。系統將同步解析其「突破破壞力 (STR)」與「控制防禦力 (DEF)」。
             </div>
         </div>
 
         <div class="panel">
             <div class="panel-header"><span>COMMAND_CENTER</span><span>API_LINK</span></div>
             <div class="control-panel">
-                <label style="font-size: 9px; color: var(--gold-leaf); margin-bottom: 5px; display: block;">PROXY_ENDPOINT (URL)</label>
+                <label style="font-size: 9px; color: var(--gold-leaf); margin-bottom: 5px; display: block;">PROXY_ENDPOINT</label>
                 <input type="text" id="proxyInput" value="/api/clash-proxy" class="input-box" style="font-size: 12px; height: 35px; margin-bottom: 20px;">
                 
                 <label style="font-size: 9px; color: var(--gold-leaf); margin-bottom: 5px; display: block;">TARGET_PLAYER_TAG</label>
                 <input type="text" id="tagInput" placeholder="#CV9QU9CYJ" class="input-box" maxlength="15">
                 
-                <button id="btn-run" class="btn-prime" onclick="quantumAnalysis()">啟動實時解構</button>
+                <button id="btn-run" class="btn-prime" onclick="quantumAnalysis()">執行攻防雙核解構</button>
             </div>
             
             <div class="math-box">
-                $$Z\_Score = \frac{x - \mu}{\sigma}$$<br>
-                $$STR = \left( \frac{100}{1 + e^{-Z_{offense}}} \right) \cdot \Psi$$<br>
-                $$\Psi = 1.15 \text{ (if WR>54\% & 3C>40\%)}$$
-            </div>
-            
-            <div style="padding: 20px; font-size: 10px; color: #445566; line-height: 1.4;">
-                * 系統將透過 Proxy 向官方發送請求。<br>
-                * 非線性歸一化將消除極端數據的畸變。
+                $$Z_{str} = \frac{3C\_Rate - 0.22}{0.08}$$<br>
+                $$Z_{def} = \frac{Control\_Rate - 0.78}{0.08}$$<br>
+                $$Base = \frac{100}{1 + e^{-Z}}$$ <br>
+                $$STR\ \Psi = 1.15\ \text{(WR>54\%, 3C>40\%)}$$<br>
+                $$DEF\ \Omega = 1.15\ \text{(WR>53\%, CTRL>75\%)}$$
             </div>
         </div>
     </div>
@@ -124,14 +125,14 @@
             radarChart = new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: ['進攻強度 (STR)', '防禦深度 (DEF)', '微操精度 (MIC)', '戰略營運 (MAC)', '抗壓韌性 (PSY)', '數據穩定性 (CST)'],
+                    labels: ['進攻突破 (STR)', '極限防禦 (DEF)', '微操精度 (MIC)', '戰略營運 (MAC)', '抗壓韌性 (PSY)', '數據穩定性 (CST)'],
                     datasets: [{
                         data: [0,0,0,0,0,0],
                         backgroundColor: 'rgba(0, 242, 255, 0.1)',
                         borderColor: '#00f2ff',
                         borderWidth: 2,
                         pointRadius: 3,
-                        pointBackgroundColor: '#00f2ff'
+                        pointBackgroundColor: '#fff'
                     }]
                 },
                 options: {
@@ -157,122 +158,126 @@
             const log = document.getElementById('ui-log');
             const btn = document.getElementById('btn-run');
             
-            if(!tag) return alert("請輸入有效的玩家標籤！");
+            if(!tag) return alert("請輸入玩家標籤！");
             
             isProcessing = true;
             btn.disabled = true;
             btn.innerText = "資料同步中...";
-            log.innerHTML += `<br>> 建立 Proxy 連結: #${tag}...`;
+            log.innerHTML += `<br>> 請求雙核數據: #${tag}...`;
             
             try {
-                // 正式啟用 fetch 發送請求到 Proxy
                 const response = await fetch(`${proxy}?tag=${tag}`);
-                
-                if (!response.ok) {
-                    throw new Error(`伺服器回應錯誤 (狀態碼: ${response.status})`);
-                }
-
+                if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
                 const data = await response.json();
-                
-                if (!data || !data.name) {
-                    throw new Error("抓取成功但資料格式無效，請檢查 Proxy 回傳的 JSON 結構。");
-                }
+                if (!data.name) throw new Error("無效的資料格式");
 
-                log.innerHTML += `<br><span style="color:var(--neon-blue)">> 握手成功。載入目標 [ ${data.name} ] 的原始數據。</span>`;
-                
-                // 進入專業算法處理
-                processProfessionalLogic(data);
+                log.innerHTML += `<br><span style="color:var(--neon-blue)">> 載入目標 [ ${data.name} ] 數據完畢。</span>`;
+                processDualCoreLogic(data);
 
             } catch (e) {
                 log.innerHTML += `<br><span class="hl-red">> 錯誤: ${e.message}</span>`;
             } finally {
                 isProcessing = false;
                 btn.disabled = false;
-                btn.innerText = "啟動實時解構";
+                btn.innerText = "執行攻防雙核解構";
             }
         }
 
-        function processProfessionalLogic(data) {
-            // 防呆處理：確保 API 缺漏欄位時系統不會崩潰
+        function processDualCoreLogic(data) {
             const wins = data.wins || 0;
             const losses = data.losses || 0;
             const total = wins + losses;
             const wr = total > 0 ? (wins / total) : 0;
             const tcw = data.threeCrownWins || 0;
             const raw3C = wins > 0 ? (tcw / wins) : 0;
-            const pb = data.bestTrophies || 0;
             
-            // 由於官方 API 頂層可能不直接給 challengeMaxWins，這裡做 Fallback 預估
+            // 防禦核心：控制轉化率 (非三冠勝場的佔比)
+            const controlRate = wins > 0 ? ((wins - tcw) / wins) : 0;
+            
+            const pb = data.bestTrophies || 0;
             const challengeWins = data.challengeMaxWins || Math.min(20, Math.floor(pb / 500));
-
             const log = document.getElementById('ui-log');
 
-            // 1. Z-Score 歸一化 (對標全球頂尖模型基準)
+            // 1. Z-Score 歸一化
             const zOffense = (raw3C - 0.22) / 0.08;
+            const zDefense = (controlRate - 0.78) / 0.08; // 基準為 78% 的控制率
             const zConsistency = (wr - 0.51) / 0.05;
-
-            // 2. STR S型曲線權重映射 (Sigmoid)
-            let strBase = 1 / (1 + Math.exp(-zOffense)) * 100;
-            
-            // 3. PB 難度係數 (平方加重)
             const difficultyScale = Math.pow(pb / 9000, 2); 
 
-            // 4. 協同因子獎勵 (激進判定)
-            let synergyBonus = 1.0;
-            let isAggressiveElite = false;
-            
+            // --- 進攻 (STR) 運算 ---
+            let strBase = 1 / (1 + Math.exp(-zOffense)) * 100;
+            let strSynergy = 1.0;
+            let isAggressive = false;
             if (wr > 0.54 && raw3C > 0.40) {
-                synergyBonus = 1.15;
-                isAggressiveElite = true;
-                log.innerHTML += `<br><span class="hl-gold">> [SYNERGY_OVERRIDE] 滿足雙高門檻，觸發 1.15x 激進增益。</span>`;
+                strSynergy = 1.15;
+                isAggressive = true;
+                log.innerHTML += `<br><span class="hl-red">> [STR_ALERT] 觸發狂暴進攻增益 (1.15x)</span>`;
             }
+            let strFinal = Math.min(100, ((strBase * 0.7) + (difficultyScale * 30)) * strSynergy);
 
-            // 最終 STR 合成 (限制在 100)
-            let strFinal = strBase * 0.7 + (difficultyScale * 30);
-            strFinal *= synergyBonus;
-            strFinal = Math.min(100, strFinal);
+            // --- 防守 (DEF) 運算 (V15.0 核心) ---
+            let defBase = 1 / (1 + Math.exp(-zDefense)) * 100;
+            let defSynergy = 1.0;
+            let isIronclad = false;
+            // 鐵壁判定：勝率高且極度依賴 1 冠勝
+            if (wr > 0.53 && controlRate > 0.75) {
+                defSynergy = 1.15;
+                isIronclad = true;
+                log.innerHTML += `<br><span class="hl-cyan">> [DEF_ALERT] 觸發鐵壁防禦增益 (1.15x)</span>`;
+            }
+            let defFinal = Math.min(100, ((defBase * 0.65) + (difficultyScale * 35)) * defSynergy);
 
-            // 5. 其他專業維度演算
-            let def = Math.min(100, (1 - raw3C) * 80 + (wr * 20));
+            // 其他維度
             let mic = Math.min(100, (pb / 90) + (challengeWins * 2));
             let mac = Math.min(100, (wr * 120) * (pb / 9000));
             let psy = Math.min(100, (pb > 8500 ? 98 : pb/90));
             let cst = Math.min(100, 50 + (zConsistency * 15));
 
-            renderUI(data.name, [strFinal, def, mic, mac, psy, cst], isAggressiveElite, {wr, raw3C, pb});
+            renderUI(data.name, [strFinal, defFinal, mic, mac, psy, cst], isAggressive, isIronclad, {wr, raw3C, controlRate});
         }
 
-        function renderUI(name, scores, isElite, raw) {
+        function renderUI(name, scores, isAggressive, isIronclad, raw) {
             document.getElementById('ui-name').innerText = name;
+            document.getElementById('ui-ncr').innerText = (scores.reduce((a,b)=>a+b)/6).toFixed(1);
             
-            // MVI (Maxima Value Index)
-            const mvi = (scores.reduce((a,b)=>a+b)/6).toFixed(1);
-            document.getElementById('ui-ncr').innerText = mvi;
-            
-            const ids = ['val-str', 'val-def', 'val-mic', 'val-mac'];
-            ids.forEach((id, i) => {
-                const el = document.getElementById(id);
-                el.innerText = Math.round(scores[i]);
-                el.classList.remove('active');
-                if(i === 0 && isElite) el.classList.add('active'); // STR 激進高亮
-            });
+            // 數據渲染與高亮
+            document.getElementById('val-str').innerText = Math.round(scores[0]);
+            document.getElementById('val-def').innerText = Math.round(scores[1]);
+            document.getElementById('val-mic').innerText = Math.round(scores[2]);
+            document.getElementById('val-mac').innerText = Math.round(scores[3]);
 
+            document.getElementById('val-str').className = 'stat-val' + (isAggressive ? ' active-str' : '');
+            document.getElementById('val-def').className = 'stat-val' + (isIronclad ? ' active-def' : '');
+
+            // 雷達圖動態變色 (偏向進攻或防守)
+            let radarColor = '#00f2ff';
+            let radarBg = 'rgba(0, 242, 255, 0.1)';
+            if (isAggressive && !isIronclad) { radarColor = '#ff2a00'; radarBg = 'rgba(255, 42, 0, 0.15)'; }
+            else if (isIronclad && !isAggressive) { radarColor = '#00ffaa'; radarBg = 'rgba(0, 255, 170, 0.15)'; }
+            
+            radarChart.data.datasets[0].borderColor = radarColor;
+            radarChart.data.datasets[0].backgroundColor = radarBg;
+            radarChart.data.datasets[0].pointBackgroundColor = radarColor;
             radarChart.data.datasets[0].data = scores;
             radarChart.update();
 
-            let report = `<span class="hl-blue">[ 實時量子解構報告 ]</span><br><br>`;
-            report += `受測目標在 PB (<span class="hl-gold">${raw.pb}</span>) 區間展現出 <span class="hl-red">${(raw.raw3C*100).toFixed(1)}%</span> 的三冠轉換純度。<br>`;
-            report += `全局勝率為 <span class="hl-gold">${(raw.wr*100).toFixed(1)}%</span>。<br><br>`;
+            // 報告生成
+            let report = `<span style="color:var(--neon-blue)">[ 攻防矩陣解構報告 ]</span><br><br>`;
+            report += `全局勝率：<span class="hl-gold">${(raw.wr*100).toFixed(1)}%</span><br>`;
+            report += `三冠突破率 (進攻)：<span class="hl-red">${(raw.raw3C*100).toFixed(1)}%</span><br>`;
+            report += `戰局控制率 (防守)：<span class="hl-cyan">${(raw.controlRate*100).toFixed(1)}%</span><br><br>`;
             
-            if(isElite) {
-                report += `<span class="hl-red">>> 警告：偵測到「極端掠食者」特徵。</span><br>`;
-                report += `目標的進攻意圖與實質勝率產生了正向協同效應 (Synergy > 1.0)。建議在防守端投入額外資源。`;
-            } else {
-                report += `經 Z-Score 歸一化判定，目標進攻數據處於常態分佈範圍。未觸發協同係數補償。`;
+            if (isAggressive) {
+                report += `<span class="hl-red">>> 判定：【狂暴掠食者】</span> 目標具備極強的推進破壞力，防守時需提防一波流崩盤。<br>`;
+            }
+            if (isIronclad) {
+                report += `<span class="hl-cyan">>> 判定：【鐵壁控制大師】</span> 目標防守滴水不漏，極其擅長拖入殘局並以微弱優勢取勝。對陣時切忌急躁虧費。<br>`;
+            }
+            if (!isAggressive && !isIronclad) {
+                report += `目標攻守趨於平衡，無極端偏好，屬於常態分佈選手。`;
             }
             
             document.getElementById('ui-report').innerHTML = report;
-            document.getElementById('ui-log').innerHTML += `<br>> 運算完成。雷達圖譜已更新。`;
         }
 
         window.onload = initCharts;

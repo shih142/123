@@ -213,6 +213,7 @@
 
         .sync-bar {
             height: 4px; background: #222; width: 100%; margin-top: 10px;
+            position: relative;
         }
         .sync-progress {
             height: 100%; width: 0%; background: var(--neon-cyan);
@@ -261,7 +262,7 @@
             </section>
 
             <div class="data-grid">
-                <!-- ROW 1: CORE HISTORY -->
+                <!-- ROW 1 -->
                 <div class="data-node">
                     <div class="node-label">Career Total Wins</div>
                     <div class="node-value" id="valWins">--</div>
@@ -283,7 +284,7 @@
                     <div class="mini-bar"><div id="barWinRate" class="mini-fill"></div></div>
                 </div>
 
-                <!-- ROW 2: PEAK ACHIEVEMENTS -->
+                <!-- ROW 2 -->
                 <div class="data-node node-special">
                     <div class="node-label">3-Crown Power</div>
                     <div class="node-value" id="val3C">--</div>
@@ -305,7 +306,7 @@
                     <div class="mini-bar"><div id="barLevel" class="mini-fill"></div></div>
                 </div>
 
-                <!-- ROW 3: LEGACY METRICS -->
+                <!-- ROW 3 -->
                 <div class="data-node">
                     <div class="node-label">Cards Unlocked</div>
                     <div class="node-value" id="valCards">--</div>
@@ -436,7 +437,7 @@
                 const losses = data.losses || 0;
                 const threeCrowns = data.threeCrownWins || 0;
                 const bestTrophies = data.bestTrophies || data.trophies || 0;
-                const donations = data.donations || 0;
+                const donations = data.totalDonations || data.donations || 0;
                 const challengeMax = data.challengeMaxWins || 0;
                 const cards = data.cards ? data.cards.length : 110;
                 const level = data.expLevel || 0;

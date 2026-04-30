@@ -3,18 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>神經矩陣 MAXIMA | V11.0 專業權重引擎</title>
+    <title>神經矩陣 MAXIMA | V12.0 激進進攻引擎</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --bg-deep: #080a0c;
-            --panel-bg: rgba(15, 20, 25, 0.9);
+            --bg-deep: #05070a;
+            --panel-bg: rgba(10, 15, 20, 0.95);
             --holo-cyan: #00e5ff;
             --apex-gold: #ffc800;
+            --aggressive-red: #ff0044;
             --pure-white: #f0f5fa;
             --muted-gold: #826a4a;
-            --grid: rgba(0, 229, 255, 0.03);
+            --grid: rgba(255, 0, 68, 0.05);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -24,116 +25,124 @@
             font-family: 'Share Tech Mono', 'Microsoft JhengHei', sans-serif;
             height: 100vh; display: flex; overflow: hidden;
             background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-            background-size: 30px 30px;
+            background-size: 40px 40px;
         }
 
         .layout-grid { display: grid; grid-template-columns: 320px 1fr 320px; gap: 20px; width: 100%; height: 100%; padding: 20px; }
-        .panel { background: var(--panel-bg); border: 1px solid rgba(130, 106, 74, 0.3); position: relative; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .panel-header { padding: 12px; border-bottom: 1px solid var(--muted-gold); font-family: 'Orbitron'; font-size: 11px; letter-spacing: 2px; display: flex; justify-content: space-between; background: rgba(0,0,0,0.5); }
+        .panel { background: var(--panel-bg); border: 1px solid rgba(255, 0, 68, 0.2); position: relative; display: flex; flex-direction: column; box-shadow: 0 0 40px rgba(0,0,0,0.8); }
+        .panel-header { padding: 12px; border-bottom: 1px solid var(--aggressive-red); font-family: 'Orbitron'; font-size: 11px; letter-spacing: 2px; display: flex; justify-content: space-between; background: rgba(255,0,68,0.1); }
         
-        /* 數值展示 */
-        .ncr-display { padding: 25px; text-align: center; border-bottom: 1px solid rgba(130, 106, 74, 0.2); }
-        .ncr-value { font-family: 'Orbitron'; font-size: 56px; font-weight: 900; color: var(--apex-gold); text-shadow: 0 0 20px rgba(255, 200, 0, 0.3); }
+        .ncr-display { padding: 25px; text-align: center; border-bottom: 1px solid rgba(255, 0, 68, 0.1); }
+        .ncr-value { font-family: 'Orbitron'; font-size: 64px; font-weight: 900; color: var(--aggressive-red); text-shadow: 0 0 30px rgba(255, 0, 68, 0.5); }
         
         .metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 15px; }
-        .metric-node { background: rgba(0,0,0,0.3); border: 1px solid rgba(130, 106, 74, 0.2); padding: 12px; transition: 0.4s; opacity: 0; transform: translateY(10px); }
+        .metric-node { background: rgba(255,0,68,0.02); border: 1px solid rgba(255, 0, 68, 0.1); padding: 12px; opacity: 0; transform: translateY(10px); transition: 0.5s; }
         .metric-node.visible { opacity: 1; transform: translateY(0); }
-        .mn-title { font-size: 10px; color: var(--muted-gold); margin-bottom: 5px; }
-        .mn-val { font-family: 'Orbitron'; font-size: 20px; color: var(--pure-white); }
-        .mn-val.highlight { color: var(--holo-cyan); }
+        .mn-title { font-size: 10px; color: var(--aggressive-red); margin-bottom: 5px; font-weight: bold; }
+        .mn-val { font-family: 'Orbitron'; font-size: 22px; color: var(--pure-white); }
+        .mn-val.highlight { color: var(--aggressive-red); text-shadow: 0 0 10px var(--aggressive-red); }
 
-        /* 圖表區 */
-        .charts-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; flex: 1; padding: 15px; }
-        .chart-box { background: rgba(0,0,0,0.2); border: 1px solid rgba(130, 106, 74, 0.1); position: relative; min-height: 250px; }
+        .charts-container { display: grid; grid-template-columns: 1fr; gap: 15px; flex: 1; padding: 15px; }
+        .chart-box { background: rgba(0,0,0,0.4); border: 1px solid rgba(255, 0, 68, 0.05); position: relative; flex: 1; }
 
-        .report-box { flex: 1; padding: 15px; font-size: 13px; line-height: 1.7; color: #aaa; overflow-y: auto; background: rgba(0,0,0,0.2); }
-        .hl { color: var(--apex-gold); font-weight: bold; }
+        .report-box { padding: 20px; font-size: 13px; line-height: 1.8; color: #ccc; background: rgba(255,0,68,0.05); border-top: 1px solid rgba(255,0,68,0.2); }
+        .hl { color: var(--aggressive-red); font-weight: bold; }
 
-        input, button { background: #000; border: 1px solid var(--muted-gold); color: var(--apex-gold); padding: 10px; font-family: 'Share Tech Mono'; width: 100%; margin-bottom: 15px; }
-        button { cursor: pointer; font-weight: bold; transition: 0.3s; }
-        button:hover { background: var(--apex-gold); color: #000; }
+        input, button { background: #000; border: 1px solid var(--aggressive-red); color: var(--aggressive-red); padding: 12px; font-family: 'Share Tech Mono'; width: 100%; margin-bottom: 15px; font-size: 14px; }
+        button { cursor: pointer; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; transition: 0.3s; }
+        button:hover { background: var(--aggressive-red); color: #fff; box-shadow: 0 0 20px var(--aggressive-red); }
         
-        .term-log { flex: 1; padding: 10px; font-size: 11px; color: #555; overflow-y: auto; font-family: 'Share Tech Mono'; }
+        .term-log { flex: 1; padding: 15px; font-size: 11px; color: #666; overflow-y: auto; font-family: 'Share Tech Mono'; line-height: 1.5; }
     </style>
 </head>
 <body>
 
     <div class="layout-grid">
         <div class="panel">
-            <div class="panel-header"><span>PLAYER_PROFILE</span><span>V11.0</span></div>
+            <div class="panel-header"><span>SUBJECT_IDENT</span><span>AGGRESSIVE_V12</span></div>
             <div class="ncr-display">
-                <div id="ui-name" style="font-size: 20px; margin-bottom: 5px; font-family: 'Orbitron';">---</div>
+                <div id="ui-name" style="font-size: 18px; margin-bottom: 10px; font-family: 'Orbitron'; letter-spacing: 1px;">---</div>
                 <div id="ui-ncr" class="ncr-value">0.00</div>
-                <div id="ui-class" style="font-size: 11px; color: var(--muted-gold); margin-top: 10px;">AWAITING DATA</div>
+                <div id="ui-class" style="font-size: 11px; color: var(--aggressive-red); margin-top: 10px; font-weight: bold;">STANDBY</div>
             </div>
-            <div style="padding: 15px;" id="ui-tags"></div>
+            <div class="term-log" id="ui-log">> 初始化激進運算模組...<br>> 權重已重置為 Killer-Instinct 模式。</div>
         </div>
 
         <div class="panel">
-            <div class="panel-header"><span>GEOMETRIC_ANALYSIS</span><span>SIX_DIMENSIONS</span></div>
+            <div class="panel-header"><span>OFFENSIVE_EXTREMITY_ANALYSIS</span><span>RADAR_SYNC</span></div>
             <div class="charts-container">
                 <div class="chart-box"><canvas id="radarChart"></canvas></div>
-                <div class="chart-box"><canvas id="barChart"></canvas></div>
             </div>
             <div class="metrics-grid">
-                <div class="metric-node" id="node-1"><div class="mn-title">進攻權重(STR)</div><div class="mn-val highlight" id="val-str">0</div></div>
+                <div class="metric-node" id="node-1"><div class="mn-title">激進進攻(STR)</div><div class="mn-val highlight" id="val-str">0</div></div>
                 <div class="metric-node" id="node-2"><div class="mn-title">防禦係數(DEF)</div><div class="mn-val" id="val-def">0</div></div>
-                <div class="metric-node" id="node-3"><div class="mn-title">微操精度(MIC)</div><div class="mn-val highlight" id="val-mic">0</div></div>
+                <div class="metric-node" id="node-3"><div class="mn-title">微操精度(MIC)</div><div class="mn-val" id="val-mic">0</div></div>
                 <div class="metric-node" id="node-4"><div class="mn-title">宏觀營運(MAC)</div><div class="mn-val" id="val-mac">0</div></div>
                 <div class="metric-node" id="node-5"><div class="mn-title">抗壓心理(PSY)</div><div class="mn-val" id="val-psy">0</div></div>
                 <div class="metric-node" id="node-6"><div class="mn-title">穩定指數(CST)</div><div class="mn-val" id="val-cst">0</div></div>
             </div>
-            <div class="report-box" id="ui-report">系統就緒。請輸入玩家標籤以進行專業數據解構。</div>
+            <div class="report-box" id="ui-report">請注入數據，系統將執行非線性進攻壓制運算。</div>
         </div>
 
         <div class="panel">
-            <div class="panel-header"><span>COMMAND_CENTER</span><span>TRACE</span></div>
+            <div class="panel-header"><span>COMMAND_CONSOLE</span><span>OVERRIDE</span></div>
             <div style="padding: 20px;">
-                <label style="font-size: 10px; color: var(--muted-gold);">PLAYER_TAG</label>
+                <label style="font-size: 10px; color: var(--aggressive-red); font-weight: bold;">TARGET_PLAYER_TAG</label>
                 <input type="text" id="playerTag" value="#CV9QU9CYJ">
-                <button onclick="executeProfessionalAnalysis()">執行專業權重運算</button>
+                <button onclick="executeAggressiveAnalysis()">執行激進數據解構</button>
             </div>
-            <div class="term-log" id="ui-log"></div>
+            <div style="padding: 0 20px; font-size: 10px; color: #555;">
+                * 警告：激進版本會大幅壓低非三冠傾向玩家的 STR 分數。
+            </div>
         </div>
     </div>
 
     <script>
-        let radarChart, barChart;
+        let radarChart;
 
         function initCharts() {
             const ctxR = document.getElementById('radarChart').getContext('2d');
-            const ctxB = document.getElementById('barChart').getContext('2d');
-            
             radarChart = new Chart(ctxR, {
                 type: 'radar',
                 data: {
-                    labels: ['STR', 'DEF', 'MIC', 'MAC', 'PSY', 'CST'],
-                    datasets: [{ data: [0,0,0,0,0,0], backgroundColor: 'rgba(255,200,0,0.1)', borderColor: '#ffc800', borderWidth: 2, pointRadius: 0 }]
+                    labels: ['STR (激進)', 'DEF', 'MIC', 'MAC', 'PSY', 'CST'],
+                    datasets: [{ 
+                        data: [0,0,0,0,0,0], 
+                        backgroundColor: 'rgba(255, 0, 68, 0.15)', 
+                        borderColor: '#ff0044', 
+                        borderWidth: 2,
+                        pointBackgroundColor: '#fff',
+                        pointRadius: 2
+                    }]
                 },
-                options: { responsive: true, maintainAspectRatio: false, scales: { r: { grid: { color: '#222' }, angleLines: { color: '#222' }, ticks: { display: false } } }, plugins: { legend: { display: false } } }
-            });
-
-            barChart = new Chart(ctxB, {
-                type: 'bar',
-                data: {
-                    labels: ['STR', 'DEF', 'MIC', 'MAC', 'PSY', 'CST'],
-                    datasets: [{ data: [0,0,0,0,0,0], backgroundColor: '#00e5ff' }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, scales: { y: { display: false }, x: { grid: { display: false } } }, plugins: { legend: { display: false } } }
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    scales: { 
+                        r: { 
+                            grid: { color: 'rgba(255,0,68,0.1)' }, 
+                            angleLines: { color: 'rgba(255,0,68,0.1)' }, 
+                            ticks: { display: false },
+                            pointLabels: { color: '#ff0044', font: { size: 10, weight: 'bold' } }
+                        } 
+                    }, 
+                    plugins: { legend: { display: false } } 
+                }
             });
         }
 
-        async function executeProfessionalAnalysis() {
+        async function executeAggressiveAnalysis() {
             const tag = document.getElementById('playerTag').value;
-            document.getElementById('ui-log').innerHTML += `> 正在連結數據庫: ${tag}...<br>`;
+            const log = document.getElementById('ui-log');
+            log.innerHTML += `<br>> 鎖定目標: ${tag}`;
             
-            // 模擬獲取高端對局數據
+            // 模擬高端進攻型玩家
             const data = {
-                name: "PRO_PLAYER",
-                wins: 18450,
-                losses: 14200,
-                bestTrophies: 8850,
-                threeCrownWins: 4200
+                name: "OFFENSIVE_BEAST",
+                wins: 12000,
+                losses: 9500,
+                bestTrophies: 8600,
+                threeCrownWins: 5800 // 極高三冠數
             };
 
             const total = data.wins + data.losses;
@@ -142,31 +151,38 @@
             const tcw = data.threeCrownWins;
 
             // ==========================================
-            // 🚀 V11.0 專業 STR 權重算法
+            // 🔥 V12.0 激進版本 STR 核心算法
             // ==========================================
-            // 1. 三冠效率 (與勝場比): 50%
-            const convRate = (tcw / data.wins) * 100;
-            // 2. PB 難度係數 (以9000為基準): 30%
-            const diffFactor = (pb / 9000) * 100;
-            // 3. 進攻密度 (與總場數比): 20%
-            const density = (tcw / total) * 100;
+            
+            // 1. 核心轉換率 (權重 65%): 使用平方提升高分段差異
+            const rawConvRate = (tcw / data.wins);
+            const convScore = Math.pow(rawConvRate, 0.85) * 100; // 略微補償中段，但極大化高段
 
-            let str = (convRate * 0.5) + (diffFactor * 0.3) + (density * 0.2);
-            str = Math.min(100, str * 1.1); // 加上 1.1 的激進補償係數
+            // 2. 盃段難度 (權重 20%): 必須在高盃段達成才算數
+            const difficulty = (pb / 9000) * 100;
 
-            // 其餘指標
-            let def = Math.min(100, ((data.wins - tcw)/data.wins * 70) + (wr * 30));
-            let mic = Math.min(100, (pb / 9000 * 50) + ( (1 - (tcw/data.wins)) * wr * 100 ) );
-            let mac = Math.min(100, (pb / 9000 * 70) + (wr * 30));
-            let psy = Math.min(100, (pb > 8000 ? 90 : 60) + (wr * 10));
-            let cst = Math.min(100, (Math.log10(total) / Math.log10(100000)) * 100);
+            // 3. 進攻純度 (權重 15%): 三冠在總對局中的存在感
+            const purity = (tcw / total) * 100;
+
+            // 激進合成公式
+            let str = (convScore * 0.65) + (difficulty * 0.20) + (purity * 0.15);
+            
+            // 激進補償：如果勝率高且三冠率高，給予額外 15% 爆發獎勵
+            if (rawConvRate > 0.4 && wr > 0.55) str *= 1.15;
+
+            str = Math.min(100, str);
+
+            // 其他指標 (輔助)
+            let def = Math.min(100, ((data.wins - tcw)/data.wins * 60) + (wr * 40));
+            let mic = Math.min(100, (pb / 9000 * 40) + ( (1 - rawConvRate) * wr * 120 ) );
+            let mac = Math.min(100, (pb / 9000 * 60) + (wr * 40));
+            let psy = Math.min(100, (pb > 8000 ? 95 : pb/100) + (wr * 5));
+            let cst = Math.min(100, (Math.log10(total) / Math.log10(80000)) * 100);
 
             const scores = [str, def, mic, mac, psy, cst];
-            updateUI(data.name, scores);
-        }
-
-        function updateUI(name, scores) {
-            document.getElementById('ui-name').innerText = name;
+            
+            // UI 更新
+            document.getElementById('ui-name').innerText = data.name;
             const ids = ['val-str', 'val-def', 'val-mic', 'val-mac', 'val-psy', 'val-cst'];
             ids.forEach((id, i) => {
                 document.getElementById(id).innerText = Math.round(scores[i]);
@@ -175,19 +191,19 @@
 
             radarChart.data.datasets[0].data = scores;
             radarChart.update();
-            barChart.data.datasets[0].data = scores;
-            barChart.update();
 
-            // MVI 幾何面積計算
+            // MVI 指數 (幾何面積權重)
             const mvi = (scores.reduce((a, b) => a + b) / 600) * 100;
             document.getElementById('ui-ncr').innerText = mvi.toFixed(2);
+            document.getElementById('ui-class').innerText = mvi > 75 ? "危險掠食者" : "標準作戰單位";
 
             document.getElementById('ui-report').innerHTML = `
-                <span class="hl">進攻權重分析 (STR):</span> 
-                當前 STR 指數為 <span class="hl">${Math.round(scores[0])}</span>。
-                本算法已剔除低盃段三冠的水份，當前數值反映了在 <span class="hl">PB ${Math.round(scores[3]*90)}</span> 高壓環境下的破壞力。
-                這是一個基於轉換率 (50%) 與難度係數 (30%) 的客觀結果。
+                <span class="hl">激進進攻評定:</span> 該對象表現出 <span class="hl">${(rawConvRate*100).toFixed(1)}%</span> 的斬殺轉換率。
+                在 V12 激進算法下，其 STR 指數被判定為 <span class="hl">${Math.round(str)}</span>。
+                這意味著該玩家不具備妥協性，其戰術核心完全建立在<span class="hl">摧毀對方主塔</span>而非點數勝出。
             `;
+            
+            log.innerHTML += `<br>> 運算完成。檢測到高強度攻擊訊號。`;
         }
 
         window.onload = initCharts;

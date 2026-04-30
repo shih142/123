@@ -3,24 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>神經矩陣 MAXIMA | V47.0 OVERCLOCK-CARNAGE</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Noto+Sans+TC:wght@300;500;700;900&display=swap" rel="stylesheet">
+    <title>神經矩陣 MAXIMA | V48.0 APEX-SYNTHESIS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* V47.0 激進狂暴風格 (深淵紅 x 霓虹緋) */
+        /* V48.0 專業平衡風格 (量子藍 x 冷鍛白) */
         :root {
-            --bg-deep: #0a0000;
-            --panel-bg: rgba(20, 5, 5, 0.95);
-            --stat-primary: #ff1744; /* 狂暴紅 */
-            --stat-secondary: #ff8a80;
-            --text-main: #ffebee;
-            --text-dim: #b71c1c;
-            --border-glow: rgba(255, 23, 68, 0.2);
-            --neon-shadow: 0 0 20px rgba(255, 23, 68, 0.5);
-            --alert-glow: 0 0 30px rgba(213, 0, 0, 0.8);
+            --bg-deep: #050b14;
+            --panel-bg: rgba(9, 17, 30, 0.95);
+            --stat-primary: #00e5ff; /* 量子藍 */
+            --stat-secondary: #82b1ff;
+            --text-main: #f1f5f9;
+            --text-dim: #94a3b8;
+            --border-glow: rgba(0, 229, 255, 0.2);
+            --neon-shadow: 0 0 15px rgba(0, 229, 255, 0.4);
+            --chart-fill: rgba(0, 229, 255, 0.1);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; cursor: crosshair; }
+        * { box-sizing: border-box; margin: 0; padding: 0; cursor: default; }
         
         body {
             background-color: var(--bg-deep);
@@ -28,105 +28,104 @@
             font-family: 'Share Tech Mono', 'Noto Sans TC', sans-serif;
             min-height: 100vh; overflow-x: hidden; display: flex; flex-direction: column;
             background-image: 
-                radial-gradient(circle at 50% 50%, #1a0202 0%, #0a0000 100%),
-                linear-gradient(rgba(255, 23, 68, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 23, 68, 0.03) 1px, transparent 1px);
-            background-size: 100% 100%, 30px 30px, 30px 30px;
+                linear-gradient(rgba(130, 177, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(130, 177, 255, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
         }
 
-        header { padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--stat-primary); background: rgba(15, 0, 0, 0.9); box-shadow: var(--neon-shadow); }
+        header { padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--stat-primary); background: rgba(5, 11, 20, 0.95); box-shadow: var(--neon-shadow); }
         .system-status { display: flex; gap: 20px; font-size: 12px; color: var(--stat-primary); font-weight: bold; letter-spacing: 2px; }
         .status-node { display: flex; align-items: center; gap: 6px; }
-        .dot { width: 8px; height: 8px; background: #fff; border-radius: 50%; box-shadow: 0 0 10px #fff; }
-        .blink { animation: pulse 0.8s infinite; }
+        .dot { width: 8px; height: 8px; background: var(--stat-primary); border-radius: 50%; box-shadow: 0 0 8px var(--stat-primary); }
+        .blink { animation: pulse 2s infinite; }
 
         main { display: grid; grid-template-columns: 380px 1fr 340px; flex: 1; gap: 2px; }
-        .column { background: var(--panel-bg); display: flex; flex-direction: column; position: relative; border-right: 1px solid rgba(255, 23, 68, 0.1); }
+        .column { background: var(--panel-bg); display: flex; flex-direction: column; position: relative; border-right: 1px solid rgba(0, 229, 255, 0.1); }
 
-        .section-label { padding: 12px 15px; font-family: 'Orbitron'; font-size: 11px; background: linear-gradient(90deg, rgba(255, 23, 68, 0.2), transparent); color: var(--stat-secondary); border-bottom: 1px solid rgba(255, 23, 68, 0.3); display: flex; justify-content: space-between; text-transform: uppercase; letter-spacing: 1.5px; }
+        .section-label { padding: 12px 15px; font-family: 'Orbitron'; font-size: 11px; background: linear-gradient(90deg, rgba(0, 229, 255, 0.1), transparent); color: var(--stat-secondary); border-bottom: 1px solid rgba(0, 229, 255, 0.2); display: flex; justify-content: space-between; text-transform: uppercase; letter-spacing: 1.5px; }
 
-        .hero-stats { padding: 30px 20px; text-align: center; border-bottom: 1px solid rgba(255,0,0,0.1); position: relative; overflow: hidden;}
-        .hero-value { font-family: 'Orbitron'; font-size: 96px; font-weight: 900; color: #fff; line-height: 0.8; margin-bottom: 15px; text-shadow: var(--alert-glow); }
-        .hero-name { font-family: 'Orbitron'; font-size: 20px; color: var(--stat-primary); letter-spacing: 5px; font-weight: bold;}
+        .hero-stats { padding: 30px 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .hero-value { font-family: 'Orbitron'; font-size: 88px; font-weight: 900; color: #fff; line-height: 0.8; margin-bottom: 15px; text-shadow: 0 0 20px rgba(0, 229, 255, 0.3); }
+        .hero-name { font-family: 'Orbitron'; font-size: 18px; color: var(--stat-secondary); letter-spacing: 4px; font-weight: bold;}
 
-        .data-matrix { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: rgba(255, 23, 68, 0.1); }
-        .cell { background: var(--bg-deep); padding: 20px 10px; text-align: center; position: relative; transition: 0.2s; }
-        .cell:hover { background: #2b0404; }
-        .cell-label { font-size: 10px; color: var(--stat-secondary); margin-bottom: 8px; letter-spacing: 1px; font-weight: bold; }
-        .cell-val { font-family: 'Orbitron'; font-size: 30px; color: #fff; text-shadow: 0 0 10px rgba(255, 23, 68, 0.4); }
+        .data-matrix { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: rgba(0, 229, 255, 0.1); }
+        .cell { background: var(--bg-deep); padding: 20px 10px; text-align: center; position: relative; transition: 0.3s; }
+        .cell:hover { background: #0c1627; }
+        .cell-label { font-size: 10px; color: var(--text-dim); margin-bottom: 8px; letter-spacing: 1px; font-weight: bold; }
+        .cell-val { font-family: 'Orbitron'; font-size: 28px; color: #fff; }
         
-        .highlight-atk::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: var(--stat-primary); box-shadow: var(--neon-shadow); }
-        .highlight-atk .cell-val { color: var(--stat-primary); font-weight: 900; }
+        .highlight-synth::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--stat-primary); }
+        .highlight-synth .cell-val { color: var(--stat-primary); text-shadow: 0 0 10px rgba(0, 229, 255, 0.2); }
 
         .vis-container { flex: 1; display: flex; flex-direction: column; padding: 20px; position: relative; min-height: 400px; }
         #radarWrapper { flex: 1; min-height: 380px; }
-        .report-overlay { background: rgba(10, 0, 0, 0.9); border: 1px solid var(--stat-primary); padding: 20px; margin-top: 15px; font-size: 13px; position: relative; border-left: 6px solid var(--stat-primary); box-shadow: inset 0 0 20px rgba(255,0,0,0.1); }
+        .report-overlay { background: rgba(5, 11, 20, 0.85); border: 1px solid var(--stat-primary); padding: 20px; margin-top: 15px; font-size: 13px; position: relative; border-left: 4px solid var(--stat-primary); box-shadow: inset 0 0 15px rgba(0,229,255,0.05); backdrop-filter: blur(5px); }
 
-        .io-panel { padding: 20px; border-top: 1px solid var(--border-glow); background: rgba(0,0,0,0.8); }
-        input { width: 100%; background: #050000; border: 1px solid var(--text-dim); padding: 15px; color: #fff; font-family: 'Orbitron'; font-size: 16px; outline: none; transition: 0.3s; text-align: center; letter-spacing: 2px; }
+        .io-panel { padding: 20px; border-top: 1px solid var(--border-glow); background: rgba(0,0,0,0.4); }
+        input { width: 100%; background: #050b14; border: 1px solid #1e293b; padding: 15px; color: #fff; font-family: 'Orbitron'; font-size: 16px; outline: none; transition: 0.3s; text-align: center; letter-spacing: 2px; }
         input:focus { border-color: var(--stat-primary); box-shadow: var(--neon-shadow); }
         input:disabled { opacity: 0.5; cursor: not-allowed; }
         
-        .btn-prime { width: 100%; padding: 18px; margin-top: 10px; background: rgba(255, 23, 68, 0.1); color: #fff; font-family: 'Orbitron'; font-weight: 900; font-size: 15px; border: 1px solid var(--stat-primary); cursor: pointer; letter-spacing: 3px; transition: 0.1s; text-shadow: 0 0 5px rgba(255,255,255,0.5); }
-        .btn-prime:hover:not(:disabled) { background: var(--stat-primary); color: #fff; box-shadow: var(--alert-glow); transform: scale(1.02); }
-        .btn-prime:disabled { background: #1a0505; color: #4a0000; border-color: #330000; cursor: wait; }
+        .btn-prime { width: 100%; padding: 18px; margin-top: 10px; background: rgba(0, 229, 255, 0.05); color: var(--stat-primary); font-family: 'Orbitron'; font-weight: 900; font-size: 14px; border: 1px solid var(--stat-primary); cursor: pointer; letter-spacing: 2px; transition: 0.2s; }
+        .btn-prime:hover:not(:disabled) { background: var(--stat-primary); color: #000; box-shadow: var(--neon-shadow); }
+        .btn-prime:disabled { background: #0f172a; color: #475569; border-color: #1e293b; cursor: wait; }
 
-        .sim-log { flex: 1; font-family: 'Share Tech Mono'; font-size: 11px; padding: 15px; color: var(--stat-secondary); overflow-y: auto; max-height: 300px; }
-        .log-line { margin-bottom: 8px; border-left: 2px solid #b71c1c; padding-left: 10px; line-height: 1.4; }
-        .log-ts { color: #d50000; margin-right: 10px; font-size: 10px; }
-        .log-tag { padding: 2px 5px; border-radius: 2px; font-size: 9px; margin-right: 8px; text-transform: uppercase; font-weight: bold; color:#fff; }
+        .sim-log { flex: 1; font-family: 'Share Tech Mono'; font-size: 11px; padding: 15px; color: var(--text-dim); overflow-y: auto; max-height: 300px; }
+        .log-line { margin-bottom: 8px; border-left: 2px solid #334155; padding-left: 10px; line-height: 1.4; }
+        .log-ts { color: #64748b; margin-right: 10px; font-size: 10px; }
+        .log-tag { padding: 2px 5px; border-radius: 2px; font-size: 9px; margin-right: 8px; text-transform: uppercase; font-weight: bold; color:#000; }
         
-        .tag-sys { background: #b71c1c; }
+        .tag-sys { background: #64748b; color: #fff; }
         .tag-calc { background: var(--stat-primary); }
-        .tag-crit { background: #ff0000; color: #fff; box-shadow: 0 0 5px #ff0000; animation: pulse 0.5s infinite; }
+        .tag-info { background: #3b82f6; color: #fff; }
 
-        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+        @keyframes pulse { 0% { opacity: 0.3; } 50% { opacity: 1; } 100% { opacity: 0.3; } }
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: var(--stat-primary); }
 
-        .data-box { padding: 15px; background: rgba(255,23,68,0.05); border: 1px solid rgba(255,23,68,0.3); margin-top: auto; font-family: 'Orbitron'; }
+        .data-box { padding: 15px; background: rgba(0,229,255,0.02); border: 1px solid rgba(0,229,255,0.15); margin-top: auto; font-family: 'Orbitron'; }
         .d-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 12px; }
-        .d-label { color: var(--stat-secondary); }
-        .d-val { color: #fff; font-weight: bold; text-shadow: 0 0 5px rgba(255,255,255,0.3); }
+        .d-label { color: var(--text-dim); }
+        .d-val { color: #fff; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <header>
         <div class="system-status">
-            <div class="status-node"><div class="dot blink" style="background:#ff1744;box-shadow:0 0 10px #ff1744;"></div> V47.0 OVERCLOCK-CARNAGE | AGGRESSION TIER</div>
-            <div class="status-node" id="top-lethality" style="color: #ff5252;">CONSERVATIVE PROTOCOLS: DISABLED</div>
+            <div class="status-node"><div class="dot blink"></div> V48.0 APEX-SYNTHESIS | PRO-BALANCE TIER</div>
+            <div class="status-node" id="top-lethality">ALGORITHM: BAYESIAN SIGMOID ACTIVE</div>
         </div>
         <div style="font-family: 'Orbitron'; font-size: 16px; letter-spacing: 4px; color: #fff;">MAXIMA_DATACENTER</div>
     </header>
 
     <main>
         <section class="column">
-            <div class="section-label"><span>LETHAL_STATISTICS</span><span>CARNAGE_API</span></div>
+            <div class="section-label"><span>SYNTHESIZED_METRICS</span><span>DATA_STREAM</span></div>
             <div class="hero-stats">
                 <div class="hero-value" id="ui-mvi">00</div>
-                <div class="hero-name" id="ui-name">AWAITING_TARGET</div>
-                <div style="font-size: 10px; color: var(--stat-secondary); margin-top: 5px;">LETHALITY RATING (LTR)</div>
+                <div class="hero-name" id="ui-name">AWAITING_INPUT</div>
+                <div style="font-size: 10px; color: var(--text-dim); margin-top: 5px;">APEX SYNTHESIS INDEX (ASI)</div>
             </div>
 
             <div class="data-matrix">
-                <div class="cell highlight-atk"><div class="cell-label">HYPER-OFFENSE (HOR)</div><div class="cell-val" id="val-str">--</div></div>
-                <div class="cell highlight-atk"><div class="cell-label">VANGUARD-DEF (VDR)</div><div class="cell-val" id="val-def">--</div></div>
-                <div class="cell"><div class="cell-label">VOLATILITY (VLI)</div><div class="cell-val" id="val-mic">--</div></div>
-                <div class="cell"><div class="cell-label">BASE EFFICACY (OEI)</div><div class="cell-val" id="val-mac">--</div></div>
-                <div class="cell"><div class="cell-label">MOMENTUM (MOM)</div><div class="cell-val" id="val-cst">--</div></div>
-                <div class="cell"><div class="cell-label">EXECUTION (EXE)</div><div class="cell-val" id="val-exe" style="color: var(--stat-primary);">--</div></div>
+                <div class="cell highlight-synth"><div class="cell-label">SYNTH-OFFENSE (SOR)</div><div class="cell-val" id="val-str">--</div></div>
+                <div class="cell highlight-synth"><div class="cell-label">TACTICAL-DEF (TDR)</div><div class="cell-val" id="val-def">--</div></div>
+                <div class="cell"><div class="cell-label">BAYESIAN CONF (B-CF)</div><div class="cell-val" id="val-mic">--</div></div>
+                <div class="cell"><div class="cell-label">OBJECTIVE BASE (OEI)</div><div class="cell-val" id="val-mac">--</div></div>
+                <div class="cell"><div class="cell-label">SIGMOID MOD (S-MOD)</div><div class="cell-val" id="val-cst">--</div></div>
+                <div class="cell"><div class="cell-label">DYNAMIC ADAPT (DYN)</div><div class="cell-val" id="val-exe" style="color: var(--stat-primary);">--</div></div>
             </div>
 
             <div class="io-panel">
-                <input type="text" id="tagInput" placeholder="ENTER TARGET TAG (#...)" spellcheck="false">
-                <button class="btn-prime" id="btn-engage" onclick="fetchAndAnalyze()">OVERRIDE & EXECUTE</button>
+                <input type="text" id="tagInput" placeholder="PLAYER TAG (#...)" spellcheck="false">
+                <button class="btn-prime" id="btn-engage" onclick="fetchAndAnalyze()">RUN SYNTHESIS PROTOCOL</button>
             </div>
         </section>
 
         <section class="column">
-            <div class="section-label"><span>AGGRESSION_VECTORS</span><span>RADAR_PLOT</span></div>
+            <div class="section-label"><span>EQUILIBRIUM_VECTORS</span><span>RADAR_PLOT</span></div>
             <div class="vis-container">
                 <div id="radarWrapper">
                     <canvas id="mainChart"></canvas>
@@ -134,25 +133,25 @@
                 
                 <div class="report-overlay" id="report-container">
                     <div id="ui-archetype" style="font-family: 'Orbitron'; color: var(--stat-primary); font-size: 16px; font-weight: 900; margin-bottom: 10px; letter-spacing: 1px;">SYSTEM STANDBY</div>
-                    <div id="ui-desc" style="line-height: 1.6; color: #ffebee;">
-                        系統已實裝 V47.0 極限超頻協定。安全機制已解除。防守不再被視為存活指標，而是反擊的絞肉機。攻守數據皆採用指數級別（1.5次方）放大，以極端手段篩選出最具侵略性的高危險玩家。
+                    <div id="ui-desc" style="line-height: 1.6; color: #cbd5e1;">
+                        系統已實裝 V48.0 頂點合成協定。結合貝氏平滑估計與 Sigmoid 曲線，在激進爆發與保守底線中取得數學上的黃金平衡。專為職業賽事與高階環境設計的無死角評估模型。
                     </div>
                 </div>
             </div>
         </section>
 
         <section class="column">
-            <div class="section-label"><span>CARNAGE_LOG</span><span>PROXY_NETWORK</span></div>
+            <div class="section-label"><span>ANALYSIS_LOG</span><span>PROXY_NETWORK</span></div>
             <div id="log-feed" class="sim-log">
-                <div class="log-line"><span class="log-ts">00:00:00</span> <span class="log-tag tag-sys">SYS</span> OVERCLOCK-CARNAGE V47.0 載入完畢。</div>
-                <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-tag tag-crit">CRIT</span> 警告：線性平滑演算法已銷毀，指數級波動已啟用。</div>
+                <div class="log-line"><span class="log-ts">00:00:00</span> <span class="log-tag tag-sys">SYS</span> APEX-SYNTHESIS V48.0 核心上線。</div>
+                <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-tag tag-info">INFO</span> 載入貝氏平滑參數與非線性 S 曲線權重。</div>
             </div>
 
             <div class="data-box">
                 <div class="d-row"><span class="d-label">Raw Win Rate (p)</span><span class="d-val" id="sub-p">--</span></div>
-                <div class="d-row"><span class="d-label">Exponential Mod (p^1.5)</span><span class="d-val" id="sub-exp" style="color: var(--stat-primary);">--</span></div>
-                <div class="d-row"><span class="d-label">Risk Amplitude</span><span class="d-val" id="sub-risk">--</span></div>
-                <div class="d-row"><span class="d-label">Defensive Turnover</span><span class="d-val" id="sub-dto">--</span></div>
+                <div class="d-row"><span class="d-label">Bayesian Rate (θ)</span><span class="d-val" id="sub-bayes" style="color: var(--stat-primary);">--</span></div>
+                <div class="d-row"><span class="d-label">Wilson Lower (WLB)</span><span class="d-val" id="sub-wlb">--</span></div>
+                <div class="d-row"><span class="d-label">Sigmoid Multiplier</span><span class="d-val" id="sub-sig">--</span></div>
             </div>
         </section>
     </main>
@@ -166,16 +165,16 @@
             chart = new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: ['HOR(狂暴進攻)', 'VDR(絞肉防禦)', 'VLI(暴走波動)', 'OEI(客觀底盤)', 'MOM(殺戮動能)', 'EXE(處決力)'],
+                    labels: ['SOR(綜合進攻)', 'TDR(戰術防守)', 'B-CF(貝氏置信)', 'OEI(客觀底盤)', 'DYN(動態適應)', 'ASI(頂點合成)'],
                     datasets: [{
-                        label: 'CARNAGE_VECTOR',
+                        label: 'SYNTHESIS_VECTOR',
                         data: [0,0,0,0,0,0],
-                        backgroundColor: 'rgba(255, 23, 68, 0.15)',
-                        borderColor: '#ff1744',
+                        backgroundColor: 'rgba(0, 229, 255, 0.1)',
+                        borderColor: '#00e5ff',
                         borderWidth: 2,
                         pointRadius: 4,
                         pointBackgroundColor: '#fff',
-                        pointBorderColor: '#ff1744'
+                        pointBorderColor: '#00e5ff'
                     }]
                 },
                 options: {
@@ -183,9 +182,9 @@
                     maintainAspectRatio: false,
                     scales: {
                         r: {
-                            angleLines: { color: 'rgba(255, 23, 68, 0.15)' },
-                            grid: { color: 'rgba(255, 23, 68, 0.15)' },
-                            pointLabels: { color: '#ff8a80', font: { family: 'Share Tech Mono', size: 11, weight: 'bold' } },
+                            angleLines: { color: 'rgba(0, 229, 255, 0.1)' },
+                            grid: { color: 'rgba(0, 229, 255, 0.1)' },
+                            pointLabels: { color: '#94a3b8', font: { family: 'Share Tech Mono', size: 11, weight: 'bold' } },
                             ticks: { display: false, max: 100, min: 0 }
                         }
                     },
@@ -196,24 +195,24 @@
 
         async function fetchAndAnalyze() {
             let tagRaw = document.getElementById('tagInput').value.trim();
-            if(!tagRaw) return writeLog("CRIT", "未鎖定目標，拒絕執行空指令。");
+            if(!tagRaw) return writeLog("INFO", "請輸入玩家標籤以啟動合成協定。");
 
             const btn = document.getElementById('btn-engage');
             const input = document.getElementById('tagInput');
             btn.disabled = true; input.disabled = true;
-            btn.innerText = "OVERCLOCKING...";
+            btn.innerText = "SYNTHESIZING DATA...";
 
             let tagClean = tagRaw.replace('#', '');
             let encodedTag = encodeURIComponent('#' + tagClean);
 
-            writeLog("SYS", `鎖定目標 [#${tagClean}]，啟動極限超頻演算...`);
+            writeLog("SYS", `獲取目標數據 [#${tagClean}]，啟動動態平衡演算...`);
             
             try {
                 const apiUrl = `/api/clash-proxy?tag=${encodedTag}`;
                 const response = await fetch(apiUrl);
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const rawData = await response.json();
-                writeLog("SYS", `數據連線建立。注入指數級運算元。`);
+                writeLog("SYS", `握手成功。正在映射至 S 曲線函數。`);
 
                 const playerData = {
                     name: rawData.name || "UNKNOWN",
@@ -221,24 +220,24 @@
                     losses: rawData.losses || 0,
                     trophies: rawData.trophies || 0
                 };
-                runCarnageModel(playerData);
+                runSynthesisModel(playerData);
 
             } catch (error) {
-                writeLog("CRIT", `API 攔截 (${error.message})，強制載入極端殺手測試檔案。`);
-                // 模擬一個勝率極高、波動極大的狂暴型玩家
-                runCarnageModel({ name: "BLOODHOUND", wins: 2200, losses: 900, trophies: 8500 });
+                writeLog("INFO", `API 離線 (${error.message})。載入職業級均衡測試數據。`);
+                // 模擬一個典型的中高階職業玩家：場次多，勝率穩定微高 (約58%)
+                runSynthesisModel({ name: "PRO_EQUILIBRIUM", wins: 5800, losses: 4200, trophies: 7500 });
             } finally {
                 btn.disabled = false; input.disabled = false;
-                btn.innerText = "OVERRIDE & EXECUTE";
+                btn.innerText = "RUN SYNTHESIS PROTOCOL";
                 input.focus();
             }
         }
 
         /**
-         * V47.0 核心演算法：OVERCLOCK-CARNAGE 極限指數運算
+         * V48.0 核心演算法：APEX-SYNTHESIS 動態平衡數學模型
          */
-        function runCarnageModel(data) {
-            writeLog("CALC", "解析指數級勝率與暴走波動...");
+        function runSynthesisModel(data) {
+            writeLog("CALC", "執行貝氏平滑與非線性激進/保守校正...");
 
             const W = data.wins;
             const L = data.losses;
@@ -246,95 +245,109 @@
             const T = data.trophies;
 
             const p = W / N; 
-            const expMod = Math.pow(p, 1.5); // 指數放大
             
-            // 底盤：V46 的 OEI (簡化版，保持客觀重力)
-            const G = Math.log10(T > 10 ? T : 10) / 3.9;
-            const E = (W - L) / N;
-            const OEI = G * (1 + E); 
+            // 1. 貝氏置信勝率 (Bayesian Smoothing)
+            // 假設全局基準為 50%，虛擬樣本 N=100
+            const alpha = 50; 
+            const beta = 50;
+            const theta = (W + alpha) / (N + alpha + beta);
 
-            // ==========================================
-            // 激進指標計算 (POWER LAW SCALING)
-            // ==========================================
-            
-            // 1. HOR 狂暴進攻：將指數勝率與客觀難度相乘，強烈放大高勝率
-            const HOR_raw = expMod * OEI * 1.5; 
-
-            // 2. VDR 反擊防禦：防守不再是 WLB，而是存活率的指數放大 (視為反打能力)
-            const survivalRate = 1 - (L / N);
-            const VDR_raw = Math.pow(survivalRate, 1.5) * OEI * 1.3;
-
-            // 3. VLI 暴走指數 (波動率)：計算高勝率下的極端振幅
-            // 傳統模型懲罰波動，這裡我們把波動視為「爆發力」的潛在指標
+            // 2. 威爾遜極限 (保守防禦基底)
             const z = 1.96;
-            const standardError = Math.sqrt((p * (1 - p)) / N);
-            const WUB = p + z * standardError;
-            const WLB = p - z * standardError;
-            const VLI_raw = ((WUB - WLB) / (WLB > 0 ? WLB : 0.01)) * (p > 0.5 ? 1.5 : 0.5);
+            const denom = 1 + (z * z) / N;
+            const term1 = p + (z * z) / (2 * N);
+            const term2 = z * Math.sqrt((p * (1 - p)) / N + (z * z) / (4 * N * N));
+            const WLB = Math.max(0, (term1 - term2) / denom); 
+
+            // 3. 客觀底盤 OEI (剔除盃數通膨)
+            const G = Math.log10(T > 10 ? T : 10) / 3.9;
+            const OEI = G * (1 + (W - L) / N);
+
+            // 4. S 曲線進攻函數 (Sigmoid Modifier)
+            // 將 0.5~0.8 的勝率轉化為一條平滑的 S 曲線，兼顧中段保守與高段爆發
+            const k = 12; // 曲線陡峭度 (激進因子)
+            const sigmoidMod = 1 / (1 + Math.exp(-k * (theta - 0.5)));
+
+            // ==========================================
+            // V48 綜合指數計算
+            // ==========================================
+            
+            // SOR: 綜合進攻 (S曲線激進爆發 x 客觀難度)
+            const SOR_raw = sigmoidMod * OEI * 1.5; 
+
+            // TDR: 戰術防守 (威爾遜下限 x 生存反擊率 x 客觀難度)
+            const survivalRate = 1 - (L / N);
+            const TDR_raw = Math.sqrt(WLB * survivalRate) * OEI * 1.2;
+
+            // B_CF: 貝氏置信度 (接近 1 代表數據極其可靠)
+            const standardError = Math.sqrt((theta * (1 - theta)) / (N + alpha + beta));
+            const B_CF = Math.max(0.1, 1 - (z * standardError));
 
             // ==========================================
 
             const mapScore = (val, maxExpected) => Math.min(99.9, Math.max(0.1, (val / maxExpected) * 100));
 
-            const score_HOR = mapScore(HOR_raw, 1.0); 
-            const score_VDR = mapScore(VDR_raw, 0.9);
-            const score_VLI = mapScore(VLI_raw, 0.4); 
-            const score_OEI = mapScore(OEI, 1.0);
+            const score_SOR = mapScore(SOR_raw, 1.2); 
+            const score_TDR = mapScore(TDR_raw, 0.8);
+            const score_BCF = mapScore(B_CF, 1.0); 
+            const score_OEI = mapScore(OEI, 1.2);
             
-            // 動能 (MOM) 與處決 (EXE) 作為衍生指標
-            const score_MOM = mapScore(p * expMod * 2, 1.0);
-            const score_EXE = mapScore((score_HOR + score_VDR) / 2 * (1 + VLI_raw), 100);
+            // DYN (動態適應): 反映玩家勝率與期望值的落差動能
+            const score_DYN = mapScore((theta - 0.5) * 2 + B_CF, 1.5);
+            
+            // ASI (頂點合成指數): 最平衡的總分
+            const score_ASI = (score_SOR * 0.45) + (score_TDR * 0.35) + (score_OEI * 0.2);
 
-            const scores = [score_HOR, score_VDR, score_VLI, score_OEI, score_MOM, score_EXE];
-            updateDashboard(data, scores, p, expMod, VLI_raw, survivalRate);
+            const scores = [score_SOR, score_TDR, score_BCF, score_OEI, score_DYN, score_ASI];
+            updateDashboard(data, scores, p, theta, WLB, sigmoidMod);
         }
 
-        function updateDashboard(data, scores, p, expMod, VLI_raw, survivalRate) {
-            // LTR (Lethality Rating) 致命評分
-            const ltr = (scores[0]*0.35 + scores[1]*0.25 + scores[4]*0.2 + scores[5]*0.2); 
+        function updateDashboard(data, scores, p, theta, WLB, sigmoidMod) {
+            const asi = scores[5]; 
             
-            document.getElementById('ui-mvi').innerText = Math.round(ltr);
+            document.getElementById('ui-mvi').innerText = Math.round(asi);
             document.getElementById('ui-name').innerText = data.name.toUpperCase();
             
             document.getElementById('val-str').innerText = scores[0].toFixed(1);
             document.getElementById('val-def').innerText = scores[1].toFixed(1);
             document.getElementById('val-mic').innerText = scores[2].toFixed(1);
             document.getElementById('val-mac').innerText = scores[3].toFixed(1);
-            document.getElementById('val-cst').innerText = scores[4].toFixed(1);
-            document.getElementById('val-exe').innerText = scores[5].toFixed(1);
+            document.getElementById('val-cst').innerText = sigmoidMod.toFixed(3);
+            document.getElementById('val-exe').innerText = scores[4].toFixed(1);
 
-            document.getElementById('sub-p').innerText = (p * 100).toFixed(1) + "%";
-            document.getElementById('sub-exp').innerText = expMod.toFixed(3);
-            document.getElementById('sub-risk').innerText = (VLI_raw * 100).toFixed(1) + "%";
-            document.getElementById('sub-dto').innerText = (survivalRate * 100).toFixed(1) + "%";
+            document.getElementById('sub-p').innerText = (p * 100).toFixed(2) + "%";
+            document.getElementById('sub-bayes').innerText = (theta * 100).toFixed(2) + "%";
+            document.getElementById('sub-wlb').innerText = (WLB * 100).toFixed(2) + "%";
+            document.getElementById('sub-sig').innerText = sigmoidMod.toFixed(3);
 
             chart.data.datasets[0].data = scores;
             chart.update();
 
-            generateCarnageReport(scores[0], scores[1], scores[2], ltr);
+            generateSynthesisReport(scores[0], scores[1], asi, theta);
         }
 
-        function generateCarnageReport(hor, vdr, vli, ltr) {
+        function generateSynthesisReport(sor, tdr, asi, theta) {
             const uiArch = document.getElementById('ui-archetype');
             const uiDesc = document.getElementById('ui-desc');
             
-            if (ltr > 85 && hor > 90) {
-                uiArch.innerText = "APEX EXECUTIONER (頂級處決者)";
-                uiArch.style.textShadow = "0 0 10px #ff1744";
-                uiDesc.innerHTML = `狂暴進攻指數 (HOR) 突破臨界值。<br><br><strong>威脅評估：</strong>極端危險。該目標不依賴防守，其進攻節奏具備毀滅性的壓制力。指數級放大顯示其勝率完全來自於單方面的屠殺，而非勢均力敵的拉鋸戰。`;
-                writeLog("CRIT", "偵測到極限屠殺數據，目標極度危險。");
-            } else if (vli > 75 && hor > 70) {
-                uiArch.innerText = "UNSTABLE BERSERKER (失控狂戰士)";
-                uiArch.style.color = "#ff8a80";
-                uiDesc.innerHTML = `暴走指數 (VLI) 異常偏高。<br><br><strong>威脅評估：</strong>極度不穩定。目標的表現波動極大，但其爆發力上限極其驚人。他們可能開局白給，也可能在最後一分鐘展現出如同開掛般的微操。`;
-            } else if (vdr > 85) {
-                uiArch.innerText = "LETHAL COUNTER-STRIKER (致命絞肉機)";
-                uiArch.style.color = "#fff";
-                uiDesc.innerHTML = `反擊防禦指數 (VDR) 高達 ${vdr.toFixed(1)}。<br><br><strong>威脅評估：</strong>此目標的防守不是為了防守，而是為了賺取費用差進行絞殺。不要被其看似被動的走位欺騙，一旦你進攻失誤，迎來的將是毀滅性的反推。`;
+            if (asi >= 85 && sor > 80 && tdr > 80) {
+                uiArch.innerText = "PRO-CIRCUIT SYNTHESIS (全能型職業模組)";
+                uiArch.style.color = "var(--stat-primary)";
+                uiArch.style.textShadow = "0 0 10px rgba(0, 229, 255, 0.4)";
+                uiDesc.innerHTML = `ASI 指標達到職業水準。<br><br><strong>綜合評估：</strong>在最嚴苛的動態平衡算法下，該玩家既具備 S 曲線的激進突破力，也擁有堅實的威爾遜防守基底。不偏科、無短板，是真正具備高端賽事競爭力的六邊形戰士。`;
+                writeLog("INFO", "檢測到頂尖均衡數據，判定為全能型菁英。");
+            } else if (sor > 85 && tdr <= 60) {
+                uiArch.innerText = "ASYMMETRIC STRIKER (非對稱突擊手)";
+                uiArch.style.color = "#82b1ff";
+                uiDesc.innerHTML = `S 曲線進攻模組 (SOR) 高度活躍，但戰術防守 (TDR) 偏弱。<br><br><strong>綜合評估：</strong>傾向於激進進攻以掩蓋防守漏洞。在順風局擁有極強的壓制力，但若遇到防守堅固的對手，容易因過度透支資源而崩盤。`;
+            } else if (tdr > 80 && sor <= 65) {
+                uiArch.innerText = "TACTICAL BASTION (戰術壁壘)";
+                uiArch.style.color = "#cbd5e1";
+                uiDesc.innerHTML = `戰術防守 (TDR) 極度穩固，但 S 曲線進攻未觸發爆發段。<br><br><strong>綜合評估：</strong>極度保守且容錯率高。擅長透過抓對手失誤來贏得比賽，但缺乏主動撕裂防線的爆發力，容易陷入長時間的拉鋸戰。`;
             } else {
-                uiArch.innerText = "SUB-OPTIMAL COMBATANT (次級戰鬥員)";
-                uiArch.style.color = "#b71c1c";
-                uiDesc.innerHTML = `在激進指數的照妖鏡下，目標的真實侵略性平庸。其勝率多半來自於拖泥帶水的拉鋸，缺乏一擊必殺的統治力。`;
+                uiArch.innerText = "STANDARD EQUILIBRIUM (標準均衡態)";
+                uiArch.style.color = "var(--text-dim)";
+                uiDesc.innerHTML = `各項指標皆處於系統預測的中位數區間。勝率與場次符合常態分佈，尚未展現出能夠打破數學平衡的特異性表現。`;
             }
         }
 
@@ -347,7 +360,7 @@
             
             let tagClass = 'tag-sys';
             if(tag === 'CALC') tagClass = 'tag-calc';
-            if(tag === 'CRIT') tagClass = 'tag-crit';
+            if(tag === 'INFO') tagClass = 'tag-info';
 
             div.innerHTML = `<span class="log-ts">${ts}</span><span class="log-tag ${tagClass}">${tag}</span> ${msg}`;
             feed.prepend(div);

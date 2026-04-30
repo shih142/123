@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>神經矩陣 MAXIMA | V36.0 深度兵推終端</title>
+    <title>神經矩陣 MAXIMA | V37.0 量子權重矩陣</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -61,7 +61,6 @@
 
         .chart-container { flex: 1; padding: 20px; position: relative; background: radial-gradient(circle at center, rgba(157,0,255,0.05) 0%, transparent 70%); min-height: 250px; }
         
-        /* V36.0 報告區大幅擴展 */
         .report-console { min-height: 250px; background: rgba(0,0,0,0.8); border-top: 1px solid var(--border-glow); overflow-y: auto; display: flex; flex-direction: column; }
         .rep-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; border-bottom: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.02); position: sticky; top: 0; z-index: 10; backdrop-filter: blur(5px); }
         .rep-threat { font-family: 'Orbitron'; font-size: 14px; font-weight: bold; }
@@ -93,6 +92,8 @@
         .btn-prime { width: 100%; padding: 18px; background: rgba(157,0,255,0.1); color: #fff; border: 1px solid var(--quantum-purple); font-family: 'Orbitron'; font-size: 14px; font-weight: bold; cursor: pointer; transition: 0.3s; letter-spacing: 2px; border-radius: 4px; -webkit-appearance: none; margin-top: 10px; }
         .btn-prime:hover, .btn-prime:active { background: var(--quantum-purple); box-shadow: 0 0 25px rgba(157,0,255,0.6); }
 
+        .math-box { font-size: 10px; color: #665588; padding: 15px; border-top: 1px solid var(--border-glow); line-height: 1.4; background: rgba(0,0,0,0.4); margin-top: auto;}
+
         @media (min-width: 1024px) {
             body { height: 100vh; overflow: hidden; }
             .layout-grid { display: grid; grid-template-columns: 350px 1fr 300px; gap: 20px; padding: 20px; height: 100%; }
@@ -115,7 +116,7 @@
 
     <div class="layout-grid">
         <div id="panel-stats" class="panel">
-            <div class="panel-header"><span>NEURAL_ENGINE</span><span>V36.0_DEEP_MATRIX</span></div>
+            <div class="panel-header"><span>NEURAL_ENGINE</span><span>V37.0_QUANTUM_WEIGHTS</span></div>
             <div id="ncr-container" class="ncr-section">
                 <div class="ncr-title">MAXIMA VALUE INDEX (MVI)</div>
                 <div id="ui-ncr" class="ncr-value">00.0</div>
@@ -135,7 +136,7 @@
         </div>
 
         <div id="panel-radar" class="panel">
-            <div class="panel-header"><span>RADAR_VISUALIZATION</span><span>TACTICAL_PROFILER_ACTIVE</span></div>
+            <div class="panel-header"><span>RADAR_VISUALIZATION</span><span>SIGMOID_MODEL_ACTIVE</span></div>
             <div class="chart-container">
                 <canvas id="mainRadar"></canvas>
             </div>
@@ -145,7 +146,7 @@
                     <span class="rep-threat" style="color:#8877aa;">THREAT: --</span>
                 </div>
                 <div class="rep-body">
-                    等待目標 Tag 匯入。V36.0 將根據數據矩陣反向推演敵方卡組傾向，並生成開局至加時賽的階段性致勝兵推。
+                    等待目標 Tag 匯入。V37.0 已實裝 Sigmoid 非線性評分模型，確保極端數值的完美收斂。
                 </div>
             </div>
         </div>
@@ -159,7 +160,13 @@
                 <label style="font-size: 10px; color: #776699; margin-bottom: 5px; display: block; text-align: center;">UNIFIED_PROXY_ROUTER</label>
                 <input type="text" id="proxyInput" value="/api/clash-proxy" class="input-box">
                 
-                <button id="btn-run" class="btn-prime" onclick="fetchLiveData()">INITIATE DEEP SCAN</button>
+                <button id="btn-run" class="btn-prime" onclick="fetchLiveData()">INITIATE QUANTUM SCAN</button>
+            </div>
+            <div class="math-box">
+                [ V37.0 Core Algo ]<br>
+                Z_wr = (WR - 0.5) * 20<br>
+                Z_tcr = (TCR - 0.15) * 10<br>
+                f(x) = 100 / (1 + e^-x)
             </div>
         </div>
     </div>
@@ -230,7 +237,7 @@
             if(!tag) return;
             
             isProcessing = true;
-            document.getElementById('btn-run').innerText = "DECRYPTING MATRIX...";
+            document.getElementById('btn-run').innerText = "CALCULATING MATRICES...";
             document.getElementById('ncr-container').classList.remove('tilt-active');
             
             try {
@@ -259,50 +266,76 @@
                 document.getElementById('ui-report').innerHTML = `<div class="rep-body" style="color:var(--alert-red);">通訊中斷。請確認代理路由器正常運作。</div>`;
             } finally {
                 isProcessing = false;
-                document.getElementById('btn-run').innerText = "INITIATE DEEP SCAN";
+                document.getElementById('btn-run').innerText = "INITIATE QUANTUM SCAN";
             }
         }
 
+        // ==========================================
+        // 🔥 V37.0 核心演算法：量子權重與 Sigmoid 收斂
+        // ==========================================
         function processData(data) {
             const total = data.wins + data.losses;
             if (total === 0) return;
+            
             const wr = data.wins / total;
-            const mmr = data.mmr;
+            const tcr = data.wins > 0 ? data.threeCrownWins / data.wins : 0;
+            const streak = data.streak;
 
-            const ewr = 0.50 + 0.05 * Math.tanh((mmr - 1600) / 450);
-            const deltaWR = wr - ewr;
-            const zBase = (mmr - 1600) / 350; 
-            const zDeltaStandard = deltaWR / 0.035; 
+            // 1. 正規化變數 (Z-Scores & Normalizers)
+            const n_mmr = data.mmr > 4000 ? (data.mmr - 5000) / 800 : (data.mmr - 1200) / 600; 
+            const z_total = Math.log10(total > 0 ? total : 1) - 3; // 基準 1000 場
+            const z_wr = (wr - 0.5) * 20; // 基準勝率 50%
+            const z_tcr = (tcr - 0.15) * 10; // 基準三冠率 15%
 
-            const sigmaMMR = 0.04 * Math.exp(-0.0008 * Math.max(0, mmr - 1600));
-            const zMIC = deltaWR / sigmaMMR;
-            let micScore = 100 / (1 + Math.exp(-(zMIC * 1.5)));
-            let endScore = 100 / (1 + Math.exp(-((total - 150) / 60)));
+            // 2. 非線性激活函數 (限制上下限以防破版)
+            const S = (x) => Math.max(10.0, Math.min(99.9, 100 / (1 + Math.exp(-x))));
 
-            const tcwRate = data.threeCrownWins / data.wins;
-            const expectedTCR = 0.20 * Math.exp(-0.001 * Math.max(0, mmr - 1600));
-            const zEXE = (tcwRate - expectedTCR) / 0.05;
-            let exeScore = 100 / (1 + Math.exp(-zEXE));
+            // 3. 權重多項式計算
+            // 進攻 (STR)：高度綁定三冠率與勝率
+            let strScore = S(z_tcr * 1.5 + z_wr * 0.5 + n_mmr * 0.2); 
+            
+            // 防守 (DEF)：高勝率但低三冠率的「一比零大師」
+            let defScore = S(-z_tcr * 1.2 + n_mmr * 0.8 + z_wr * 0.5); 
+            
+            // 微操 (MIC)：純淨的勝率偏移與連勝狀態加成
+            let micScore = S(z_wr * 1.5 + n_mmr * 0.5 + (streak > 0 ? streak * 0.15 : 0)); 
+            
+            // 宏觀 (MAC)：高分段且高場次的運營證明
+            let macScore = S(n_mmr * 1.2 + z_total * 0.5 + z_wr * 0.3); 
+            
+            // 抗壓 (PSY)：場次底蘊與當前連勝負的綜合體
+            let psyScore = S(z_total * 0.8 + streak * 0.3 + z_wr * 0.2); 
+            
+            // 穩定度 (CST)：高總場次且未處於連敗
+            let cstScore = S(z_total * 1.0 - Math.abs(streak) * 0.2 + z_wr * 0.5); 
+            
+            // 處決 (EXE)：純粹檢定三冠率
+            let exeScore = S(z_tcr * 2.0 - z_total * 0.2); 
+            
+            // 耐力 (END)：純粹檢定遊玩總數
+            let endScore = S(z_total * 1.5); 
+            
+            // 資本 (PAY)：高分段卻勝率平庸，判定為卡等碾壓
+            let payScore = S(n_mmr * 1.5 - z_wr * 1.2); 
 
-            let psyScoreBase = Math.min(99.9, 100 / (1 + Math.exp(-(((total - 150) / 60) * 0.50 - zEXE * 0.30 + zMIC * 0.20 + 0.5)))); 
-            let tiltFactor = data.streak * 0.08; 
-            let psyScore = Math.max(10.0, Math.min(99.9, psyScoreBase * (1 + tiltFactor)));
+            // 4. 破防狀態 (Tilt) 的毀滅性懲罰
+            if (streak <= -3) {
+                const tiltPen = streak * 0.05; // -15% 起跳
+                psyScore *= (1 + tiltPen);
+                cstScore *= 0.85;
+                micScore *= 0.90;
+            }
 
-            let macScore = 100 / (1 + Math.exp(-(zDeltaStandard * 1.5 + zBase * 0.5))); 
-            let cstScore = 100 / (1 + Math.exp(-(deltaWR * 25))); 
-            if(data.streak <= -3) { macScore *= 0.85; cstScore *= 0.70; }
-
-            let payScore = 100 / (1 + Math.exp(-((zBase * 0.50) - (zMIC * 0.30) - (deltaWR * 10) + 0.8) * 1.5)); 
-            let defScore = 100 / (1 + Math.exp(-((zBase * 0.40) + (zDeltaStandard * 0.60))));
-            let strScore = 100 / (1 + Math.exp(-(((tcwRate - 0.20) / 0.10) * 0.60 + zBase * 0.40)));
-
-            renderUI(data.name, [strScore, defScore, micScore, macScore, psyScore, cstScore, exeScore, endScore, payScore], data.streak);
+            renderUI(data.name, [strScore, defScore, micScore, macScore, psyScore, cstScore, exeScore, endScore, payScore], streak);
         }
 
         function renderUI(name, scores, streak) {
             const [STR, DEF, MIC, MAC, PSY, CST, EXE, END, PAY] = scores;
             document.getElementById('ui-name').innerText = name;
-            document.getElementById('ui-ncr').innerText = (scores.slice(0, 8).reduce((a,b)=>a+b)/8).toFixed(1); 
+            
+            // MVI 總分計算 (排除 PAY 以反映真實技術)
+            const mvi = (STR + DEF + MIC + MAC + PSY + CST + EXE + END) / 8;
+            document.getElementById('ui-ncr').innerText = mvi.toFixed(1); 
             
             const ids = ['val-str','val-def','val-mic','val-mac','val-psy','val-cst','val-exe','val-end','val-pay'];
             ids.forEach((id, i) => {
@@ -313,9 +346,7 @@
                 if(scores[i] <= 45) el.classList.add('active-low');
             });
 
-            // ==========================================
-            // 🔥 V36.0 深度戰術原型與兵推邏輯
-            // ==========================================
+            // V37.0 戰術原型判定保持與 V36 相同，因為權重基準已重新校準
             let archetype, threat, mainColor, profileText, decksHTML, phase1, phase2, phase3;
 
             if (PAY > 80 && MIC < 55) {

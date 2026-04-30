@@ -3,206 +3,440 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>神經矩陣 MAXIMA | V38.0 戰影防禦協定</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <title>神經矩陣 MAXIMA | V39.0 APEX ANALYTICA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Noto+Sans+TC:wght@300;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        /* * V39.0 定製化 CSS 系統 - 賽博龐克終端風格 
+         */
         :root {
-            --bg-deep: #020105;
-            --panel-bg: rgba(10, 5, 15, 0.98);
+            --bg-deep: #020205;
+            --panel-bg: rgba(10, 10, 20, 0.95);
             --laser-cyan: #00ffcc;
             --quantum-purple: #9d00ff;
             --alert-red: #ff2a2a;
+            --warning-yellow: #ffcc00;
             --text-main: #e6d9f2;
+            --text-dim: #776699;
             --border-glow: rgba(0, 255, 204, 0.2);
+            --sidebar-width: 350px;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
+        
         body {
             background-color: var(--bg-deep);
             color: var(--text-main);
-            font-family: 'Share Tech Mono', sans-serif;
-            min-height: 100vh;
-            background-image: radial-gradient(circle at 50% 50%, #1a0a2e 0%, #020105 100%);
-            overflow-x: hidden;
+            font-family: 'Share Tech Mono', 'Noto Sans TC', sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            background-image: 
+                radial-gradient(circle at 50% 50%, #160a25 0%, #020205 100%),
+                linear-gradient(rgba(0, 255, 204, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 204, 0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 40px 40px, 40px 40px;
         }
 
-        .layout-grid { display: flex; flex-direction: column; gap: 15px; padding: 15px; max-width: 1500px; margin: 0 auto; }
-        .panel { background: var(--panel-bg); border: 1px solid var(--border-glow); border-radius: 4px; display: flex; flex-direction: column; overflow: hidden; }
+        /* 頂部裝飾條 */
+        .top-bar {
+            height: 4px;
+            background: linear-gradient(90deg, var(--quantum-purple), var(--laser-cyan), var(--alert-red));
+            width: 100%;
+            z-index: 100;
+        }
+
+        header {
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-glow);
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .logo { font-family: 'Orbitron'; font-weight: 900; font-size: 20px; color: var(--laser-cyan); letter-spacing: 2px; }
+        .version-tag { font-size: 10px; background: var(--quantum-purple); padding: 2px 8px; border-radius: 10px; margin-left: 10px; vertical-align: middle; }
+
+        /* 主佈局 */
+        main {
+            display: grid;
+            grid-template-columns: var(--sidebar-width) 1fr 320px;
+            flex: 1;
+            overflow: hidden;
+            gap: 1px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .column {
+            background: var(--panel-bg);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        /* 滾動條美化 */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border-glow); border-radius: 10px; }
+
+        /* 面板標題 */
+        .section-header {
+            padding: 12px 20px;
+            font-family: 'Orbitron';
+            font-size: 11px;
+            background: rgba(0, 255, 204, 0.05);
+            border-bottom: 1px solid var(--border-glow);
+            color: var(--laser-cyan);
+            display: flex;
+            justify-content: space-between;
+            letter-spacing: 1px;
+        }
+
+        /* 數值面板元件 */
+        .mvi-container { padding: 30px 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .mvi-label { font-size: 10px; color: var(--text-dim); margin-bottom: 10px; letter-spacing: 3px; }
+        .mvi-value { font-family: 'Orbitron'; font-size: 64px; font-weight: 900; color: #fff; text-shadow: 0 0 20px rgba(0, 255, 204, 0.4); line-height: 1; }
+        .player-name { font-family: 'Orbitron'; font-size: 16px; margin-top: 15px; color: var(--laser-cyan); }
+
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: rgba(255,255,255,0.05); }
+        .stat-box { background: var(--bg-deep); padding: 15px; display: flex; flex-direction: column; align-items: center; }
+        .stat-box .label { font-size: 9px; color: var(--text-dim); margin-bottom: 5px; }
+        .stat-box .value { font-family: 'Orbitron'; font-size: 20px; color: var(--text-main); }
+        .stat-box.highlight .value { color: var(--laser-cyan); text-shadow: 0 0 10px var(--laser-cyan); }
+
+        /* 雷達圖容器 */
+        .radar-area { flex: 1; min-height: 350px; display: flex; align-items: center; justify-content: center; position: relative; }
+        .chart-wrapper { width: 90%; height: 90%; }
+
+        /* 心理狀態監測 */
+        .mental-status { padding: 20px; background: rgba(0,0,0,0.3); margin: 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); }
+        .mental-bar-bg { height: 6px; background: #222; border-radius: 3px; margin: 10px 0; overflow: hidden; }
+        .mental-bar-fill { height: 100%; width: 0%; background: var(--laser-cyan); transition: 1s ease-out; }
+        .tilt-warning { color: var(--alert-red); font-weight: bold; animation: pulse 2s infinite; font-size: 12px; }
+
+        /* 分析報告區 */
+        .report-content { padding: 20px; }
+        .archetype-tag { display: inline-block; padding: 4px 12px; background: var(--quantum-purple); border-radius: 4px; font-weight: bold; margin-bottom: 15px; font-size: 14px; }
+        .report-text { font-size: 14px; line-height: 1.7; color: #bbaadd; margin-bottom: 20px; }
         
-        .panel-header { padding: 10px 15px; border-bottom: 1px solid var(--border-glow); font-family: 'Orbitron'; font-size: 10px; color: var(--laser-cyan); display: flex; justify-content: space-between; }
+        .tactic-card { background: rgba(255,255,255,0.03); border-left: 3px solid var(--laser-cyan); padding: 15px; margin-bottom: 10px; }
+        .tactic-card h4 { font-size: 12px; color: var(--laser-cyan); margin-bottom: 5px; text-transform: uppercase; }
+        .tactic-card p { font-size: 13px; }
 
-        .ncr-section { padding: 30px 15px; text-align: center; }
-        .ncr-value { font-family: 'Orbitron'; font-size: 72px; font-weight: 900; color: #fff; text-shadow: 0 0 20px var(--laser-cyan); }
+        /* 輸入控制 */
+        .controls { padding: 20px; border-top: 1px solid var(--border-glow); }
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; font-size: 10px; color: var(--text-dim); margin-bottom: 5px; }
+        input { 
+            width: 100%; background: #000; border: 1px solid #332244; padding: 12px; 
+            color: var(--laser-cyan); font-family: 'Orbitron'; outline: none; border-radius: 4px; 
+        }
+        input:focus { border-color: var(--laser-cyan); }
+        .btn-scan { 
+            width: 100%; padding: 15px; background: rgba(0, 255, 204, 0.1); border: 1px solid var(--laser-cyan); 
+            color: var(--laser-cyan); font-family: 'Orbitron'; cursor: pointer; transition: 0.3s; 
+            font-weight: bold; letter-spacing: 2px;
+        }
+        .btn-scan:hover { background: var(--laser-cyan); color: #000; box-shadow: 0 0 20px rgba(0, 255, 204, 0.4); }
 
-        .stats-wall { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: rgba(255,255,255,0.05); }
-        .stat-item { background: var(--bg-deep); padding: 15px; text-align: center; }
-        .stat-label { font-size: 9px; color: #776699; margin-bottom: 5px; }
-        .stat-val { font-family: 'Orbitron'; font-size: 22px; color: #fff; }
-        .active-high { color: var(--laser-cyan); text-shadow: 0 0 10px var(--laser-cyan); }
-        .active-low { color: var(--alert-red); }
+        /* 虛擬演習日誌 */
+        .sim-log { font-size: 11px; padding: 15px; font-family: 'Share Tech Mono'; color: #66ccaa; }
+        .log-entry { margin-bottom: 8px; border-left: 1px solid #333; padding-left: 10px; }
+        .log-time { color: #555; margin-right: 5px; }
+        .log-tag { color: var(--quantum-purple); margin-right: 5px; }
 
-        .chart-container { flex: 1; padding: 20px; min-height: 300px; }
-        .report-console { background: rgba(0,0,0,0.5); border-top: 1px solid var(--border-glow); padding: 20px; font-size: 14px; line-height: 1.6; color: #bbaadd; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 
-        .input-box { width: 100%; background: #000; border: 1px solid #331a4d; padding: 15px; color: var(--laser-cyan); font-family: 'Orbitron'; font-size: 14px; margin-bottom: 10px; border-radius: 4px; text-align: center; }
-        .btn-prime { width: 100%; padding: 18px; background: rgba(0, 255, 204, 0.1); color: var(--laser-cyan); border: 1px solid var(--laser-cyan); font-family: 'Orbitron'; font-size: 14px; cursor: pointer; transition: 0.3s; }
-        .btn-prime:hover { background: var(--laser-cyan); color: #000; }
-
-        .math-box { font-size: 10px; color: #554477; padding: 15px; border-top: 1px solid rgba(255,255,255,0.05); }
-
-        @media (min-width: 1024px) {
-            .layout-grid { display: grid; grid-template-columns: 350px 1fr 300px; height: 100vh; padding: 20px; }
+        /* 響應式微調 */
+        @media (max-width: 1200px) {
+            main { grid-template-columns: 300px 1fr; }
+            .column:last-child { display: none; }
         }
     </style>
 </head>
 <body>
 
-    <div class="layout-grid">
-        <div class="panel">
-            <div class="panel-header"><span>NEURAL_ENGINE</span><span>V38.0_SHADOW_DEF</span></div>
-            <div class="ncr-section">
-                <div style="font-size: 10px; color: #776699; letter-spacing: 2px;">MAXIMA INDEX</div>
-                <div id="ui-ncr" class="ncr-value">00.0</div>
-                <div id="ui-name" style="color: var(--laser-cyan); margin-top: 10px;">AWAITING_TAG</div>
-            </div>
-            <div class="stats-wall">
-                <div class="stat-item"><div class="stat-label">STR</div><div id="val-str" class="stat-val">--</div></div>
-                <div class="stat-item"><div class="stat-label" style="color: var(--laser-cyan);">DEF</div><div id="val-def" class="stat-val">--</div></div>
-                <div class="stat-item"><div class="stat-label">MIC</div><div id="val-mic" class="stat-val">--</div></div>
-                <div class="stat-item"><div class="stat-label">MAC</div><div id="val-mac" class="stat-val">--</div></div>
-                <div class="stat-item"><div class="stat-label">PSY</div><div id="val-psy" class="stat-val">--</div></div>
-                <div class="stat-item"><div class="stat-label">CST</div><div id="val-cst" class="stat-val">--</div></div>
-                <div class="stat-item"><div class="stat-label">EXE</div><div id="val-exe" class="stat-val">--</div></div>
-                <div class="stat-item"><div class="stat-label">END</div><div id="val-end" class="stat-val">--</div></div>
-                <div class="stat-item"><div class="stat-label">PAY</div><div id="val-pay" class="stat-val">--</div></div>
-            </div>
-        </div>
+    <div class="top-bar"></div>
+    
+    <header>
+        <div class="logo">NEURAL MATRIX <span class="version-tag">V39.0 APEX</span></div>
+        <div id="connection-status" style="font-size: 10px; color: var(--laser-cyan);">● SYSTEM_LINK_ESTABLISHED</div>
+    </header>
 
-        <div class="panel">
-            <div class="panel-header"><span>VISUALIZER</span><span>DEF_PURITY_MODEL</span></div>
-            <div class="chart-container"><canvas id="mainRadar"></canvas></div>
-            <div id="ui-report" class="report-console">
-                系統初始化完成。V38.0 已將防守權重與三冠率徹底解耦，現在防守分僅取決於環境等級、勝率穩定度與實戰經驗。
+    <main>
+        <section class="column">
+            <div class="section-header"><span>BASIC_TELEMETRY</span><span>UNIT_01</span></div>
+            
+            <div class="mvi-container">
+                <div class="mvi-label">MAXIMA VALUE INDEX</div>
+                <div id="ui-mvi" class="mvi-value">00.0</div>
+                <div id="ui-name" class="player-name">AWAITING_INPUT</div>
             </div>
-        </div>
 
-        <div class="panel">
-            <div class="panel-header"><span>COMMAND</span><span>INPUT</span></div>
-            <div style="padding: 20px;">
-                <input type="text" id="tagInput" placeholder="PLAYER TAG" class="input-box">
-                <input type="text" id="proxyInput" value="/api/clash-proxy" class="input-box">
-                <button id="btn-run" class="btn-prime" onclick="fetchLiveData()">START DEEP SCAN</button>
+            <div class="stat-grid">
+                <div class="stat-box"><div class="label">STR (OFFENSE)</div><div id="val-str" class="value">--</div></div>
+                <div class="stat-box highlight"><div class="label">DEF (DEFENSE)</div><div id="val-def" class="value">--</div></div>
+                <div class="stat-box"><div class="label">MIC (MICRO)</div><div id="val-mic" class="value">--</div></div>
+                <div class="stat-box"><div class="label">MAC (MACRO)</div><div id="val-mac" class="value">--</div></div>
+                <div class="stat-box"><div class="label">PSY (MENTAL)</div><div id="val-psy" class="value">--</div></div>
+                <div class="stat-item" style="grid-column: span 2; background: #000; padding: 10px; text-align: center;">
+                    <div class="label" style="font-size: 8px; color: var(--text-dim);">PAY_TO_WIN_FACTOR</div>
+                    <div id="val-pay" class="value" style="font-size: 14px; color: var(--warning-yellow);">--</div>
+                </div>
             </div>
-            <div class="math-box">
-                [ V38.0 Def-Purity Algo ]<br>
-                Z_def = (n_mmr * 1.3) + (z_wr * 1.0) + (z_total * 0.5)<br>
-                Status: TCR_DECOUPLED (三冠率解耦完成)
+
+            <div class="mental-status">
+                <div style="display: flex; justify-content: space-between; font-size: 10px;">
+                    <span>TILT_PROBABILITY</span>
+                    <span id="tilt-pct">0%</span>
+                </div>
+                <div class="mental-bar-bg"><div id="tilt-bar" class="mental-bar-fill"></div></div>
+                <div id="tilt-msg" style="font-size: 10px; color: var(--text-dim);">穩定性：掃描中...</div>
             </div>
-        </div>
-    </div>
+
+            <div class="controls">
+                <div class="input-group">
+                    <label>PLAYER_TAG</label>
+                    <input type="text" id="tagInput" placeholder="#P8PYR0..." value="">
+                </div>
+                <div class="input-group">
+                    <label>ACCESS_PROXY</label>
+                    <input type="text" id="proxyInput" value="/api/clash-proxy">
+                </div>
+                <button class="btn-scan" onclick="runAnalysis()">INITIATE DEEP SCAN</button>
+            </div>
+        </section>
+
+        <section class="column" style="background: rgba(5,5,10,0.8);">
+            <div class="section-header"><span>TACTICAL_VISUALIZER</span><span>SIGMOID_MODEL</span></div>
+            
+            <div class="radar-area">
+                <div class="chart-wrapper">
+                    <canvas id="radarChart"></canvas>
+                </div>
+            </div>
+
+            <div id="report-box" class="report-content">
+                <div id="ui-archetype" class="archetype-tag" style="display: none;">ARCHETYPE_PENDING</div>
+                <div id="ui-report-text" class="report-text">
+                    等待掃描指令。請輸入目標玩家標籤並啟動 APEX 分析矩陣。
+                </div>
+                <div id="ui-tactics">
+                    </div>
+            </div>
+        </section>
+
+        <section class="column">
+            <div class="section-header"><span>SIMULATION_LOG</span><span>LOG_V9</span></div>
+            <div id="ui-log" class="sim-log">
+                <div class="log-entry"><span class="log-time">[00:00:00]</span> 系統待命。</div>
+                <div class="log-entry"><span class="log-time">[00:00:00]</span> 權重引擎 V39.0 就緒。</div>
+            </div>
+            
+            <div style="margin-top: auto; padding: 20px; background: rgba(0,0,0,0.4); border-top: 1px solid var(--border-glow);">
+                <div style="font-size: 10px; color: var(--laser-cyan); margin-bottom: 10px;">SUB_INDICATORS</div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 11px;">
+                    <div style="display: flex; justify-content: space-between;"><span>Consistency (CST)</span><span id="sub-cst">--</span></div>
+                    <div style="display: flex; justify-content: space-between;"><span>Execution (EXE)</span><span id="sub-exe">--</span></div>
+                    <div style="display: flex; justify-content: space-between;"><span>Endurance (END)</span><span id="sub-end">--</span></div>
+                </div>
+            </div>
+        </section>
+    </main>
 
     <script>
-        let radarChart;
-        let isProcessing = false;
+        /**
+         * V39.0 APEX ANALYTICA 核心腳本
+         */
+        let radar;
+        let isAnalyzing = false;
 
-        function initCharts() {
-            const ctx = document.getElementById('mainRadar').getContext('2d');
-            radarChart = new Chart(ctx, {
+        // 初始化圖表
+        function initRadar() {
+            const ctx = document.getElementById('radarChart').getContext('2d');
+            radar = new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: ['STR', 'DEF', 'MIC', 'MAC', 'PSY', 'CST', 'EXE', 'END', 'PAY'],
+                    labels: ['STR', 'DEF', 'MIC', 'MAC', 'PSY', 'CST', 'EXE', 'END'],
                     datasets: [{
-                        data: [0,0,0,0,0,0,0,0,0],
-                        backgroundColor: 'rgba(0, 255, 204, 0.1)',
+                        data: [0, 0, 0, 0, 0, 0, 0, 0],
+                        backgroundColor: 'rgba(0, 255, 204, 0.15)',
                         borderColor: '#00ffcc',
                         borderWidth: 2,
-                        pointRadius: 2
+                        pointBackgroundColor: '#00ffcc',
+                        pointRadius: 3
                     }]
                 },
                 options: {
-                    responsive: true, 
+                    responsive: true,
                     maintainAspectRatio: false,
-                    scales: { r: { grid: { color: 'rgba(255,255,255,0.05)' }, angleLines: { color: 'rgba(255,255,255,0.05)' }, ticks: { display: false, max: 100, min: 0 }, pointLabels: { color: '#8877aa' } } },
+                    scales: {
+                        r: {
+                            angleLines: { color: 'rgba(255,255,255,0.05)' },
+                            grid: { color: 'rgba(255,255,255,0.1)' },
+                            pointLabels: { color: '#776699', font: { family: 'Orbitron', size: 10 } },
+                            ticks: { display: false, max: 100, min: 0 }
+                        }
+                    },
                     plugins: { legend: { display: false } }
                 }
             });
         }
 
-        async function fetchLiveData() {
-            const tag = document.getElementById('tagInput').value.trim().toUpperCase().replace('#', '');
-            const proxy = document.getElementById('proxyInput').value.trim();
-            if(!tag || isProcessing) return;
-            isProcessing = true;
-            document.getElementById('btn-run').innerText = "SCANNING...";
-            
-            try {
-                const res = await fetch(`${proxy}?tag=${tag}`);
-                const rawJson = await res.json();
-                processData(rawJson);
-            } catch (e) {
-                console.error(e);
-            } finally {
-                isProcessing = false;
-                document.getElementById('btn-run').innerText = "START DEEP SCAN";
+        // 模擬數據獲取 (在實際環境中替換為 Fetch)
+        async function runAnalysis() {
+            if (isAnalyzing) return;
+            const tag = document.getElementById('tagInput').value.trim();
+            if (!tag) {
+                addLog("ERROR", "請輸入玩家標籤");
+                return;
             }
+
+            isAnalyzing = true;
+            addLog("SYSTEM", `開始掃描目標: ${tag}`);
+            document.querySelector('.btn-scan').innerText = "ANALYZING...";
+
+            // 模擬網絡延遲
+            setTimeout(() => {
+                // 這裡模擬從 API 獲得的數據
+                const mockData = {
+                    name: "戰神_測試員",
+                    wins: 4500,
+                    losses: 3800,
+                    threeCrownWins: 1200,
+                    trophies: 7850,
+                    streak: -4 // 假設處於連敗
+                };
+                
+                calculateMetrics(mockData);
+                isAnalyzing = false;
+                document.querySelector('.btn-scan').innerText = "INITIATE DEEP SCAN";
+                addLog("SUCCESS", "分析矩陣構建完成");
+            }, 1500);
         }
 
-        function processData(raw) {
-            const total = raw.wins + raw.losses || 1;
-            const wr = raw.wins / total;
-            const tcr = raw.threeCrownWins / raw.wins || 0;
-            const pol = raw.currentPathOfLegendSeasonResult?.rating || raw.trophies || 1600;
-
-            const n_mmr = pol > 4000 ? (pol - 5000) / 800 : (pol - 1200) / 600;
+        /**
+         * 核心計算引擎 V39.0
+         */
+        function calculateMetrics(data) {
+            const total = data.wins + data.losses;
+            const wr = data.wins / total;
+            const tcr = data.threeCrownWins / data.wins;
+            
+            // 正規化 (Z-Scores)
+            const n_mmr = (data.trophies - 5000) / 1000;
             const z_total = Math.log10(total) - 3;
             const z_wr = (wr - 0.5) * 20;
             const z_tcr = (tcr - 0.15) * 10;
 
             const S = (x) => Math.max(10.0, Math.min(99.9, 100 / (1 + Math.exp(-x))));
 
-            // ==========================================
-            // 🔥 V38.0 防守權重：徹底移除 Z_TCR
-            // ==========================================
-            let defScore = S((n_mmr * 1.3) + (z_wr * 1.0) + (z_total * 0.5));
-            
-            let strScore = S(z_tcr * 1.5 + z_wr * 0.5 + n_mmr * 0.2);
-            let micScore = S(z_wr * 1.5 + n_mmr * 0.5);
-            let macScore = S(n_mmr * 1.5 + z_total * 0.5);
-            let psyScore = S(z_total * 0.8 + z_wr * 0.4);
-            let cstScore = S(z_total * 1.0 + z_wr * 1.0);
-            let exeScore = S(z_tcr * 2.0);
-            let endScore = S(z_total * 1.5);
-            let payScore = S(n_mmr * 1.5 - z_wr * 1.2);
+            // 權重分配 (V39.0 戰影協定：DEF 與 TCR 脫鉤)
+            const def = S((n_mmr * 1.3) + (z_wr * 1.0) + (z_total * 0.5));
+            const str = S((z_tcr * 1.6) + (z_wr * 0.4) + (n_mmr * 0.2));
+            const mic = S((z_wr * 1.5) + (n_mmr * 0.5));
+            const mac = S((n_mmr * 1.5) + (z_total * 0.5));
+            const psy = S((z_total * 0.8) + (z_wr * 0.5) + (data.streak * 0.2));
+            const cst = S((z_total * 1.0) + (z_wr * 1.0));
+            const exe = S((z_tcr * 2.0));
+            const end = S((z_total * 1.5));
+            const pay = S((n_mmr * 1.5) - (z_wr * 1.2)); // 簡易課金係數
 
-            const scores = [strScore, defScore, micScore, macScore, psyScore, cstScore, exeScore, endScore, payScore];
-            renderUI(raw.name, scores);
+            const scores = [str, def, mic, mac, psy, cst, exe, end];
+            const mvi = scores.reduce((a, b) => a + b) / scores.length;
+
+            updateUI(data.name, scores, mvi, pay, data.streak);
         }
 
-        function renderUI(name, scores) {
+        function updateUI(name, scores, mvi, pay, streak) {
             document.getElementById('ui-name').innerText = name;
-            document.getElementById('ui-ncr').innerText = (scores.slice(0,8).reduce((a,b)=>a+b)/8).toFixed(1);
+            document.getElementById('ui-mvi').innerText = mvi.toFixed(1);
             
-            const ids = ['val-str','val-def','val-mic','val-mac','val-psy','val-cst','val-exe','val-end','val-pay'];
-            ids.forEach((id, i) => {
-                const el = document.getElementById(id);
-                el.innerText = scores[i].toFixed(1);
-                el.className = scores[i] >= 80 ? 'stat-val active-high' : (scores[i] <= 45 ? 'stat-val active-low' : 'stat-val');
-            });
+            // 更新基礎指標
+            document.getElementById('val-str').innerText = scores[0].toFixed(1);
+            document.getElementById('val-def').innerText = scores[1].toFixed(1);
+            document.getElementById('val-mic').innerText = scores[2].toFixed(1);
+            document.getElementById('val-mac').innerText = scores[3].toFixed(1);
+            document.getElementById('val-psy').innerText = scores[4].toFixed(1);
+            document.getElementById('val-pay').innerText = pay > 75 ? "極高 (WHALE DETECTED)" : (pay > 50 ? "中等" : "低");
 
-            radarChart.data.datasets[0].data = scores;
-            radarChart.update();
-            
-            const def = scores[1];
-            let report = "";
-            if (def > 85) report = "檢測到【絕對防禦者】。對手不依賴卡組體系，純粹靠著極高的環境適應力與低失誤率生存。建議採取換路施壓，切勿在單路死磕。";
-            else if (def > 60) report = "防禦水平合格。對手具備基礎的拉扯意識，但在多路混戰中可能出現漏洞。";
-            else report = "防禦漏洞顯著。對手傾向於以攻代守，一旦進攻節奏被打斷，其半場防線極易潰敗。";
-            
-            document.getElementById('ui-report').innerHTML = `<strong>深度掃描報告：</strong><br>${report}`;
+            document.getElementById('sub-cst').innerText = scores[5].toFixed(1);
+            document.getElementById('sub-exe').innerText = scores[6].toFixed(1);
+            document.getElementById('sub-end').innerText = scores[7].toFixed(1);
+
+            // 更新雷達圖
+            radar.data.datasets[0].data = scores;
+            radar.update();
+
+            // 心理狀態計算
+            const tiltProb = streak < 0 ? Math.min(95, Math.abs(streak) * 20) : 5;
+            document.getElementById('tilt-pct').innerText = tiltProb + "%";
+            document.getElementById('tilt-bar').style.width = tiltProb + "%";
+            document.getElementById('tilt-bar').style.backgroundColor = tiltProb > 60 ? "#ff2a2a" : "#00ffcc";
+            document.getElementById('tilt-msg').innerHTML = tiltProb > 60 ? "<span class='tilt-warning'>檢測到精神崩潰風險</span>" : "精神狀態穩定";
+
+            generateReport(scores, pay, streak);
         }
 
-        window.onload = initCharts;
+        function generateReport(scores, pay, streak) {
+            const [str, def, mic, mac, psy] = scores;
+            const uiArchetype = document.getElementById('ui-archetype');
+            const uiReportText = document.getElementById('ui-report-text');
+            const uiTactics = document.getElementById('ui-tactics');
+            
+            uiArchetype.style.display = "inline-block";
+            let report = "";
+            let tactics = [];
+
+            // 判斷邏輯
+            if (def > 80 && mac > 75) {
+                uiArchetype.innerText = "鐵壁大師 (IRON WALL)";
+                report = "該玩家展現了極高的防守純度與大局觀。他不依賴暴力進攻，而是透過完美的拉扯與聖水差優勢擊敗對手。";
+                tactics = [
+                    { h: "消耗戰術", p: "利用毒藥、礦工或火球進行塔血消耗，對手擅長防守部隊，但難以防禦直接法術。" },
+                    { h: "換路奇襲", p: "在雙倍聖水前，利用兩路均衡壓力迫使對方交出核心防守建築。" }
+                ];
+            } else if (str > 80 && mic > 70) {
+                uiArchetype.innerText = "狂暴死士 (BERSERKER)";
+                report = "極端侵略型對手。擅長利用極限操作強攻，通常在開局就會發動高壓攻勢。";
+                tactics = [
+                    { h: "穩定防守", p: "保留核心防禦牌（如建築、大皮卡），不要輕易交出。對方一旦攻勢受挫，心理防線極易受損。" },
+                    { h: "反擊平推", p: "吃下一波傷害後，利用殘餘部隊組成一波對方無法防禦的回推。" }
+                ];
+            } else {
+                uiArchetype.innerText = "均衡型玩家 (STANDARD)";
+                report = "表現平庸且穩定。沒有明顯弱點，但也沒有致命的殺招。";
+                tactics = [{ h: "基本功對決", p: "維持正常的聖水輪轉，等待對方犯錯。" }];
+            }
+
+            uiReportText.innerText = report;
+            uiTactics.innerHTML = tactics.map(t => `<div class="tactic-card"><h4>${t.h}</h4><p>${t.p}</p></div>`).join('');
+            
+            // 增加連敗特別戰術
+            if (streak <= -3) {
+                uiTactics.innerHTML += `
+                    <div class="tactic-card" style="border-color: var(--alert-red);">
+                        <h4 style="color: var(--alert-red);">破防利用協定 (TILT EXPLOIT)</h4>
+                        <p>目標處於連敗，開局直接進攻並配合表情嘲諷，對手極高機率會出現不理智的虧費操作。</p>
+                    </div>
+                `;
+            }
+        }
+
+        function addLog(tag, msg) {
+            const log = document.getElementById('ui-log');
+            const now = new Date();
+            const timeStr = `[${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}]`;
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.innerHTML = `<span class="log-time">${timeStr}</span> <span class="log-tag">[${tag}]</span> ${msg}`;
+            log.prepend(entry);
+        }
+
+        window.onload = initRadar;
     </script>
 </body>
 </html>

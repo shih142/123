@@ -3,19 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>神經矩陣 MAXIMA | V23.0 熵值穩定協議</title>
+    <title>神經矩陣 MAXIMA | V24.0 貝氏動態期望協議</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --bg-deep: #05070a;
-            --panel-bg: rgba(10, 15, 25, 0.98);
-            --interface-blue: #00d2ff;
-            --stability-green: #33ffaa;
-            --alert-red: #ff3e3e;
-            --data-purple: #9d50bb;
-            --text-main: #e6f1ff;
-            --border-glow: rgba(0, 210, 255, 0.2);
+            --bg-deep: #030508;
+            --panel-bg: rgba(8, 12, 18, 0.95);
+            --neon-blue: #00b3ff;
+            --tech-orange: #ff6600;
+            --alert-red: #ff2a2a;
+            --data-purple: #b84dff;
+            --text-main: #d9e6f2;
+            --border-glow: rgba(0, 179, 255, 0.25);
+            --grid-color: rgba(255, 255, 255, 0.02);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -24,66 +25,71 @@
             color: var(--text-main);
             font-family: 'Share Tech Mono', sans-serif;
             height: 100vh; display: flex; overflow: hidden;
-            background-image: radial-gradient(circle at 50% 50%, #102030 0%, #05070a 100%);
+            background-image: 
+                linear-gradient(var(--grid-color) 1px, transparent 1px), 
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 40px 40px;
         }
 
         .layout-grid { display: grid; grid-template-columns: 360px 1fr 360px; gap: 20px; width: 100%; height: 100%; padding: 20px; }
         .panel { background: var(--panel-bg); border: 1px solid var(--border-glow); position: relative; display: flex; flex-direction: column; overflow: hidden; }
         
-        .panel-header { padding: 12px 18px; border-bottom: 1px solid var(--border-glow); font-family: 'Orbitron'; font-size: 10px; letter-spacing: 2px; display: flex; justify-content: space-between; color: var(--interface-blue); background: rgba(0, 210, 255, 0.05); }
+        .panel-header { padding: 12px 18px; border-bottom: 1px solid var(--border-glow); font-family: 'Orbitron'; font-size: 10px; letter-spacing: 2px; display: flex; justify-content: space-between; color: var(--neon-blue); background: linear-gradient(90deg, rgba(0,179,255,0.08), transparent); }
         
         .ncr-section { padding: 40px 20px; text-align: center; }
-        .ncr-title { font-family: 'Orbitron'; font-size: 11px; color: #5588aa; margin-bottom: 10px; }
-        .ncr-value { font-family: 'Orbitron'; font-size: 84px; font-weight: 900; color: #fff; text-shadow: 0 0 30px rgba(0, 210, 255, 0.5); line-height: 1; }
+        .ncr-title { font-family: 'Orbitron'; font-size: 11px; color: #6688aa; margin-bottom: 10px; }
+        .ncr-value { font-family: 'Orbitron'; font-size: 84px; font-weight: 900; color: #fff; text-shadow: 0 0 25px rgba(0, 179, 255, 0.6); line-height: 1; }
 
         .stats-wall { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border-glow); flex: 1; }
         .stat-item { background: var(--bg-deep); padding: 25px 20px; display: flex; flex-direction: column; justify-content: center; }
         .stat-label { font-size: 10px; color: #557799; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
         .stat-val { font-family: 'Orbitron'; font-size: 28px; color: var(--text-main); }
         
-        .stat-val.active-str { color: var(--alert-red); text-shadow: 0 0 15px rgba(255,62,62,0.4); }
-        .stat-val.active-def { color: var(--stability-green); text-shadow: 0 0 15px rgba(51,255,170,0.4); }
+        .stat-val.active-str { color: var(--alert-red); text-shadow: 0 0 15px rgba(255,42,42,0.5); font-weight: bold; }
+        .stat-val.active-def { color: var(--tech-orange); text-shadow: 0 0 15px rgba(255,102,0,0.5); font-weight: bold; }
 
-        .chart-container { flex: 1; padding: 30px; position: relative; }
-        .report-console { height: 220px; background: rgba(0,0,0,0.5); border-top: 1px solid var(--border-glow); padding: 20px; font-size: 13px; color: #88aabb; overflow-y: auto; line-height: 1.8; }
+        .chart-container { flex: 1; padding: 30px; position: relative; background: rgba(0,0,0,0.3); }
+        .report-console { height: 240px; background: rgba(0,0,0,0.6); border-top: 1px solid var(--border-glow); padding: 20px; font-size: 13px; color: #99aabb; overflow-y: auto; line-height: 1.8; }
 
-        .input-box { width: 100%; background: #000; border: 1px solid #224466; padding: 15px; color: var(--interface-blue); font-family: 'Orbitron'; font-size: 14px; margin-bottom: 15px; outline: none; text-align: center; }
-        .btn-prime { width: 100%; padding: 18px; background: transparent; color: var(--interface-blue); border: 1px solid var(--interface-blue); font-family: 'Orbitron'; font-weight: bold; cursor: pointer; transition: 0.2s; letter-spacing: 2px; }
-        .btn-prime:hover { background: var(--interface-blue); color: #000; box-shadow: 0 0 25px rgba(0,210,255,0.4); }
+        .input-box { width: 100%; background: #000; border: 1px solid #1a334d; padding: 15px; color: var(--neon-blue); font-family: 'Orbitron'; font-size: 14px; margin-bottom: 15px; outline: none; text-align: center; transition: 0.3s; }
+        .input-box:focus { border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(0,179,255,0.2); }
+        
+        .btn-prime { width: 100%; padding: 18px; background: rgba(0,179,255,0.1); color: var(--neon-blue); border: 1px solid var(--neon-blue); font-family: 'Orbitron'; font-weight: bold; cursor: pointer; transition: 0.3s; letter-spacing: 2px; }
+        .btn-prime:hover { background: var(--neon-blue); color: #000; box-shadow: 0 0 25px rgba(0,179,255,0.5); }
 
-        .math-box { font-size: 10px; color: #557799; padding: 20px; border-top: 1px solid var(--border-glow); line-height: 2; background: rgba(0,0,0,0.3); }
-        .hl-blue { color: var(--interface-blue); font-weight: bold; }
-        .hl-green { color: var(--stability-green); font-weight: bold; }
+        .math-box { font-size: 10px; color: #6688aa; padding: 20px; border-top: 1px solid var(--border-glow); line-height: 2; background: rgba(0,0,0,0.4); }
+        .hl-blue { color: var(--neon-blue); font-weight: bold; }
+        .hl-orange { color: var(--tech-orange); font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div class="layout-grid">
         <div class="panel">
-            <div class="panel-header"><span>ANALYSIS_UNIT</span><span>V23.0_STABILITY</span></div>
+            <div class="panel-header"><span>ANALYSIS_CORE</span><span>V24.0_BAYESIAN</span></div>
             <div class="ncr-section">
-                <div class="ncr-title">STABILITY VALUE INDEX (SVI)</div>
+                <div class="ncr-title">MAXIMA VALUE INDEX (MVI)</div>
                 <div id="ui-ncr" class="ncr-value">00.0</div>
-                <div id="ui-name" style="margin-top:20px; font-size: 14px; letter-spacing: 3px; color: var(--interface-blue);">READY_TO_SCAN</div>
+                <div id="ui-name" style="margin-top:20px; font-size: 14px; letter-spacing: 3px; color: var(--neon-blue);">WAITING_FOR_DATA</div>
             </div>
             <div class="stats-wall">
-                <div class="stat-item"><div class="stat-label">Destruction (STR)</div><div id="val-str" class="stat-val">--</div></div>
-                <div class="stat-item"><div class="stat-label">Stability (DEF)</div><div id="val-def" class="stat-val">--</div></div>
-                <div class="stat-item"><div class="stat-label">Precision (MIC)</div><div id="val-mic" class="stat-val">--</div></div>
-                <div class="stat-item"><div class="stat-label">Operation (MAC)</div><div id="val-mac" class="stat-val">--</div></div>
+                <div class="stat-item"><div class="stat-label">Offense (STR)</div><div id="val-str" class="stat-val">--</div></div>
+                <div class="stat-item"><div class="stat-label">Defense (DEF)</div><div id="val-def" class="stat-val">--</div></div>
+                <div class="stat-item"><div class="stat-label">Micro (MIC)</div><div id="val-mic" class="stat-val">--</div></div>
+                <div class="stat-item"><div class="stat-label">Macro (MAC)</div><div id="val-mac" class="stat-val">--</div></div>
             </div>
             <div id="ui-log" style="padding: 15px; font-size: 10px; color: #557788; line-height: 1.6;">
-                > 系統：熵值穩定協議已就緒。<br>> 已移除所有基於「皇冠數量」的偏見算法。
+                > 系統：貝氏動態期望協議載入完畢。<br>> 預期勝率 (EWR) 將根據雙曲正切函數動態生成。
             </div>
         </div>
 
         <div class="panel">
-            <div class="panel-header"><span>VISUALIZATION</span><span>ENTROPY_DYNAMICS</span></div>
+            <div class="panel-header"><span>VISUALIZATION</span><span>DELTA_DISTRIBUTION</span></div>
             <div class="chart-container">
                 <canvas id="mainRadar"></canvas>
             </div>
             <div id="ui-report" class="report-console">
-                等待數據封包匯入。本系統將以勝率穩定性為核心，評估絕對防禦能力。
+                客觀測算待命中。將計算實際勝率與 MMR 理論預期勝率之間的 Δ (Delta) 溢出值。
             </div>
         </div>
 
@@ -100,13 +106,15 @@
             </div>
             
             <div class="math-box">
-                [ V23.0 Stability Model ]<br><br>
-                1. WinRate (WR) = Wins / Total<br>
-                2. Stability (Z_WR) = (WR - 0.50) / 0.06<br>
-                3. Pressure (Z_MMR) = (MMR - 1600) / 350<br><br>
-                <span class="hl-blue">Defensive Efficiency (DEF):</span><br>
-                Z_DEF = (Z_WR * 0.55) + (Z_MMR * 0.45)<br>
-                Score = 100 / (1 + e^(-Z_DEF))
+                [ V24.0 Bayesian EWR Model ]<br><br>
+                <span class="hl-blue">1. Dynamic Expected Win Rate:</span><br>
+                EWR = 0.50 + 0.05 * Tanh((MMR - 1600) / 450)<br><br>
+                <span class="hl-orange">2. Performance Delta (Δ):</span><br>
+                Δ_WR = Actual_WR - EWR<br>
+                Z_Delta = Δ_WR / 0.035<br><br>
+                3. Z_Base = (MMR - 1600) / 350<br>
+                Z_DEF = (Z_Base * 0.40) + (Z_Delta * 0.60)<br>
+                DEF_Score = 100 / (1 + e^(-Z_DEF))
             </div>
         </div>
     </div>
@@ -120,13 +128,13 @@
             radarChart = new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: ['爆發進攻 (STR)', '熵值穩定 (DEF)', '操作精度 (MIC)', '戰略維度 (MAC)', '抗壓韌性 (PSY)', '勝率一致性 (CST)'],
+                    labels: ['破防進攻 (STR)', '絕對防禦 (DEF)', '操作精度 (MIC)', '戰略維度 (MAC)', '抗壓韌性 (PSY)', '勝率一致性 (CST)'],
                     datasets: [{
                         data: [0,0,0,0,0,0],
-                        backgroundColor: 'rgba(0, 210, 255, 0.1)',
-                        borderColor: '#00d2ff',
+                        backgroundColor: 'rgba(0, 179, 255, 0.15)',
+                        borderColor: '#00b3ff',
                         borderWidth: 2,
-                        pointRadius: 4,
+                        pointRadius: 3,
                         pointBackgroundColor: '#fff'
                     }]
                 },
@@ -137,7 +145,7 @@
                             grid: { color: 'rgba(255,255,255,0.05)' }, 
                             angleLines: { color: 'rgba(255,255,255,0.1)' },
                             ticks: { display: false, max: 100, min: 0 },
-                            pointLabels: { color: '#88aabb', font: { size: 12, family: 'Orbitron' } }
+                            pointLabels: { color: '#99aabb', font: { size: 11, family: 'Orbitron' } }
                         } 
                     },
                     plugins: { legend: { display: false } }
@@ -165,12 +173,11 @@
                     pol = rawJson.leagueStatistics.currentSeason.trophies;
                 }
 
-                processStabilityMatrix({
+                processBayesianMatrix({
                     name: rawJson.name,
                     wins: rawJson.wins || 0,
                     losses: rawJson.losses || 0,
                     threeCrownWins: rawJson.threeCrownWins || 0,
-                    bestTrophies: rawJson.bestTrophies || 0,
                     mmr: pol
                 });
 
@@ -182,36 +189,42 @@
             }
         }
 
-        function processStabilityMatrix(data) {
+        function processBayesianMatrix(data) {
             const total = data.wins + data.losses;
             if (total === 0) return;
 
             const wr = data.wins / total;
-            const tcwRate = data.threeCrownWins / data.wins; // 用於 STR 指標
+            const tcwRate = data.threeCrownWins / data.wins; 
             const mmr = data.mmr;
 
-            // --- 核心改動：DEF (熵值穩定性) ---
-            // 完全不參考皇冠數量，只參考勝率在特定分段的「穩定程度」
-            const zWR = (wr - 0.50) / 0.06;  // 以 50% 為基準，6% 為一標準差
-            const zMMR = (mmr - 1600) / 350; // 環境難度校正
+            // --- V24.0 核心改動：動態預期勝率 (EWR) ---
+            // Tanh (雙曲正切) 會產生一個介於 -1 到 1 的平滑S型曲線
+            // 基礎為 50%，MMR 每提升 450 分，預期勝率會平滑逼近 55%
+            const ewr = 0.50 + 0.05 * Math.tanh((mmr - 1600) / 450);
             
-            // 權重：勝率穩定度 55% / 競技壓力 45%
-            const zDEF = (zWR * 0.55) + (zMMR * 0.45);
+            // 計算「實際勝率」與「預期勝率」的差值 (Delta)
+            const deltaWR = wr - ewr;
+            
+            // 客觀標準化 (標準差設為 3.5%)
+            const zDelta = deltaWR / 0.035; 
+            const zBase = (mmr - 1600) / 350; 
+            
+            // 防禦分數 = 40% 環境難度基數 + 60% 超越預期表現的溢出值
+            const zDEF = (zBase * 0.40) + (zDelta * 0.60);
             let defScore = 100 / (1 + Math.exp(-zDEF));
 
-            // --- STR (爆發進攻) ---
-            // 依然保持「三冠率」作為進攻火力的衡量
+            // --- STR (保持原有的相對進攻火力邏輯) ---
             const z3C = (tcwRate - 0.20) / 0.10;
-            const zSTR = (z3C * 0.60) + (zMMR * 0.40);
+            const zSTR = (z3C * 0.60) + (zBase * 0.40);
             let strScore = 100 / (1 + Math.exp(-zSTR));
 
-            // 輔助維度
+            // 輔助維度更新 (同樣基於 Delta 值優化)
             let mic = 100 / (1 + Math.exp(-((mmr - 1800) / 350)));
-            let mac = 100 / (1 + Math.exp(-((wr - 0.52) * 12)));
+            let mac = 100 / (1 + Math.exp(-(zDelta * 1.5 + zBase * 0.5)));
             let psy = Math.min(99, (mmr / 25));
-            let cst = 100 / (1 + Math.exp(-((wr - 0.5) * 15)));
+            let cst = 100 / (1 + Math.exp(-(deltaWR * 20)));
 
-            renderUI(data.name, [strScore, defScore, mic, mac, psy, cst], {wr, mmr, tcwRate});
+            renderUI(data.name, [strScore, defScore, mic, mac, psy, cst], {wr, ewr, deltaWR, mmr});
         }
 
         function renderUI(name, scores, raw) {
@@ -223,21 +236,28 @@
             document.getElementById('val-mic').innerText = Math.round(scores[2]);
             document.getElementById('val-mac').innerText = Math.round(scores[3]);
 
+            if (scores[1] > 80) document.getElementById('val-def').className = 'stat-val active-def';
+            else document.getElementById('val-def').className = 'stat-val';
+
             radarChart.data.datasets[0].data = scores;
             radarChart.update();
 
-            let report = `<span class="hl-blue">[ V23.0 穩定性分析報告 ]</span><br><br>`;
-            report += `綜合勝率：<span class="hl-green">${(raw.wr*100).toFixed(1)}%</span><br>`;
-            report += `環境積分：<span class="hl-blue">${raw.mmr} MMR</span><br>`;
-            report += `進攻三冠率：${(raw.tcwRate*100).toFixed(1)}%<br><br>`;
+            let report = `<span class="hl-blue">[ V24.0 客觀防禦解析報告 ]</span><br><br>`;
+            report += `當前環境難度：<span class="hl-blue">${raw.mmr} MMR</span><br>`;
+            report += `實際存活率 (Actual WR)：<span style="color:#fff">${(raw.wr*100).toFixed(2)}%</span><br>`;
+            report += `系統預期勝率 (EWR)：<span style="color:#8899aa">${(raw.ewr*100).toFixed(2)}%</span><br>`;
             
-            report += `>> <span style="color:#fff">防禦解析：</span><br>`;
-            if (scores[1] > 85) {
-                report += `目標展現出極致的 <span class="hl-green">熵值控制能力</span>。在當前 MMR 環境下，其防線表現出極高的抗壓穩定性，不依賴戰術風格即可判定為頂級防禦大師。`;
-            } else if (scores[1] > 60) {
-                report += `目標防禦表現穩定，能有效將對局維持在正向期望值內。`;
+            const deltaColor = raw.deltaWR >= 0 ? "var(--tech-orange)" : "var(--alert-red)";
+            const deltaSign = raw.deltaWR >= 0 ? "+" : "";
+            report += `淨勝溢出值 (Δ WR)：<span style="color:${deltaColor}; font-weight:bold">${deltaSign}${(raw.deltaWR*100).toFixed(2)}%</span><br><br>`;
+            
+            report += `>> <span style="color:#fff">演算法評估：</span><br>`;
+            if (raw.deltaWR > 0.035) { // 超過 1個標準差
+                report += `目標表現出<span class="hl-orange">超常規的防線穩定性</span>。其勝率不僅滿足高分段的基本生存要求，更超越同儕預期達 ${ (raw.deltaWR*100).toFixed(1) }%，屬頂級防守者。`;
+            } else if (raw.deltaWR >= 0) {
+                report += `目標的防守能力完全符合當前 MMR 分段的系統期望，展現了稱職的陣地控制力。`;
             } else {
-                report += `數據顯示目標防線在當前環境下存在較大波動，生存壓力較高。`;
+                report += `目標實際勝率低於系統對當前分段的數學期望。防線面臨嚴重透支壓力。`;
             }
             
             document.getElementById('ui-report').innerHTML = report;

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>神經矩陣 MAXIMA | V48.0 APEX-SYNTHESIS</title>
+    <title>神經矩陣 MAXIMA | V48.0 APEX-SYNTHESIS 深度剖析版</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -59,7 +59,81 @@
 
         .vis-container { flex: 1; display: flex; flex-direction: column; padding: 20px; position: relative; min-height: 400px; }
         #radarWrapper { flex: 1; min-height: 380px; }
-        .report-overlay { background: rgba(5, 11, 20, 0.85); border: 1px solid var(--stat-primary); padding: 20px; margin-top: 15px; font-size: 13px; position: relative; border-left: 4px solid var(--stat-primary); box-shadow: inset 0 0 15px rgba(0,229,255,0.05); backdrop-filter: blur(5px); }
+        
+        /* 深度分析報告專屬 UI 升級 */
+        .report-overlay {
+            background: rgba(5, 11, 20, 0.9);
+            border: 1px solid var(--stat-primary);
+            padding: 25px;
+            margin-top: 15px;
+            font-size: 13px;
+            position: relative;
+            border-top: 4px solid var(--stat-primary);
+            box-shadow: inset 0 0 20px rgba(0,229,255,0.05), 0 5px 15px rgba(0,0,0,0.5);
+            backdrop-filter: blur(8px);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-bottom: 1px solid rgba(0, 229, 255, 0.2);
+            padding-bottom: 10px;
+        }
+
+        #ui-archetype {
+            font-family: 'Orbitron';
+            color: var(--stat-primary);
+            font-size: 18px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .threat-level {
+            font-family: 'Orbitron';
+            font-size: 12px;
+            padding: 3px 8px;
+            border-radius: 3px;
+            background: rgba(255, 23, 68, 0.1);
+            color: #ff1744;
+            border: 1px solid #ff1744;
+        }
+
+        .report-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .report-module {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(130, 177, 255, 0.1);
+            padding: 12px;
+        }
+
+        .module-title {
+            font-family: 'Share Tech Mono';
+            color: var(--stat-secondary);
+            font-size: 11px;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .module-title::before { content: "▸"; color: var(--stat-primary); }
+
+        .module-content {
+            color: #cbd5e1;
+            line-height: 1.5;
+            font-size: 12px;
+        }
+
+        .module-full { grid-column: span 2; }
 
         .io-panel { padding: 20px; border-top: 1px solid var(--border-glow); background: rgba(0,0,0,0.4); }
         input { width: 100%; background: #050b14; border: 1px solid #1e293b; padding: 15px; color: #fff; font-family: 'Orbitron'; font-size: 16px; outline: none; transition: 0.3s; text-align: center; letter-spacing: 2px; }
@@ -132,9 +206,15 @@
                 </div>
                 
                 <div class="report-overlay" id="report-container">
-                    <div id="ui-archetype" style="font-family: 'Orbitron'; color: var(--stat-primary); font-size: 16px; font-weight: 900; margin-bottom: 10px; letter-spacing: 1px;">SYSTEM STANDBY</div>
-                    <div id="ui-desc" style="line-height: 1.6; color: #cbd5e1;">
-                        系統已實裝 V48.0 頂點合成協定。結合貝氏平滑估計與 Sigmoid 曲線，在激進爆發與保守底線中取得數學上的黃金平衡。專為職業賽事與高階環境設計的無死角評估模型。
+                    <div class="report-header">
+                        <div id="ui-archetype" style="text-shadow: 0 0 10px #94a3b8; color: #94a3b8;">SYSTEM STANDBY</div>
+                        <div class="threat-level" style="color: #94a3b8; border-color: #94a3b8; background: rgba(148, 163, 184, 0.1);">AWAITING TARGET</div>
+                    </div>
+                    <div class="report-grid">
+                        <div class="report-module module-full">
+                            <div class="module-title">BEHAVIORAL_ANALYSIS (行為解析)</div>
+                            <div class="module-content">系統已實裝 V48.0 頂點合成協定。結合貝氏平滑估計與 Sigmoid 曲線，在激進爆發與保守底線中取得數學上的黃金平衡。專為職業賽事與高階環境設計的無死角評估模型。</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -145,6 +225,7 @@
             <div id="log-feed" class="sim-log">
                 <div class="log-line"><span class="log-ts">00:00:00</span> <span class="log-tag tag-sys">SYS</span> APEX-SYNTHESIS V48.0 核心上線。</div>
                 <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-tag tag-info">INFO</span> 載入貝氏平滑參數與非線性 S 曲線權重。</div>
+                <div class="log-line"><span class="log-ts">00:00:02</span> <span class="log-tag tag-sys">SYS</span> 預測性神經輪廓模組 (PNP) 部署完畢。</div>
             </div>
 
             <div class="data-box">
@@ -224,8 +305,10 @@
 
             } catch (error) {
                 writeLog("INFO", `API 離線 (${error.message})。載入職業級均衡測試數據。`);
-                // 模擬一個典型的中高階職業玩家：場次多，勝率穩定微高 (約58%)
+                // 模擬一個典型的中高階職業玩家：場次多，勝率穩定微高 (約58%)，進攻防守均衡
                 runSynthesisModel({ name: "PRO_EQUILIBRIUM", wins: 5800, losses: 4200, trophies: 7500 });
+                // 若要測試「非對稱突擊手」，可更換下方註解的數據集：
+                // runSynthesisModel({ name: "ASYM_STRIKER", wins: 850, losses: 500, trophies: 6800 });
             } finally {
                 btn.disabled = false; input.disabled = false;
                 btn.innerText = "RUN SYNTHESIS PROTOCOL";
@@ -233,9 +316,6 @@
             }
         }
 
-        /**
-         * V48.0 核心演算法：APEX-SYNTHESIS 動態平衡數學模型
-         */
         function runSynthesisModel(data) {
             writeLog("CALC", "執行貝氏平滑與非線性激進/保守校正...");
 
@@ -247,7 +327,6 @@
             const p = W / N; 
             
             // 1. 貝氏置信勝率 (Bayesian Smoothing)
-            // 假設全局基準為 50%，虛擬樣本 N=100
             const alpha = 50; 
             const beta = 50;
             const theta = (W + alpha) / (N + alpha + beta);
@@ -259,31 +338,21 @@
             const term2 = z * Math.sqrt((p * (1 - p)) / N + (z * z) / (4 * N * N));
             const WLB = Math.max(0, (term1 - term2) / denom); 
 
-            // 3. 客觀底盤 OEI (剔除盃數通膨)
+            // 3. 客觀底盤 OEI
             const G = Math.log10(T > 10 ? T : 10) / 3.9;
             const OEI = G * (1 + (W - L) / N);
 
-            // 4. S 曲線進攻函數 (Sigmoid Modifier)
-            // 將 0.5~0.8 的勝率轉化為一條平滑的 S 曲線，兼顧中段保守與高段爆發
-            const k = 12; // 曲線陡峭度 (激進因子)
+            // 4. S 曲線進攻函數
+            const k = 12; 
             const sigmoidMod = 1 / (1 + Math.exp(-k * (theta - 0.5)));
 
-            // ==========================================
-            // V48 綜合指數計算
-            // ==========================================
-            
-            // SOR: 綜合進攻 (S曲線激進爆發 x 客觀難度)
+            // 綜合指標
             const SOR_raw = sigmoidMod * OEI * 1.5; 
-
-            // TDR: 戰術防守 (威爾遜下限 x 生存反擊率 x 客觀難度)
             const survivalRate = 1 - (L / N);
             const TDR_raw = Math.sqrt(WLB * survivalRate) * OEI * 1.2;
 
-            // B_CF: 貝氏置信度 (接近 1 代表數據極其可靠)
             const standardError = Math.sqrt((theta * (1 - theta)) / (N + alpha + beta));
             const B_CF = Math.max(0.1, 1 - (z * standardError));
-
-            // ==========================================
 
             const mapScore = (val, maxExpected) => Math.min(99.9, Math.max(0.1, (val / maxExpected) * 100));
 
@@ -292,10 +361,7 @@
             const score_BCF = mapScore(B_CF, 1.0); 
             const score_OEI = mapScore(OEI, 1.2);
             
-            // DYN (動態適應): 反映玩家勝率與期望值的落差動能
             const score_DYN = mapScore((theta - 0.5) * 2 + B_CF, 1.5);
-            
-            // ASI (頂點合成指數): 最平衡的總分
             const score_ASI = (score_SOR * 0.45) + (score_TDR * 0.35) + (score_OEI * 0.2);
 
             const scores = [score_SOR, score_TDR, score_BCF, score_OEI, score_DYN, score_ASI];
@@ -326,29 +392,74 @@
             generateSynthesisReport(scores[0], scores[1], asi, theta);
         }
 
+        // 升級版：預測性神經輪廓深度解析引擎
         function generateSynthesisReport(sor, tdr, asi, theta) {
-            const uiArch = document.getElementById('ui-archetype');
-            const uiDesc = document.getElementById('ui-desc');
+            const reportContainer = document.getElementById('report-container');
             
+            // 預設變數
+            let archetype = "STANDARD EQUILIBRIUM";
+            let threatText = "THREAT: MODERATE";
+            let threatColor = "#94a3b8";
+            let analysisText = "各項指標皆處於系統預測的中位數區間。勝率與場次符合常態分佈，尚未展現出能夠打破數學平衡的特異性表現。";
+            let weaknessText = "目前無明顯極端短板，但也意味著缺乏絕對的致勝手段。";
+            let counterText = "維持常規營運節奏即可。透過穩定的費用交換來積累優勢，對手通常無法在逆風時打出奇蹟翻盤。";
+
+            // 邏輯判斷樹
             if (asi >= 85 && sor > 80 && tdr > 80) {
-                uiArch.innerText = "PRO-CIRCUIT SYNTHESIS (全能型職業模組)";
-                uiArch.style.color = "var(--stat-primary)";
-                uiArch.style.textShadow = "0 0 10px rgba(0, 229, 255, 0.4)";
-                uiDesc.innerHTML = `ASI 指標達到職業水準。<br><br><strong>綜合評估：</strong>在最嚴苛的動態平衡算法下，該玩家既具備 S 曲線的激進突破力，也擁有堅實的威爾遜防守基底。不偏科、無短板，是真正具備高端賽事競爭力的六邊形戰士。`;
-                writeLog("INFO", "檢測到頂尖均衡數據，判定為全能型菁英。");
-            } else if (sor > 85 && tdr <= 60) {
-                uiArch.innerText = "ASYMMETRIC STRIKER (非對稱突擊手)";
-                uiArch.style.color = "#82b1ff";
-                uiDesc.innerHTML = `S 曲線進攻模組 (SOR) 高度活躍，但戰術防守 (TDR) 偏弱。<br><br><strong>綜合評估：</strong>傾向於激進進攻以掩蓋防守漏洞。在順風局擁有極強的壓制力，但若遇到防守堅固的對手，容易因過度透支資源而崩盤。`;
-            } else if (tdr > 80 && sor <= 65) {
-                uiArch.innerText = "TACTICAL BASTION (戰術壁壘)";
-                uiArch.style.color = "#cbd5e1";
-                uiDesc.innerHTML = `戰術防守 (TDR) 極度穩固，但 S 曲線進攻未觸發爆發段。<br><br><strong>綜合評估：</strong>極度保守且容錯率高。擅長透過抓對手失誤來贏得比賽，但缺乏主動撕裂防線的爆發力，容易陷入長時間的拉鋸戰。`;
-            } else {
-                uiArch.innerText = "STANDARD EQUILIBRIUM (標準均衡態)";
-                uiArch.style.color = "var(--text-dim)";
-                uiDesc.innerHTML = `各項指標皆處於系統預測的中位數區間。勝率與場次符合常態分佈，尚未展現出能夠打破數學平衡的特異性表現。`;
+                archetype = "PRO-CIRCUIT ELITE";
+                threatText = "THREAT: EXTREME";
+                threatColor = "#00e5ff"; 
+                analysisText = "該目標在最嚴苛的動態平衡算法下，既具備 S 曲線的激進突破力，也擁有堅實的威爾遜防守基底。其攻守轉換幾乎沒有數學上的死角，是極度危險的六邊形戰士。";
+                weaknessText = "近乎無懈可擊。唯一的潛在盲區在於其對「最優解」的依賴，面對極度非主流或混亂的快節奏陣型時，可能會因運算過度而產生微小延遲。";
+                counterText = "避免與其進行傳統的陣地戰或拼防守反擊。必須利用不可預測的雙路施壓，強制打亂其既定的 S 曲線平滑節奏。";
+            } 
+            else if (sor > 80 && (sor - tdr) > 15) {
+                archetype = "ASYMMETRIC STRIKER";
+                threatText = "THREAT: HIGH (OFFENSIVE)";
+                threatColor = "#ff1744"; 
+                analysisText = `S 曲線進攻模組 (SOR: ${sor.toFixed(1)}) 呈現高度活躍，遠超其戰術防守 (TDR: ${tdr.toFixed(1)})。傾向於透過高頻率的進攻來掩蓋防守端的漏洞。`;
+                weaknessText = "防守資源分配極度不均。當第一波進攻被完美化解時，該目標極易陷入費用真空期，且其防守走位往往過於激進。";
+                counterText = "最高指導原則：忍耐。保留核心防禦法術與建築，完全放空其佯攻路。一旦成功防守其主攻波，直接在同路下重兵進行毀滅性反推。";
+            } 
+            else if (tdr > 80 && (tdr - sor) > 15) {
+                archetype = "TACTICAL BASTION";
+                threatText = "THREAT: HIGH (DEFENSIVE)";
+                threatColor = "#ffea00"; 
+                analysisText = `戰術防守 (TDR: ${tdr.toFixed(1)}) 極度穩固，威爾遜下限評級極高。擅長透過抓對手失誤來賺取費用差，防守陣型滴水不漏。`;
+                weaknessText = "主動撕裂防線的爆發力不足。由於過度依賴防守反擊，如果對手完全不發動總攻，他們往往會失去比賽的節奏主導權。";
+                counterText = "拒絕其預期的防守反擊戰場。採用「極限消耗（Chip Damage）」戰術，利用法術或遠程單位慢慢磨血。切忌孤注一擲下大費單位讓對方賺取防守價值。";
             }
+            else if (asi < 40) {
+                archetype = "VULNERABLE TARGET";
+                threatText = "THREAT: LOW";
+                threatColor = "#475569";
+                analysisText = "貝氏勝率評估低下，無論是進攻端的突破力還是防守端的穩定性，都處於系統的安全閾值之下。";
+                weaknessText = "容易在攻守轉換中出現重大失誤（如空法術、重疊下兵）。";
+                counterText = "保持基本專注力即可，對手通常會因為自身的營運失誤而崩盤。";
+            }
+
+            // 動態渲染 HTML 結構
+            reportContainer.innerHTML = `
+                <div class="report-header">
+                    <div id="ui-archetype" style="text-shadow: 0 0 10px ${threatColor}; color: ${threatColor};">${archetype}</div>
+                    <div class="threat-level" style="color: ${threatColor}; border-color: ${threatColor}; background: ${threatColor}20;">${threatText}</div>
+                </div>
+                <div class="report-grid">
+                    <div class="report-module module-full">
+                        <div class="module-title">BEHAVIORAL_ANALYSIS (行為解析)</div>
+                        <div class="module-content">${analysisText}</div>
+                    </div>
+                    <div class="report-module">
+                        <div class="module-title">EXPLOITABLE_WEAKNESS (弱點預測)</div>
+                        <div class="module-content">${weaknessText}</div>
+                    </div>
+                    <div class="report-module">
+                        <div class="module-title">COUNTER_STRATEGY (反制協議)</div>
+                        <div class="module-content">${counterText}</div>
+                    </div>
+                </div>
+            `;
+            writeLog("INFO", `分析報告已產出：${archetype}`);
         }
 
         function writeLog(tag, msg) {

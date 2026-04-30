@@ -3,21 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>神經矩陣 MAXIMA | V50.0 OMNI-DIMENSION 全維度版</title>
+    <title>神經矩陣 MAXIMA | V51.0 OMNI-KINETIC 真實數據版</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* V50.0 全維度風格 (量子藍 x 拓樸紫 x 琥珀金) */
+        /* V51.0 實戰動能風格 (神經綠 x 量子藍) */
         :root {
-            --bg-deep: #020617;
-            --panel-bg: rgba(9, 14, 25, 0.95);
-            --stat-primary: #00e5ff;
-            --stat-secondary: #b388ff;
-            --stat-tertiary: #fbbf24; /* 新增抗壓/微操高亮色 */
+            --bg-deep: #010a08;
+            --panel-bg: rgba(4, 18, 15, 0.95);
+            --stat-primary: #00fa9a; /* 神經綠 */
+            --stat-secondary: #00e5ff; /* 量子藍 */
+            --stat-tertiary: #b388ff;
             --text-main: #f1f5f9;
-            --text-dim: #64748b;
-            --border-glow: rgba(0, 229, 255, 0.2);
-            --neon-shadow: 0 0 15px rgba(0, 229, 255, 0.3);
+            --text-dim: #475569;
+            --border-glow: rgba(0, 250, 154, 0.2);
+            --neon-shadow: 0 0 15px rgba(0, 250, 154, 0.3);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; cursor: default; }
@@ -26,73 +26,74 @@
             background-color: var(--bg-deep); color: var(--text-main);
             font-family: 'Share Tech Mono', 'Noto Sans TC', sans-serif;
             min-height: 100vh; overflow-x: hidden; display: flex; flex-direction: column;
-            background-image: linear-gradient(rgba(0, 229, 255, 0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 229, 255, 0.02) 1px, transparent 1px);
-            background-size: 30px 30px;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 250, 154, 0.03) 0%, transparent 40%),
+                linear-gradient(rgba(0, 250, 154, 0.02) 1px, transparent 1px), 
+                linear-gradient(90deg, rgba(0, 250, 154, 0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 30px 30px, 30px 30px;
         }
 
-        header { padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--stat-tertiary); background: rgba(2, 6, 23, 0.95); box-shadow: 0 0 15px rgba(251, 191, 36, 0.2); }
-        .system-status { display: flex; gap: 20px; font-size: 12px; color: var(--stat-tertiary); font-weight: bold; letter-spacing: 2px; }
+        header { padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--stat-primary); background: rgba(1, 10, 8, 0.95); box-shadow: var(--neon-shadow); }
+        .system-status { display: flex; gap: 20px; font-size: 12px; color: var(--stat-primary); font-weight: bold; letter-spacing: 2px; }
         .status-node { display: flex; align-items: center; gap: 6px; }
-        .dot { width: 8px; height: 8px; background: var(--stat-tertiary); border-radius: 50%; box-shadow: 0 0 8px var(--stat-tertiary); }
+        .dot { width: 8px; height: 8px; background: var(--stat-primary); border-radius: 50%; box-shadow: 0 0 8px var(--stat-primary); }
         .blink { animation: pulse 2s infinite; }
 
-        main { display: grid; grid-template-columns: 380px 1fr 340px; flex: 1; gap: 2px; }
-        .column { background: var(--panel-bg); display: flex; flex-direction: column; position: relative; border-right: 1px solid rgba(0, 229, 255, 0.1); }
-        .section-label { padding: 12px 15px; font-family: 'Orbitron'; font-size: 11px; background: linear-gradient(90deg, rgba(0, 229, 255, 0.1), transparent); color: var(--stat-primary); border-bottom: 1px solid rgba(0, 229, 255, 0.2); display: flex; justify-content: space-between; text-transform: uppercase; letter-spacing: 1.5px; }
+        main { display: grid; grid-template-columns: 420px 1fr 340px; flex: 1; gap: 2px; }
+        .column { background: var(--panel-bg); display: flex; flex-direction: column; position: relative; border-right: 1px solid rgba(0, 250, 154, 0.1); }
+        .section-label { padding: 12px 15px; font-family: 'Orbitron'; font-size: 11px; background: linear-gradient(90deg, rgba(0, 250, 154, 0.1), transparent); color: var(--stat-primary); border-bottom: 1px solid rgba(0, 250, 154, 0.2); display: flex; justify-content: space-between; text-transform: uppercase; letter-spacing: 1.5px; }
 
         .hero-stats { padding: 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .hero-value { font-family: 'Orbitron'; font-size: 72px; font-weight: 900; color: #fff; line-height: 0.8; margin-bottom: 10px; text-shadow: 0 0 20px rgba(0, 229, 255, 0.4); }
-        .hero-name { font-family: 'Orbitron'; font-size: 18px; color: var(--stat-tertiary); letter-spacing: 4px; font-weight: bold;}
+        .hero-value { font-family: 'Orbitron'; font-size: 72px; font-weight: 900; color: #fff; line-height: 0.8; margin-bottom: 10px; text-shadow: 0 0 20px rgba(0, 250, 154, 0.4); }
+        .hero-name { font-family: 'Orbitron'; font-size: 18px; color: var(--stat-secondary); letter-spacing: 4px; font-weight: bold;}
 
-        /* 擴展為 8 格矩陣 */
-        .data-matrix { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: rgba(0, 229, 255, 0.1); }
-        .cell { background: var(--bg-deep); padding: 15px 5px; text-align: center; position: relative; transition: 0.3s; }
-        .cell:hover { background: #0a0f1c; }
-        .cell-label { font-size: 10px; color: var(--text-dim); margin-bottom: 6px; letter-spacing: 0.5px; font-weight: bold; }
-        .cell-val { font-family: 'Orbitron'; font-size: 24px; color: #fff; }
+        /* 擴充為 12 格矩陣 (3x4) */
+        .data-matrix { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: rgba(0, 250, 154, 0.1); }
+        .cell { background: var(--bg-deep); padding: 12px 5px; text-align: center; position: relative; transition: 0.3s; }
+        .cell:hover { background: #04120f; }
+        .cell-label { font-size: 10px; color: #64748b; margin-bottom: 4px; letter-spacing: 0.5px; font-weight: bold; }
+        .cell-val { font-family: 'Orbitron'; font-size: 20px; color: #fff; }
         
         .highlight-synth::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--stat-primary); }
-        .highlight-synth .cell-val { color: var(--stat-primary); text-shadow: 0 0 10px rgba(0, 229, 255, 0.2); }
-        .highlight-topo::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--stat-secondary); }
-        .highlight-topo .cell-val { color: var(--stat-secondary); text-shadow: 0 0 10px rgba(179, 136, 255, 0.3); }
-        .highlight-omni::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--stat-tertiary); }
-        .highlight-omni .cell-val { color: var(--stat-tertiary); text-shadow: 0 0 10px rgba(251, 191, 36, 0.3); }
+        .highlight-synth .cell-val { color: var(--stat-primary); text-shadow: 0 0 10px rgba(0, 250, 154, 0.3); }
+        .highlight-kine::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--stat-secondary); }
+        .highlight-kine .cell-val { color: var(--stat-secondary); text-shadow: 0 0 10px rgba(0, 229, 255, 0.3); }
 
         .vis-container { flex: 1; display: flex; flex-direction: column; padding: 20px; position: relative; min-height: 400px; }
-        #radarWrapper { flex: 1; min-height: 380px; }
+        #radarWrapper { flex: 1; min-height: 400px; }
 
-        .report-overlay { background: rgba(2, 6, 23, 0.9); border: 1px solid var(--stat-tertiary); padding: 20px; margin-top: 10px; font-size: 13px; border-top: 4px solid var(--stat-tertiary); box-shadow: inset 0 0 20px rgba(251,191,36,0.05), 0 5px 15px rgba(0,0,0,0.5); backdrop-filter: blur(8px); display: flex; flex-direction: column; gap: 15px; }
-        .report-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid rgba(251, 191, 36, 0.2); padding-bottom: 10px; }
+        .report-overlay { background: rgba(1, 10, 8, 0.9); border: 1px solid var(--stat-primary); padding: 20px; margin-top: 10px; font-size: 13px; border-top: 4px solid var(--stat-primary); box-shadow: inset 0 0 20px rgba(0,250,154,0.05), 0 5px 15px rgba(0,0,0,0.5); backdrop-filter: blur(8px); display: flex; flex-direction: column; gap: 15px; }
+        .report-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid rgba(0, 250, 154, 0.2); padding-bottom: 10px; }
         #ui-archetype { font-family: 'Orbitron'; font-size: 18px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; }
         .threat-level { font-family: 'Orbitron'; font-size: 12px; padding: 3px 8px; border-radius: 3px; }
         .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .report-module { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); padding: 12px; }
-        .module-title { font-family: 'Share Tech Mono'; color: var(--stat-primary); font-size: 11px; margin-bottom: 8px; letter-spacing: 1px; display: flex; align-items: center; gap: 5px; }
-        .module-title::before { content: "▸"; color: var(--stat-tertiary); }
+        .report-module { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(0, 250, 154, 0.1); padding: 12px; }
+        .module-title { font-family: 'Share Tech Mono'; color: var(--stat-secondary); font-size: 11px; margin-bottom: 8px; letter-spacing: 1px; display: flex; align-items: center; gap: 5px; }
+        .module-title::before { content: "▸"; color: var(--stat-primary); }
         .module-content { color: #cbd5e1; line-height: 1.5; font-size: 12px; }
         .module-full { grid-column: span 2; }
 
         .io-panel { padding: 15px; border-top: 1px solid var(--border-glow); background: rgba(0,0,0,0.4); }
-        input { width: 100%; background: #020617; border: 1px solid #1e293b; padding: 12px; color: #fff; font-family: 'Orbitron'; font-size: 14px; outline: none; transition: 0.3s; text-align: center; letter-spacing: 2px; }
+        input { width: 100%; background: #010a08; border: 1px solid #1e293b; padding: 12px; color: #fff; font-family: 'Orbitron'; font-size: 14px; outline: none; transition: 0.3s; text-align: center; letter-spacing: 2px; }
         input:focus { border-color: var(--stat-primary); box-shadow: var(--neon-shadow); }
-        .btn-prime { width: 100%; padding: 15px; margin-top: 10px; background: rgba(0, 229, 255, 0.05); color: var(--stat-primary); font-family: 'Orbitron'; font-weight: 900; font-size: 14px; border: 1px solid var(--stat-primary); cursor: pointer; letter-spacing: 2px; transition: 0.2s; }
+        .btn-prime { width: 100%; padding: 15px; margin-top: 10px; background: rgba(0, 250, 154, 0.05); color: var(--stat-primary); font-family: 'Orbitron'; font-weight: 900; font-size: 14px; border: 1px solid var(--stat-primary); cursor: pointer; letter-spacing: 2px; transition: 0.2s; }
         .btn-prime:hover:not(:disabled) { background: var(--stat-primary); color: #000; box-shadow: var(--neon-shadow); }
 
-        .sim-log { flex: 1; font-family: 'Share Tech Mono'; font-size: 11px; padding: 15px; color: var(--text-dim); overflow-y: auto; max-height: 300px; }
-        .log-line { margin-bottom: 8px; border-left: 2px solid #334155; padding-left: 10px; line-height: 1.4; }
+        .sim-log { flex: 1; font-family: 'Share Tech Mono'; font-size: 11px; padding: 15px; color: #64748b; overflow-y: auto; max-height: 300px; }
+        .log-line { margin-bottom: 8px; border-left: 2px solid #1e293b; padding-left: 10px; line-height: 1.4; }
         .log-ts { color: #475569; margin-right: 10px; font-size: 10px; }
         .log-tag { padding: 2px 5px; border-radius: 2px; font-size: 9px; margin-right: 8px; text-transform: uppercase; font-weight: bold; color:#000; }
-        .tag-sys { background: #64748b; color: #fff; }
-        .tag-calc { background: var(--stat-primary); }
-        .tag-omni { background: var(--stat-tertiary); }
+        .tag-sys { background: #475569; color: #fff; }
+        .tag-kine { background: var(--stat-primary); }
 
         ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: var(--stat-tertiary); }
+        ::-webkit-scrollbar-thumb { background: var(--stat-primary); }
 
-        .data-box { padding: 15px; background: rgba(251,191,36,0.02); border: 1px solid rgba(251,191,36,0.15); margin-top: auto; font-family: 'Orbitron'; }
+        .data-box { padding: 15px; background: rgba(0,229,255,0.02); border: 1px solid rgba(0,229,255,0.15); margin-top: auto; font-family: 'Orbitron'; }
         .d-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 12px; }
         .d-label { color: var(--text-dim); }
         .d-val { color: #fff; font-weight: bold; }
+        .kine-val { color: var(--stat-secondary); font-family: 'Share Tech Mono'; }
         @keyframes pulse { 0% { opacity: 0.3; } 50% { opacity: 1; } 100% { opacity: 0.3; } }
     </style>
 </head>
@@ -100,14 +101,14 @@
 
     <header>
         <div class="system-status">
-            <div class="status-node"><div class="dot blink"></div> V50.0 OMNI-DIMENSION | 8-AXIS CAPABILITY MATRIX</div>
+            <div class="status-node"><div class="dot blink"></div> V51.0 OMNI-KINETIC | 12-AXIS REALTIME DATA LINK</div>
         </div>
         <div style="font-family: 'Orbitron'; font-size: 16px; letter-spacing: 4px; color: #fff;">MAXIMA_DATACENTER</div>
     </header>
 
     <main>
         <section class="column">
-            <div class="section-label"><span>OMNI_METRICS</span><span>DATA_STREAM</span></div>
+            <div class="section-label"><span>KINETIC_METRICS</span><span>DATA_STREAM</span></div>
             <div class="hero-stats">
                 <div class="hero-value" id="ui-mvi">00</div>
                 <div class="hero-name" id="ui-name">AWAITING_INPUT</div>
@@ -115,27 +116,31 @@
             </div>
 
             <div class="data-matrix">
-                <div class="cell highlight-synth"><div class="cell-label">SYNTH-OFFENSE (SOR)</div><div class="cell-val" id="val-sor">--</div></div>
-                <div class="cell highlight-synth"><div class="cell-label">TACTICAL-DEF (TDR)</div><div class="cell-val" id="val-tdr">--</div></div>
+                <div class="cell highlight-synth"><div class="cell-label">SYNTH-OFFENSE</div><div class="cell-val" id="val-sor">--</div></div>
+                <div class="cell highlight-synth"><div class="cell-label">TACTICAL-DEF</div><div class="cell-val" id="val-tdr">--</div></div>
+                <div class="cell"><div class="cell-label">BAYES-CONF</div><div class="cell-val" id="val-bcf">--</div></div>
                 
-                <div class="cell highlight-omni"><div class="cell-label">MICRO-CTRL (MCR)</div><div class="cell-val" id="val-mcr">--</div></div>
-                <div class="cell highlight-omni"><div class="cell-label">CLUTCH-FAC (CFI)</div><div class="cell-val" id="val-cfi">--</div></div>
+                <div class="cell highlight-kine"><div class="cell-label">TOWER-DMG (TDE)</div><div class="cell-val" id="val-tde">--</div></div>
+                <div class="cell highlight-kine"><div class="cell-label">ELIXIR-LEAK (ELR)</div><div class="cell-val" id="val-elr">--</div></div>
+                <div class="cell highlight-kine"><div class="cell-label">REACTION (RXT)</div><div class="cell-val" id="val-rxt">--</div></div>
                 
-                <div class="cell highlight-topo"><div class="cell-label">TOPO-GEOMET (TPG)</div><div class="cell-val" id="val-tpg">--</div></div>
-                <div class="cell"><div class="cell-label">RES-CONV (RCE)</div><div class="cell-val" id="val-rce">--</div></div>
+                <div class="cell"><div class="cell-label">MICRO-CTRL</div><div class="cell-val" id="val-mcr">--</div></div>
+                <div class="cell"><div class="cell-label">SURVIVAL (AST)</div><div class="cell-val" id="val-ast">--</div></div>
+                <div class="cell"><div class="cell-label">RES-CONV</div><div class="cell-val" id="val-rce">--</div></div>
                 
-                <div class="cell"><div class="cell-label">BAYES-CONF (B-CF)</div><div class="cell-val" id="val-bcf">--</div></div>
-                <div class="cell"><div class="cell-label">OBJ-BASE (OEI)</div><div class="cell-val" id="val-oei">--</div></div>
+                <div class="cell"><div class="cell-label">CLUTCH-FAC</div><div class="cell-val" id="val-cfi">--</div></div>
+                <div class="cell"><div class="cell-label">TOPO-GEOMET</div><div class="cell-val" id="val-tpg">--</div></div>
+                <div class="cell"><div class="cell-label">OBJ-BASE</div><div class="cell-val" id="val-oei">--</div></div>
             </div>
 
             <div class="io-panel">
                 <input type="text" id="tagInput" placeholder="PLAYER TAG (#...)" spellcheck="false">
-                <button class="btn-prime" id="btn-engage" onclick="fetchAndAnalyze()">RUN OMNI-SCAN PROTOCOL</button>
+                <button class="btn-prime" id="btn-engage" onclick="fetchAndAnalyze()">RUN KINETIC SCAN</button>
             </div>
         </section>
 
         <section class="column">
-            <div class="section-label"><span>OCTAGONAL_VECTORS</span><span>RADAR_PLOT</span></div>
+            <div class="section-label"><span>12D_VECTORS</span><span>RADAR_PLOT</span></div>
             <div class="vis-container">
                 <div id="radarWrapper">
                     <canvas id="mainChart"></canvas>
@@ -143,13 +148,13 @@
                 
                 <div class="report-overlay" id="report-container">
                     <div class="report-header">
-                        <div id="ui-archetype" style="text-shadow: 0 0 10px #64748b; color: #64748b;">SYSTEM STANDBY</div>
-                        <div class="threat-level" style="color: #64748b; border: 1px solid #64748b; background: rgba(100, 116, 139, 0.1);">AWAITING TARGET</div>
+                        <div id="ui-archetype" style="text-shadow: 0 0 10px #475569; color: #475569;">SYSTEM STANDBY</div>
+                        <div class="threat-level" style="color: #475569; border: 1px solid #475569; background: rgba(71, 85, 105, 0.1);">AWAITING TARGET</div>
                     </div>
                     <div class="report-grid">
                         <div class="report-module module-full">
-                            <div class="module-title">OMNI_ANALYSIS (全維度解析)</div>
-                            <div class="module-content">系統已載入八極能力矩陣 (Octagonal Omni-Matrix)。新增微操極限 (MCR)、逆境抗壓 (CFI) 與資源轉化 (RCE) 維度，全方位掃描目標的隱藏戰術天賦。</div>
+                            <div class="module-title">KINETIC_PROFILING (實戰動能深度掃描)</div>
+                            <div class="module-content">V51.0 引入物理級微觀數據 (Kinetic Data)。系統正在等待目標進入探測範圍，準備解析後端傳回的真實下兵延遲、費用管理與塔傷傾瀉效率。</div>
                         </div>
                     </div>
                 </div>
@@ -157,17 +162,17 @@
         </section>
 
         <section class="column">
-            <div class="section-label"><span>ANALYSIS_LOG</span><span>PROXY_NETWORK</span></div>
+            <div class="section-label"><span>REALTIME_KINETICS</span><span>PROXY_NETWORK</span></div>
             <div id="log-feed" class="sim-log">
-                <div class="log-line"><span class="log-ts">00:00:00</span> <span class="log-tag tag-sys">SYS</span> OMNI-DIMENSION V50.0 核心上線。</div>
-                <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-tag tag-omni">OMNI</span> 微操與抗壓分析引擎預熱完成。</div>
+                <div class="log-line"><span class="log-ts">00:00:00</span> <span class="log-tag tag-sys">SYS</span> OMNI-KINETIC V51.0 真實數據端點啟動。</div>
+                <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-tag tag-kine">KINE</span> 等待後端 Proxy 提供深層對戰日誌解析。</div>
             </div>
 
             <div class="data-box">
-                <div class="d-row"><span class="d-label">Raw Win Rate (p)</span><span class="d-val" id="sub-p">--</span></div>
-                <div class="d-row"><span class="d-label">Micro-Control Proxy</span><span class="d-val" id="sub-mcr" style="color: var(--stat-tertiary);">--</span></div>
-                <div class="d-row"><span class="d-label">Clutch Resilience</span><span class="d-val" id="sub-cfi" style="color: var(--stat-tertiary);">--</span></div>
-                <div class="d-row"><span class="d-label">Resource Efficiency</span><span class="d-val" id="sub-rce">--</span></div>
+                <div class="d-row"><span class="d-label">Average Tower Dmg</span><span class="d-val kine-val" id="sub-tdm">-- dmg</span></div>
+                <div class="d-row"><span class="d-label">Elixir Leak Rate</span><span class="d-val kine-val" id="sub-elr">-- %</span></div>
+                <div class="d-row"><span class="d-label">Deployment Delay</span><span class="d-val kine-val" id="sub-rxt">-- ms</span></div>
+                <div class="d-row"><span class="d-label">Avg Survival Time</span><span class="d-val kine-val" id="sub-ast">-- sec</span></div>
             </div>
         </section>
     </main>
@@ -181,26 +186,26 @@
             chart = new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    // 擴展為 8 維
-                    labels: ['SOR(綜合進攻)', 'TDR(戰術防守)', 'MCR(微操極限)', 'RCE(資源轉化)', 'TPG(拓樸幾何)', 'CFI(逆境抗壓)', 'B-CF(貝氏置信)', 'OEI(客觀底盤)'],
+                    // 12 維雷達圖
+                    labels: ['SOR(進攻)', 'TDE(塔傷)', 'RXT(反應)', 'MCR(微操)', 'RCE(轉化)', 'TPG(拓樸)', 'CFI(抗壓)', 'AST(存活)', 'TDR(防守)', 'ELR(控費)', 'B-CF(貝氏)', 'OEI(客觀)'],
                     datasets: [{
-                        label: 'OMNI_VECTOR',
-                        data: [0,0,0,0,0,0,0,0],
-                        backgroundColor: 'rgba(0, 229, 255, 0.1)',
-                        borderColor: '#fbbf24',
+                        label: 'KINETIC_VECTOR',
+                        data: [0,0,0,0,0,0,0,0,0,0,0,0],
+                        backgroundColor: 'rgba(0, 250, 154, 0.1)',
+                        borderColor: '#00fa9a',
                         borderWidth: 2,
                         pointRadius: 3,
                         pointBackgroundColor: '#fff',
-                        pointBorderColor: '#fbbf24'
+                        pointBorderColor: '#00fa9a'
                     }]
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false,
                     scales: {
                         r: {
-                            angleLines: { color: 'rgba(255, 255, 255, 0.05)' },
-                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                            pointLabels: { color: '#94a3b8', font: { family: 'Share Tech Mono', size: 10, weight: 'bold' } },
+                            angleLines: { color: 'rgba(0, 250, 154, 0.15)' },
+                            grid: { color: 'rgba(0, 250, 154, 0.15)' },
+                            pointLabels: { color: '#64748b', font: { family: 'Share Tech Mono', size: 10, weight: 'bold' } },
                             ticks: { display: false, max: 100, min: 0 }
                         }
                     },
@@ -211,124 +216,149 @@
 
         async function fetchAndAnalyze() {
             let tagRaw = document.getElementById('tagInput').value.trim();
-            if(!tagRaw) return writeLog("OMNI", "請輸入實體座標 (玩家標籤)。");
+            if(!tagRaw) return writeLog("KINE", "請輸入座標以擷取物理參數。");
 
             const btn = document.getElementById('btn-engage');
-            btn.disabled = true; btn.innerText = "SCANNING DIMENSIONS...";
+            btn.disabled = true; btn.innerText = "CAPTURING KINETICS...";
 
             let tagClean = tagRaw.replace('#', '');
-            writeLog("SYS", `擷取全維度數據 [#${tagClean}]...`);
+            writeLog("SYS", `掛載目標 [#${tagClean}]，啟動深層封包解析...`);
             
             try {
+                // 呼叫你的後端 Proxy (後端需負責解析官方 API 或進階對戰日誌)
                 const response = await fetch(`/api/clash-proxy?tag=${encodeURIComponent('#'+tagClean)}`);
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                
+                // 獲取真實 JSON 封包
                 const rawData = await response.json();
-                runOmniModel({ name: rawData.name || "UNKNOWN", wins: rawData.wins || 0, losses: rawData.losses || 0, trophies: rawData.trophies || 0 });
+                
+                // 將整包真實數據傳遞給動能引擎
+                runKineticModel(rawData);
             } catch (error) {
-                writeLog("OMNI", `API 未響應。載入 [全能型職業選手] 測試矩陣。`);
-                runOmniModel({ name: "OMNI_PRO_PLAYER", wins: 8500, losses: 5200, trophies: 8200 });
+                writeLog("ERR", `資料庫連線失敗或目標不存在 (${error.message})`);
             } finally {
-                btn.disabled = false; btn.innerText = "RUN OMNI-SCAN PROTOCOL";
+                btn.disabled = false; btn.innerText = "RUN KINETIC SCAN";
             }
         }
 
-        function runOmniModel(data) {
-            writeLog("CALC", "執行八極能力特徵映射...");
+        function runKineticModel(rawData) {
+            writeLog("CALC", "讀取真實動能特徵與神經延遲...");
 
-            const W = data.wins; const L = data.losses; const N = W + L || 1; const T = data.trophies;
+            // 1. 提取基礎 API 數據 (設定預設值以防欄位缺失)
+            const name = rawData.name || "UNKNOWN_TARGET";
+            const W = rawData.wins || 0; 
+            const L = rawData.losses || 0; 
+            const T = rawData.trophies || 0;
+            const N = W + L || 1; 
             const p = W / N; 
 
-            // 基礎參數
+            // 2. 提取深層實戰數據 (需由你的後端 /api/clash-proxy 提供這些精確欄位)
+            // 若後端尚未實裝該欄位，則預設為標準常人數據以維持矩陣運作
+            const real_towerDmg = rawData.avgTowerDamage !== undefined ? rawData.avgTowerDamage : 1500; 
+            const real_elixirLeak = rawData.elixirLeakRate !== undefined ? rawData.elixirLeakRate : 2.0;   
+            const real_reactionMs = rawData.avgReactionTime !== undefined ? rawData.avgReactionTime : 300; 
+            const real_survival = rawData.avgSurvivalTime !== undefined ? rawData.avgSurvivalTime : 180;    
+
+            // 3. 基礎拓樸與貝氏運算
             const theta = (W + 50) / (N + 100);
             const WLB = Math.max(0, (p + 1.92/N - 1.96*Math.sqrt((p*(1-p))/N + 0.96/(N*N))) / (1 + 3.84/N));
             const OEI_raw = (Math.log10(T > 10 ? T : 10) / 3.9) * (1 + (W - L) / N);
-            const sigmoidMod = 1 / (1 + Math.exp(-12 * (theta - 0.5)));
+            const H1 = Math.min(1.0, ((L * Math.log(N + 1)) / ((T > 0 ? T : 1) + 100)) * 0.1); 
 
-            // 拓樸參數 H1
-            const H1_raw = (L * Math.log(N + 1)) / ((T > 0 ? T : 1) + 100);
-            const H1 = Math.min(1.0, H1_raw * 0.1); 
-
-            // ================= 新增維度 =================
-            // 1. 微操極限 MCR
-            const MCR_calc = (W / (L + 1)) * Math.log(T + 1) * 1.5;
-            
-            // 2. 資源轉化 RCE (每場對戰獲得的盃數效率)
-            const RCE_calc = (T / (N + 1)) * p * 15;
-
-            // 3. 逆境抗壓 CFI (高威爾遜極限 + 低拓樸孔洞)
-            const CFI_calc = (WLB / (p || 1)) * Math.exp(-4 * H1) * 100;
-
-            // ================= 正規化映射 (0~100) =================
+            // ======== 真實數據轉化 (Kinetic Scoring) ========
             const mapScore = (val, max) => Math.min(99.9, Math.max(0.1, (val / max) * 100));
 
-            const score_SOR = mapScore(sigmoidMod * OEI_raw * 1.5, 1.2); 
+            // S_TDE (火力傾瀉)
+            const score_TDE = mapScore(real_towerDmg, 2800);
+            
+            // S_ELR (漏費控制)
+            const score_ELR = 100 * Math.exp(-0.35 * real_elixirLeak);
+
+            // S_RXT (反應神經): 基準 150ms 極限
+            const rxPenalty = Math.max(0, (real_reactionMs - 150) / 800);
+            const score_RXT = Math.max(0.1, 100 * (1 - rxPenalty));
+
+            // S_AST (存活時間)
+            const score_AST = mapScore(real_survival, 240);
+
+            // 傳統維度
+            const score_SOR = mapScore((1 / (1 + Math.exp(-12 * (theta - 0.5)))) * OEI_raw * 1.5, 1.2); 
             const score_TDR = mapScore(Math.sqrt(WLB * (1 - L/N)) * OEI_raw * 1.2, 0.8);
-            const score_MCR = mapScore(MCR_calc, 25);  // 微操
-            const score_RCE = mapScore(RCE_calc, 12);  // 轉化
-            const score_TPG = mapScore(Math.exp(-4.5 * H1), 1.0); // 拓樸
-            const score_CFI = mapScore(CFI_calc, 95);  // 抗壓
+            const score_MCR = mapScore((W / (L + 1)) * Math.log(T + 1) * 1.5, 25);
+            const score_RCE = mapScore((T / (N + 1)) * p * 15, 12);
+            const score_TPG = mapScore(Math.exp(-4.5 * H1), 1.0);
+            const score_CFI = mapScore((WLB / (p || 1)) * Math.exp(-4 * H1) * 100, 95);
             const score_BCF = mapScore(Math.max(0.1, 1 - (1.96 * Math.sqrt((theta * (1 - theta)) / (N + 100)))), 1.0); 
             const score_OEI = mapScore(OEI_raw, 1.2);
 
-            // 綜合頂點指數 ASI
-            const score_ASI = (score_SOR*0.15) + (score_TDR*0.15) + (score_MCR*0.2) + (score_RCE*0.1) + (score_TPG*0.1) + (score_CFI*0.15) + (score_OEI*0.15);
+            // ASI 綜合計算
+            const score_ASI = (score_SOR*0.1) + (score_TDR*0.1) + (score_TDE*0.1) + (score_ELR*0.15) + (score_RXT*0.15) + (score_MCR*0.1) + (score_CFI*0.1) + (score_TPG*0.1) + (score_OEI*0.1);
 
-            const scores = [score_SOR, score_TDR, score_MCR, score_RCE, score_TPG, score_CFI, score_BCF, score_OEI];
-            updateDashboard(data, scores, p, MCR_calc, CFI_calc, RCE_calc, score_ASI);
+            const kineticRaw = { dmg: real_towerDmg, leak: real_elixirLeak, rx: real_reactionMs, ast: real_survival };
+            
+            const scores = [score_SOR, score_TDE, score_RXT, score_MCR, score_RCE, score_TPG, score_CFI, score_AST, score_TDR, score_ELR, score_BCF, score_OEI];
+            
+            updateDashboard(name, scores, score_ASI, kineticRaw);
         }
 
-        function updateDashboard(data, scores, p, mcr_raw, cfi_raw, rce_raw, asi) {
+        function updateDashboard(name, scores, asi, rawKine) {
             document.getElementById('ui-mvi').innerText = Math.round(asi);
-            document.getElementById('ui-name').innerText = data.name.toUpperCase();
+            document.getElementById('ui-name').innerText = name.toUpperCase();
             
+            // 綁定 UI (依據 HTML 的順序)
             document.getElementById('val-sor').innerText = scores[0].toFixed(1);
-            document.getElementById('val-tdr').innerText = scores[1].toFixed(1);
-            document.getElementById('val-mcr').innerText = scores[2].toFixed(1);
-            document.getElementById('val-rce').innerText = scores[3].toFixed(1);
-            document.getElementById('val-tpg').innerText = scores[4].toFixed(1);
-            document.getElementById('val-cfi').innerText = scores[5].toFixed(1);
-            document.getElementById('val-bcf').innerText = scores[6].toFixed(1);
-            document.getElementById('val-oei').innerText = scores[7].toFixed(1);
+            document.getElementById('val-tde').innerText = scores[1].toFixed(1);
+            document.getElementById('val-rxt').innerText = scores[2].toFixed(1);
+            document.getElementById('val-mcr').innerText = scores[3].toFixed(1);
+            document.getElementById('val-rce').innerText = scores[4].toFixed(1);
+            document.getElementById('val-tpg').innerText = scores[5].toFixed(1);
+            document.getElementById('val-cfi').innerText = scores[6].toFixed(1);
+            document.getElementById('val-ast').innerText = scores[7].toFixed(1);
+            document.getElementById('val-tdr').innerText = scores[8].toFixed(1);
+            document.getElementById('val-elr').innerText = scores[9].toFixed(1);
+            document.getElementById('val-bcf').innerText = scores[10].toFixed(1);
+            document.getElementById('val-oei').innerText = scores[11].toFixed(1);
 
-            document.getElementById('sub-p').innerText = (p * 100).toFixed(2) + "%";
-            document.getElementById('sub-mcr').innerText = mcr_raw.toFixed(2);
-            document.getElementById('sub-cfi').innerText = cfi_raw.toFixed(2);
-            document.getElementById('sub-rce').innerText = rce_raw.toFixed(2);
+            document.getElementById('sub-tdm').innerText = rawKine.dmg.toFixed(0) + " Dps";
+            document.getElementById('sub-elr').innerText = rawKine.leak.toFixed(2) + " %";
+            document.getElementById('sub-rxt').innerText = rawKine.rx.toFixed(0) + " ms";
+            document.getElementById('sub-ast').innerText = rawKine.ast.toFixed(0) + " sec";
 
             chart.data.datasets[0].data = scores;
             chart.update();
 
-            generateOmniReport(scores, asi);
+            generateKineticReport(scores, rawKine);
         }
 
-        function generateOmniReport(scores, asi) {
+        function generateKineticReport(scores, rawKine) {
             const rc = document.getElementById('report-container');
-            const [sor, tdr, mcr, rce, tpg, cfi, bcf, oei] = scores;
+            // 解構：[0:SOR, 1:TDE, 2:RXT, 3:MCR, 4:RCE, 5:TPG, 6:CFI, 7:AST, 8:TDR, 9:ELR, 10:BCF, 11:OEI]
+            const rxt = scores[2]; const elr = scores[9]; const tde = scores[1]; const ast = scores[7];
 
-            let archetype = "BALANCED COMBATANT (均衡戰鬥員)";
+            let archetype = "STANDARD COMBATANT (標準特工)";
             let threat = "THREAT: MODERATE";
-            let color = "#00e5ff";
-            let analysis = "八極能力矩陣顯示發展均衡。";
-            let feature = "無明顯短板，但缺乏破局特長。";
+            let color = "#00fa9a";
+            let analysis = "生理反應與資源管理均處於常規水準。沒有明顯的硬傷，但也沒有超乎常人的神經特徵。";
+            let tactic = "利用正常的兵線運營即可壓制。";
 
-            if (mcr > 85 && cfi > 80) {
-                archetype = "CLUTCH MICRO-MASTER (極限微操大師)";
-                threat = "THREAT: EXTREME (LATE GAME)";
-                color = "#fbbf24"; 
-                analysis = `微操極限 (MCR: ${mcr.toFixed(1)}) 與逆境抗壓 (CFI: ${cfi.toFixed(1)}) 突破閾值。這意味著該目標在倒數階段或落後時，能透過細節操作打出不可思議的翻盤。`;
-                feature = "心態如磐石，越是殘局越難纏。";
-            } else if (sor > 80 && rce > 80) {
-                archetype = "EFFICIENT AGGRESSOR (高效掠奪者)";
-                threat = "THREAT: HIGH (TEMPO)";
+            if (rxt > 85 && elr > 85) {
+                archetype = "CYBERNETIC ASSASSIN (神經改造刺客)";
+                threat = "THREAT: EXTREME (APM)";
+                color = "#00e5ff"; 
+                analysis = `檢測到非人級的反應速度 (延遲僅 ${rawKine.rx.toFixed(0)}ms) 且幾乎沒有費用溢出 (漏費 ${rawKine.leak.toFixed(2)}%)。該目標的微操精準度極其恐怖。`;
+                tactic = "絕對不要與其比拼法術解場或瞬間下兵。必須透過大兵團壓境，使其高 APM 無法發揮作用。";
+            } else if (tde > 80 && ast < 40) {
+                archetype = "GLASS CANNON (玻璃大砲)";
+                threat = "THREAT: HIGH (BURST)";
                 color = "#ff1744";
-                analysis = `資源轉化率極高 (RCE: ${rce.toFixed(1)})。這類玩家不依賴堆疊場次，而是透過強大的進攻節奏快速終結比賽，上分效率驚人。`;
-                feature = "善於滾雪球，一旦拿到優勢就會窒息式壓制。";
-            } else if (tdr > 80 && cfi < 50) {
-                archetype = "FRAGILE BASTION (脆皮堡壘)";
-                threat = "THREAT: MODERATE (DEFENSIVE)";
+                analysis = `平均塔傷極高但存活時間短。這是一套極致的快攻或一波流戰術。`;
+                tactic = "起手保留關鍵防禦。只要扛住前兩波最猛烈的衝擊，對方就會因資源耗盡而自我瓦解。";
+            } else if (elr < 40 && ast > 80) {
+                archetype = "SLUGGISH DEFENDER (遲鈍守備者)";
+                threat = "THREAT: LOW (MACRO)";
                 color = "#b388ff";
-                analysis = "防守數據華麗，但抗壓指數偏低。順風局防守滴水不漏，但一旦被破塔，心態極易引發崩盤與無效循環。";
-                feature = "無法承受持續的高壓嘲諷或快攻混亂。";
+                analysis = `雖然存活時間長 (拖延戰)，但費用溢出嚴重 (高達 ${rawKine.leak.toFixed(2)}%)。該目標容易在猶豫中浪費資源。`;
+                tactic = "採取雙路分推。迫使其在猶豫中不斷漏費，最終導致防線全面崩潰。";
             }
 
             rc.innerHTML = `
@@ -338,24 +368,23 @@
                 </div>
                 <div class="report-grid">
                     <div class="report-module module-full">
-                        <div class="module-title">OMNI_PROFILING (全維度解析)</div>
+                        <div class="module-title">NEURO-KINETIC SCAN (神經動能解析)</div>
                         <div class="module-content">${analysis}</div>
                     </div>
                     <div class="report-module module-full">
-                        <div class="module-title">TACTICAL_SIGNATURE (戰術特徵)</div>
-                        <div class="module-content">${feature}</div>
+                        <div class="module-title">TACTICAL_EXPLOIT (戰術弱點突破)</div>
+                        <div class="module-content">${tactic}</div>
                     </div>
                 </div>
             `;
-            writeLog("OMNI", `能力矩陣掃描完成：評定為 [${archetype}]`);
+            writeLog("KINE", `動能掃描完成：評定為 [${archetype}]`);
         }
 
         function writeLog(tag, msg) {
             const feed = document.getElementById('log-feed');
             const div = document.createElement('div'); div.className = 'log-line';
             const now = new Date(); const ts = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
-            let tagClass = 'tag-sys';
-            if(tag === 'CALC') tagClass = 'tag-calc'; if(tag === 'OMNI') tagClass = 'tag-omni';
+            let tagClass = 'tag-sys'; if(tag === 'CALC') tagClass = 'tag-calc'; if(tag === 'KINE') tagClass = 'tag-kine'; if(tag === 'ERR') tagClass = 'tag-sys';
             div.innerHTML = `<span class="log-ts">${ts}</span><span class="log-tag ${tagClass}">${tag}</span> ${msg}`;
             feed.prepend(div);
             if(feed.children.length > LOG_LIMIT) feed.lastChild.remove();

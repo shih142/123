@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>神經矩陣 MAXIMA | V32.0 戰術剖析終端</title>
+    <title>神經矩陣 MAXIMA | V33.0 資本獵手終端</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -53,12 +53,11 @@
         
         .stat-val.active-mic { color: var(--laser-cyan); text-shadow: 0 0 15px rgba(0,255,204,0.6); font-weight: bold; }
         .stat-val.active-exe { color: var(--alert-red); text-shadow: 0 0 15px rgba(255,42,42,0.6); font-weight: bold; }
-        .stat-val.active-psy { color: var(--steel-blue); text-shadow: 0 0 15px rgba(77,166,255,0.8); font-weight: bold; font-size: 24px; }
-        .stat-val.active-pay { color: var(--gold-pay); text-shadow: 0 0 15px rgba(255,170,0,0.6); font-weight: bold; }
+        .stat-val.active-psy { color: var(--steel-blue); text-shadow: 0 0 15px rgba(77,166,255,0.8); font-weight: bold; }
+        .stat-val.active-pay { color: var(--gold-pay); text-shadow: 0 0 15px rgba(255,170,0,0.8); font-weight: bold; font-size: 24px; }
 
         .chart-container { flex: 1; padding: 20px; position: relative; background: radial-gradient(circle at center, rgba(157,0,255,0.05) 0%, transparent 70%); min-height: 300px; }
         
-        /* V32.0 報告區塊深度優化 */
         .report-console { min-height: 180px; max-height: 280px; background: rgba(0,0,0,0.8); border-top: 1px solid var(--border-glow); overflow-y: auto; display: flex; flex-direction: column; }
         .rep-header { display: flex; justify-content: space-between; padding: 10px 15px; border-bottom: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.02); }
         .rep-threat { font-family: 'Orbitron'; font-size: 14px; font-weight: bold; }
@@ -71,6 +70,9 @@
         
         .btn-prime { width: 100%; padding: 18px; background: rgba(157,0,255,0.1); color: #fff; border: 1px solid var(--quantum-purple); font-family: 'Orbitron'; font-size: 14px; font-weight: bold; cursor: pointer; transition: 0.3s; letter-spacing: 2px; border-radius: 4px; -webkit-appearance: none; }
         .btn-prime:hover, .btn-prime:active { background: var(--quantum-purple); box-shadow: 0 0 25px rgba(157,0,255,0.6); }
+
+        .math-box { font-size: 10px; color: #8877aa; padding: 15px; border-top: 1px solid var(--border-glow); line-height: 1.6; background: rgba(0,0,0,0.4); }
+        .hl-gold { color: var(--gold-pay); font-weight: bold; }
 
         @media (min-width: 1024px) {
             body { height: 100vh; overflow: hidden; }
@@ -96,7 +98,7 @@
 
     <div class="layout-grid">
         <div id="panel-stats" class="panel">
-            <div class="panel-header"><span>NEURAL_ENGINE</span><span>V32.0_TACTICAL</span></div>
+            <div class="panel-header"><span>NEURAL_ENGINE</span><span>V33.0_WHALE_HUNTER</span></div>
             <div class="ncr-section">
                 <div class="ncr-title">MAXIMA VALUE INDEX (MVI)</div>
                 <div id="ui-ncr" class="ncr-value">00.0</div>
@@ -113,7 +115,7 @@
                 
                 <div class="stat-item"><div class="stat-label">Execute<br>(EXE)</div><div id="val-exe" class="stat-val">--</div></div>
                 <div class="stat-item"><div class="stat-label">Endure<br>(END)</div><div id="val-end" class="stat-val">--</div></div>
-                <div class="stat-item"><div class="stat-label">Capital<br>(PAY)</div><div id="val-pay" class="stat-val">--</div></div>
+                <div class="stat-item"><div class="stat-label" style="color:var(--gold-pay);">Capital<br>(PAY)</div><div id="val-pay" class="stat-val">--</div></div>
             </div>
         </div>
 
@@ -128,7 +130,7 @@
                     <span class="rep-threat" style="color:#8877aa;">THREAT: --</span>
                 </div>
                 <div class="rep-body">
-                    等待輸入目標標籤。V32.0 戰術剖析引擎將自動生成玩家原型與反制兵推。
+                    等待輸入。V33.0 已實裝「勝率偏離懲罰」，精準剝離無課技術流與重課鯨魚。
                 </div>
             </div>
         </div>
@@ -143,6 +145,14 @@
                 <input type="text" id="proxyInput" value="/api/clash-proxy" class="input-box">
                 
                 <button id="btn-run" class="btn-prime" onclick="fetchLiveData()">INITIATE SCAN</button>
+            </div>
+
+            <div class="math-box">
+                [ V33.0 Whale Hunter Core ]<br><br>
+                <span class="hl-gold">Optimized Capital (PAY):</span><br>
+                Z_PAY = (Z_Base*0.5) - (Z_MIC*0.3) <span style="color:#ff2a2a;">- (ΔWR*10)</span> + 0.8<br>
+                PAY = 100 / (1 + e^(-Z_PAY*1.5))<br>
+                *High MMR + Low WinRate = Severe P2W Penalty.
             </div>
         </div>
     </div>
@@ -244,8 +254,13 @@
             const zPSY = (zEND * 0.50) - (zEXE * 0.30) + (zMIC * 0.20) + 0.5;
             let psyScore = Math.min(99.9, 100 / (1 + Math.exp(-zPSY))); 
 
-            const zPAY = (zBase * 0.60) - (zMIC * 0.40) + 0.5; 
-            let payScore = 100 / (1 + Math.exp(-zPAY * 1.2)); 
+            // ==========================================
+            // 🔥 NEW: V33.0 資本獵手演算法
+            // 引入勝率偏離 (deltaWR)。高分段但勝率低迷 = 靠等級硬扛。
+            // Sigmoid 曲線乘數調高至 1.5，讓數值更具極端性！
+            // ==========================================
+            const zPAY = (zBase * 0.50) - (zMIC * 0.30) - (deltaWR * 10) + 0.8; 
+            let payScore = 100 / (1 + Math.exp(-zPAY * 1.5)); 
 
             const zDEF = (zBase * 0.40) + (zDeltaStandard * 0.60);
             let defScore = 100 / (1 + Math.exp(-zDEF));
@@ -278,19 +293,18 @@
 
             document.querySelectorAll('.stat-val').forEach(el => el.className = 'stat-val');
 
-            // --- 戰術剖析引擎 (V32.0) ---
             let archetype = "均衡適應者 (ADAPTIVE BALANCER)";
             let threat = "B+";
             let mainColor = "#9d00ff";
             let weaknessDesc = "全方位發展，無明顯破綻，但也缺乏極端殺招。";
             let tactic = "維持常規輪轉，以不變應萬變。注意對方的微小失誤並擴大優勢。";
 
-            if (scores[8] > 80 && scores[2] < 50) {
-                archetype = "資本壓制流 (CAPITAL SUPPRESSOR)";
+            if (scores[8] > 82 && scores[2] < 55) {
+                archetype = "重課階級惡霸 (WHALE SUPPRESSOR)";
                 threat = "A"; mainColor = "#ffaa00";
                 document.getElementById('val-pay').classList.add('active-pay');
-                weaknessDesc = "微操能力低下，過度依賴卡牌等級與高質量單卡。";
-                tactic = "【防守反擊】切勿與其在同路硬碰硬。利用建築拉扯與賺費防守，針對其笨重的牌序進行換路速攻。";
+                weaknessDesc = "勝率低迷卻身處高分段，微操極差。完全依賴魔法小卡與卡牌質量硬扛局勢。";
+                tactic = "【防守反擊】他的進攻往往伴隨嚴重的虧費。切勿與其在同路硬碰硬，利用建築拉扯與賺費防守，針對其笨重的牌序進行換路速攻。";
             } else if (scores[4] > 85 && scores[6] < 50) {
                 archetype = "泥沼戰神 (MUD GOD)";
                 threat = "S"; mainColor = "#4da6ff";
@@ -303,27 +317,20 @@
                 document.getElementById('val-exe').classList.add('active-exe');
                 weaknessDesc = "攻擊性極強，但防守端空虛且容易出現虧費過激操作。";
                 tactic = "【龜縮抓失誤】開局先摸清底細，預留解牌。一旦扛住其第一波猛攻，直接下橋頭單位施壓，對方防線會瞬間瓦解。";
-            } else if (scores[4] < 40 && scores[6] > 70) {
-                archetype = "順風球殺手 (MOMENTUM BULLY)";
-                threat = "B"; mainColor = "#ffcc00";
-                weaknessDesc = "抗壓極差，一旦陷入劣勢或被針對，極易發生「拔線/亂下牌」的崩盤反應。";
-                tactic = "【心態打擊】開局若能成功防守並發送表情符號施壓，對手勝率將垂直下降。盡量把戰局拖長，讓他自己失誤白給。";
             } else if (scores[2] > 85 && scores[8] < 40) {
                 archetype = "無課技術流 (F2P CHAD)";
                 threat = "S+"; mainColor = "#00ffcc";
                 document.getElementById('val-mic').classList.add('active-mic');
-                weaknessDesc = "卡等可能處於劣勢，但擁有恐怖的微操與下牌時機掌控力。";
-                tactic = "【法術斬殺】不要試圖在微操上贏過他。利用高質量的範圍法術（如火球、毒藥）消耗皇家塔，避免被他用小費卡牌完美解場。";
+                weaknessDesc = "卡等可能處於劣勢，但擁有恐怖的勝率與下牌時機掌控力。";
+                tactic = "【法術斬殺】不要試圖在微操上贏過他。利用高質量的範圍法術消耗皇家塔，避免被他用小費卡牌完美解場。";
             }
 
-            // 更新雷達圖顏色
             radarChart.data.datasets[0].borderColor = mainColor;
-            radarChart.data.datasets[0].backgroundColor = mainColor + "26"; // 15% opacity hex
+            radarChart.data.datasets[0].backgroundColor = mainColor + "26"; 
             radarChart.data.datasets[0].pointBackgroundColor = mainColor;
             radarChart.data.datasets[0].data = scores;
             radarChart.update();
 
-            // 生成報告 HTML
             const reportHTML = `
                 <div class="rep-header">
                     <span class="rep-archetype" style="color:${mainColor}">${archetype}</span>

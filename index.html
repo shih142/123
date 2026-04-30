@@ -3,20 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>神經矩陣 MAXIMA | V46.0 ELO-CONVERGENCE</title>
+    <title>神經矩陣 MAXIMA | V47.0 OVERCLOCK-CARNAGE</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Noto+Sans+TC:wght@300;500;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* V46.0 絕對客觀風格 (鈦鋼灰 x 觀測金) */
+        /* V47.0 激進狂暴風格 (深淵紅 x 霓虹緋) */
         :root {
-            --bg-deep: #0a0c10;
-            --panel-bg: rgba(18, 22, 28, 0.95);
-            --stat-primary: #ffc107; /* 觀測金 */
-            --text-main: #f8f9fa;
-            --text-dim: #78909c;
-            --obj-gray: #cfd8dc;
-            --border-glow: rgba(255, 193, 7, 0.15);
-            --neon-shadow: 0 0 15px rgba(255, 193, 7, 0.3);
+            --bg-deep: #0a0000;
+            --panel-bg: rgba(20, 5, 5, 0.95);
+            --stat-primary: #ff1744; /* 狂暴紅 */
+            --stat-secondary: #ff8a80;
+            --text-main: #ffebee;
+            --text-dim: #b71c1c;
+            --border-glow: rgba(255, 23, 68, 0.2);
+            --neon-shadow: 0 0 20px rgba(255, 23, 68, 0.5);
+            --alert-glow: 0 0 30px rgba(213, 0, 0, 0.8);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; cursor: crosshair; }
@@ -27,131 +28,131 @@
             font-family: 'Share Tech Mono', 'Noto Sans TC', sans-serif;
             min-height: 100vh; overflow-x: hidden; display: flex; flex-direction: column;
             background-image: 
-                linear-gradient(rgba(207, 216, 220, 0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(207, 216, 220, 0.02) 1px, transparent 1px);
-            background-size: 40px 40px;
+                radial-gradient(circle at 50% 50%, #1a0202 0%, #0a0000 100%),
+                linear-gradient(rgba(255, 23, 68, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 23, 68, 0.03) 1px, transparent 1px);
+            background-size: 100% 100%, 30px 30px, 30px 30px;
         }
 
-        header { padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--stat-primary); background: rgba(10, 12, 16, 0.9); box-shadow: var(--neon-shadow); }
+        header { padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--stat-primary); background: rgba(15, 0, 0, 0.9); box-shadow: var(--neon-shadow); }
         .system-status { display: flex; gap: 20px; font-size: 12px; color: var(--stat-primary); font-weight: bold; letter-spacing: 2px; }
         .status-node { display: flex; align-items: center; gap: 6px; }
-        .dot { width: 8px; height: 8px; background: var(--text-main); border-radius: 50%; box-shadow: 0 0 10px var(--text-main); }
-        .blink { animation: pulse 1.5s infinite; }
+        .dot { width: 8px; height: 8px; background: #fff; border-radius: 50%; box-shadow: 0 0 10px #fff; }
+        .blink { animation: pulse 0.8s infinite; }
 
         main { display: grid; grid-template-columns: 380px 1fr 340px; flex: 1; gap: 2px; }
-        .column { background: var(--panel-bg); display: flex; flex-direction: column; position: relative; border-right: 1px solid rgba(255, 193, 7, 0.1); }
+        .column { background: var(--panel-bg); display: flex; flex-direction: column; position: relative; border-right: 1px solid rgba(255, 23, 68, 0.1); }
 
-        .section-label { padding: 12px 15px; font-family: 'Orbitron'; font-size: 11px; background: rgba(255, 193, 7, 0.05); color: var(--obj-gray); border-bottom: 1px solid rgba(255, 193, 7, 0.2); display: flex; justify-content: space-between; text-transform: uppercase; letter-spacing: 1.5px; }
+        .section-label { padding: 12px 15px; font-family: 'Orbitron'; font-size: 11px; background: linear-gradient(90deg, rgba(255, 23, 68, 0.2), transparent); color: var(--stat-secondary); border-bottom: 1px solid rgba(255, 23, 68, 0.3); display: flex; justify-content: space-between; text-transform: uppercase; letter-spacing: 1.5px; }
 
-        .hero-stats { padding: 30px 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.02); }
-        .hero-value { font-family: 'Orbitron'; font-size: 88px; font-weight: 900; color: #fff; line-height: 0.8; margin-bottom: 15px; text-shadow: 0 0 20px rgba(255, 255, 255, 0.2); }
-        .hero-name { font-family: 'Orbitron'; font-size: 18px; color: var(--stat-primary); letter-spacing: 4px; font-weight: bold;}
+        .hero-stats { padding: 30px 20px; text-align: center; border-bottom: 1px solid rgba(255,0,0,0.1); position: relative; overflow: hidden;}
+        .hero-value { font-family: 'Orbitron'; font-size: 96px; font-weight: 900; color: #fff; line-height: 0.8; margin-bottom: 15px; text-shadow: var(--alert-glow); }
+        .hero-name { font-family: 'Orbitron'; font-size: 20px; color: var(--stat-primary); letter-spacing: 5px; font-weight: bold;}
 
-        .data-matrix { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: rgba(255, 193, 7, 0.1); }
-        .cell { background: var(--bg-deep); padding: 20px 10px; text-align: center; position: relative; transition: 0.3s; }
-        .cell:hover { background: #1a1d24; }
-        .cell-label { font-size: 10px; color: var(--text-dim); margin-bottom: 8px; letter-spacing: 1px; font-weight: bold; }
-        .cell-val { font-family: 'Orbitron'; font-size: 28px; color: #fff; }
+        .data-matrix { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: rgba(255, 23, 68, 0.1); }
+        .cell { background: var(--bg-deep); padding: 20px 10px; text-align: center; position: relative; transition: 0.2s; }
+        .cell:hover { background: #2b0404; }
+        .cell-label { font-size: 10px; color: var(--stat-secondary); margin-bottom: 8px; letter-spacing: 1px; font-weight: bold; }
+        .cell-val { font-family: 'Orbitron'; font-size: 30px; color: #fff; text-shadow: 0 0 10px rgba(255, 23, 68, 0.4); }
         
-        .highlight-obj::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--obj-gray); }
-        .highlight-obj .cell-val { color: var(--obj-gray); text-shadow: 0 0 15px rgba(207, 216, 220, 0.3); }
+        .highlight-atk::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: var(--stat-primary); box-shadow: var(--neon-shadow); }
+        .highlight-atk .cell-val { color: var(--stat-primary); font-weight: 900; }
 
         .vis-container { flex: 1; display: flex; flex-direction: column; padding: 20px; position: relative; min-height: 400px; }
         #radarWrapper { flex: 1; min-height: 380px; }
-        .report-overlay { background: rgba(5, 6, 8, 0.85); border: 1px solid var(--stat-primary); padding: 20px; margin-top: 15px; font-size: 13px; position: relative; border-left: 4px solid var(--stat-primary); }
+        .report-overlay { background: rgba(10, 0, 0, 0.9); border: 1px solid var(--stat-primary); padding: 20px; margin-top: 15px; font-size: 13px; position: relative; border-left: 6px solid var(--stat-primary); box-shadow: inset 0 0 20px rgba(255,0,0,0.1); }
 
-        .io-panel { padding: 20px; border-top: 1px solid var(--border-glow); background: rgba(0,0,0,0.6); }
-        input { width: 100%; background: #0a0c10; border: 1px solid var(--text-dim); padding: 15px; color: #fff; font-family: 'Orbitron'; font-size: 16px; outline: none; transition: 0.3s; text-align: center; letter-spacing: 2px; }
+        .io-panel { padding: 20px; border-top: 1px solid var(--border-glow); background: rgba(0,0,0,0.8); }
+        input { width: 100%; background: #050000; border: 1px solid var(--text-dim); padding: 15px; color: #fff; font-family: 'Orbitron'; font-size: 16px; outline: none; transition: 0.3s; text-align: center; letter-spacing: 2px; }
         input:focus { border-color: var(--stat-primary); box-shadow: var(--neon-shadow); }
         input:disabled { opacity: 0.5; cursor: not-allowed; }
         
-        .btn-prime { width: 100%; padding: 18px; margin-top: 10px; background: rgba(255, 193, 7, 0.05); color: var(--stat-primary); font-family: 'Orbitron'; font-weight: 900; font-size: 14px; border: 1px solid var(--stat-primary); cursor: pointer; letter-spacing: 2px; transition: 0.2s; }
-        .btn-prime:hover:not(:disabled) { background: var(--stat-primary); color: #000; box-shadow: var(--neon-shadow); }
-        .btn-prime:disabled { background: #1a1d24; color: #546e7a; border-color: #263238; cursor: wait; }
+        .btn-prime { width: 100%; padding: 18px; margin-top: 10px; background: rgba(255, 23, 68, 0.1); color: #fff; font-family: 'Orbitron'; font-weight: 900; font-size: 15px; border: 1px solid var(--stat-primary); cursor: pointer; letter-spacing: 3px; transition: 0.1s; text-shadow: 0 0 5px rgba(255,255,255,0.5); }
+        .btn-prime:hover:not(:disabled) { background: var(--stat-primary); color: #fff; box-shadow: var(--alert-glow); transform: scale(1.02); }
+        .btn-prime:disabled { background: #1a0505; color: #4a0000; border-color: #330000; cursor: wait; }
 
-        .sim-log { flex: 1; font-family: 'Share Tech Mono'; font-size: 11px; padding: 15px; color: #b0bec5; overflow-y: auto; max-height: 300px; }
-        .log-line { margin-bottom: 8px; border-left: 2px solid #546e7a; padding-left: 10px; line-height: 1.4; }
-        .log-ts { color: #78909c; margin-right: 10px; font-size: 10px; }
-        .log-tag { padding: 2px 5px; border-radius: 2px; font-size: 9px; margin-right: 8px; text-transform: uppercase; font-weight: bold; color:#000; }
+        .sim-log { flex: 1; font-family: 'Share Tech Mono'; font-size: 11px; padding: 15px; color: var(--stat-secondary); overflow-y: auto; max-height: 300px; }
+        .log-line { margin-bottom: 8px; border-left: 2px solid #b71c1c; padding-left: 10px; line-height: 1.4; }
+        .log-ts { color: #d50000; margin-right: 10px; font-size: 10px; }
+        .log-tag { padding: 2px 5px; border-radius: 2px; font-size: 9px; margin-right: 8px; text-transform: uppercase; font-weight: bold; color:#fff; }
         
-        .tag-sys { background: #90a4ae; }
+        .tag-sys { background: #b71c1c; }
         .tag-calc { background: var(--stat-primary); }
-        .tag-warn { background: #ff5252; color: #fff; }
+        .tag-crit { background: #ff0000; color: #fff; box-shadow: 0 0 5px #ff0000; animation: pulse 0.5s infinite; }
 
-        @keyframes pulse { 0% { opacity: 0.2; } 50% { opacity: 1; } 100% { opacity: 0.2; } }
+        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: var(--stat-primary); }
 
-        .data-box { padding: 15px; background: rgba(255,193,7,0.02); border: 1px solid rgba(255,193,7,0.15); margin-top: auto; font-family: 'Orbitron'; }
+        .data-box { padding: 15px; background: rgba(255,23,68,0.05); border: 1px solid rgba(255,23,68,0.3); margin-top: auto; font-family: 'Orbitron'; }
         .d-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 12px; }
-        .d-label { color: var(--text-dim); }
-        .d-val { color: #fff; font-weight: bold; }
+        .d-label { color: var(--stat-secondary); }
+        .d-val { color: #fff; font-weight: bold; text-shadow: 0 0 5px rgba(255,255,255,0.3); }
     </style>
 </head>
 <body>
 
     <header>
         <div class="system-status">
-            <div class="status-node"><div class="dot blink"></div> V46.0 ELO-CONVERGENCE | OBJECTIVE TIER</div>
-            <div class="status-node" id="top-lethality">TDI (TROPHY INDEX): DEPRECATED</div>
+            <div class="status-node"><div class="dot blink" style="background:#ff1744;box-shadow:0 0 10px #ff1744;"></div> V47.0 OVERCLOCK-CARNAGE | AGGRESSION TIER</div>
+            <div class="status-node" id="top-lethality" style="color: #ff5252;">CONSERVATIVE PROTOCOLS: DISABLED</div>
         </div>
         <div style="font-family: 'Orbitron'; font-size: 16px; letter-spacing: 4px; color: #fff;">MAXIMA_DATACENTER</div>
     </header>
 
     <main>
         <section class="column">
-            <div class="section-label"><span>OBJECTIVE_STATISTICS</span><span>API_STREAM</span></div>
+            <div class="section-label"><span>LETHAL_STATISTICS</span><span>CARNAGE_API</span></div>
             <div class="hero-stats">
                 <div class="hero-value" id="ui-mvi">00</div>
-                <div class="hero-name" id="ui-name">AWAITING_INPUT</div>
-                <div style="font-size: 10px; color: var(--text-dim); margin-top: 5px;">TRUE SKILL RATING (TSR)</div>
+                <div class="hero-name" id="ui-name">AWAITING_TARGET</div>
+                <div style="font-size: 10px; color: var(--stat-secondary); margin-top: 5px;">LETHALITY RATING (LTR)</div>
             </div>
 
             <div class="data-matrix">
-                <div class="cell highlight-obj"><div class="cell-label">OFFENSE (Objective)</div><div class="cell-val" id="val-str">--</div></div>
-                <div class="cell highlight-obj"><div class="cell-label">DEFENSE (Objective)</div><div class="cell-val" id="val-def">--</div></div>
-                <div class="cell"><div class="cell-label">CONFIDENCE (C)</div><div class="cell-val" id="val-mic">--</div></div>
-                <div class="cell"><div class="cell-label">GRAVITY (G)</div><div class="cell-val" id="val-mac">--</div></div>
-                <div class="cell"><div class="cell-label">EFFICACY (E)</div><div class="cell-val" id="val-cst">--</div></div>
-                <div class="cell"><div class="cell-label">INDEX (OEI)</div><div class="cell-val" id="val-exe" style="color: var(--stat-primary);">--</div></div>
+                <div class="cell highlight-atk"><div class="cell-label">HYPER-OFFENSE (HOR)</div><div class="cell-val" id="val-str">--</div></div>
+                <div class="cell highlight-atk"><div class="cell-label">VANGUARD-DEF (VDR)</div><div class="cell-val" id="val-def">--</div></div>
+                <div class="cell"><div class="cell-label">VOLATILITY (VLI)</div><div class="cell-val" id="val-mic">--</div></div>
+                <div class="cell"><div class="cell-label">BASE EFFICACY (OEI)</div><div class="cell-val" id="val-mac">--</div></div>
+                <div class="cell"><div class="cell-label">MOMENTUM (MOM)</div><div class="cell-val" id="val-cst">--</div></div>
+                <div class="cell"><div class="cell-label">EXECUTION (EXE)</div><div class="cell-val" id="val-exe" style="color: var(--stat-primary);">--</div></div>
             </div>
 
             <div class="io-panel">
-                <input type="text" id="tagInput" placeholder="PLAYER TAG (#...)" spellcheck="false">
-                <button class="btn-prime" id="btn-engage" onclick="fetchAndAnalyze()">RUN OBJECTIVE ALGORITHM</button>
+                <input type="text" id="tagInput" placeholder="ENTER TARGET TAG (#...)" spellcheck="false">
+                <button class="btn-prime" id="btn-engage" onclick="fetchAndAnalyze()">OVERRIDE & EXECUTE</button>
             </div>
         </section>
 
         <section class="column">
-            <div class="section-label"><span>CONVERGENCE_VECTORS</span><span>RADAR_PLOT</span></div>
+            <div class="section-label"><span>AGGRESSION_VECTORS</span><span>RADAR_PLOT</span></div>
             <div class="vis-container">
                 <div id="radarWrapper">
                     <canvas id="mainChart"></canvas>
                 </div>
                 
                 <div class="report-overlay" id="report-container">
-                    <div id="ui-archetype" style="font-family: 'Orbitron'; color: var(--stat-primary); font-size: 16px; font-weight: 900; margin-bottom: 10px; letter-spacing: 1px;">AWAITING DATA</div>
-                    <div id="ui-desc" style="line-height: 1.6; color: #cfd8dc;">
-                        系統已實裝 V46.0 客觀收斂協定。主觀且帶有通膨性質的「盃段難度指數 (TDI)」已被銷毀。目前的攻守數據已完全由基於統計置信度與大數法則的「客觀效能指數 (OEI)」所驅動。
+                    <div id="ui-archetype" style="font-family: 'Orbitron'; color: var(--stat-primary); font-size: 16px; font-weight: 900; margin-bottom: 10px; letter-spacing: 1px;">SYSTEM STANDBY</div>
+                    <div id="ui-desc" style="line-height: 1.6; color: #ffebee;">
+                        系統已實裝 V47.0 極限超頻協定。安全機制已解除。防守不再被視為存活指標，而是反擊的絞肉機。攻守數據皆採用指數級別（1.5次方）放大，以極端手段篩選出最具侵略性的高危險玩家。
                     </div>
                 </div>
             </div>
         </section>
 
         <section class="column">
-            <div class="section-label"><span>OBSERVATION_LOG</span><span>PROXY_NETWORK</span></div>
+            <div class="section-label"><span>CARNAGE_LOG</span><span>PROXY_NETWORK</span></div>
             <div id="log-feed" class="sim-log">
-                <div class="log-line"><span class="log-ts">00:00:00</span> <span class="log-tag tag-sys">SYS</span> ELO-CONVERGENCE V46.0 初始化。</div>
-                <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-tag tag-warn">WARN</span> TDI 模組已停用，切換至 OEI 客觀數學模型。</div>
+                <div class="log-line"><span class="log-ts">00:00:00</span> <span class="log-tag tag-sys">SYS</span> OVERCLOCK-CARNAGE V47.0 載入完畢。</div>
+                <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-tag tag-crit">CRIT</span> 警告：線性平滑演算法已銷毀，指數級波動已啟用。</div>
             </div>
 
             <div class="data-box">
-                <div class="d-row"><span class="d-label">Total Matches (N)</span><span class="d-val" id="sub-n">--</span></div>
-                <div class="d-row"><span class="d-label">Ladder Gravity (G)</span><span class="d-val" id="sub-g">--</span></div>
-                <div class="d-row"><span class="d-label">Stat Confidence (C)</span><span class="d-val" id="sub-c">--</span></div>
-                <div class="d-row"><span class="d-label">Net Efficacy (E)</span><span class="d-val" id="sub-e">--</span></div>
-                <div class="d-row"><span class="d-label" style="color:var(--stat-primary);">Objective Index (OEI)</span><span class="d-val" id="sub-oei" style="color:var(--stat-primary);">--</span></div>
+                <div class="d-row"><span class="d-label">Raw Win Rate (p)</span><span class="d-val" id="sub-p">--</span></div>
+                <div class="d-row"><span class="d-label">Exponential Mod (p^1.5)</span><span class="d-val" id="sub-exp" style="color: var(--stat-primary);">--</span></div>
+                <div class="d-row"><span class="d-label">Risk Amplitude</span><span class="d-val" id="sub-risk">--</span></div>
+                <div class="d-row"><span class="d-label">Defensive Turnover</span><span class="d-val" id="sub-dto">--</span></div>
             </div>
         </section>
     </main>
@@ -165,16 +166,16 @@
             chart = new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: ['OER(進攻)', 'DRS(防守)', 'CON(統計置信)', 'GRV(階級重力)', 'EFF(淨勝效能)', 'OEI(綜合指數)'],
+                    labels: ['HOR(狂暴進攻)', 'VDR(絞肉防禦)', 'VLI(暴走波動)', 'OEI(客觀底盤)', 'MOM(殺戮動能)', 'EXE(處決力)'],
                     datasets: [{
-                        label: 'STAT_VECTOR',
+                        label: 'CARNAGE_VECTOR',
                         data: [0,0,0,0,0,0],
-                        backgroundColor: 'rgba(255, 193, 7, 0.1)',
-                        borderColor: '#ffc107',
+                        backgroundColor: 'rgba(255, 23, 68, 0.15)',
+                        borderColor: '#ff1744',
                         borderWidth: 2,
                         pointRadius: 4,
-                        pointBackgroundColor: '#cfd8dc',
-                        pointBorderColor: '#ffc107'
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#ff1744'
                     }]
                 },
                 options: {
@@ -182,9 +183,9 @@
                     maintainAspectRatio: false,
                     scales: {
                         r: {
-                            angleLines: { color: 'rgba(255, 255, 255, 0.05)' },
-                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                            pointLabels: { color: '#b0bec5', font: { family: 'Share Tech Mono', size: 11 } },
+                            angleLines: { color: 'rgba(255, 23, 68, 0.15)' },
+                            grid: { color: 'rgba(255, 23, 68, 0.15)' },
+                            pointLabels: { color: '#ff8a80', font: { family: 'Share Tech Mono', size: 11, weight: 'bold' } },
                             ticks: { display: false, max: 100, min: 0 }
                         }
                     },
@@ -195,24 +196,24 @@
 
         async function fetchAndAnalyze() {
             let tagRaw = document.getElementById('tagInput').value.trim();
-            if(!tagRaw) return writeLog("WARN", "拒絕空值，請輸入有效字串。");
+            if(!tagRaw) return writeLog("CRIT", "未鎖定目標，拒絕執行空指令。");
 
             const btn = document.getElementById('btn-engage');
             const input = document.getElementById('tagInput');
             btn.disabled = true; input.disabled = true;
-            btn.innerText = "CALCULATING OBJECTIVE MATRIX...";
+            btn.innerText = "OVERCLOCKING...";
 
             let tagClean = tagRaw.replace('#', '');
             let encodedTag = encodeURIComponent('#' + tagClean);
 
-            writeLog("SYS", `擷取真實數據 [#${tagClean}]，啟動 OEI 演算...`);
+            writeLog("SYS", `鎖定目標 [#${tagClean}]，啟動極限超頻演算...`);
             
             try {
                 const apiUrl = `/api/clash-proxy?tag=${encodedTag}`;
                 const response = await fetch(apiUrl);
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const rawData = await response.json();
-                writeLog("SYS", `連接成功。剝離主觀獎盃權重。`);
+                writeLog("SYS", `數據連線建立。注入指數級運算元。`);
 
                 const playerData = {
                     name: rawData.name || "UNKNOWN",
@@ -220,24 +221,24 @@
                     losses: rawData.losses || 0,
                     trophies: rawData.trophies || 0
                 };
-                runObjectiveModel(playerData);
+                runCarnageModel(playerData);
 
             } catch (error) {
-                writeLog("WARN", `API 錯誤 (${error.message})，載入大數據測試模型。`);
-                // 模擬一個客觀上的高手：場次極多，且淨勝率極高
-                runObjectiveModel({ name: "CLINICAL_PRO", wins: 15000, losses: 11000, trophies: 8800 });
+                writeLog("CRIT", `API 攔截 (${error.message})，強制載入極端殺手測試檔案。`);
+                // 模擬一個勝率極高、波動極大的狂暴型玩家
+                runCarnageModel({ name: "BLOODHOUND", wins: 2200, losses: 900, trophies: 8500 });
             } finally {
                 btn.disabled = false; input.disabled = false;
-                btn.innerText = "RUN OBJECTIVE ALGORITHM";
+                btn.innerText = "OVERRIDE & EXECUTE";
                 input.focus();
             }
         }
 
         /**
-         * V46.0 核心演算法：Objective Efficacy Index (OEI) 客觀效能指數
+         * V47.0 核心演算法：OVERCLOCK-CARNAGE 極限指數運算
          */
-        function runObjectiveModel(data) {
-            writeLog("CALC", "計算統計置信度與客觀重力...");
+        function runCarnageModel(data) {
+            writeLog("CALC", "解析指數級勝率與暴走波動...");
 
             const W = data.wins;
             const L = data.losses;
@@ -245,96 +246,95 @@
             const T = data.trophies;
 
             const p = W / N; 
-            const z = 1.96; 
+            const expMod = Math.pow(p, 1.5); // 指數放大
             
-            // 雙極限萃取 (進攻上限與防守下限)
-            const denominator = 1 + (z * z) / N;
-            const term1 = p + (z * z) / (2 * N);
-            const term2 = z * Math.sqrt((p * (1 - p)) / N + (z * z) / (4 * N * N));
-            const WLB = Math.max(0, (term1 - term2) / denominator); 
-            const WUB = Math.min(1, (term1 + term2) / denominator); 
-
-            // ==========================================
-            // OEI 客觀效能指數計算
-            // ==========================================
-            
-            // 1. 階級重力 (G) - 壓平獎盃通膨
-            const G = Math.log10(T > 10 ? T : 10) / 3.9; 
-
-            // 2. 統計置信度 (C) - 拒絕小樣本神話
-            const standardError = Math.sqrt((p * (1 - p)) / N);
-            const C = Math.max(0.1, 1 - (z * standardError)); 
-
-            // 3. 淨勝效能 (E) - 懲罰只靠場次堆疊的肝帝
+            // 底盤：V46 的 OEI (簡化版，保持客觀重力)
+            const G = Math.log10(T > 10 ? T : 10) / 3.9;
             const E = (W - L) / N;
+            const OEI = G * (1 + E); 
 
-            // 客觀效能指數 (OEI) - 取代原本的 TDI
-            const OEI = G * C * (1 + E);
+            // ==========================================
+            // 激進指標計算 (POWER LAW SCALING)
+            // ==========================================
+            
+            // 1. HOR 狂暴進攻：將指數勝率與客觀難度相乘，強烈放大高勝率
+            const HOR_raw = expMod * OEI * 1.5; 
+
+            // 2. VDR 反擊防禦：防守不再是 WLB，而是存活率的指數放大 (視為反打能力)
+            const survivalRate = 1 - (L / N);
+            const VDR_raw = Math.pow(survivalRate, 1.5) * OEI * 1.3;
+
+            // 3. VLI 暴走指數 (波動率)：計算高勝率下的極端振幅
+            // 傳統模型懲罰波動，這裡我們把波動視為「爆發力」的潛在指標
+            const z = 1.96;
+            const standardError = Math.sqrt((p * (1 - p)) / N);
+            const WUB = p + z * standardError;
+            const WLB = p - z * standardError;
+            const VLI_raw = ((WUB - WLB) / (WLB > 0 ? WLB : 0.01)) * (p > 0.5 ? 1.5 : 0.5);
+
             // ==========================================
 
             const mapScore = (val, maxExpected) => Math.min(99.9, Math.max(0.1, (val / maxExpected) * 100));
 
-            // 【進攻與防守】 - 純粹被 OEI 賦予權重
-            const OER = mapScore(WUB * OEI, 1.2); 
-            const DRS = mapScore(WLB * OEI, 1.0);
+            const score_HOR = mapScore(HOR_raw, 1.0); 
+            const score_VDR = mapScore(VDR_raw, 0.9);
+            const score_VLI = mapScore(VLI_raw, 0.4); 
+            const score_OEI = mapScore(OEI, 1.0);
+            
+            // 動能 (MOM) 與處決 (EXE) 作為衍生指標
+            const score_MOM = mapScore(p * expMod * 2, 1.0);
+            const score_EXE = mapScore((score_HOR + score_VDR) / 2 * (1 + VLI_raw), 100);
 
-            // 用於雷達圖顯示的三個基礎 OEI 元件
-            const score_C = mapScore(C, 1.0);
-            const score_G = mapScore(G, 1.1);
-            const score_E = mapScore(E + 0.5, 0.7); // 基準化淨勝差
-            const score_OEI = mapScore(OEI, 1.3);
-
-            const scores = [OER, DRS, score_C, score_G, score_E, score_OEI];
-            updateDashboard(data, scores, N, G, C, E, OEI);
+            const scores = [score_HOR, score_VDR, score_VLI, score_OEI, score_MOM, score_EXE];
+            updateDashboard(data, scores, p, expMod, VLI_raw, survivalRate);
         }
 
-        function updateDashboard(data, scores, N, G, C, E, OEI) {
-            // TSR (True Skill Rating) 綜合評分
-            const tsr = (scores[0]*0.3 + scores[1]*0.3 + scores[5]*0.4); 
+        function updateDashboard(data, scores, p, expMod, VLI_raw, survivalRate) {
+            // LTR (Lethality Rating) 致命評分
+            const ltr = (scores[0]*0.35 + scores[1]*0.25 + scores[4]*0.2 + scores[5]*0.2); 
             
-            document.getElementById('ui-mvi').innerText = Math.round(tsr);
+            document.getElementById('ui-mvi').innerText = Math.round(ltr);
             document.getElementById('ui-name').innerText = data.name.toUpperCase();
             
             document.getElementById('val-str').innerText = scores[0].toFixed(1);
             document.getElementById('val-def').innerText = scores[1].toFixed(1);
-            document.getElementById('val-mic').innerText = (C * 100).toFixed(1) + "%";
-            document.getElementById('val-mac').innerText = G.toFixed(2);
-            document.getElementById('val-cst').innerText = E.toFixed(3);
-            document.getElementById('val-exe').innerText = OEI.toFixed(3);
+            document.getElementById('val-mic').innerText = scores[2].toFixed(1);
+            document.getElementById('val-mac').innerText = scores[3].toFixed(1);
+            document.getElementById('val-cst').innerText = scores[4].toFixed(1);
+            document.getElementById('val-exe').innerText = scores[5].toFixed(1);
 
-            document.getElementById('sub-n').innerText = N.toLocaleString();
-            document.getElementById('sub-g').innerText = G.toFixed(3);
-            document.getElementById('sub-c').innerText = (C * 100).toFixed(2) + "%";
-            document.getElementById('sub-e').innerText = E.toFixed(3);
-            document.getElementById('sub-oei').innerText = OEI.toFixed(3);
+            document.getElementById('sub-p').innerText = (p * 100).toFixed(1) + "%";
+            document.getElementById('sub-exp').innerText = expMod.toFixed(3);
+            document.getElementById('sub-risk').innerText = (VLI_raw * 100).toFixed(1) + "%";
+            document.getElementById('sub-dto').innerText = (survivalRate * 100).toFixed(1) + "%";
 
             chart.data.datasets[0].data = scores;
             chart.update();
 
-            generateAnalyticalReport(OEI, C, E, N);
+            generateCarnageReport(scores[0], scores[1], scores[2], ltr);
         }
 
-        function generateAnalyticalReport(oei, c, e, n) {
+        function generateCarnageReport(hor, vdr, vli, ltr) {
             const uiArch = document.getElementById('ui-archetype');
             const uiDesc = document.getElementById('ui-desc');
             
-            if (c < 0.8 && n < 500) {
-                uiArch.innerText = "STATISTICAL ANOMALY (小樣本異常)";
-                uiArch.style.color = "#ff5252";
-                uiDesc.innerHTML = `該玩家的樣本數過少 (N=${n})，導致統計置信度不足 (${(c*100).toFixed(1)}%)。<br><br><strong>客觀結論：</strong>目前的勝率極可能只是運氣或連勝機制造成的假象，OEI 系統已大幅度削減其評分權重以維持客觀性。`;
-                writeLog("WARN", "樣本不足，觸發 OEI 權重懲罰。");
-            } else if (e < 0 && c > 0.95) {
-                uiArch.innerText = "INEFFICIENT GRINDER (低效能堆疊者)";
-                uiArch.style.color = "var(--text-dim)";
-                uiDesc.innerHTML = `雖然擁有極高的樣本置信度，但淨勝效能為負 (E: ${e.toFixed(3)})。<br><br><strong>客觀結論：</strong>該玩家當前的獎盃數完全依賴「低勝率、大場次」硬生生堆疊而成。OEI 指數已看穿其水分，這類對手的實際威脅性遠低於其表面的排位。`;
-            } else if (oei > 1.05 && e > 0.1) {
-                uiArch.innerText = "TRUE APEX PREDATOR (絕對頂端掠食者)";
-                uiArch.style.color = "var(--stat-primary)";
-                uiDesc.innerHTML = `OEI 突破閾值 (OEI: ${oei.toFixed(3)})。<br><br><strong>客觀結論：</strong>在剔除所有獎盃通膨的數學模型下，該玩家依然展現出極致的淨勝率與無可挑剔的統計證明。這是客觀意義上無庸置疑的頂尖高手。`;
+            if (ltr > 85 && hor > 90) {
+                uiArch.innerText = "APEX EXECUTIONER (頂級處決者)";
+                uiArch.style.textShadow = "0 0 10px #ff1744";
+                uiDesc.innerHTML = `狂暴進攻指數 (HOR) 突破臨界值。<br><br><strong>威脅評估：</strong>極端危險。該目標不依賴防守，其進攻節奏具備毀滅性的壓制力。指數級放大顯示其勝率完全來自於單方面的屠殺，而非勢均力敵的拉鋸戰。`;
+                writeLog("CRIT", "偵測到極限屠殺數據，目標極度危險。");
+            } else if (vli > 75 && hor > 70) {
+                uiArch.innerText = "UNSTABLE BERSERKER (失控狂戰士)";
+                uiArch.style.color = "#ff8a80";
+                uiDesc.innerHTML = `暴走指數 (VLI) 異常偏高。<br><br><strong>威脅評估：</strong>極度不穩定。目標的表現波動極大，但其爆發力上限極其驚人。他們可能開局白給，也可能在最後一分鐘展現出如同開掛般的微操。`;
+            } else if (vdr > 85) {
+                uiArch.innerText = "LETHAL COUNTER-STRIKER (致命絞肉機)";
+                uiArch.style.color = "#fff";
+                uiDesc.innerHTML = `反擊防禦指數 (VDR) 高達 ${vdr.toFixed(1)}。<br><br><strong>威脅評估：</strong>此目標的防守不是為了防守，而是為了賺取費用差進行絞殺。不要被其看似被動的走位欺騙，一旦你進攻失誤，迎來的將是毀滅性的反推。`;
             } else {
-                uiArch.innerText = "EMPIRICAL STANDARD (客觀標準態)";
-                uiArch.style.color = "var(--obj-gray)";
-                uiDesc.innerHTML = `OEI 指標顯示該玩家的實力與其當前所處的環境完美收斂。勝率、場次與階級重力達成了穩定的數學平衡。`;
+                uiArch.innerText = "SUB-OPTIMAL COMBATANT (次級戰鬥員)";
+                uiArch.style.color = "#b71c1c";
+                uiDesc.innerHTML = `在激進指數的照妖鏡下，目標的真實侵略性平庸。其勝率多半來自於拖泥帶水的拉鋸，缺乏一擊必殺的統治力。`;
             }
         }
 
@@ -347,7 +347,7 @@
             
             let tagClass = 'tag-sys';
             if(tag === 'CALC') tagClass = 'tag-calc';
-            if(tag === 'WARN') tagClass = 'tag-warn';
+            if(tag === 'CRIT') tagClass = 'tag-crit';
 
             div.innerHTML = `<span class="log-ts">${ts}</span><span class="log-tag ${tagClass}">${tag}</span> ${msg}`;
             feed.prepend(div);

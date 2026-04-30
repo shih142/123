@@ -362,13 +362,16 @@
             const ncrEl = document.getElementById('ui-ncr');
             ncrEl.innerText = ncr.toFixed(2); // 顯示到小數點後兩位，彰顯精準與客觀
 
-            // 客觀標準化評級
-            let rankClass = "低於數據基準 (-1σ)", color = var(--objective-gray);
+            // 客觀標準化評級 (已修正語法錯誤)
+            let rankClass = "低於數據基準 (-1σ)", color = "var(--objective-gray)";
+            
             if(ncr >= 85) rankClass = "頂端統計異常值 (+3σ)";
             else if(ncr >= 70) rankClass = "高度偏離常態 (+2σ)";
             else if(ncr >= 50) rankClass = "高於數據基準 (+1σ)";
 
-            document.getElementById('ui-class').innerText = `統計落點：${rankClass}`;
+            const classEl = document.getElementById('ui-class');
+            classEl.innerText = `統計落點：${rankClass}`;
+            classEl.style.color = color;
             ncrEl.style.color = "var(--holo-cyan)";
 
             // 客觀標籤

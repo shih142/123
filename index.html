@@ -18,14 +18,15 @@
             --glass-border: rgba(0, 243, 255, 0.3);
             --text-main: #e0e0e0;
             --danger-glow: #ff2d55;
+            --muted-text: #888;
+            --dim-text: #666;
         }
 
         * { box-sizing: border-box; }
 
         body {
             background-color: var(--deep-space);
-            background-image: 
-                radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0);
+            background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0);
             background-size: 40px 40px;
             color: var(--text-main);
             font-family: 'Rajdhani', sans-serif;
@@ -37,7 +38,7 @@
         }
 
         body::before {
-            content: " ";
+            content: "";
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%), 
@@ -47,6 +48,25 @@
             z-index: 100;
         }
 
+        /* --- Utility Classes --- */
+        .font-orbitron { font-family: 'Orbitron', sans-serif; }
+        .font-fira { font-family: 'Fira Code', monospace; }
+        .text-cyan { color: var(--neon-cyan); }
+        .text-magenta { color: var(--neon-magenta); }
+        .text-yellow { color: var(--neon-yellow); }
+        .text-danger { color: var(--danger-glow); }
+        .text-muted { color: var(--muted-text); }
+        .text-dim { color: var(--dim-text); }
+        
+        .flex-between { display: flex; justify-content: space-between; align-items: center; }
+        .flex-col { display: flex; flex-direction: column; }
+        .mt-auto { margin-top: auto; }
+        .mb-sm { margin-bottom: 5px; }
+        .mb-md { margin-bottom: 15px; }
+        .text-sm { font-size: 0.8rem; }
+        .text-xs { font-size: 0.7rem; }
+
+        /* --- Layout & Components --- */
         .sidebar {
             width: 80px;
             background-color: rgba(0,0,0,0.8);
@@ -70,6 +90,7 @@
             border: 1px solid transparent;
             position: relative;
         }
+        .nav-icon.active { color: var(--neon-cyan); font-size: 1.5rem; }
         .nav-icon:hover { 
             background: rgba(0, 243, 255, 0.1); 
             border-color: var(--neon-cyan);
@@ -85,7 +106,6 @@
             flex: 1;
             display: grid;
             grid-template-columns: 1fr 320px;
-            gap: 0;
             overflow: hidden;
         }
 
@@ -105,6 +125,7 @@
             text-transform: uppercase; color: var(--neon-cyan);
             text-shadow: 0 0 10px var(--neon-cyan);
         }
+        .version-tag { font-size: 0.8rem; vertical-align: middle; opacity: 0.6; }
 
         .core-module {
             background: var(--glass-bg);
@@ -147,6 +168,7 @@
         .mini-bar { height: 2px; background: #111; width: 100%; margin-top: 6px; position: relative; }
         .mini-fill { height: 100%; width: 0%; background: var(--neon-cyan); transition: 1.2s cubic-bezier(0.1, 0.9, 0.2, 1); }
 
+        /* Status Colors */
         .node-off { border-color: var(--neon-yellow); } .node-off .node-value, .node-off .mini-fill { color: var(--neon-yellow); background: var(--neon-yellow); }
         .node-def { border-color: var(--neon-cyan); }
         .node-win { border-color: var(--neon-magenta); } .node-win .node-value, .node-win .mini-fill { color: var(--neon-magenta); background: var(--neon-magenta); }
@@ -172,6 +194,7 @@
             display: flex; flex-direction: column;
             gap: 20px;
         }
+        
         .terminal {
             flex: 1;
             background: #000;
@@ -184,6 +207,7 @@
         }
         .terminal-line { margin-bottom: 6px; line-height: 1.4; }
         .terminal-line.cmd { color: var(--neon-cyan); }
+        .terminal-line.error { color: var(--danger-glow); }
 
         .omega-btn {
             background: transparent;
@@ -211,58 +235,61 @@
             outline: none;
         }
 
-        .sync-bar {
-            height: 4px; background: #222; width: 100%; margin-top: 10px;
-            position: relative;
-        }
+        .sync-bar { height: 4px; background: #222; width: 100%; margin-top: 10px; position: relative; }
         .sync-progress {
             height: 100%; width: 0%; background: var(--neon-cyan);
             box-shadow: 0 0 10px var(--neon-cyan);
             transition: width 1s ease-in-out;
         }
 
+        .log-entry {
+            display: grid; 
+            grid-template-columns: 80px 1fr 100px; 
+            padding: 12px; 
+            border-bottom: 1px solid #222; 
+            font-size: 0.85rem;
+        }
     </style>
 </head>
 <body>
 
     <nav class="sidebar">
-        <div class="nav-icon" style="color:var(--neon-cyan); font-size:1.5rem;">Ω<span class="nav-label">OMEGA CORE</span></div>
+        <div class="nav-icon active">Ω<span class="nav-label">OMEGA CORE</span></div>
         <div class="nav-icon">📊<span class="nav-label">NEURAL METRICS</span></div>
         <div class="nav-icon">🧬<span class="nav-label">GENETIC TACTICS</span></div>
         <div class="nav-icon">📡<span class="nav-label">SATELLITE LINK</span></div>
-        <div style="margin-top:auto" class="nav-icon">⚙️<span class="nav-label">SYSTEM CFG</span></div>
+        <div class="nav-icon mt-auto">⚙️<span class="nav-label">SYSTEM CFG</span></div>
     </nav>
 
     <div class="main-container">
         <main class="viewport">
             <header class="hologram-header">
                 <div>
-                    <h1>Neural-X Omega <span style="font-size:0.8rem; vertical-align:middle; opacity:0.6;">v15.2.0</span></h1>
-                    <div style="font-size:0.7rem; color:var(--neon-magenta); margin-top:5px;">[ STATUS: QUANTUM SYNC ESTABLISHED ]</div>
+                    <h1>Neural-X Omega <span class="version-tag">v15.2.0</span></h1>
+                    <div class="text-xs text-magenta mt-sm">[ STATUS: QUANTUM SYNC ESTABLISHED ]</div>
                 </div>
                 <div style="text-align:right">
-                    <div style="font-size:0.8rem; color:#888;">COORDINATES</div>
-                    <div style="font-size:0.9rem; font-family:'Fira Code';">35.6895° N, 139.6917° E</div>
+                    <div class="text-sm text-muted">COORDINATES</div>
+                    <div class="font-fira" style="font-size: 0.9rem;">35.6895° N, 139.6917° E</div>
                 </div>
             </header>
 
             <section class="core-module">
                 <div class="avatar-frame">👤</div>
                 <div style="flex:1">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <h2 style="margin:0; font-family:'Orbitron'; font-size:2rem; color:var(--neon-yellow);" id="pName">SUBJECT_NULL</h2>
-                        <div id="pTag" style="font-family:'Fira Code'; color:#666;">#--------</div>
+                    <div class="flex-between">
+                        <h2 id="pName" class="font-orbitron text-yellow" style="margin:0; font-size:2rem;">SUBJECT_NULL</h2>
+                        <div id="pTag" class="font-fira text-dim">#--------</div>
                     </div>
-                    <div style="margin-top:10px; display:flex; gap:20px;">
-                        <div><span style="color:#888">RANK:</span> <span style="color:var(--neon-cyan)">ULTIMATE CHAMPION</span></div>
-                        <div><span style="color:#888">SYNC RATIO:</span> <span style="color:var(--neon-magenta)" id="syncRatio">0%</span></div>
+                    <div class="flex-between" style="margin-top:10px; justify-content: flex-start; gap: 20px;">
+                        <div><span class="text-muted">RANK:</span> <span class="text-cyan">ULTIMATE CHAMPION</span></div>
+                        <div><span class="text-muted">SYNC RATIO:</span> <span id="syncRatio" class="text-magenta">0%</span></div>
                     </div>
                     <div class="sync-bar"><div id="syncProg" class="sync-progress"></div></div>
                 </div>
             </section>
 
             <div class="data-grid">
-                <!-- ROW 1 -->
                 <div class="data-node">
                     <div class="node-label">Career Total Wins</div>
                     <div class="node-value" id="valWins">--</div>
@@ -284,7 +311,6 @@
                     <div class="mini-bar"><div id="barWinRate" class="mini-fill"></div></div>
                 </div>
 
-                <!-- ROW 2 -->
                 <div class="data-node node-special">
                     <div class="node-label">3-Crown Power</div>
                     <div class="node-value" id="val3C">--</div>
@@ -306,7 +332,6 @@
                     <div class="mini-bar"><div id="barLevel" class="mini-fill"></div></div>
                 </div>
 
-                <!-- ROW 3 -->
                 <div class="data-node">
                     <div class="node-label">Cards Unlocked</div>
                     <div class="node-value" id="valCards">--</div>
@@ -331,48 +356,48 @@
 
             <div class="visual-matrix">
                 <div class="panel">
-                    <div style="color:var(--neon-cyan); font-size:0.8rem; margin-bottom:15px; font-family:'Orbitron';">CAREER POTENTIAL RADAR</div>
+                    <div class="text-cyan text-sm mb-md font-orbitron">CAREER POTENTIAL RADAR</div>
                     <div style="height:250px;"><canvas id="omegaRadar"></canvas></div>
                 </div>
-                <div class="panel" style="display:flex; flex-direction:column;">
-                    <div style="color:var(--neon-magenta); font-size:0.8rem; margin-bottom:15px; font-family:'Orbitron';">EXECUTIVE AI ADVISOR</div>
+                <div class="panel flex-col">
+                    <div class="text-magenta text-sm mb-md font-orbitron">EXECUTIVE AI ADVISOR</div>
                     <div id="aiAdvisor" style="font-size:0.9rem; line-height:1.6; color:#bbb; flex:1;">
-                        <span style="color:var(--neon-cyan)">SYSTEM</span> Waiting for neural link initialization...<br>
+                        <span class="text-cyan">SYSTEM</span> Waiting for neural link initialization...<br>
                         Execute audit protocol to start analysis.
                     </div>
                 </div>
             </div>
 
             <div class="panel">
-                <div style="color:#888; font-size:0.8rem; margin-bottom:15px; font-family:'Orbitron';">RECENT ENCOUNTERS ANALYSIS</div>
+                <div class="text-muted text-sm mb-md font-orbitron">RECENT ENCOUNTERS ANALYSIS</div>
                 <div id="omegaLog"></div>
             </div>
         </main>
 
         <aside class="control-tower">
-            <div style="font-family:'Orbitron'; font-size:0.9rem; color:var(--neon-cyan);">LINK CONTROLS</div>
+            <div class="font-orbitron text-cyan" style="font-size:0.9rem;">LINK CONTROLS</div>
             
             <div>
-                <div style="font-size:0.7rem; color:#666; margin-bottom:5px;">SUBJECT PROXY URL</div>
+                <div class="text-xs text-dim mb-sm">SUBJECT PROXY URL</div>
                 <input type="text" id="proxyUrl" class="tag-input" value="/api/clash-proxy">
             </div>
 
             <div>
-                <div style="font-size:0.7rem; color:#666; margin-bottom:5px;">SUBJECT IDENTITY TAG</div>
+                <div class="text-xs text-dim mb-sm">SUBJECT IDENTITY TAG</div>
                 <input type="text" id="playerTag" class="tag-input" value="#CV9QU9CYJ">
             </div>
 
-            <button class="omega-btn" onclick="startQuantumAudit()">INITIATE OMEGA AUDIT</button>
+            <button id="btnAudit" class="omega-btn">INITIATE OMEGA AUDIT</button>
 
-            <div style="flex:1; display:flex; flex-direction:column;">
-                <div style="font-size:0.7rem; color:#666; margin-bottom:5px;">LIVE SYSTEM FEED</div>
+            <div class="flex-col" style="flex:1;">
+                <div class="text-xs text-dim mb-sm">LIVE SYSTEM FEED</div>
                 <div class="terminal" id="sysTerminal">
                     <div class="terminal-line">SYSTEM READY...</div>
                     <div class="terminal-line">AWAITING INPUT...</div>
                 </div>
             </div>
             
-            <div style="font-size:0.65rem; color:#444; border-top:1px solid #222; pt:10px;">
+            <div style="font-size:0.65rem; color:#444; border-top:1px solid #222; padding-top:10px;">
                 NEURAL-X HYPER-ENGINE<br>
                 AUTH LEVEL: 09 (OVERRIDE)
             </div>
@@ -381,14 +406,14 @@
 
     <script>
         let omegaChart;
+        const domTerminal = document.getElementById('sysTerminal'); // Cached DOM element
 
         function logTerminal(msg, type = '') {
-            const term = document.getElementById('sysTerminal');
             const line = document.createElement('div');
-            line.className = 'terminal-line ' + type;
+            line.className = `terminal-line ${type}`;
             line.innerText = msg;
-            term.appendChild(line);
-            term.scrollTop = term.scrollHeight;
+            domTerminal.appendChild(line);
+            domTerminal.scrollTop = domTerminal.scrollHeight;
         }
 
         function initOmega() {
@@ -406,12 +431,32 @@
                     }]
                 },
                 options: {
-                    scales: { r: { grid: { color: 'rgba(255, 255, 255, 0.1)' }, angleLines: { color: 'rgba(255, 255, 255, 0.1)' }, pointLabels: { color: '#00f3ff', font: { family: 'Orbitron', size: 10 } }, ticks: { display: false }, min: 0, max: 100 } },
+                    scales: { 
+                        r: { 
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }, 
+                            angleLines: { color: 'rgba(255, 255, 255, 0.1)' }, 
+                            pointLabels: { color: '#00f3ff', font: { family: 'Orbitron', size: 10 } }, 
+                            ticks: { display: false }, 
+                            min: 0, max: 100 
+                        } 
+                    },
                     plugins: { legend: { display: false } },
                     maintainAspectRatio: false
                 }
             });
             logTerminal("Hyper-Engine Cores Initialized.");
+        }
+
+        function updateStatUI(id, val, barId, max = 100, isPercentage = false) {
+            const el = document.getElementById(id);
+            if (el) el.innerText = isPercentage ? `${val}%` : val;
+            
+            const bar = document.getElementById(barId);
+            if (bar) {
+                const numericVal = parseFloat(val);
+                const percent = Math.min((numericVal / max) * 100, 100);
+                bar.style.width = `${percent}%`;
+            }
         }
 
         async function startQuantumAudit() {
@@ -427,12 +472,13 @@
                 
                 const data = await response.json();
                 
+                // Base Info Update
                 document.getElementById('pName').innerText = data.name || 'UNKNOWN_ENTITY';
                 document.getElementById('pTag').innerText = data.tag || tag;
                 document.getElementById('syncRatio').innerText = '99.8%';
                 document.getElementById('syncProg').style.width = '99.8%';
 
-                // --- 生涯統計數據提取 ---
+                // Stats Extraction
                 const wins = data.wins || 0;
                 const losses = data.losses || 0;
                 const threeCrowns = data.threeCrownWins || 0;
@@ -443,37 +489,33 @@
                 const level = data.expLevel || 0;
                 const warWins = data.warDayWins || 0;
 
-                const winRate = ((wins / (wins + losses)) * 100 || 0).toFixed(1);
-                const efficiency = ((threeCrowns / wins) * 100 || 0).toFixed(0);
+                // Calculated Metrics
+                const totalMatches = wins + losses;
+                const winRate = totalMatches ? ((wins / totalMatches) * 100).toFixed(1) : 0;
+                const efficiency = wins ? ((threeCrowns / wins) * 100).toFixed(0) : 0;
                 const legacyScore = (wins * 0.5 + donations * 0.01 + bestTrophies * 0.1).toFixed(0);
-                const stability = (90 + (wins / 5000) * 10 > 100 ? 99.8 : 90 + (wins / 5000) * 10).toFixed(1);
+                const rawStability = 90 + (wins / 5000) * 10;
+                const stability = (rawStability > 100 ? 99.8 : rawStability).toFixed(1);
 
-                // 數值注入
-                const updateVal = (id, val, barId, max = 100) => {
-                    const el = document.getElementById(id);
-                    if(el) el.innerText = val;
-                    const bar = document.getElementById(barId);
-                    if(bar) {
-                        const numericVal = parseFloat(val);
-                        const percent = (numericVal / max) * 100;
-                        bar.style.width = (percent > 100 ? 100 : percent) + '%';
-                    }
-                };
+                // Config Array for cleaner UI updating
+                const statConfigs = [
+                    { id: 'valWins', val: wins, bar: 'barWins', max: 5000 },
+                    { id: 'valPB', val: bestTrophies, bar: 'barPB', max: 9000 },
+                    { id: 'valDonations', val: donations, bar: 'barDonations', max: 100000 },
+                    { id: 'valWinRate', val: winRate, bar: 'barWinRate', max: 100, isPct: true },
+                    { id: 'val3C', val: threeCrowns, bar: 'bar3C', max: 3000 },
+                    { id: 'valChallenge', val: challengeMax, bar: 'barChallenge', max: 12 },
+                    { id: 'valWar', val: warWins, bar: 'barWar', max: 500 },
+                    { id: 'valLevel', val: level, bar: 'barLevel', max: 15 },
+                    { id: 'valCards', val: cards, bar: 'barCards', max: 115 },
+                    { id: 'valLegacy', val: legacyScore, bar: 'barLegacy', max: 10000 },
+                    { id: 'valEff', val: efficiency, bar: 'barEff', max: 100 },
+                    { id: 'valStability', val: stability, bar: 'barStability', max: 100, isPct: true }
+                ];
 
-                updateVal('valWins', wins, 'barWins', 5000);
-                updateVal('valPB', bestTrophies, 'barPB', 9000);
-                updateVal('valDonations', donations, 'barDonations', 100000);
-                updateVal('valWinRate', winRate + '%', 'barWinRate', 100);
-                updateVal('val3C', threeCrowns, 'bar3C', 3000);
-                updateVal('valChallenge', challengeMax, 'barChallenge', 12);
-                updateVal('valWar', warWins, 'barWar', 500);
-                updateVal('valLevel', level, 'barLevel', 15);
-                updateVal('valCards', cards, 'barCards', 115);
-                updateVal('valLegacy', legacyScore, 'barLegacy', 10000);
-                updateVal('valEff', efficiency, 'barEff', 100);
-                updateVal('valStability', stability + '%', 'barStability', 100);
+                statConfigs.forEach(cfg => updateStatUI(cfg.id, cfg.val, cfg.bar, cfg.max, cfg.isPct));
 
-                // 圖表同步
+                // Radar Chart Update
                 omegaChart.data.datasets[0].data = [
                     (bestTrophies / 9000) * 100, 
                     (wins / 5000) * 100, 
@@ -483,45 +525,53 @@
                 ];
                 omegaChart.update();
 
+                // AI Advisor Update
                 document.getElementById('aiAdvisor').innerHTML = `
-                    <div style="color:var(--neon-cyan); margin-bottom:10px; font-weight:bold;">> CAREER_LEGACY_PROFILE:</div>
+                    <div class="text-cyan mb-sm" style="font-weight:bold;">> CAREER_LEGACY_PROFILE:</div>
                     <div style="font-size:0.8rem; display:grid; grid-template-columns:1fr 1fr; gap:10px;">
                         <div>
-                            <span style="color:var(--neon-yellow)">[VETERAN_SCORE]</span> ${legacyScore}<br>
-                            <span style="color:var(--neon-magenta)">[EFFICIENCY]</span> ${efficiency}% (3-Crown)
+                            <span class="text-yellow">[VETERAN_SCORE]</span> ${legacyScore}<br>
+                            <span class="text-magenta">[EFFICIENCY]</span> ${efficiency}% (3-Crown)
                         </div>
                         <div>
-                            <span style="color:var(--neon-cyan)">[DONATIONS]</span> ${donations}<br>
-                            <span style="color:var(--neon-magenta)">[MASTERY]</span> ${cards} Cards Found
+                            <span class="text-cyan">[DONATIONS]</span> ${donations}<br>
+                            <span class="text-magenta">[MASTERY]</span> ${cards} Cards Found
                         </div>
                     </div>
-                    <div style="border-top:1px solid #333; margin-top:10px; pt:5px; font-size:0.8rem;">
-                        <span style="color:var(--neon-cyan)">LONG-TERM_ADVISORY:</span> Subject is a <span style="color:var(--neon-yellow)">${wins > 2000 ? 'Seasoned Elite' : 'Rising Prospect'}</span>. Career stability is ${stability}%.
+                    <div style="border-top:1px solid #333; margin-top:10px; padding-top:5px; font-size:0.8rem;">
+                        <span class="text-cyan">LONG-TERM_ADVISORY:</span> Subject is a <span class="text-yellow">${wins > 2000 ? 'Seasoned Elite' : 'Rising Prospect'}</span>. Career stability is ${stability}%.
                     </div>
                 `;
 
+                // Log Extraction
                 const logBox = document.getElementById('omegaLog');
-                if(data.battleLog && data.battleLog.length > 0) {
+                if (data.battleLog && data.battleLog.length > 0) {
                     logBox.innerHTML = '';
                     data.battleLog.slice(0, 5).forEach(b => {
                         const isWin = b.team[0].crowns > b.opponent[0].crowns;
                         logBox.innerHTML += `
-                            <div style="display:grid; grid-template-columns: 80px 1fr 100px; padding:12px; border-bottom:1px solid #222; font-size:0.85rem;">
+                            <div class="log-entry">
                                 <span style="color:${isWin ? 'var(--neon-cyan)' : 'var(--danger-glow)'}">${isWin ? 'WIN' : 'LOSS'}</span>
                                 <span style="color:#aaa;">vs ${b.opponent[0].name}</span>
-                                <span style="text-align:right; font-family:'Fira Code';">${b.team[0].crowns} - ${b.opponent[0].crowns}</span>
+                                <span class="font-fira" style="text-align:right;">${b.team[0].crowns} - ${b.opponent[0].crowns}</span>
                             </div>
                         `;
                     });
+                } else {
+                    logBox.innerHTML = `<div class="text-dim text-sm">NO_COMBAT_LOGS_DETECTED</div>`;
                 }
 
                 logTerminal("Neural Link Established successfully.", "cmd");
             } catch (err) {
-                logTerminal(`CRITICAL_ERROR: ${err.message}`, 'cmd');
+                logTerminal(`CRITICAL_ERROR: ${err.message}`, 'error');
             }
         }
 
-        window.onload = initOmega;
+        // Initialize and bind events on DOM ready
+        document.addEventListener('DOMContentLoaded', () => {
+            initOmega();
+            document.getElementById('btnAudit').addEventListener('click', startQuantumAudit);
+        });
     </script>
 </body>
 </html>

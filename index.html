@@ -3,21 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>神經矩陣 MAXIMA | V45.0 PURE-STABILITY</title>
+    <title>神經矩陣 MAXIMA | V46.0 ELO-CONVERGENCE</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Noto+Sans+TC:wght@300;500;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* V45.0 絕對純粹視覺風格 */
+        /* V46.0 絕對客觀風格 (鈦鋼灰 x 觀測金) */
         :root {
-            --bg-deep: #030811;
-            --panel-bg: rgba(8, 15, 28, 0.95);
-            --stat-primary: #2979ff; /* 鈷藍色 */
-            --atk-silver: #e0e0e0;   /* 進攻白金 */
-            --def-blue: #00b0ff;     /* 防禦天藍 */
-            --text-main: #e3f2fd;
-            --text-dim: #64b5f6;
-            --border-glow: rgba(41, 121, 255, 0.2);
-            --neon-shadow: 0 0 15px rgba(41, 121, 255, 0.4);
+            --bg-deep: #0a0c10;
+            --panel-bg: rgba(18, 22, 28, 0.95);
+            --stat-primary: #ffc107; /* 觀測金 */
+            --text-main: #f8f9fa;
+            --text-dim: #78909c;
+            --obj-gray: #cfd8dc;
+            --border-glow: rgba(255, 193, 7, 0.15);
+            --neon-shadow: 0 0 15px rgba(255, 193, 7, 0.3);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; cursor: crosshair; }
@@ -28,67 +27,63 @@
             font-family: 'Share Tech Mono', 'Noto Sans TC', sans-serif;
             min-height: 100vh; overflow-x: hidden; display: flex; flex-direction: column;
             background-image: 
-                radial-gradient(circle at 50% 50%, #081220 0%, #030811 100%),
-                linear-gradient(rgba(41, 121, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(41, 121, 255, 0.03) 1px, transparent 1px);
-            background-size: 100% 100%, 30px 30px, 30px 30px;
+                linear-gradient(rgba(207, 216, 220, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(207, 216, 220, 0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
         }
 
-        header { padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--stat-primary); background: rgba(5, 10, 18, 0.9); box-shadow: var(--neon-shadow); }
+        header { padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--stat-primary); background: rgba(10, 12, 16, 0.9); box-shadow: var(--neon-shadow); }
         .system-status { display: flex; gap: 20px; font-size: 12px; color: var(--stat-primary); font-weight: bold; letter-spacing: 2px; }
         .status-node { display: flex; align-items: center; gap: 6px; }
-        .dot { width: 8px; height: 8px; background: var(--atk-silver); border-radius: 50%; box-shadow: 0 0 10px var(--atk-silver); }
+        .dot { width: 8px; height: 8px; background: var(--text-main); border-radius: 50%; box-shadow: 0 0 10px var(--text-main); }
         .blink { animation: pulse 1.5s infinite; }
 
         main { display: grid; grid-template-columns: 380px 1fr 340px; flex: 1; gap: 2px; }
-        .column { background: var(--panel-bg); display: flex; flex-direction: column; position: relative; border-right: 1px solid rgba(41, 121, 255, 0.1); }
+        .column { background: var(--panel-bg); display: flex; flex-direction: column; position: relative; border-right: 1px solid rgba(255, 193, 7, 0.1); }
 
-        .section-label { padding: 12px 15px; font-family: 'Orbitron'; font-size: 11px; background: linear-gradient(90deg, rgba(41, 121, 255, 0.1), transparent); color: var(--text-dim); border-bottom: 1px solid rgba(41, 121, 255, 0.2); display: flex; justify-content: space-between; text-transform: uppercase; letter-spacing: 1.5px; }
+        .section-label { padding: 12px 15px; font-family: 'Orbitron'; font-size: 11px; background: rgba(255, 193, 7, 0.05); color: var(--obj-gray); border-bottom: 1px solid rgba(255, 193, 7, 0.2); display: flex; justify-content: space-between; text-transform: uppercase; letter-spacing: 1.5px; }
 
         .hero-stats { padding: 30px 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.02); }
-        .hero-value { font-family: 'Orbitron'; font-size: 88px; font-weight: 900; color: #fff; line-height: 0.8; margin-bottom: 15px; text-shadow: 0 0 20px rgba(255,255,255,0.3); }
+        .hero-value { font-family: 'Orbitron'; font-size: 88px; font-weight: 900; color: #fff; line-height: 0.8; margin-bottom: 15px; text-shadow: 0 0 20px rgba(255, 255, 255, 0.2); }
         .hero-name { font-family: 'Orbitron'; font-size: 18px; color: var(--stat-primary); letter-spacing: 4px; font-weight: bold;}
 
-        .data-matrix { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: rgba(41, 121, 255, 0.1); }
+        .data-matrix { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: rgba(255, 193, 7, 0.1); }
         .cell { background: var(--bg-deep); padding: 20px 10px; text-align: center; position: relative; transition: 0.3s; }
-        .cell:hover { background: #0a1426; }
+        .cell:hover { background: #1a1d24; }
         .cell-label { font-size: 10px; color: var(--text-dim); margin-bottom: 8px; letter-spacing: 1px; font-weight: bold; }
         .cell-val { font-family: 'Orbitron'; font-size: 28px; color: #fff; }
         
-        .highlight-atk::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--atk-silver); }
-        .highlight-atk .cell-val { color: var(--atk-silver); text-shadow: 0 0 15px rgba(255, 255, 255, 0.3); }
-        
-        .highlight-def::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--def-blue); }
-        .highlight-def .cell-val { color: var(--def-blue); text-shadow: 0 0 15px rgba(0, 176, 255, 0.4); } 
+        .highlight-obj::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--obj-gray); }
+        .highlight-obj .cell-val { color: var(--obj-gray); text-shadow: 0 0 15px rgba(207, 216, 220, 0.3); }
 
         .vis-container { flex: 1; display: flex; flex-direction: column; padding: 20px; position: relative; min-height: 400px; }
         #radarWrapper { flex: 1; min-height: 380px; }
-        .report-overlay { background: rgba(3, 8, 17, 0.85); border: 1px solid var(--stat-primary); padding: 20px; margin-top: 15px; font-size: 13px; position: relative; border-left: 4px solid var(--stat-primary); }
+        .report-overlay { background: rgba(5, 6, 8, 0.85); border: 1px solid var(--stat-primary); padding: 20px; margin-top: 15px; font-size: 13px; position: relative; border-left: 4px solid var(--stat-primary); }
 
         .io-panel { padding: 20px; border-top: 1px solid var(--border-glow); background: rgba(0,0,0,0.6); }
-        input { width: 100%; background: #030811; border: 1px solid var(--stat-primary); padding: 15px; color: #fff; font-family: 'Orbitron'; font-size: 16px; outline: none; transition: 0.3s; text-align: center; letter-spacing: 2px; }
-        input:focus { border-color: var(--atk-silver); box-shadow: 0 0 15px rgba(255,255,255,0.2); }
+        input { width: 100%; background: #0a0c10; border: 1px solid var(--text-dim); padding: 15px; color: #fff; font-family: 'Orbitron'; font-size: 16px; outline: none; transition: 0.3s; text-align: center; letter-spacing: 2px; }
+        input:focus { border-color: var(--stat-primary); box-shadow: var(--neon-shadow); }
         input:disabled { opacity: 0.5; cursor: not-allowed; }
         
-        .btn-prime { width: 100%; padding: 18px; margin-top: 10px; background: rgba(41, 121, 255, 0.1); color: var(--text-main); font-family: 'Orbitron'; font-weight: 900; font-size: 14px; border: 1px solid var(--stat-primary); cursor: pointer; letter-spacing: 2px; transition: 0.2s; }
-        .btn-prime:hover:not(:disabled) { background: var(--stat-primary); color: #fff; box-shadow: var(--neon-shadow); }
-        .btn-prime:disabled { background: #0a1426; color: #40628a; border-color: #122440; cursor: wait; }
+        .btn-prime { width: 100%; padding: 18px; margin-top: 10px; background: rgba(255, 193, 7, 0.05); color: var(--stat-primary); font-family: 'Orbitron'; font-weight: 900; font-size: 14px; border: 1px solid var(--stat-primary); cursor: pointer; letter-spacing: 2px; transition: 0.2s; }
+        .btn-prime:hover:not(:disabled) { background: var(--stat-primary); color: #000; box-shadow: var(--neon-shadow); }
+        .btn-prime:disabled { background: #1a1d24; color: #546e7a; border-color: #263238; cursor: wait; }
 
-        .sim-log { flex: 1; font-family: 'Share Tech Mono'; font-size: 11px; padding: 15px; color: #90caf9; overflow-y: auto; max-height: 300px; }
-        .log-line { margin-bottom: 8px; border-left: 2px solid #1976d2; padding-left: 10px; line-height: 1.4; }
-        .log-ts { color: #1565c0; margin-right: 10px; font-size: 10px; }
-        .log-tag { padding: 2px 5px; border-radius: 2px; font-size: 9px; margin-right: 8px; text-transform: uppercase; font-weight: bold; color:#fff; }
+        .sim-log { flex: 1; font-family: 'Share Tech Mono'; font-size: 11px; padding: 15px; color: #b0bec5; overflow-y: auto; max-height: 300px; }
+        .log-line { margin-bottom: 8px; border-left: 2px solid #546e7a; padding-left: 10px; line-height: 1.4; }
+        .log-ts { color: #78909c; margin-right: 10px; font-size: 10px; }
+        .log-tag { padding: 2px 5px; border-radius: 2px; font-size: 9px; margin-right: 8px; text-transform: uppercase; font-weight: bold; color:#000; }
         
-        .tag-sys { background: #1976d2; }
+        .tag-sys { background: #90a4ae; }
         .tag-calc { background: var(--stat-primary); }
-        .tag-warn { background: var(--atk-silver); color: #000; }
+        .tag-warn { background: #ff5252; color: #fff; }
 
         @keyframes pulse { 0% { opacity: 0.2; } 50% { opacity: 1; } 100% { opacity: 0.2; } }
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: var(--stat-primary); }
 
-        .data-box { padding: 15px; background: rgba(41,121,255,0.05); border: 1px solid rgba(41,121,255,0.2); margin-top: auto; font-family: 'Orbitron'; }
+        .data-box { padding: 15px; background: rgba(255,193,7,0.02); border: 1px solid rgba(255,193,7,0.15); margin-top: auto; font-family: 'Orbitron'; }
         .d-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 12px; }
         .d-label { color: var(--text-dim); }
         .d-val { color: #fff; font-weight: bold; }
@@ -98,65 +93,65 @@
 
     <header>
         <div class="system-status">
-            <div class="status-node"><div class="dot blink"></div> V45.0 PURE-STABILITY | CROWN-INDEPENDENT</div>
-            <div class="status-node" id="top-lethality">CROWN DEPENDENCY: REMOVED</div>
+            <div class="status-node"><div class="dot blink"></div> V46.0 ELO-CONVERGENCE | OBJECTIVE TIER</div>
+            <div class="status-node" id="top-lethality">TDI (TROPHY INDEX): DEPRECATED</div>
         </div>
         <div style="font-family: 'Orbitron'; font-size: 16px; letter-spacing: 4px; color: #fff;">MAXIMA_DATACENTER</div>
     </header>
 
     <main>
         <section class="column">
-            <div class="section-label"><span>PLAYER_STATISTICS</span><span>LIVE_API</span></div>
+            <div class="section-label"><span>OBJECTIVE_STATISTICS</span><span>API_STREAM</span></div>
             <div class="hero-stats">
                 <div class="hero-value" id="ui-mvi">00</div>
                 <div class="hero-name" id="ui-name">AWAITING_INPUT</div>
-                <div style="font-size: 10px; color: var(--text-dim); margin-top: 5px;">PURE PERFORMANCE RATING (PPR)</div>
+                <div style="font-size: 10px; color: var(--text-dim); margin-top: 5px;">TRUE SKILL RATING (TSR)</div>
             </div>
 
             <div class="data-matrix">
-                <div class="cell highlight-atk"><div class="cell-label">OFFENSE (Peak)</div><div class="cell-val" id="val-str">--</div></div>
-                <div class="cell highlight-def"><div class="cell-label">DEFENSE (Base)</div><div class="cell-val" id="val-def">--</div></div>
-                <div class="cell"><div class="cell-label">TACTICS (MIC)</div><div class="cell-val" id="val-mic">--</div></div>
-                <div class="cell"><div class="cell-label">STRATEGY (MAC)</div><div class="cell-val" id="val-mac">--</div></div>
-                <div class="cell"><div class="cell-label">CONSISTENCY (CST)</div><div class="cell-val" id="val-cst">--</div></div>
-                <div class="cell"><div class="cell-label">EXPERIENCE (EXP)</div><div class="cell-val" id="val-exe">--</div></div>
+                <div class="cell highlight-obj"><div class="cell-label">OFFENSE (Objective)</div><div class="cell-val" id="val-str">--</div></div>
+                <div class="cell highlight-obj"><div class="cell-label">DEFENSE (Objective)</div><div class="cell-val" id="val-def">--</div></div>
+                <div class="cell"><div class="cell-label">CONFIDENCE (C)</div><div class="cell-val" id="val-mic">--</div></div>
+                <div class="cell"><div class="cell-label">GRAVITY (G)</div><div class="cell-val" id="val-mac">--</div></div>
+                <div class="cell"><div class="cell-label">EFFICACY (E)</div><div class="cell-val" id="val-cst">--</div></div>
+                <div class="cell"><div class="cell-label">INDEX (OEI)</div><div class="cell-val" id="val-exe" style="color: var(--stat-primary);">--</div></div>
             </div>
 
             <div class="io-panel">
                 <input type="text" id="tagInput" placeholder="PLAYER TAG (#...)" spellcheck="false">
-                <button class="btn-prime" id="btn-engage" onclick="fetchAndAnalyze()">EXECUTE PURE ANALYSIS</button>
+                <button class="btn-prime" id="btn-engage" onclick="fetchAndAnalyze()">RUN OBJECTIVE ALGORITHM</button>
             </div>
         </section>
 
         <section class="column">
-            <div class="section-label"><span>WIN_RATE_VECTORS</span><span>RADAR_PLOT</span></div>
+            <div class="section-label"><span>CONVERGENCE_VECTORS</span><span>RADAR_PLOT</span></div>
             <div class="vis-container">
                 <div id="radarWrapper">
                     <canvas id="mainChart"></canvas>
                 </div>
                 
                 <div class="report-overlay" id="report-container">
-                    <div id="ui-archetype" style="font-family: 'Orbitron'; color: var(--atk-silver); font-size: 16px; font-weight: 900; margin-bottom: 10px; letter-spacing: 1px;">AWAITING DATA</div>
-                    <div id="ui-desc" style="line-height: 1.6; color: #bbdefb;">
-                        已切換至 V45.0 純粹態演算法。系統已完全屏棄「三皇冠」數據，攻守兩端純粹由勝場、敗場與極限波動區間 (WUB / WLB) 進行演算。不再對小費消耗流牌組產生任何降維打擊。
+                    <div id="ui-archetype" style="font-family: 'Orbitron'; color: var(--stat-primary); font-size: 16px; font-weight: 900; margin-bottom: 10px; letter-spacing: 1px;">AWAITING DATA</div>
+                    <div id="ui-desc" style="line-height: 1.6; color: #cfd8dc;">
+                        系統已實裝 V46.0 客觀收斂協定。主觀且帶有通膨性質的「盃段難度指數 (TDI)」已被銷毀。目前的攻守數據已完全由基於統計置信度與大數法則的「客觀效能指數 (OEI)」所驅動。
                     </div>
                 </div>
             </div>
         </section>
 
         <section class="column">
-            <div class="section-label"><span>ANALYSIS_LOG</span><span>PROXY_NETWORK</span></div>
+            <div class="section-label"><span>OBSERVATION_LOG</span><span>PROXY_NETWORK</span></div>
             <div id="log-feed" class="sim-log">
-                <div class="log-line"><span class="log-ts">00:00:00</span> <span class="log-tag tag-sys">SYS</span> PURE-STABILITY V45.0 核心初始化。</div>
-                <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-tag tag-sys">SYS</span> 已隔離 ThreeCrownWins 變數，啟動純淨勝率計算引擎。</div>
+                <div class="log-line"><span class="log-ts">00:00:00</span> <span class="log-tag tag-sys">SYS</span> ELO-CONVERGENCE V46.0 初始化。</div>
+                <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-tag tag-warn">WARN</span> TDI 模組已停用，切換至 OEI 客觀數學模型。</div>
             </div>
 
             <div class="data-box">
-                <div class="d-row"><span class="d-label">Empirical Win Rate (p)</span><span class="d-val" id="sub-p">--</span></div>
-                <div class="d-row"><span class="d-label">Wilson Upper Bound (WUB)</span><span class="d-val" id="sub-wub" style="color: var(--atk-silver);">--</span></div>
-                <div class="d-row"><span class="d-label">Wilson Lower Bound (WLB)</span><span class="d-val" id="sub-wlb" style="color: var(--def-blue);">--</span></div>
-                <div class="d-row"><span class="d-label">Trophy Difficulty (TDI)</span><span class="d-val" id="sub-tdi">--</span></div>
-                <div class="d-row"><span class="d-label">Crown Dependency</span><span class="d-val" style="color: #ef5350;">0.00%</span></div>
+                <div class="d-row"><span class="d-label">Total Matches (N)</span><span class="d-val" id="sub-n">--</span></div>
+                <div class="d-row"><span class="d-label">Ladder Gravity (G)</span><span class="d-val" id="sub-g">--</span></div>
+                <div class="d-row"><span class="d-label">Stat Confidence (C)</span><span class="d-val" id="sub-c">--</span></div>
+                <div class="d-row"><span class="d-label">Net Efficacy (E)</span><span class="d-val" id="sub-e">--</span></div>
+                <div class="d-row"><span class="d-label" style="color:var(--stat-primary);">Objective Index (OEI)</span><span class="d-val" id="sub-oei" style="color:var(--stat-primary);">--</span></div>
             </div>
         </section>
     </main>
@@ -170,16 +165,16 @@
             chart = new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: ['OER(極限突破)', 'DRS(絕對底線)', 'MIC(微操戰術)', 'MAC(宏觀營運)', 'CST(勝率一致性)', 'EXP(實戰經驗)'],
+                    labels: ['OER(進攻)', 'DRS(防守)', 'CON(統計置信)', 'GRV(階級重力)', 'EFF(淨勝效能)', 'OEI(綜合指數)'],
                     datasets: [{
                         label: 'STAT_VECTOR',
                         data: [0,0,0,0,0,0],
-                        backgroundColor: 'rgba(41, 121, 255, 0.15)',
-                        borderColor: '#2979ff',
+                        backgroundColor: 'rgba(255, 193, 7, 0.1)',
+                        borderColor: '#ffc107',
                         borderWidth: 2,
                         pointRadius: 4,
-                        pointBackgroundColor: '#e0e0e0',
-                        pointBorderColor: '#2979ff'
+                        pointBackgroundColor: '#cfd8dc',
+                        pointBorderColor: '#ffc107'
                     }]
                 },
                 options: {
@@ -189,7 +184,7 @@
                         r: {
                             angleLines: { color: 'rgba(255, 255, 255, 0.05)' },
                             grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                            pointLabels: { color: '#64b5f6', font: { family: 'Share Tech Mono', size: 11 } },
+                            pointLabels: { color: '#b0bec5', font: { family: 'Share Tech Mono', size: 11 } },
                             ticks: { display: false, max: 100, min: 0 }
                         }
                     },
@@ -200,50 +195,49 @@
 
         async function fetchAndAnalyze() {
             let tagRaw = document.getElementById('tagInput').value.trim();
-            if(!tagRaw) return writeLog("WARN", "未偵測到標籤，請輸入有效字串。");
+            if(!tagRaw) return writeLog("WARN", "拒絕空值，請輸入有效字串。");
 
             const btn = document.getElementById('btn-engage');
             const input = document.getElementById('tagInput');
             btn.disabled = true; input.disabled = true;
-            btn.innerText = "CALCULATING PURE MATRICES...";
+            btn.innerText = "CALCULATING OBJECTIVE MATRIX...";
 
             let tagClean = tagRaw.replace('#', '');
             let encodedTag = encodeURIComponent('#' + tagClean);
 
-            writeLog("SYS", `擷取真實數據 [#${tagClean}]，忽略三皇冠指標...`);
+            writeLog("SYS", `擷取真實數據 [#${tagClean}]，啟動 OEI 演算...`);
             
             try {
                 const apiUrl = `/api/clash-proxy?tag=${encodedTag}`;
                 const response = await fetch(apiUrl);
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const rawData = await response.json();
-                writeLog("SYS", `數據連接成功。執行 V45.0 無冠勝率運算。`);
+                writeLog("SYS", `連接成功。剝離主觀獎盃權重。`);
 
                 const playerData = {
                     name: rawData.name || "UNKNOWN",
                     wins: rawData.wins || 0,
                     losses: rawData.losses || 0,
                     trophies: rawData.trophies || 0
-                    // 完全不讀取 rawData.threeCrownWins
                 };
-                runPureModel(playerData);
+                runObjectiveModel(playerData);
 
             } catch (error) {
-                writeLog("WARN", `API 錯誤 (${error.message})，載入標準高盃段玩家測試模型。`);
-                // 模擬一個標準的高手數據，不需要假定任何流派
-                runPureModel({ name: "PURE_TACTICIAN", wins: 8500, losses: 6200, trophies: 8200 });
+                writeLog("WARN", `API 錯誤 (${error.message})，載入大數據測試模型。`);
+                // 模擬一個客觀上的高手：場次極多，且淨勝率極高
+                runObjectiveModel({ name: "CLINICAL_PRO", wins: 15000, losses: 11000, trophies: 8800 });
             } finally {
                 btn.disabled = false; input.disabled = false;
-                btn.innerText = "EXECUTE PURE ANALYSIS";
+                btn.innerText = "RUN OBJECTIVE ALGORITHM";
                 input.focus();
             }
         }
 
         /**
-         * V45.0 核心演算法：無冠雙邊界模型 (Crown-Independent Dual-Bound)
+         * V46.0 核心演算法：Objective Efficacy Index (OEI) 客觀效能指數
          */
-        function runPureModel(data) {
-            writeLog("CALC", "計算 95% 置信區間勝率...");
+        function runObjectiveModel(data) {
+            writeLog("CALC", "計算統計置信度與客觀重力...");
 
             const W = data.wins;
             const L = data.losses;
@@ -251,89 +245,96 @@
             const T = data.trophies;
 
             const p = W / N; 
-            const z = 1.96; // 95% 信心水準
+            const z = 1.96; 
+            
+            // 雙極限萃取 (進攻上限與防守下限)
             const denominator = 1 + (z * z) / N;
             const term1 = p + (z * z) / (2 * N);
             const term2 = z * Math.sqrt((p * (1 - p)) / N + (z * z) / (4 * N * N));
-
-            // 純粹的勝率極限
             const WLB = Math.max(0, (term1 - term2) / denominator); 
             const WUB = Math.min(1, (term1 + term2) / denominator); 
+
+            // ==========================================
+            // OEI 客觀效能指數計算
+            // ==========================================
             
-            // 盃段難度指數 (TDI) - 高盃段的勝率更有含金量
-            const TDI = 0.5 + (1 / (1 + Math.exp(-0.002 * (T - 6500)))) * 1.5;
+            // 1. 階級重力 (G) - 壓平獎盃通膨
+            const G = Math.log10(T > 10 ? T : 10) / 3.9; 
+
+            // 2. 統計置信度 (C) - 拒絕小樣本神話
+            const standardError = Math.sqrt((p * (1 - p)) / N);
+            const C = Math.max(0.1, 1 - (z * standardError)); 
+
+            // 3. 淨勝效能 (E) - 懲罰只靠場次堆疊的肝帝
+            const E = (W - L) / N;
+
+            // 客觀效能指數 (OEI) - 取代原本的 TDI
+            const OEI = G * C * (1 + E);
+            // ==========================================
 
             const mapScore = (val, maxExpected) => Math.min(99.9, Math.max(0.1, (val / maxExpected) * 100));
 
-            // 【進攻能力 OER】 - 視為「極限突破能力」，即 WUB 結合環境難度
-            const OER = mapScore(WUB * TDI, 1.2); 
+            // 【進攻與防守】 - 純粹被 OEI 賦予權重
+            const OER = mapScore(WUB * OEI, 1.2); 
+            const DRS = mapScore(WLB * OEI, 1.0);
 
-            // 【防守能力 DRS】 - 視為「絕對底線能力」，即 WLB 結合環境難度
-            const DRS = mapScore(WLB * TDI, 1.0);
+            // 用於雷達圖顯示的三個基礎 OEI 元件
+            const score_C = mapScore(C, 1.0);
+            const score_G = mapScore(G, 1.1);
+            const score_E = mapScore(E + 0.5, 0.7); // 基準化淨勝差
+            const score_OEI = mapScore(OEI, 1.3);
 
-            // 【一致性 CST】 - 取代原本的致死率。區間越窄，表現越穩定不依賴運氣
-            const bandwidth = WUB - WLB;
-            const CST = Math.max(0.1, 100 - (bandwidth / (WUB || 1) * 100));
-
-            // 【微操與宏觀】
-            const MIC = mapScore((p * 0.6 + (1 - bandwidth) * 0.4) * TDI, 1.0);
-            const experienceLog = Math.log10(N > 0 ? N : 1) / 5; 
-            const MAC = mapScore(experienceLog * 0.5 + TDI * 0.5, 1.0);
-            
-            // 【經驗值 EXP】
-            const EXP = mapScore(experienceLog, 1.0);
-
-            const scores = [OER, DRS, MIC, MAC, CST, EXP];
-            updateDashboard(data, scores, p, TDI, WUB, WLB, CST);
+            const scores = [OER, DRS, score_C, score_G, score_E, score_OEI];
+            updateDashboard(data, scores, N, G, C, E, OEI);
         }
 
-        function updateDashboard(data, scores, p, TDI, WUB, WLB, CST) {
-            // PPR (Pure Performance Rating) 綜合評分
-            const ppr = (scores[0]*0.25 + scores[1]*0.25 + scores[2]*0.2 + scores[3]*0.15 + scores[4]*0.15); 
+        function updateDashboard(data, scores, N, G, C, E, OEI) {
+            // TSR (True Skill Rating) 綜合評分
+            const tsr = (scores[0]*0.3 + scores[1]*0.3 + scores[5]*0.4); 
             
-            document.getElementById('ui-mvi').innerText = Math.round(ppr);
+            document.getElementById('ui-mvi').innerText = Math.round(tsr);
             document.getElementById('ui-name').innerText = data.name.toUpperCase();
             
             document.getElementById('val-str').innerText = scores[0].toFixed(1);
             document.getElementById('val-def').innerText = scores[1].toFixed(1);
-            document.getElementById('val-mic').innerText = scores[2].toFixed(1);
-            document.getElementById('val-mac').innerText = scores[3].toFixed(1);
-            document.getElementById('val-cst').innerText = scores[4].toFixed(1);
-            document.getElementById('val-exe').innerText = scores[5].toFixed(1);
+            document.getElementById('val-mic').innerText = (C * 100).toFixed(1) + "%";
+            document.getElementById('val-mac').innerText = G.toFixed(2);
+            document.getElementById('val-cst').innerText = E.toFixed(3);
+            document.getElementById('val-exe').innerText = OEI.toFixed(3);
 
-            document.getElementById('sub-p').innerText = (p * 100).toFixed(2) + "%";
-            document.getElementById('sub-wub').innerText = (WUB * 100).toFixed(2) + "%";
-            document.getElementById('sub-wlb').innerText = (WLB * 100).toFixed(2) + "%";
-            document.getElementById('sub-tdi').innerText = TDI.toFixed(3);
+            document.getElementById('sub-n').innerText = N.toLocaleString();
+            document.getElementById('sub-g').innerText = G.toFixed(3);
+            document.getElementById('sub-c').innerText = (C * 100).toFixed(2) + "%";
+            document.getElementById('sub-e').innerText = E.toFixed(3);
+            document.getElementById('sub-oei').innerText = OEI.toFixed(3);
 
             chart.data.datasets[0].data = scores;
             chart.update();
 
-            generateAnalyticalReport(scores, WUB, WLB, CST);
+            generateAnalyticalReport(OEI, C, E, N);
         }
 
-        function generateAnalyticalReport(scores, wub, wlb, cst) {
-            const [oer, drs] = scores;
+        function generateAnalyticalReport(oei, c, e, n) {
             const uiArch = document.getElementById('ui-archetype');
             const uiDesc = document.getElementById('ui-desc');
             
-            if (cst > 90 && oer > 75) {
-                uiArch.innerText = "ABSOLUTE CONSISTENCY (絕對穩態終結者)";
+            if (c < 0.8 && n < 500) {
+                uiArch.innerText = "STATISTICAL ANOMALY (小樣本異常)";
+                uiArch.style.color = "#ff5252";
+                uiDesc.innerHTML = `該玩家的樣本數過少 (N=${n})，導致統計置信度不足 (${(c*100).toFixed(1)}%)。<br><br><strong>客觀結論：</strong>目前的勝率極可能只是運氣或連勝機制造成的假象，OEI 系統已大幅度削減其評分權重以維持客觀性。`;
+                writeLog("WARN", "樣本不足，觸發 OEI 權重懲罰。");
+            } else if (e < 0 && c > 0.95) {
+                uiArch.innerText = "INEFFICIENT GRINDER (低效能堆疊者)";
+                uiArch.style.color = "var(--text-dim)";
+                uiDesc.innerHTML = `雖然擁有極高的樣本置信度，但淨勝效能為負 (E: ${e.toFixed(3)})。<br><br><strong>客觀結論：</strong>該玩家當前的獎盃數完全依賴「低勝率、大場次」硬生生堆疊而成。OEI 指數已看穿其水分，這類對手的實際威脅性遠低於其表面的排位。`;
+            } else if (oei > 1.05 && e > 0.1) {
+                uiArch.innerText = "TRUE APEX PREDATOR (絕對頂端掠食者)";
                 uiArch.style.color = "var(--stat-primary)";
-                uiDesc.innerHTML = `極端狹窄的勝率波動頻寬，且極限勝率 (WUB) 保持在高位。<br><br><strong>數據結論：</strong>這是一名無論對局環境如何變化，都能穩定輸出的玩家。不論他玩的是石頭人還是速豬，他的獲勝都不依賴運氣或對方失誤，而是純粹的硬實力碾壓。`;
-                writeLog("SYS", "偵測到極高的一致性 (CST)，表現極度穩定。");
-            } else if (oer > 80 && cst < 70) {
-                uiArch.innerText = "VOLATILE STRIKER (高波動突破者)";
-                uiArch.style.color = "var(--atk-silver)";
-                uiDesc.innerHTML = `極限勝率 (WUB) 極高，但底線勝率 (WLB) 偏低導致一致性下降。<br><br><strong>數據結論：</strong>上限極高的玩家。狀態好時能擊敗世界冠軍，但狀態差時也容易翻車。戰術上建議在開局給予高強度壓力，試探其當前狀態。`;
-            } else if (drs > 80 && oer < 70) {
-                uiArch.innerText = "IRON BASTION (鐵壁防禦陣)";
-                uiArch.style.color = "var(--def-blue)";
-                uiDesc.innerHTML = `擁有堅實的底線勝率 (WLB: ${(wlb*100).toFixed(1)}%)。<br><br><strong>數據結論：</strong>他可能無法輕易打穿你的防線，但你也很難從他手中拿到一塔。對陣此類玩家，勝負往往取決於延長賽最後 10 秒的法術斬殺計算。`;
+                uiDesc.innerHTML = `OEI 突破閾值 (OEI: ${oei.toFixed(3)})。<br><br><strong>客觀結論：</strong>在剔除所有獎盃通膨的數學模型下，該玩家依然展現出極致的淨勝率與無可挑剔的統計證明。這是客觀意義上無庸置疑的頂尖高手。`;
             } else {
-                uiArch.innerText = "METHODICAL TACTICIAN (常規戰術家)";
-                uiArch.style.color = "#e3f2fd";
-                uiDesc.innerHTML = `攻防突破率與底線勝率維持在標準常態分配內。沒有三皇冠數據的干擾，真實反映了該玩家在當前盃段的適應能力。`;
+                uiArch.innerText = "EMPIRICAL STANDARD (客觀標準態)";
+                uiArch.style.color = "var(--obj-gray)";
+                uiDesc.innerHTML = `OEI 指標顯示該玩家的實力與其當前所處的環境完美收斂。勝率、場次與階級重力達成了穩定的數學平衡。`;
             }
         }
 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>神經矩陣 MAXIMA | V33.0 資本獵手終端</title>
+    <title>神經矩陣 MAXIMA | V35.0 實時戰局終端</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -17,6 +17,7 @@
             --warning-yellow: #ffcc00;
             --steel-blue: #4da6ff;
             --gold-pay: #ffaa00;
+            --tilt-red: #ff0055;
             --text-main: #e6d9f2;
             --border-glow: rgba(157, 0, 255, 0.3);
             --grid-color: rgba(255, 255, 255, 0.02);
@@ -42,9 +43,13 @@
         
         .panel-header { padding: 12px 15px; border-bottom: 1px solid var(--border-glow); font-family: 'Orbitron'; font-size: 10px; letter-spacing: 1px; display: flex; justify-content: space-between; color: var(--laser-cyan); background: linear-gradient(90deg, rgba(0,255,204,0.1), transparent); }
         
-        .ncr-section { padding: 20px 15px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .ncr-section { padding: 20px 15px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); position: relative; }
         .ncr-title { font-family: 'Orbitron'; font-size: 11px; color: #aa88cc; margin-bottom: 10px; letter-spacing: 1px; }
-        .ncr-value { font-family: 'Orbitron'; font-size: 64px; font-weight: 900; color: #fff; text-shadow: 0 0 25px rgba(157, 0, 255, 0.6); line-height: 1; }
+        .ncr-value { font-family: 'Orbitron'; font-size: 64px; font-weight: 900; color: #fff; text-shadow: 0 0 25px rgba(157, 0, 255, 0.6); line-height: 1; transition: 0.3s; }
+        
+        /* 破防狀態特效 */
+        .tilt-active .ncr-value { color: var(--tilt-red); text-shadow: 0 0 30px rgba(255, 0, 85, 0.8); animation: glitch 0.3s infinite; }
+        @keyframes glitch { 0% { transform: translate(0) } 20% { transform: translate(-2px, 1px) } 40% { transform: translate(-1px, -1px) } 60% { transform: translate(2px, 1px) } 80% { transform: translate(1px, -1px) } 100% { transform: translate(0) } }
 
         .stats-wall { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: rgba(255,255,255,0.05); flex: 1; overflow-y: auto; }
         .stat-item { background: var(--bg-deep); padding: 10px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
@@ -55,24 +60,30 @@
         .stat-val.active-exe { color: var(--alert-red); text-shadow: 0 0 15px rgba(255,42,42,0.6); font-weight: bold; }
         .stat-val.active-psy { color: var(--steel-blue); text-shadow: 0 0 15px rgba(77,166,255,0.8); font-weight: bold; }
         .stat-val.active-pay { color: var(--gold-pay); text-shadow: 0 0 15px rgba(255,170,0,0.8); font-weight: bold; font-size: 24px; }
+        .stat-val.tilt-drop { color: var(--tilt-red); text-decoration: line-through; opacity: 0.8; }
 
-        .chart-container { flex: 1; padding: 20px; position: relative; background: radial-gradient(circle at center, rgba(157,0,255,0.05) 0%, transparent 70%); min-height: 300px; }
+        .chart-container { flex: 1; padding: 20px; position: relative; background: radial-gradient(circle at center, rgba(157,0,255,0.05) 0%, transparent 70%); min-height: 280px; }
         
         .report-console { min-height: 180px; max-height: 280px; background: rgba(0,0,0,0.8); border-top: 1px solid var(--border-glow); overflow-y: auto; display: flex; flex-direction: column; }
-        .rep-header { display: flex; justify-content: space-between; padding: 10px 15px; border-bottom: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.02); }
+        .rep-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; border-bottom: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.02); }
         .rep-threat { font-family: 'Orbitron'; font-size: 14px; font-weight: bold; }
         .rep-archetype { font-size: 12px; letter-spacing: 1px; text-transform: uppercase; }
+        .rep-status { font-size: 10px; padding: 3px 8px; border-radius: 2px; font-family: 'Share Tech Mono'; letter-spacing: 1px; }
+        .status-fire { background: rgba(0, 255, 204, 0.2); color: var(--laser-cyan); border: 1px solid var(--laser-cyan); }
+        .status-tilt { background: rgba(255, 0, 85, 0.2); color: var(--tilt-red); border: 1px solid var(--tilt-red); font-weight: bold; }
+        .status-normal { background: rgba(255, 255, 255, 0.1); color: #aaa; border: 1px solid #555; }
+
         .rep-body { padding: 15px; font-size: 12px; color: #bbaadd; line-height: 1.6; }
         .rep-tactic { margin-top: 10px; padding: 10px; background: rgba(0,255,204,0.05); border-left: 3px solid var(--laser-cyan); color: #fff; }
+        .tilt-tactic { margin-top: 10px; padding: 10px; background: rgba(255, 0, 85, 0.1); border-left: 3px solid var(--tilt-red); color: #fff; font-weight: bold; }
 
-        .input-box { width: 100%; background: #000; border: 1px solid #331a4d; padding: 15px; color: var(--quantum-purple); font-family: 'Orbitron'; font-size: 16px; margin-bottom: 15px; outline: none; text-align: center; transition: 0.3s; border-radius: 4px; -webkit-appearance: none; }
+        .input-box { width: 100%; background: #000; border: 1px solid #331a4d; padding: 15px; color: var(--quantum-purple); font-family: 'Orbitron'; font-size: 14px; margin-bottom: 10px; outline: none; text-align: center; transition: 0.3s; border-radius: 4px; -webkit-appearance: none; }
         .input-box:focus { border-color: var(--laser-cyan); box-shadow: 0 0 15px rgba(0,255,204,0.2); color: var(--laser-cyan); }
         
-        .btn-prime { width: 100%; padding: 18px; background: rgba(157,0,255,0.1); color: #fff; border: 1px solid var(--quantum-purple); font-family: 'Orbitron'; font-size: 14px; font-weight: bold; cursor: pointer; transition: 0.3s; letter-spacing: 2px; border-radius: 4px; -webkit-appearance: none; }
+        .btn-prime { width: 100%; padding: 18px; background: rgba(157,0,255,0.1); color: #fff; border: 1px solid var(--quantum-purple); font-family: 'Orbitron'; font-size: 14px; font-weight: bold; cursor: pointer; transition: 0.3s; letter-spacing: 2px; border-radius: 4px; -webkit-appearance: none; margin-top: 10px; }
         .btn-prime:hover, .btn-prime:active { background: var(--quantum-purple); box-shadow: 0 0 25px rgba(157,0,255,0.6); }
 
-        .math-box { font-size: 10px; color: #8877aa; padding: 15px; border-top: 1px solid var(--border-glow); line-height: 1.6; background: rgba(0,0,0,0.4); }
-        .hl-gold { color: var(--gold-pay); font-weight: bold; }
+        .math-box { font-size: 10px; color: #8877aa; padding: 15px; border-top: 1px solid var(--border-glow); line-height: 1.6; background: rgba(0,0,0,0.4); margin-top: auto;}
 
         @media (min-width: 1024px) {
             body { height: 100vh; overflow: hidden; }
@@ -98,8 +109,8 @@
 
     <div class="layout-grid">
         <div id="panel-stats" class="panel">
-            <div class="panel-header"><span>NEURAL_ENGINE</span><span>V33.0_WHALE_HUNTER</span></div>
-            <div class="ncr-section">
+            <div class="panel-header"><span>NEURAL_ENGINE</span><span>V35.0_REAL_BATTLELOG</span></div>
+            <div id="ncr-container" class="ncr-section">
                 <div class="ncr-title">MAXIMA VALUE INDEX (MVI)</div>
                 <div id="ui-ncr" class="ncr-value">00.0</div>
                 <div id="ui-name" style="margin-top:15px; font-size: 14px; letter-spacing: 3px; color: var(--laser-cyan);">AWAITING_TELEMETRY</div>
@@ -130,29 +141,29 @@
                     <span class="rep-threat" style="color:#8877aa;">THREAT: --</span>
                 </div>
                 <div class="rep-body">
-                    等待輸入。V33.0 已實裝「勝率偏離懲罰」，精準剝離無課技術流與重課鯨魚。
+                    等待輸入。V35.0 已實裝「真實戰局追蹤協議」，系統將直接掃描 Battlelog 解析連勝/連敗趨勢。
                 </div>
             </div>
         </div>
 
         <div id="panel-input" class="panel">
             <div class="panel-header"><span>COMMAND_NODE</span><span>TACTICAL_INPUT</span></div>
-            <div style="padding: 20px;">
-                <label style="font-size: 10px; color: #776699; margin-bottom: 8px; display: block; text-align: center;">TARGET_PLAYER_TAG</label>
+            <div style="padding: 20px; display: flex; flex-direction: column; flex: 1;">
+                <label style="font-size: 10px; color: #776699; margin-bottom: 5px; display: block; text-align: center;">TARGET_PLAYER_TAG</label>
                 <input type="text" id="tagInput" placeholder="ENTER TAG" class="input-box">
                 
-                <label style="font-size: 10px; color: #776699; margin-bottom: 8px; display: block; text-align: center;">ROUTER_PATH</label>
+                <label style="font-size: 10px; color: #776699; margin-bottom: 5px; display: block; text-align: center;">PROFILE_PROXY_ROUTER</label>
                 <input type="text" id="proxyInput" value="/api/clash-proxy" class="input-box">
+
+                <label style="font-size: 10px; color: #776699; margin-bottom: 5px; display: block; text-align: center;">BATTLELOG_PROXY_ROUTER</label>
+                <input type="text" id="proxyBattlelogInput" value="/api/clash-battlelog" class="input-box">
                 
                 <button id="btn-run" class="btn-prime" onclick="fetchLiveData()">INITIATE SCAN</button>
             </div>
-
             <div class="math-box">
-                [ V33.0 Whale Hunter Core ]<br><br>
-                <span class="hl-gold">Optimized Capital (PAY):</span><br>
-                Z_PAY = (Z_Base*0.5) - (Z_MIC*0.3) <span style="color:#ff2a2a;">- (ΔWR*10)</span> + 0.8<br>
-                PAY = 100 / (1 + e^(-Z_PAY*1.5))<br>
-                *High MMR + Low WinRate = Severe P2W Penalty.
+                [ V35.0 Real-time Battlelog Array ]<br>
+                Fetching Array[0...n] -> Comparing team[0].crowns vs opponent[0].crowns.<br>
+                Instant Tilt computation based on raw real match history.
             </div>
         </div>
     </div>
@@ -192,18 +203,67 @@
             });
         }
 
+        // 解析真實連勝/連敗數據
+        function parseRealStreak(battlelog) {
+            let streak = 0;
+            let isWinningStreak = null;
+
+            if (!Array.isArray(battlelog) || battlelog.length === 0) return 0;
+
+            for (let i = 0; i < battlelog.length; i++) {
+                const battle = battlelog[i];
+                
+                // 確保是對戰數據 (過濾掉特殊模式無皇冠紀錄的狀況)
+                if (!battle.team || !battle.opponent) continue;
+
+                let myCrowns = battle.team[0].crowns;
+                let oppCrowns = battle.opponent[0].crowns;
+
+                let result = 0; // 0 = 平手
+                if (myCrowns > oppCrowns) result = 1; // 1 = 贏
+                else if (myCrowns < oppCrowns) result = -1; // -1 = 輸
+
+                // 如果遇到平手，連勝/連敗終止
+                if (result === 0) break;
+
+                // 第一場戰鬥決定當前是連勝還是連敗
+                if (isWinningStreak === null) {
+                    isWinningStreak = (result === 1);
+                    streak = result;
+                } else {
+                    // 如果跟前一場的勝負結果相同，累計下去
+                    if ((isWinningStreak && result === 1) || (!isWinningStreak && result === -1)) {
+                        streak += result;
+                    } else {
+                        // 勝負反轉，鏈結斷裂
+                        break;
+                    }
+                }
+            }
+            // 限制最大權重，避免數據爆炸 (-10 到 10)
+            return Math.max(-10, Math.min(10, streak));
+        }
+
         async function fetchLiveData() {
             if (isProcessing) return;
             const tag = document.getElementById('tagInput').value.trim().toUpperCase().replace('#', '');
-            const proxy = document.getElementById('proxyInput').value.trim();
+            const proxyProfile = document.getElementById('proxyInput').value.trim();
+            const proxyBattlelog = document.getElementById('proxyBattlelogInput').value.trim();
             if(!tag) return;
             
             isProcessing = true;
-            document.getElementById('btn-run').innerText = "SCANNING...";
+            document.getElementById('btn-run').innerText = "SCANNING NETWORK...";
+            document.getElementById('ncr-container').classList.remove('tilt-active');
             
             try {
-                const response = await fetch(`${proxy}?tag=${tag}`);
-                const rawJson = await response.json();
+                // V35.0 雙線程並行抓取
+                const [profileRes, battlelogRes] = await Promise.all([
+                    fetch(`${proxyProfile}?tag=${tag}`),
+                    fetch(`${proxyBattlelog}?tag=${tag}`)
+                ]);
+
+                const rawJson = await profileRes.json();
+                const battlelogJson = battlelogRes.ok ? await battlelogRes.json() : []; 
                 
                 let pol = 1600; 
                 if (rawJson.currentPathOfLegendSeasonResult?.rating) {
@@ -212,15 +272,21 @@
                     pol = rawJson.leagueStatistics.currentSeason.trophies;
                 }
 
+                // 呼叫戰局解析引擎
+                const realStreak = parseRealStreak(battlelogJson);
+
                 processData({
-                    name: rawJson.name,
+                    name: rawJson.name || "UNKNOWN_TARGET",
                     wins: rawJson.wins || 0,
                     losses: rawJson.losses || 0,
                     threeCrownWins: rawJson.threeCrownWins || 0,
-                    mmr: pol
+                    mmr: pol,
+                    streak: realStreak
                 });
+
             } catch (e) {
-                console.error(e);
+                console.error("TELEMETRY FAILED:", e);
+                document.getElementById('ui-report').innerHTML = `<div class="rep-body" style="color:var(--alert-red);">【錯誤】資料截獲失敗。請確認代理路由器 (Proxy Router) 是否正確配置。</div>`;
             } finally {
                 isProcessing = false;
                 document.getElementById('btn-run').innerText = "INITIATE SCAN";
@@ -251,14 +317,22 @@
             const zEXE = (tcwRate - expectedTCR) / 0.05;
             let exeScore = 100 / (1 + Math.exp(-zEXE));
 
-            const zPSY = (zEND * 0.50) - (zEXE * 0.30) + (zMIC * 0.20) + 0.5;
-            let psyScore = Math.min(99.9, 100 / (1 + Math.exp(-zPSY))); 
+            // V34.0/V35.0 Tilt Factor
+            const zPSY_base = (zEND * 0.50) - (zEXE * 0.30) + (zMIC * 0.20) + 0.5;
+            let psyScoreBase = Math.min(99.9, 100 / (1 + Math.exp(-zPSY_base))); 
+            
+            // 加入真實的連勝/連敗因子
+            let tiltFactor = data.streak * 0.08; 
+            let psyScore = Math.max(10.0, Math.min(99.9, psyScoreBase * (1 + tiltFactor)));
 
-            // ==========================================
-            // 🔥 NEW: V33.0 資本獵手演算法
-            // 引入勝率偏離 (deltaWR)。高分段但勝率低迷 = 靠等級硬扛。
-            // Sigmoid 曲線乘數調高至 1.5，讓數值更具極端性！
-            // ==========================================
+            // 連敗拖垮其他數值
+            let macScore = 100 / (1 + Math.exp(-(zDeltaStandard * 1.5 + zBase * 0.5))); 
+            let cstScore = 100 / (1 + Math.exp(-(deltaWR * 25))); 
+            if(data.streak <= -3) {
+                macScore *= 0.85;
+                cstScore *= 0.70;
+            }
+
             const zPAY = (zBase * 0.50) - (zMIC * 0.30) - (deltaWR * 10) + 0.8; 
             let payScore = 100 / (1 + Math.exp(-zPAY * 1.5)); 
 
@@ -269,14 +343,11 @@
             const zSTR = (z3C * 0.60) + (zBase * 0.40);
             let strScore = 100 / (1 + Math.exp(-zSTR));
 
-            let macScore = 100 / (1 + Math.exp(-(zDeltaStandard * 1.5 + zBase * 0.5))); 
-            let cstScore = 100 / (1 + Math.exp(-(deltaWR * 25))); 
-
             const finalScores = [strScore, defScore, micScore, macScore, psyScore, cstScore, exeScore, endScore, payScore];
-            renderUI(data.name, finalScores);
+            renderUI(data.name, finalScores, data.streak);
         }
 
-        function renderUI(name, scores) {
+        function renderUI(name, scores, streak) {
             document.getElementById('ui-name').innerText = name;
             const skillScores = scores.slice(0, 8);
             document.getElementById('ui-ncr').innerText = (skillScores.reduce((a,b)=>a+b)/8).toFixed(1); 
@@ -303,26 +374,48 @@
                 archetype = "重課階級惡霸 (WHALE SUPPRESSOR)";
                 threat = "A"; mainColor = "#ffaa00";
                 document.getElementById('val-pay').classList.add('active-pay');
-                weaknessDesc = "勝率低迷卻身處高分段，微操極差。完全依賴魔法小卡與卡牌質量硬扛局勢。";
-                tactic = "【防守反擊】他的進攻往往伴隨嚴重的虧費。切勿與其在同路硬碰硬，利用建築拉扯與賺費防守，針對其笨重的牌序進行換路速攻。";
+                weaknessDesc = "勝率低迷卻身處高分段，完全依賴魔法小卡與卡牌質量硬扛局勢。";
+                tactic = "【防守反擊】他的進攻往往伴隨嚴重的虧費。利用建築拉扯與賺費防守，針對其笨重的牌序進行換路速攻。";
             } else if (scores[4] > 85 && scores[6] < 50) {
                 archetype = "泥沼戰神 (MUD GOD)";
                 threat = "S"; mainColor = "#4da6ff";
                 document.getElementById('val-psy').classList.add('active-psy');
                 weaknessDesc = "缺乏瞬間爆發推平能力，但心態極度堅韌，極少失誤。";
-                tactic = "【閃電戰】不要陷入他的節奏！他極度擅長加時賽的折磨局。必須在常規時間內主動製造混戰，打破其防線。";
+                tactic = "【閃電戰】不要陷入他的節奏！必須在常規時間內主動製造混戰，打破其防線。";
             } else if (scores[0] > 80 && scores[1] < 40) {
                 archetype = "極限狂戰士 (GLASS BERSERKER)";
                 threat = "A-"; mainColor = "#ff2a2a";
                 document.getElementById('val-exe').classList.add('active-exe');
                 weaknessDesc = "攻擊性極強，但防守端空虛且容易出現虧費過激操作。";
-                tactic = "【龜縮抓失誤】開局先摸清底細，預留解牌。一旦扛住其第一波猛攻，直接下橋頭單位施壓，對方防線會瞬間瓦解。";
+                tactic = "【龜縮抓失誤】扛住其第一波猛攻後，直接下橋頭單位施壓，對方防線會瞬間瓦解。";
             } else if (scores[2] > 85 && scores[8] < 40) {
                 archetype = "無課技術流 (F2P CHAD)";
                 threat = "S+"; mainColor = "#00ffcc";
                 document.getElementById('val-mic').classList.add('active-mic');
                 weaknessDesc = "卡等可能處於劣勢，但擁有恐怖的勝率與下牌時機掌控力。";
-                tactic = "【法術斬殺】不要試圖在微操上贏過他。利用高質量的範圍法術消耗皇家塔，避免被他用小費卡牌完美解場。";
+                tactic = "【法術斬殺】不要試圖在微操上贏過他。利用高質量的範圍法術消耗皇家塔。";
+            }
+
+            // 真實狀態燈號判斷
+            let statusHtml = "";
+            let isTilting = false;
+
+            if (streak >= 3) {
+                statusHtml = `<span class="rep-status status-fire">🔥 狀態火熱 (${streak} 連勝)</span>`;
+            } else if (streak <= -3) {
+                isTilting = true;
+                statusHtml = `<span class="rep-status status-tilt">⚠️ 破防邊緣 (${Math.abs(streak)} 連敗)</span>`;
+                document.getElementById('ncr-container').classList.add('tilt-active');
+                document.getElementById('val-psy').classList.add('tilt-drop');
+                mainColor = "#ff0055";
+                threat = "C (TILTED)";
+                
+                tactic = `
+                    <div class="tilt-tactic">
+                    >> 【趁病要命】目標處於嚴重連敗的破防期 (Tilt State)。其抗壓 (PSY) 與穩定性 (CST) 已大幅衰退。開局發送嘲諷表情，並主動製造混亂場面，對手極高機率會做出「亂下牌」、「無腦橋頭」等虧費操作，甚至直接拔線。
+                    </div>`;
+            } else {
+                statusHtml = `<span class="rep-status status-normal">⚪ 常規輪轉 (${streak > 0 ? '+' : ''}${streak})</span>`;
             }
 
             radarChart.data.datasets[0].borderColor = mainColor;
@@ -333,15 +426,19 @@
 
             const reportHTML = `
                 <div class="rep-header">
-                    <span class="rep-archetype" style="color:${mainColor}">${archetype}</span>
-                    <span class="rep-threat" style="color:${mainColor}">THREAT: ${threat}</span>
+                    <div>
+                        <div class="rep-archetype" style="color:${mainColor}">${archetype}</div>
+                        <div class="rep-threat" style="color:${mainColor}">THREAT: ${threat}</div>
+                    </div>
+                    ${statusHtml}
                 </div>
                 <div class="rep-body">
                     <div style="margin-bottom: 8px;"><strong>掃描特徵：</strong><br>${weaknessDesc}</div>
+                    ${isTilting ? tactic : `
                     <div class="rep-tactic" style="border-left-color:${mainColor}">
                         <strong><span style="color:${mainColor}">>> 致勝兵推 (COUNTER TACTIC)</span></strong><br>
                         ${tactic}
-                    </div>
+                    </div>`}
                 </div>
             `;
             document.getElementById('ui-report').innerHTML = reportHTML;

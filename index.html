@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -376,22 +377,48 @@
                 document.getElementById('syncRatio').innerText = '94.2%';
                 document.getElementById('syncProg').style.width = '94.2%';
 
-                const wins = data.battleLog.filter(l => l.team[0].crowns > l.opponent[0].crowns).length;
-                const winRate = ((wins / data.battleLog.length) * 100).toFixed(1);
+                // --- 進階攻守分析邏輯 ---
+                const battles = data.battleLog;
+                let totalPlayerCrowns = 0;
+                let totalOpponentCrowns = 0;
+                let wins = 0;
+
+                battles.forEach(b => {
+                    const p = b.team[0].crowns;
+                    const o = b.opponent[0].crowns;
+                    totalPlayerCrowns += p;
+                    totalOpponentCrowns += o;
+                    if (p > o) wins++;
+                });
+
+                const winRate = ((wins / battles.length) * 100).toFixed(1);
+                const offenseScore = ((totalPlayerCrowns / (battles.length * 3)) * 100).toFixed(0);
+                const defenseScore = (100 - (totalOpponentCrowns / (battles.length * 3)) * 100).toFixed(0);
+                const tacticalIQ = (70 + (wins * 2.5)).toFixed(0);
 
                 document.getElementById('valWin').innerText = winRate + '%';
-                document.getElementById('valIQ').innerText = (70 + (wins * 2.5)).toFixed(0);
-                document.getElementById('valLat').innerText = '42';
-                document.getElementById('valFlux').innerText = '0.98';
+                document.getElementById('valIQ').innerText = tacticalIQ;
+                document.getElementById('valOff').innerText = offenseScore;
+                document.getElementById('valDef').innerText = defenseScore;
 
-                omegaChart.data.datasets[0].data = [75 + (wins * 2), 94, 88, 70 + (wins * 3), parseFloat(winRate)];
+                // 更新圖表 (0: Aggression, 1: Neural-Sync, 2: Elixir-Flux, 3: Tactical-IQ, 4: Stability)
+                omegaChart.data.datasets[0].data = [
+                    offenseScore, 
+                    defenseScore, 
+                    92, 
+                    tacticalIQ, 
+                    parseFloat(winRate)
+                ];
                 omegaChart.update();
 
                 document.getElementById('aiAdvisor').innerHTML = `
-                    <div style="color:var(--neon-cyan); margin-bottom:10px;">OMEGA_PROTOCOL_ANALYSIS:</div>
-                    Subject exhibits high-phase stability. 
-                    Tactical IQ units peaked. 
-                    Action: Exploit Elixir Flux gaps in encounters.
+                    <div style="color:var(--neon-cyan); margin-bottom:8px;">OMEGA_STRATEGIC_DEEP_DIVE:</div>
+                    <div style="font-size:0.8rem; margin-bottom:5px;">
+                        <span style="color:var(--neon-yellow)">[OFFENSE]</span> Rating: ${offenseScore}/100. ${offenseScore > 60 ? 'High pressure maintained.' : 'Potential lack of finishing power.'}<br>
+                        <span style="color:var(--neon-cyan)">[DEFENSE]</span> Integrity: ${defenseScore}/100. ${defenseScore > 80 ? 'Iron-clad perimeter detected.' : 'Vulnerabilities in counter-push window.'}
+                    </div>
+                    <div style="color:var(--neon-magenta); margin-top:10px; font-weight:bold;">TACTICAL ADVISORY:</div>
+                    ${defenseScore < 70 ? 'Prioritize defensive elixir conservation.' : 'Current defense is optimal. Accelerate cycle pressure.'}
                 `;
 
                 const logBox = document.getElementById('omegaLog');

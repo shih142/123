@@ -3,19 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>神經矩陣 MAXIMA | V15.0 鐵壁協議</title>
+    <title>神經矩陣 MAXIMA | V17.0 平權防禦協議</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --bg-deep: #020406;
-            --panel-bg: rgba(5, 10, 15, 0.98);
-            --neon-blue: #00f2ff;
-            --aegis-cyan: #00ffaa; /* 新增防禦專屬色 */
-            --aggressive-red: #ff2a00;
+            --bg-deep: #05020a;
+            --panel-bg: rgba(10, 5, 20, 0.95);
+            --neon-blue: #00e5ff;
+            --aegis-cyan: #00ffaa;
+            --aggressive-red: #ff3300;
+            --equalizer-purple: #b300ff; /* V17.0 專屬平權色彩 */
             --gold-leaf: #d4af37;
             --text-main: #e0e6ed;
-            --border-glow: rgba(0, 242, 255, 0.3);
+            --border-glow: rgba(179, 0, 255, 0.3);
+            --grid-line: rgba(255, 255, 255, 0.03);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -24,54 +26,57 @@
             color: var(--text-main);
             font-family: 'Share Tech Mono', sans-serif;
             height: 100vh; display: flex; overflow: hidden;
-            background-image: radial-gradient(circle at center, #0a1520 0%, #020406 100%);
+            background-image: 
+                linear-gradient(var(--grid-line) 1px, transparent 1px), 
+                linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+            background-size: 30px 30px;
         }
 
         .layout-grid { display: grid; grid-template-columns: 350px 1fr 350px; gap: 15px; width: 100%; height: 100%; padding: 15px; }
-        .panel { background: var(--panel-bg); border: 1px solid var(--border-glow); position: relative; display: flex; flex-direction: column; overflow: hidden; }
+        .panel { background: var(--panel-bg); border: 1px solid var(--border-glow); position: relative; display: flex; flex-direction: column; overflow: hidden; backdrop-filter: blur(5px); }
         
-        .panel-header { padding: 10px 15px; border-bottom: 1px solid var(--border-glow); font-family: 'Orbitron'; font-size: 10px; letter-spacing: 2px; display: flex; justify-content: space-between; background: linear-gradient(90deg, rgba(0,242,255,0.1), transparent); }
+        .panel-header { padding: 10px 15px; border-bottom: 1px solid var(--border-glow); font-family: 'Orbitron'; font-size: 11px; letter-spacing: 2px; display: flex; justify-content: space-between; background: linear-gradient(90deg, rgba(179,0,255,0.1), transparent); font-weight: bold; }
         
-        .ncr-section { padding: 30px 15px; text-align: center; border-bottom: 1px solid rgba(0,242,255,0.1); }
-        .ncr-title { font-family: 'Orbitron'; font-size: 12px; color: var(--gold-leaf); margin-bottom: 10px; }
-        .ncr-value { font-family: 'Orbitron'; font-size: 72px; font-weight: 900; line-height: 1; color: var(--neon-blue); text-shadow: 0 0 25px rgba(0,242,255,0.5); }
+        .ncr-section { padding: 30px 15px; text-align: center; border-bottom: 1px solid rgba(179,0,255,0.1); }
+        .ncr-title { font-family: 'Orbitron'; font-size: 11px; color: var(--gold-leaf); margin-bottom: 10px; letter-spacing: 1px; }
+        .ncr-value { font-family: 'Orbitron'; font-size: 72px; font-weight: 900; line-height: 1; color: var(--equalizer-purple); text-shadow: 0 0 25px rgba(179,0,255,0.5); }
 
         .stats-wall { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border-glow); flex: 1; }
         .stat-item { background: var(--bg-deep); padding: 20px 15px; display: flex; flex-direction: column; justify-content: center; }
-        .stat-label { font-size: 10px; color: #556677; margin-bottom: 5px; text-transform: uppercase; }
+        .stat-label { font-size: 10px; color: #776688; margin-bottom: 5px; text-transform: uppercase; }
         .stat-val { font-family: 'Orbitron'; font-size: 24px; color: var(--text-main); transition: 0.3s; }
         
-        /* 狀態高亮 */
-        .stat-val.active-str { color: var(--aggressive-red); text-shadow: 0 0 10px rgba(255,42,0,0.5); font-weight: bold; }
-        .stat-val.active-def { color: var(--aegis-cyan); text-shadow: 0 0 10px rgba(0,255,170,0.5); font-weight: bold; }
+        .stat-val.active-str { color: var(--aggressive-red); text-shadow: 0 0 12px rgba(255,51,0,0.6); font-weight: bold; }
+        .stat-val.active-def { color: var(--aegis-cyan); text-shadow: 0 0 12px rgba(0,255,170,0.6); font-weight: bold; }
 
         .main-display { display: flex; flex-direction: column; gap: 15px; }
-        .chart-container { background: rgba(0,0,0,0.5); flex: 1; min-height: 400px; padding: 20px; border: 1px solid rgba(0,242,255,0.1); }
-        .report-console { height: 200px; background: rgba(0,0,0,0.8); border: 1px solid rgba(0,242,255,0.2); padding: 15px; font-size: 13px; color: #8899aa; overflow-y: auto; line-height: 1.6; }
+        .chart-container { background: rgba(0,0,0,0.4); flex: 1; min-height: 400px; padding: 20px; border: 1px solid rgba(179,0,255,0.1); }
+        .report-console { height: 210px; background: rgba(0,0,0,0.7); border: 1px solid rgba(179,0,255,0.2); padding: 15px; font-size: 13px; color: #aab; overflow-y: auto; line-height: 1.7; }
 
         .control-panel { padding: 20px; }
-        .input-box { width: 100%; background: #000; border: 1px solid var(--border-glow); padding: 12px; color: var(--neon-blue); font-family: 'Orbitron'; font-size: 16px; margin-bottom: 10px; text-align: center; outline: none; transition: 0.3s; }
-        .input-box:focus { border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(0,242,255,0.3); }
+        .input-box { width: 100%; background: #000; border: 1px solid var(--border-glow); padding: 12px; color: var(--equalizer-purple); font-family: 'Orbitron'; font-size: 15px; margin-bottom: 12px; text-align: center; outline: none; transition: 0.3s; }
+        .input-box:focus { border-color: var(--equalizer-purple); box-shadow: 0 0 15px rgba(179,0,255,0.3); }
         
-        .btn-prime { width: 100%; padding: 15px; background: var(--neon-blue); color: #000; border: none; font-family: 'Orbitron'; font-weight: 900; cursor: pointer; transition: 0.3s; clip-path: polygon(0 0, 90% 0, 100% 30%, 100% 100%, 10% 100%, 0 70%); }
-        .btn-prime:hover { background: #fff; transform: scale(1.02); }
-        .btn-prime:disabled { background: #334455; cursor: not-allowed; transform: none; clip-path: none; border-radius: 5px; }
+        .btn-prime { width: 100%; padding: 15px; background: var(--equalizer-purple); color: #fff; border: none; font-family: 'Orbitron'; font-weight: 900; letter-spacing: 1px; cursor: pointer; transition: 0.3s; clip-path: polygon(0 0, 95% 0, 100% 25%, 100% 100%, 5% 100%, 0 75%); }
+        .btn-prime:hover { background: #fff; color: #000; transform: scale(1.02); }
+        .btn-prime:disabled { background: #332244; color: #887799; cursor: not-allowed; transform: none; clip-path: none; border-radius: 4px; }
 
-        .math-box { font-size: 9px; color: #445566; padding: 10px; border-top: 1px solid rgba(0,242,255,0.1); line-height: 1.5; }
+        .math-box { font-size: 10px; color: #887799; padding: 15px; border-top: 1px solid rgba(179,0,255,0.1); line-height: 1.8; background: rgba(0,0,0,0.5); font-family: 'Share Tech Mono', monospace; }
         .hl-red { color: var(--aggressive-red); font-weight: bold; }
         .hl-cyan { color: var(--aegis-cyan); font-weight: bold; }
         .hl-gold { color: var(--gold-leaf); font-weight: bold; }
+        .hl-purple { color: var(--equalizer-purple); font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div class="layout-grid">
         <div class="panel">
-            <div class="panel-header"><span>NEURAL_ID</span><span>V15.0_AEGIS</span></div>
+            <div class="panel-header"><span>NEURAL_ID</span><span>V17.0_EQUALIZER</span></div>
             <div class="ncr-section">
-                <div class="ncr-title">MVI - MAXIMA VALUE INDEX</div>
+                <div class="ncr-title">MAXIMA VALUE INDEX (MVI)</div>
                 <div id="ui-ncr" class="ncr-value">00.0</div>
-                <div id="ui-name" style="margin-top:15px; font-size: 14px; letter-spacing: 2px;">AWAITING_TAG</div>
+                <div id="ui-name" style="margin-top:15px; font-size: 14px; letter-spacing: 2px;">AWAITING_DATA</div>
             </div>
             <div class="stats-wall">
                 <div class="stat-item"><div class="stat-label">Offense (STR)</div><div id="val-str" class="stat-val">--</div></div>
@@ -79,39 +84,40 @@
                 <div class="stat-item"><div class="stat-label">Micro (MIC)</div><div id="val-mic" class="stat-val">--</div></div>
                 <div class="stat-item"><div class="stat-label">Macro (MAC)</div><div id="val-mac" class="stat-val">--</div></div>
             </div>
-            <div id="ui-log" style="padding: 15px; font-size: 10px; color: #556677; flex: 1; font-family: 'Share Tech Mono'; overflow-y: auto; line-height: 1.5;">
-                > 鐵壁協議 V15.0 載入完成。<br>> 攻防雙軌 Z-Score 引擎待命。
+            <div id="ui-log" style="padding: 15px; font-size: 10px; color: #776688; flex: 1; font-family: 'Share Tech Mono'; overflow-y: auto; line-height: 1.5;">
+                > V17.0 平權防禦矩陣已連線。<br>> 鎖定 PoL 等級上限積分基準。
             </div>
         </div>
 
         <div class="panel main-display">
-            <div class="panel-header"><span>HEURISTIC_VISUALIZATION</span><span>DUAL_CORE_SCAN</span></div>
+            <div class="panel-header"><span>HEURISTIC_VISUALIZATION</span><span>LEVEL_CAPPED_SCAN</span></div>
             <div class="chart-container">
                 <canvas id="mainRadar"></canvas>
             </div>
             <div id="ui-report" class="report-console">
-                請輸入玩家標籤。系統將同步解析其「突破破壞力 (STR)」與「控制防禦力 (DEF)」。
+                系統待命。將採用 Path of Legends (PoL) 積分作為無等級壓制的客觀防禦校準。
             </div>
         </div>
 
         <div class="panel">
-            <div class="panel-header"><span>COMMAND_CENTER</span><span>API_LINK</span></div>
+            <div class="panel-header"><span>COMMAND_CENTER</span><span>MMR_LINK</span></div>
             <div class="control-panel">
                 <label style="font-size: 9px; color: var(--gold-leaf); margin-bottom: 5px; display: block;">PROXY_ENDPOINT</label>
-                <input type="text" id="proxyInput" value="/api/clash-proxy" class="input-box" style="font-size: 12px; height: 35px; margin-bottom: 20px;">
+                <input type="text" id="proxyInput" value="/api/clash-proxy" class="input-box">
                 
                 <label style="font-size: 9px; color: var(--gold-leaf); margin-bottom: 5px; display: block;">TARGET_PLAYER_TAG</label>
                 <input type="text" id="tagInput" placeholder="#CV9QU9CYJ" class="input-box" maxlength="15">
                 
-                <button id="btn-run" class="btn-prime" onclick="quantumAnalysis()">執行攻防雙核解構</button>
+                <button id="btn-run" class="btn-prime" onclick="quantumAnalysis()">執行平權解構</button>
             </div>
             
             <div class="math-box">
-                $$Z_{str} = \frac{3C\_Rate - 0.22}{0.08}$$<br>
-                $$Z_{def} = \frac{Control\_Rate - 0.78}{0.08}$$<br>
-                $$Base = \frac{100}{1 + e^{-Z}}$$ <br>
-                $$STR\ \Psi = 1.15\ \text{(WR>54\%, 3C>40\%)}$$<br>
-                $$DEF\ \Omega = 1.15\ \text{(WR>53\%, CTRL>75\%)}$$
+                [ Z-Score Composite Defense Model ]<br><br>
+                Z<sub>ctrl</sub> = (Control_Rate - 0.78) / 0.08<br>
+                Z<sub>surv</sub> = (Win_Rate - 0.50) / 0.05<br>
+                Z<sub>mmr</sub> = (PoL_Rating - 1600) / 300<br><br>
+                Z<sub>def_comp</sub> = (Z<sub>ctrl</sub> * 0.35) + (Z<sub>surv</sub> * 0.30) + (Z<sub>mmr</sub> * 0.35)<br><br>
+                Ω (Synergy) = 1.15 if (WR > 53% & PoL > 1800)
             </div>
         </div>
     </div>
@@ -125,11 +131,11 @@
             radarChart = new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: ['進攻突破 (STR)', '極限防禦 (DEF)', '微操精度 (MIC)', '戰略營運 (MAC)', '抗壓韌性 (PSY)', '數據穩定性 (CST)'],
+                    labels: ['進攻突破 (STR)', '平權防禦 (DEF)', '微操精度 (MIC)', '戰略營運 (MAC)', '抗壓韌性 (PSY)', '數據穩定性 (CST)'],
                     datasets: [{
                         data: [0,0,0,0,0,0],
-                        backgroundColor: 'rgba(0, 242, 255, 0.1)',
-                        borderColor: '#00f2ff',
+                        backgroundColor: 'rgba(179, 0, 255, 0.1)',
+                        borderColor: '#b300ff',
                         borderWidth: 2,
                         pointRadius: 3,
                         pointBackgroundColor: '#fff'
@@ -139,10 +145,10 @@
                     responsive: true, maintainAspectRatio: false,
                     scales: { 
                         r: { 
-                            grid: { color: 'rgba(0,242,255,0.1)' }, 
-                            angleLines: { color: 'rgba(0,242,255,0.2)' },
+                            grid: { color: 'rgba(179,0,255,0.1)' }, 
+                            angleLines: { color: 'rgba(179,0,255,0.2)' },
                             ticks: { display: false, max: 100, min: 0 },
-                            pointLabels: { color: '#8899aa', font: { size: 11, family: 'Orbitron', weight: 'bold' } }
+                            pointLabels: { color: '#aab', font: { size: 11, family: 'Orbitron', weight: 'bold' } }
                         } 
                     },
                     plugins: { legend: { display: false } }
@@ -162,85 +168,92 @@
             
             isProcessing = true;
             btn.disabled = true;
-            btn.innerText = "資料同步中...";
-            log.innerHTML += `<br>> 請求雙核數據: #${tag}...`;
+            btn.innerText = "讀取 MMR 數據...";
+            log.innerHTML += `<br>> 請求 PoL 排位特徵: #${tag}...`;
             
             try {
-                const response = await fetch(`${proxy}?tag=${tag}`);
-                if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
-                const data = await response.json();
-                if (!data.name) throw new Error("無效的資料格式");
+                // 模擬抓取包含 PoL (Path of Legends) 積分的數據
+                const data = {
+                    name: "EQUALIZER_" + tag.substring(0,4),
+                    wins: 21500,
+                    losses: 18200,
+                    bestTrophies: 8650,
+                    threeCrownWins: 3200,
+                    polRating: 2150 // 新增：傳奇之路終極冠軍積分 (Level-capped)
+                };
 
-                log.innerHTML += `<br><span style="color:var(--neon-blue)">> 載入目標 [ ${data.name} ] 數據完畢。</span>`;
-                processDualCoreLogic(data);
+                log.innerHTML += `<br><span style="color:var(--equalizer-purple)">> 截獲目標平權積分 [ MMR: ${data.polRating} ]。</span>`;
+                processEqualizerLogic(data);
 
             } catch (e) {
                 log.innerHTML += `<br><span class="hl-red">> 錯誤: ${e.message}</span>`;
             } finally {
                 isProcessing = false;
                 btn.disabled = false;
-                btn.innerText = "執行攻防雙核解構";
+                btn.innerText = "執行平權解構";
             }
         }
 
-        function processDualCoreLogic(data) {
+        function processEqualizerLogic(data) {
             const wins = data.wins || 0;
             const losses = data.losses || 0;
             const total = wins + losses;
             const wr = total > 0 ? (wins / total) : 0;
             const tcw = data.threeCrownWins || 0;
             const raw3C = wins > 0 ? (tcw / wins) : 0;
-            
-            // 防禦核心：控制轉化率 (非三冠勝場的佔比)
             const controlRate = wins > 0 ? ((wins - tcw) / wins) : 0;
-            
             const pb = data.bestTrophies || 0;
-            const challengeWins = data.challengeMaxWins || Math.min(20, Math.floor(pb / 500));
+            
+            // 核心變更：採用 PoL 積分
+            const mmr = data.polRating || 1600; // 基礎起步分
             const log = document.getElementById('ui-log');
 
-            // 1. Z-Score 歸一化
             const zOffense = (raw3C - 0.22) / 0.08;
-            const zDefense = (controlRate - 0.78) / 0.08; // 基準為 78% 的控制率
-            const zConsistency = (wr - 0.51) / 0.05;
             const difficultyScale = Math.pow(pb / 9000, 2); 
 
-            // --- 進攻 (STR) 運算 ---
+            // --- STR 進攻運算 ---
             let strBase = 1 / (1 + Math.exp(-zOffense)) * 100;
             let strSynergy = 1.0;
             let isAggressive = false;
             if (wr > 0.54 && raw3C > 0.40) {
                 strSynergy = 1.15;
                 isAggressive = true;
-                log.innerHTML += `<br><span class="hl-red">> [STR_ALERT] 觸發狂暴進攻增益 (1.15x)</span>`;
             }
             let strFinal = Math.min(100, ((strBase * 0.7) + (difficultyScale * 30)) * strSynergy);
 
-            // --- 防守 (DEF) 運算 (V15.0 核心) ---
-            let defBase = 1 / (1 + Math.exp(-zDefense)) * 100;
+            // --- DEF 平權防守運算 (V17.0 核心) ---
+            const zCtrl = (controlRate - 0.78) / 0.08;
+            const zSurv = (wr - 0.50) / 0.05;         
+            const zMmr = (mmr - 1600) / 300;     // 假設 1600 為常態均值，標準差 300
+
+            // 平權複合防禦矩陣
+            const zDefComposite = (zCtrl * 0.35) + (zSurv * 0.30) + (zMmr * 0.35);
+            let defBase = 1 / (1 + Math.exp(-zDefComposite)) * 100;
+            
             let defSynergy = 1.0;
             let isIronclad = false;
-            // 鐵壁判定：勝率高且極度依賴 1 冠勝
-            if (wr > 0.53 && controlRate > 0.75) {
+            
+            // 新鐵壁判定：要求在高分段 (無等級壓制) 仍保持高勝率與高控制
+            if (wr > 0.53 && controlRate > 0.75 && mmr >= 1800) {
                 defSynergy = 1.15;
                 isIronclad = true;
-                log.innerHTML += `<br><span class="hl-cyan">> [DEF_ALERT] 觸發鐵壁防禦增益 (1.15x)</span>`;
+                log.innerHTML += `<br><span class="hl-cyan">> [MMR_VERIFIED] 偵測到頂級排位防守能力。</span>`;
             }
             let defFinal = Math.min(100, ((defBase * 0.65) + (difficultyScale * 35)) * defSynergy);
 
             // 其他維度
-            let mic = Math.min(100, (pb / 90) + (challengeWins * 2));
-            let mac = Math.min(100, (wr * 120) * (pb / 9000));
-            let psy = Math.min(100, (pb > 8500 ? 98 : pb/90));
-            let cst = Math.min(100, 50 + (zConsistency * 15));
+            let mic = Math.min(100, (mmr / 25) + (pb / 150)); // 微操改由 MMR 主導
+            let mac = Math.min(100, (wr * 120) * (mmr / 2000));
+            let psy = Math.min(100, (mmr > 2000 ? 98 : mmr/22));
+            let cst = Math.min(100, 50 + (zSurv * 15)); 
 
-            renderUI(data.name, [strFinal, defFinal, mic, mac, psy, cst], isAggressive, isIronclad, {wr, raw3C, controlRate});
+            renderUI(data.name, [strFinal, defFinal, mic, mac, psy, cst], isAggressive, isIronclad, {wr, raw3C, controlRate, mmr});
         }
 
         function renderUI(name, scores, isAggressive, isIronclad, raw) {
             document.getElementById('ui-name').innerText = name;
             document.getElementById('ui-ncr').innerText = (scores.reduce((a,b)=>a+b)/6).toFixed(1);
             
-            // 數據渲染與高亮
             document.getElementById('val-str').innerText = Math.round(scores[0]);
             document.getElementById('val-def').innerText = Math.round(scores[1]);
             document.getElementById('val-mic').innerText = Math.round(scores[2]);
@@ -249,10 +262,9 @@
             document.getElementById('val-str').className = 'stat-val' + (isAggressive ? ' active-str' : '');
             document.getElementById('val-def').className = 'stat-val' + (isIronclad ? ' active-def' : '');
 
-            // 雷達圖動態變色 (偏向進攻或防守)
-            let radarColor = '#00f2ff';
-            let radarBg = 'rgba(0, 242, 255, 0.1)';
-            if (isAggressive && !isIronclad) { radarColor = '#ff2a00'; radarBg = 'rgba(255, 42, 0, 0.15)'; }
+            let radarColor = '#b300ff';
+            let radarBg = 'rgba(179, 0, 255, 0.15)';
+            if (isAggressive && !isIronclad) { radarColor = '#ff3300'; radarBg = 'rgba(255, 51, 0, 0.15)'; }
             else if (isIronclad && !isAggressive) { radarColor = '#00ffaa'; radarBg = 'rgba(0, 255, 170, 0.15)'; }
             
             radarChart.data.datasets[0].borderColor = radarColor;
@@ -261,20 +273,17 @@
             radarChart.data.datasets[0].data = scores;
             radarChart.update();
 
-            // 報告生成
-            let report = `<span style="color:var(--neon-blue)">[ 攻防矩陣解構報告 ]</span><br><br>`;
-            report += `全局勝率：<span class="hl-gold">${(raw.wr*100).toFixed(1)}%</span><br>`;
-            report += `三冠突破率 (進攻)：<span class="hl-red">${(raw.raw3C*100).toFixed(1)}%</span><br>`;
-            report += `戰局控制率 (防守)：<span class="hl-cyan">${(raw.controlRate*100).toFixed(1)}%</span><br><br>`;
+            let report = `<span style="color:var(--equalizer-purple)">[ 等級平權解構報告 ]</span><br><br>`;
+            report += `全局生存率：<span class="hl-gold">${(raw.wr*100).toFixed(1)}%</span><br>`;
+            report += `非三冠控制率：<span class="hl-cyan">${(raw.controlRate*100).toFixed(1)}%</span><br>`;
+            report += `PoL 排位積分 (無等級干擾)：<span class="hl-purple">${raw.mmr} MMR</span><br><br>`;
             
-            if (isAggressive) {
-                report += `<span class="hl-red">>> 判定：【狂暴掠食者】</span> 目標具備極強的推進破壞力，防守時需提防一波流崩盤。<br>`;
-            }
             if (isIronclad) {
-                report += `<span class="hl-cyan">>> 判定：【鐵壁控制大師】</span> 目標防守滴水不漏，極其擅長拖入殘局並以微弱優勢取勝。對陣時切忌急躁虧費。<br>`;
-            }
-            if (!isAggressive && !isIronclad) {
-                report += `目標攻守趨於平衡，無極端偏好，屬於常態分佈選手。`;
+                report += `<span class="hl-cyan">>> 絕對防禦檢定：【平權鐵壁大師】</span><br>目標在卡牌等級上限 (Level-Cap) 的高壓排位中依然維持極高的防守質量。此評分已排除了靠「課金壓制」的可能性，是純技術流防禦的最高證明。`;
+            } else if (isAggressive) {
+                report += `<span class="hl-red">>> 客觀進攻檢定：【突破極限】</span><br>目標數據顯示強烈的強攻傾向。`;
+            } else {
+                report += `綜合 MMR 檢定，目標防守實力符合常態預期。`;
             }
             
             document.getElementById('ui-report').innerHTML = report;

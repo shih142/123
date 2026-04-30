@@ -3,20 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>神經矩陣 MAXIMA | V20.0 企業後端橋接協議</title>
+    <title>神經矩陣 MAXIMA | V21.0 堅壁協議</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --bg-deep: #030508;
-            --panel-bg: rgba(5, 10, 15, 0.95);
+            --bg-deep: #020608;
+            --panel-bg: rgba(5, 12, 18, 0.95);
             --neon-blue: #00e5ff;
-            --aegis-cyan: #00ffaa;
+            --aegis-cyan: #00ffcc; /* V21.0 強化防禦青色 */
             --aggressive-red: #ff1100;
             --equalizer-purple: #b300ff;
             --gold-leaf: #d4af37;
             --text-main: #e0e6ed;
-            --border-glow: rgba(0, 255, 170, 0.3); /* 轉為代表穩定連線的青色 */
+            --border-glow: rgba(0, 255, 204, 0.35);
             --grid-line: rgba(255, 255, 255, 0.03);
         }
 
@@ -35,33 +35,33 @@
         .layout-grid { display: grid; grid-template-columns: 350px 1fr 350px; gap: 15px; width: 100%; height: 100%; padding: 15px; }
         .panel { background: var(--panel-bg); border: 1px solid var(--border-glow); position: relative; display: flex; flex-direction: column; overflow: hidden; backdrop-filter: blur(5px); }
         
-        .panel-header { padding: 10px 15px; border-bottom: 1px solid var(--border-glow); font-family: 'Orbitron'; font-size: 11px; letter-spacing: 2px; display: flex; justify-content: space-between; background: linear-gradient(90deg, rgba(0,255,170,0.1), transparent); font-weight: bold; }
+        .panel-header { padding: 10px 15px; border-bottom: 1px solid var(--border-glow); font-family: 'Orbitron'; font-size: 11px; letter-spacing: 2px; display: flex; justify-content: space-between; background: linear-gradient(90deg, rgba(0,255,204,0.15), transparent); font-weight: bold; }
         
-        .ncr-section { padding: 30px 15px; text-align: center; border-bottom: 1px solid rgba(0,255,170,0.1); }
+        .ncr-section { padding: 30px 15px; text-align: center; border-bottom: 1px solid rgba(0,255,204,0.15); }
         .ncr-title { font-family: 'Orbitron'; font-size: 11px; color: var(--gold-leaf); margin-bottom: 10px; letter-spacing: 1px; }
-        .ncr-value { font-family: 'Orbitron'; font-size: 72px; font-weight: 900; line-height: 1; color: var(--aegis-cyan); text-shadow: 0 0 25px rgba(0,255,170,0.5); }
+        .ncr-value { font-family: 'Orbitron'; font-size: 72px; font-weight: 900; line-height: 1; color: var(--aegis-cyan); text-shadow: 0 0 25px rgba(0,255,204,0.6); }
 
         .stats-wall { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border-glow); flex: 1; }
         .stat-item { background: var(--bg-deep); padding: 20px 15px; display: flex; flex-direction: column; justify-content: center; }
-        .stat-label { font-size: 10px; color: #668877; margin-bottom: 5px; text-transform: uppercase; }
+        .stat-label { font-size: 10px; color: #668888; margin-bottom: 5px; text-transform: uppercase; }
         .stat-val { font-family: 'Orbitron'; font-size: 24px; color: var(--text-main); transition: 0.3s; }
         
         .stat-val.active-str { color: var(--aggressive-red); text-shadow: 0 0 12px rgba(255,17,0,0.6); font-weight: bold; }
-        .stat-val.active-def { color: var(--aegis-cyan); text-shadow: 0 0 12px rgba(0,255,170,0.6); font-weight: bold; }
+        .stat-val.active-def { color: var(--aegis-cyan); text-shadow: 0 0 15px rgba(0,255,204,0.8); font-weight: bold; }
 
         .main-display { display: flex; flex-direction: column; gap: 15px; }
-        .chart-container { background: rgba(0,0,0,0.4); flex: 1; min-height: 400px; padding: 20px; border: 1px solid rgba(0,255,170,0.1); }
-        .report-console { height: 210px; background: rgba(0,0,0,0.7); border: 1px solid rgba(0,255,170,0.2); padding: 15px; font-size: 13px; color: #99bbaa; overflow-y: auto; line-height: 1.7; }
+        .chart-container { background: rgba(0,0,0,0.4); flex: 1; min-height: 400px; padding: 20px; border: 1px solid rgba(0,255,204,0.1); }
+        .report-console { height: 210px; background: rgba(0,0,0,0.7); border: 1px solid rgba(0,255,204,0.2); padding: 15px; font-size: 13px; color: #99cccc; overflow-y: auto; line-height: 1.7; }
 
         .control-panel { padding: 20px; overflow-y: auto; }
         .input-box { width: 100%; background: #000; border: 1px solid var(--border-glow); padding: 12px; color: var(--aegis-cyan); font-family: 'Orbitron'; font-size: 13px; margin-bottom: 12px; text-align: center; outline: none; transition: 0.3s; }
-        .input-box:focus { border-color: var(--aegis-cyan); box-shadow: 0 0 15px rgba(0,255,170,0.3); }
-        .input-box::placeholder { color: #335544; }
+        .input-box:focus { border-color: var(--aegis-cyan); box-shadow: 0 0 15px rgba(0,255,204,0.3); }
         
         .btn-prime { width: 100%; padding: 15px; background: var(--aegis-cyan); color: #000; border: none; font-family: 'Orbitron'; font-weight: 900; letter-spacing: 1px; cursor: pointer; transition: 0.3s; clip-path: polygon(0 0, 95% 0, 100% 25%, 100% 100%, 5% 100%, 0 75%); }
         .btn-prime:hover { background: #fff; transform: scale(1.02); }
-        .btn-prime:disabled { background: #224433; color: #557766; cursor: not-allowed; transform: none; clip-path: none; border-radius: 4px; }
+        .btn-prime:disabled { background: #224444; color: #557777; cursor: not-allowed; transform: none; clip-path: none; border-radius: 4px; }
 
+        .math-box { font-size: 10px; color: #77aaaa; padding: 15px; border-top: 1px solid rgba(0,255,204,0.2); line-height: 1.8; background: rgba(0,0,0,0.5); font-family: 'Share Tech Mono', monospace; }
         .hl-red { color: var(--aggressive-red); font-weight: bold; }
         .hl-cyan { color: var(--aegis-cyan); font-weight: bold; }
         .hl-gold { color: var(--gold-leaf); font-weight: bold; }
@@ -72,7 +72,7 @@
 
     <div class="layout-grid">
         <div class="panel">
-            <div class="panel-header"><span>NEURAL_ID</span><span>V20.0_ENTERPRISE_LINK</span></div>
+            <div class="panel-header"><span>NEURAL_ID</span><span>V21.0_AEGIS_PROTOCOL</span></div>
             <div class="ncr-section">
                 <div class="ncr-title">MAXIMA VALUE INDEX (MVI)</div>
                 <div id="ui-ncr" class="ncr-value">00.0</div>
@@ -84,38 +84,40 @@
                 <div class="stat-item"><div class="stat-label">Micro (MIC)</div><div id="val-mic" class="stat-val">--</div></div>
                 <div class="stat-item"><div class="stat-label">Macro (MAC)</div><div id="val-mac" class="stat-val">--</div></div>
             </div>
-            <div id="ui-log" style="padding: 15px; font-size: 10px; color: #668877; flex: 1; overflow-y: auto; line-height: 1.5;">
-                > V20.0 企業級專屬路由已啟動。<br>> 等待目標指令...
+            <div id="ui-log" style="padding: 15px; font-size: 10px; color: #77aaaa; flex: 1; overflow-y: auto; line-height: 1.5;">
+                > V21.0 堅壁防禦矩陣已載入。<br>> 防禦演算法重心已轉移至 MMR 與極限拉扯能力。
             </div>
         </div>
 
         <div class="panel main-display">
-            <div class="panel-header"><span>HEURISTIC_VISUALIZATION</span><span>INTERNAL_API_SCAN</span></div>
+            <div class="panel-header"><span>HEURISTIC_VISUALIZATION</span><span>COMBAT_MATRIX_SCAN</span></div>
             <div class="chart-container">
                 <canvas id="mainRadar"></canvas>
             </div>
             <div id="ui-report" class="report-console">
-                系統待命。已切換至內部代理路由，準備進行安全連線。
+                系統待命。攻防兩端均已實裝最新權重，準備進行深度解析。
             </div>
         </div>
 
         <div class="panel">
-            <div class="panel-header"><span>COMMAND_CENTER</span><span>BACKEND_ROUTER</span></div>
+            <div class="panel-header"><span>COMMAND_CENTER</span><span>ROUTING_NODE</span></div>
             <div class="control-panel">
                 <label style="font-size: 9px; color: var(--gold-leaf); margin-bottom: 5px; display: block;">PLAYER_TAG</label>
                 <input type="text" id="tagInput" placeholder="例如: CV9QU9CYJ" class="input-box" maxlength="15">
                 
-                <label style="font-size: 9px; color: #668877; margin-bottom: 5px; display: block;">INTERNAL_PROXY_ENDPOINT</label>
+                <label style="font-size: 9px; color: #668888; margin-bottom: 5px; display: block;">ROUTER_ENDPOINT</label>
                 <input type="text" id="proxyInput" value="/api/clash-proxy" class="input-box">
                 
-                <button id="btn-run" class="btn-prime" onclick="fetchLiveData()">請求後端解析</button>
+                <button id="btn-run" class="btn-prime" onclick="fetchLiveData()">啟動深度解析</button>
             </div>
             
-            <div style="font-size: 10px; color: #557766; padding: 15px; border-top: 1px solid rgba(0,255,170,0.1); line-height: 1.8; background: rgba(0,0,0,0.5);">
-                > 已配置本機/自建代理伺服器。<br>
-                > 前端將發送 GET 請求至：<br>
-                > <span style="color:var(--aegis-cyan)">/api/clash-proxy?tag=XYZ</span><br>
-                > 請確保您的後端負責注入 Bearer Token 並轉發至 Supercell 官方伺服器。
+            <div class="math-box">
+                [ Aegis Defense Model V21 ]<br><br>
+                Z<sub>ctrl</sub> = (Control_Rate - 0.80) / 0.08<br>
+                Z<sub>mmr</sub> = (PoL_Rating - 1600) / 300<br><br>
+                Z<sub>def_comp</sub> = (Z<sub>ctrl</sub>*0.4) + (Z<sub>surv</sub>*0.2) + (Z<sub>mmr</sub>*0.4)<br>
+                DEF Base = 100 / (1 + e<sup>-Z<sub>def_comp</sub></sup>)<br><br>
+                Φ (Ironclad) = 1.20 if (WR>54% & Ctrl>80% & MMR>1850)
             </div>
         </div>
     </div>
@@ -129,11 +131,11 @@
             radarChart = new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: ['破甲進攻 (STR)', '平權防禦 (DEF)', '微操精度 (MIC)', '戰略營運 (MAC)', '抗壓韌性 (PSY)', '數據穩定性 (CST)'],
+                    labels: ['破甲進攻 (STR)', '堅壁防禦 (DEF)', '微操精度 (MIC)', '戰略營運 (MAC)', '抗壓韌性 (PSY)', '數據穩定性 (CST)'],
                     datasets: [{
                         data: [0,0,0,0,0,0],
-                        backgroundColor: 'rgba(0, 255, 170, 0.1)',
-                        borderColor: '#00ffaa',
+                        backgroundColor: 'rgba(0, 255, 204, 0.1)',
+                        borderColor: '#00ffcc',
                         borderWidth: 2,
                         pointRadius: 3,
                         pointBackgroundColor: '#fff'
@@ -143,10 +145,10 @@
                     responsive: true, maintainAspectRatio: false,
                     scales: { 
                         r: { 
-                            grid: { color: 'rgba(0,255,170,0.1)' }, 
-                            angleLines: { color: 'rgba(0,255,170,0.2)' },
+                            grid: { color: 'rgba(0,255,204,0.1)' }, 
+                            angleLines: { color: 'rgba(0,255,204,0.2)' },
                             ticks: { display: false, max: 100, min: 0 },
-                            pointLabels: { color: '#99bbaa', font: { size: 11, family: 'Orbitron', weight: 'bold' } }
+                            pointLabels: { color: '#99cccc', font: { size: 11, family: 'Orbitron', weight: 'bold' } }
                         } 
                     },
                     plugins: { legend: { display: false } }
@@ -164,33 +166,23 @@
             const log = document.getElementById('ui-log');
             const btn = document.getElementById('btn-run');
             
-            if(!tag) return alert("系統警告：未偵測到玩家標籤。");
-            if(!proxy) return alert("系統警告：後端路由端點不得為空。");
+            if(!tag) return alert("缺少玩家標籤。");
             
             isProcessing = true;
             btn.disabled = true;
-            btn.innerText = "連線專屬後端...";
-            log.innerHTML += `<br>> 發起安全路由請求: #${tag}...`;
+            btn.innerText = "連線後端路由...";
+            log.innerHTML += `<br>> 鎖定目標: #${tag}，執行 V21.0 掃描...`;
             
             try {
-                // 建構後端路由專屬網址。前端只負責傳遞乾淨的 tag。
-                // 預期後端會攔截此請求，補上 API Token 並向官方發送：https://api.clashroyale.com/v1/players/%23${tag}
                 const fetchUrl = `${proxy}?tag=${tag}`;
-
                 const response = await fetch(fetchUrl, {
                     method: 'GET',
-                    headers: {
-                        'Accept': 'application/json'
-                        // Token 交由後端注入，前端不再暴露
-                    }
+                    headers: { 'Accept': 'application/json' }
                 });
 
-                if (!response.ok) {
-                    throw new Error(`後端回應異常 HTTP ${response.status}`);
-                }
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
                 const rawJson = await response.json();
-                log.innerHTML += `<br><span style="color:var(--aegis-cyan)">> 內部資料回傳成功。解析目標 [ ${rawJson.name} ]</span>`;
                 
                 let pol = 1600; 
                 if (rawJson.currentPathOfLegendSeasonResult && rawJson.currentPathOfLegendSeasonResult.rating) {
@@ -208,27 +200,26 @@
                     polRating: pol
                 };
 
-                processArmorPiercingLogic(extractedData);
+                processCombatMatrix(extractedData);
 
             } catch (e) {
-                log.innerHTML += `<br><span class="hl-red">> 路由異常: ${e.message}</span>`;
+                log.innerHTML += `<br><span class="hl-red">> 錯誤: ${e.message}。請確認後端已啟動。</span>`;
             } finally {
                 isProcessing = false;
                 btn.disabled = false;
-                btn.innerText = "請求後端解析";
+                btn.innerText = "啟動深度解析";
                 log.scrollTop = log.scrollHeight;
             }
         }
 
-        // 沿用核心運算邏輯
-        function processArmorPiercingLogic(data) {
+        function processCombatMatrix(data) {
             const wins = data.wins;
             const losses = data.losses;
             const total = wins + losses;
             const wr = total > 0 ? (wins / total) : 0;
             const tcw = data.threeCrownWins;
             const raw3C = wins > 0 ? (tcw / wins) : 0;
-            const controlRate = wins > 0 ? ((wins - tcw) / wins) : 0;
+            const controlRate = wins > 0 ? ((wins - tcw) / wins) : 0; // 1冠/2冠勝率
             const pb = data.bestTrophies;
             const mmr = data.polRating; 
             
@@ -238,7 +229,7 @@
             const zMmr = (mmr - 1600) / 300;
             const zSurv = (wr - 0.50) / 0.05;   
 
-            // STR
+            // --- STR 破甲進攻運算 (保持 V18.0 邏輯) ---
             const z3C = (raw3C - 0.22) / 0.08;
             const zOffComposite = (z3C * 0.50) + (zMmr * 0.50);
             let strBase = 1 / (1 + Math.exp(-zOffComposite)) * 100;
@@ -248,24 +239,27 @@
             if (wr > 0.54 && raw3C > 0.25 && mmr >= 1800) {
                 strSynergy = 1.15;
                 isAggressive = true;
-                log.innerHTML += `<br><span class="hl-red">> 偵測到破甲特徵。</span>`;
+                log.innerHTML += `<br><span class="hl-red">> [ARMOR_PIERCING] 偵測到破甲特徵。</span>`;
             }
             let strFinal = Math.min(100, ((strBase * 0.65) + (difficultyScale * 35)) * strSynergy);
 
-            // DEF
-            const zCtrl = (controlRate - 0.78) / 0.08;
-            const zDefComposite = (zCtrl * 0.35) + (zSurv * 0.30) + (zMmr * 0.35);
+            // --- DEF 堅壁防守運算 (V21.0 全新升級) ---
+            // 提升了防守控制率的標準 (0.78 -> 0.80)，並大幅拉高 MMR 與控制率的權重比 (0.4 / 0.2 / 0.4)
+            const zCtrl = (controlRate - 0.80) / 0.08; 
+            const zDefComposite = (zCtrl * 0.40) + (zSurv * 0.20) + (zMmr * 0.40);
             let defBase = 1 / (1 + Math.exp(-zDefComposite)) * 100;
             let defSynergy = 1.0;
             let isIronclad = false;
             
-            if (wr > 0.53 && controlRate > 0.75 && mmr >= 1800) {
-                defSynergy = 1.15;
+            // 更嚴格的高端局極限拉扯判定
+            if (wr > 0.54 && controlRate >= 0.80 && mmr >= 1850) {
+                defSynergy = 1.20; // 1.2倍終極防禦增益
                 isIronclad = true;
-                log.innerHTML += `<br><span class="hl-cyan">> 偵測到鐵壁特徵。</span>`;
+                log.innerHTML += `<br><span class="hl-cyan">> [AEGIS_ACTIVATED] 偵測到極限防守拉扯能力。</span>`;
             }
             let defFinal = Math.min(100, ((defBase * 0.65) + (difficultyScale * 35)) * defSynergy);
 
+            // 輔助維度
             let mic = Math.min(100, (mmr / 25) + (pb / 150)); 
             let mac = Math.min(100, (wr * 120) * (mmr / 2000));
             let psy = Math.min(100, (mmr > 2000 ? 98 : mmr/22));
@@ -286,8 +280,8 @@
             document.getElementById('val-str').className = 'stat-val' + (isAggressive ? ' active-str' : '');
             document.getElementById('val-def').className = 'stat-val' + (isIronclad ? ' active-def' : '');
 
-            let radarColor = '#00ffaa';
-            let radarBg = 'rgba(0, 255, 170, 0.15)';
+            let radarColor = '#00ffcc';
+            let radarBg = 'rgba(0, 255, 204, 0.15)';
             if (isAggressive && !isIronclad) { radarColor = '#ff1100'; radarBg = 'rgba(255, 17, 0, 0.15)'; }
             else if (isAggressive && isIronclad) { radarColor = '#d4af37'; radarBg = 'rgba(212, 175, 55, 0.15)'; }
             
@@ -297,20 +291,19 @@
             radarChart.data.datasets[0].data = scores;
             radarChart.update();
 
-            let report = `<span style="color:var(--aegis-cyan)">[ 內部路由解析報告 ]</span><br><br>`;
+            let report = `<span style="color:var(--aegis-cyan)">[ V21.0 攻防矩陣解析報告 ]</span><br><br>`;
             report += `全局生存率：<span class="hl-gold">${(raw.wr*100).toFixed(1)}%</span><br>`;
-            report += `三冠致命性：<span class="hl-red">${(raw.raw3C*100).toFixed(1)}%</span><br>`;
-            report += `非三冠控制率：<span class="hl-cyan">${(raw.controlRate*100).toFixed(1)}%</span><br>`;
+            report += `非三冠控制率：<span class="hl-cyan">${(raw.controlRate*100).toFixed(1)}%</span> (極限拉扯指標)<br>`;
             report += `PoL 排位積分：<span class="hl-purple">${raw.mmr} MMR</span><br><br>`;
             
             if (isAggressive && isIronclad) {
-                report += `<span class="hl-gold">>> 終極檢定：【絕對領域】</span><br>目標展現出極致的全能技術。`;
+                report += `<span class="hl-gold">>> 終極檢定：【絕對領域 (Singularity)】</span><br>目標同時具備撕裂防線的狂暴與滴水不漏的營運，這是最可怕的頂尖玩家型態。`;
             } else if (isAggressive) {
-                report += `<span class="hl-red">>> 破甲檢定：【狂戰士】</span><br>數據確認目標具備強大的突破防線能力。`;
+                report += `<span class="hl-red">>> 進攻檢定：【狂戰士 (Berserker)】</span><br>數據顯示強大的三冠破壞力。`;
             } else if (isIronclad) {
-                report += `<span class="hl-cyan">>> 防禦檢定：【平權鐵壁大師】</span><br>數據確認目標擁有卓越的防守微操。`;
+                report += `<span class="hl-cyan">>> 防守檢定：【堅壁大師 (Aegis Master)】</span><br>高達 80%+ 的控制率與高 MMR，證明這是一位精通算費與拉扯的控制型牌組大師。`;
             } else {
-                report += `目標數值落入常態區間，屬均衡型發展。`;
+                report += `目標攻防數據處於均衡發展階段。`;
             }
             
             document.getElementById('ui-report').innerHTML = report;

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>神經矩陣 OMEGA | V6.0 諸神黃昏</title>
+    <title>神經矩陣 APEX | V7.0 絕對真理</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -19,6 +19,7 @@
             --shield-blue: #4a90e2;
             --text-main: #e2c7c7;
             --grid: rgba(255, 0, 60, 0.03);
+            --apex-gold: #ffb700;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -50,12 +51,12 @@
         .panel { background: var(--panel-bg); border: 1px solid rgba(255, 0, 60, 0.2); backdrop-filter: blur(10px); display: flex; flex-direction: column; overflow: hidden; position: relative; box-shadow: inset 0 0 20px rgba(0,0,0,0.8);}
         .panel::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, var(--danger-glow), transparent); }
         .panel-header { padding: 12px 15px; border-bottom: 1px solid rgba(255, 0, 60, 0.15); font-family: 'Orbitron', 'Microsoft JhengHei'; font-size: 12px; color: #fff; letter-spacing: 2px; display: flex; justify-content: space-between; background: rgba(0,0,0,0.5); font-weight: bold;}
-        .panel-header span:last-child { color: var(--danger-glow); text-shadow: 0 0 5px var(--danger-glow); }
+        .panel-header span:last-child { color: var(--apex-gold); text-shadow: 0 0 5px var(--apex-gold); }
 
         /* 左側欄位 */
         .left-col { display: flex; flex-direction: column; gap: 20px; }
         .profile-card { padding: 20px; text-align: center; }
-        .avatar-glitch { width: 100px; height: 100px; border: 2px solid var(--danger-glow); margin: 0 auto 15px; display: flex; justify-content: center; align-items: center; font-size: 40px; background: rgba(255,0,60,0.05); box-shadow: 0 0 20px rgba(255,0,60,0.2); position: relative; }
+        .avatar-glitch { width: 100px; height: 100px; border: 2px solid var(--apex-gold); margin: 0 auto 15px; display: flex; justify-content: center; align-items: center; font-size: 40px; background: rgba(255,183,0,0.05); box-shadow: 0 0 20px rgba(255,183,0,0.2); position: relative; }
         .p-name { font-family: 'Orbitron'; font-size: 24px; color: #fff; font-weight: 900; text-transform: uppercase; margin-bottom: 5px; }
         .p-tag { color: var(--neon-magenta); font-size: 12px; }
 
@@ -90,18 +91,19 @@
         .right-col { display: flex; flex-direction: column; gap: 20px; }
         .control-form { padding: 20px; }
         .input-group label { display: block; font-size: 11px; color: #777; margin-bottom: 5px; font-weight: bold;}
-        .input-group input { width: 100%; background: rgba(0,0,0,0.8); border: 1px solid #333; color: var(--danger-glow); padding: 12px; font-family: 'Share Tech Mono'; margin-bottom: 20px; outline: none; transition: 0.3s; font-size: 14px;}
-        .input-group input:focus { border-color: var(--danger-glow); box-shadow: inset 0 0 15px rgba(255,0,60,0.3); }
+        .input-group input { width: 100%; background: rgba(0,0,0,0.8); border: 1px solid #333; color: var(--apex-gold); padding: 12px; font-family: 'Share Tech Mono'; margin-bottom: 20px; outline: none; transition: 0.3s; font-size: 14px;}
+        .input-group input:focus { border-color: var(--apex-gold); box-shadow: inset 0 0 15px rgba(255,183,0,0.3); }
         
-        .btn-exe { width: 100%; background: rgba(255,0,60,0.1); border: 1px solid var(--danger-glow); color: var(--danger-glow); padding: 15px; font-family: 'Microsoft JhengHei'; font-weight: 900; font-size: 15px; letter-spacing: 2px; cursor: pointer; transition: all 0.3s; text-transform: uppercase; text-shadow: 0 0 5px var(--danger-glow);}
-        .btn-exe:hover { background: var(--danger-glow); color: #000; box-shadow: 0 0 25px rgba(255,0,60,0.8); }
+        .btn-exe { width: 100%; background: rgba(255,183,0,0.1); border: 1px solid var(--apex-gold); color: var(--apex-gold); padding: 15px; font-family: 'Microsoft JhengHei'; font-weight: 900; font-size: 15px; letter-spacing: 2px; cursor: pointer; transition: all 0.3s; text-transform: uppercase; text-shadow: 0 0 5px var(--apex-gold);}
+        .btn-exe:hover { background: var(--apex-gold); color: #000; box-shadow: 0 0 25px rgba(255,183,0,0.8); }
         
         .terminal-panel { flex: 1; display: flex; flex-direction: column; }
-        .terminal-screen { flex: 1; padding: 15px; overflow-y: auto; font-size: 12px; line-height: 1.6; color: var(--danger-glow); }
+        .terminal-screen { flex: 1; padding: 15px; overflow-y: auto; font-size: 12px; line-height: 1.6; color: var(--apex-gold); }
         .log-line { margin-bottom: 4px; opacity: 0; animation: fadeIn 0.1s forwards; }
         .sys-info { color: var(--neon-cyan); }
         .sys-def { color: var(--shield-blue); }
         .sys-off { color: var(--lethal-orange); font-weight: bold;}
+        .sys-crit { color: var(--danger-glow); font-weight: bold; text-shadow: 0 0 5px var(--danger-glow); }
 
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
         @keyframes fadeIn { to { opacity: 1; } }
@@ -109,7 +111,7 @@
         .glitch-text { position: relative; }
         .glitch-text::before, .glitch-text::after { content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; }
         .glitch-text::before { left: 2px; text-shadow: -1px 0 #ff003c; clip: rect(24px, 550px, 90px, 0); animation: glitch-anim 2s infinite linear alternate-reverse; }
-        .glitch-text::after { left: -2px; text-shadow: -1px 0 #00f3ff; clip: rect(85px, 550px, 140px, 0); animation: glitch-anim 2.5s infinite linear alternate-reverse; }
+        .glitch-text::after { left: -2px; text-shadow: -1px 0 #ffb700; clip: rect(85px, 550px, 140px, 0); animation: glitch-anim 2.5s infinite linear alternate-reverse; }
         @keyframes glitch-anim {
             0% { clip: rect(20px, 9999px, 21px, 0); }
             20% { clip: rect(45px, 9999px, 56px, 0); }
@@ -127,25 +129,25 @@
             <div class="panel">
                 <div class="panel-header"><span>目標識別碼</span><span>[ 即時連線 ]</span></div>
                 <div class="profile-card">
-                    <div class="avatar-glitch">⚔️</div>
+                    <div class="avatar-glitch">🔱</div>
                     <div class="p-name" id="ui-name">等待輸入...</div>
                     <div class="p-tag" id="ui-tag">無目標</div>
                     
                     <div class="ncr-display">
-                        <div class="ncr-title">N.C.R (諸神黃昏核心)</div>
+                        <div class="ncr-title">N.C.R (神階綜合指數)</div>
                         <div class="ncr-value glitch-text" data-text="00" id="ui-ncr">00</div>
-                        <div style="font-family: 'Microsoft JhengHei'; font-weight: bold; color: var(--danger-glow); margin-top: 5px;" id="ui-class">未分級</div>
+                        <div style="font-family: 'Microsoft JhengHei'; font-weight: bold; color: var(--apex-gold); margin-top: 5px; font-size: 16px; text-shadow: 0 0 10px var(--apex-gold);" id="ui-class">未分級</div>
                     </div>
 
                     <div class="threat-level">
-                        <div style="font-size: 10px; color: #888;">AI 威脅評估</div>
+                        <div style="font-size: 10px; color: #888;">AI 威脅評估 (指數標度)</div>
                         <div class="threat-text" id="ui-threat">未知</div>
                     </div>
                 </div>
             </div>
 
             <div class="panel" style="flex:1;">
-                <div class="panel-header"><span>AI 戰鬥輪廓分析</span><span>[ 戰術標籤 ]</span></div>
+                <div class="panel-header"><span>AI 戰鬥輪廓分析</span><span>[ 神之標籤 ]</span></div>
                 <div style="padding: 15px; display: flex; flex-wrap: wrap; gap: 8px;" id="ui-tags"></div>
             </div>
         </div>
@@ -153,7 +155,7 @@
         <div class="mid-col">
             <div class="charts-row">
                 <div class="panel chart-box">
-                    <div class="panel-header" style="position:absolute; top:0; left:0; width:100%; border:none; background:transparent;">五維雷達圖</div>
+                    <div class="panel-header" style="position:absolute; top:0; left:0; width:100%; border:none; background:transparent;">極限五維雷達</div>
                     <canvas id="radarChart"></canvas>
                 </div>
                 <div class="panel chart-box">
@@ -163,7 +165,7 @@
             </div>
 
             <div class="panel" style="flex: 1;">
-                <div class="panel-header"><span>10核心湮滅矩陣</span><span>[ V6.0 雙核引擎 ]</span></div>
+                <div class="panel-header"><span>10核心湮滅矩陣</span><span>[ V7.0 絕對真理 ]</span></div>
                 <div style="padding: 15px; display: flex; flex-direction: column; height: 100%;">
                     <div class="metrics-grid" id="metrics-container">
                         <div class="metric-node neutral-node" id="node-1">
@@ -225,7 +227,7 @@
 
         <div class="right-col">
             <div class="panel control-form">
-                <div class="panel-header" style="margin-bottom: 20px; padding:0; border:none; background:transparent;">系統覆寫</div>
+                <div class="panel-header" style="margin-bottom: 20px; padding:0; border:none; background:transparent;">極限權重覆寫</div>
                 <div class="input-group">
                     <label>API 代理節點 (PROXY)</label>
                     <input type="text" id="proxyUrl" value="/api/clash-proxy">
@@ -234,13 +236,14 @@
                     <label>目標玩家標籤 (TAG)</label>
                     <input type="text" id="playerTag" value="#CV9QU9CYJ">
                 </div>
-                <button class="btn-exe" id="btn-run" onclick="initiateRagnarokSequence()">執行諸神黃昏協議</button>
+                <button class="btn-exe" id="btn-run" onclick="initiateRagnarokSequence()">啟動絕對真理引擎</button>
             </div>
 
             <div class="panel terminal-panel">
-                <div class="panel-header"><span>戰鬥日誌</span><span>[ 詳盡 ]</span></div>
+                <div class="panel-header"><span>真理運算日誌</span><span>[ 嚴格審查 ]</span></div>
                 <div class="terminal-screen" id="termLog">
-                    <div class="log-line">> 諸神黃昏 V6.0 雙核引擎已就緒。</div>
+                    <div class="log-line">> V7.0 絕對真理引擎 (APEX WEIGHTS) 已啟動。</div>
+                    <div class="log-line">> 警告：此權重標準極度嚴苛，平庸數據將被無情粉碎。</div>
                     <div class="log-line">> 等待操作員輸入指令...</div>
                 </div>
             </div>
@@ -261,15 +264,15 @@
             radarChart = new Chart(ctxR, {
                 type: 'radar',
                 data: {
-                    labels: ['武力(STR)', '防禦(DEF)', '營運(MAC)', '潛力(POT)', '穩定(CST)'],
+                    labels: ['極致武力(STR)', '絕對防禦(DEF)', '大局營運(MAC)', '極限潛力(POT)', '絕對穩定(CST)'],
                     datasets: [{
-                        data: [0,0,0,0,0], backgroundColor: 'rgba(255, 0, 60, 0.15)',
-                        borderColor: '#ff003c', borderWidth: 2, pointBackgroundColor: '#fff', pointRadius: 2
+                        data: [0,0,0,0,0], backgroundColor: 'rgba(255, 183, 0, 0.15)',
+                        borderColor: '#ffb700', borderWidth: 2, pointBackgroundColor: '#fff', pointRadius: 2
                     }]
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
-                    scales: { r: { angleLines: { color: 'rgba(255,0,60,0.2)' }, grid: { color: 'rgba(255,0,60,0.2)' }, pointLabels: { color: '#ccc', font: { size: 10, family: 'Microsoft JhengHei', weight: 'bold' } }, ticks: { display: false, min: 0, max: 100 } } }
+                    scales: { r: { angleLines: { color: 'rgba(255,255,255,0.1)' }, grid: { color: 'rgba(255,255,255,0.1)' }, pointLabels: { color: '#ccc', font: { size: 10, family: 'Microsoft JhengHei', weight: 'bold' } }, ticks: { display: false, min: 0, max: 100 } } }
                 }
             });
 
@@ -279,7 +282,7 @@
                     labels: ['進攻', '防守', '營運'],
                     datasets: [{
                         data: [33, 33, 34],
-                        backgroundColor: ['#ff003c', '#4a90e2', '#ffde00'],
+                        backgroundColor: ['#ff003c', '#4a90e2', '#ffb700'],
                         borderWidth: 0, hoverOffset: 4
                     }]
                 },
@@ -303,7 +306,7 @@
                     line.innerHTML += msg.charAt(i);
                     i++;
                     if (i >= msg.length) { clearInterval(interval); resolve(); }
-                }, 10);
+                }, 8);
             });
         }
 
@@ -314,7 +317,7 @@
             document.getElementById('ui-ncr').innerText = "00";
             document.getElementById('ui-ncr').setAttribute('data-text', "00");
             document.getElementById('ui-ncr').style.color = "#fff";
-            document.getElementById('ui-threat').innerText = "掃描中...";
+            document.getElementById('ui-threat').innerText = "審判中...";
             document.getElementById('ui-threat').style.color = "#888";
             document.getElementById('ui-tags').innerHTML = '';
             radarChart.data.datasets[0].data = [0,0,0,0,0]; radarChart.update();
@@ -325,7 +328,7 @@
             if(isProcessing) return;
             isProcessing = true;
             const btn = document.getElementById('btn-run');
-            btn.innerText = "數據武裝化中...";
+            btn.innerText = "神階數據審判中...";
             btn.style.borderColor = "#444"; btn.style.color = "#444"; btn.style.background = "transparent";
             
             const tag = document.getElementById('playerTag').value.trim();
@@ -334,26 +337,26 @@
             resetUI();
             document.getElementById('termLog').innerHTML = '';
             
-            await tLog(`> 正在對 [${tag}] 啟動諸神黃昏協議`, 'sys-info');
+            await tLog(`> [APEX] 鎖定目標 [${tag}]，啟動絕對真理審判...`, 'sys-crit');
             await sleep(200);
 
             let playerData;
             try {
-                await tLog(`> 正在駭入主機資料庫...`);
+                await tLog(`> 提取伺服器底層數據...`);
                 const res = await fetch(`${proxy}?tag=${tag.replace('#', '%23')}`);
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 playerData = await res.json();
-                await tLog(`> 數據獲取成功。點燃運算引擎...`, 'sys-off');
+                await tLog(`> 數據已注入。載入指數型權重算法...`, 'sys-info');
             } catch (err) {
-                await tLog(`> 偵測到代理防火牆。執行繞道程序 (載入模擬極端數據)...`);
-                // 模擬一個極度暴力的進攻型玩家 (勝率高，三冠極多)
-                playerData = { name: "BLOOD_GOD", wins: 8500, losses: 4100, bestTrophies: 8800, threeCrownWins: 4250 };
+                await tLog(`> API無法連線。切換至 [天梯第一名模擬數據] 進行極限測試...`, 'sys-info');
+                // 模擬一個天花板級別的玩家，否則在V7.0嚴苛算法下分數會很難看
+                playerData = { name: "MO_LIGHT", wins: 15200, losses: 6100, bestTrophies: 9000, threeCrownWins: 5500 };
             }
 
             await runMathEngine(playerData);
             
-            btn.innerText = "執行諸神黃昏協議";
-            btn.style.borderColor = "var(--danger-glow)"; btn.style.color = "var(--danger-glow)"; btn.style.background = "rgba(255,0,60,0.1)";
+            btn.innerText = "啟動絕對真理引擎";
+            btn.style.borderColor = "var(--apex-gold)"; btn.style.color = "var(--apex-gold)"; btn.style.background = "rgba(255,183,0,0.1)";
             isProcessing = false;
         }
 
@@ -373,17 +376,21 @@
             const wlRatio = wins / (losses || 1);
             const pme = pb / totalMatches;
 
-            // 2. V5.0 防禦數據 (Z.B.R & T.R.I)
-            const non3CrownWins = wins - threeCrowns;
-            const zbrDisplay = Math.min(100, (non3CrownWins / totalMatches) * 100 * 1.15);
-            const triScore = Math.min(100, (wlRatio * 35) + (non3CrownWins / (wins||1) * 40));
+            // ==========================================
+            // 🔥 V7.0 最強權重核心算法 (APEX WEIGHTS) 🔥
+            // ==========================================
 
-            // 3. V6.0 終極進攻數據 (O.P.I & L.E.X)
-            // O.P.I (絕對破防指數)：整個生涯中，把對手打到三冠的純粹機率
+            // 2. V7.0 極致防禦模塊 (Z.B.R & T.R.I)
+            const non3CrownWins = wins - threeCrowns;
+            // ZBR: 對零封的要求更嚴苛，放大1.25倍
+            const zbrDisplay = Math.min(100, (non3CrownWins / totalMatches) * 100 * 1.25);
+            // TRI: 勝率閾值引入，勝率越高，防禦指數越有意義
+            const triScore = Math.min(100, (wlRatio * 20) + ((non3CrownWins / (wins||1)) * 60) + (winRate * 30));
+
+            // 3. V7.0 終極進攻數據 (O.P.I & L.E.X)
             const opiRaw = (threeCrowns / totalMatches) * 100;
-            
-            // L.E.X (斬殺執行力)：複合計算刺客本能 (三冠率加權 + 勝率保底 + 戰損比擴張)
-            const lexScore = Math.min(100, (threeCrownRate * 120) + (winRate * 40) + (wlRatio * 15));
+            // LEX: 對高勝率給予爆發性加成，低於50%勝率不給加分
+            const lexScore = Math.min(100, (threeCrownRate * 150) + (winRate > 0.5 ? (winRate-0.5)*200 : 0) + (wlRatio * 10));
 
             const nodesData = [
                 { id: 'val-wl', val: wlRatio.toFixed(2) + 'x' },
@@ -398,26 +405,29 @@
                 { id: 'val-lex', val: Math.round(lexScore) }
             ];
 
-            await tLog(`> 正在填充 10 核心矩陣...`);
+            await tLog(`> 套用指數型懲罰與獎勵機制...`);
             for(let i=0; i<10; i++) {
                 document.getElementById(nodesData[i].id).innerText = nodesData[i].val;
                 document.getElementById(`node-${i+1}`).classList.add('visible');
-                await sleep(50);
+                await sleep(40);
             }
 
-            await tLog(`> 計算神盾防禦協議...`, 'sys-def');
-            await tLog(`> 計算致命斬殺指數...`, 'sys-off');
+            await tLog(`> 運算極限武力與絕對防禦...', 'sys-crit`);
             
-            // 五維計算 (進攻與防禦的雙核撕裂)
-            let str = Math.min(100, (lexScore * 0.5) + (opiRaw * 2.0) + (winRate*10)); // 火力被 LEX 和 OPI 重新定義
-            let def = Math.min(100, (triScore * 0.6) + (zbrDisplay * 0.8)); 
-            let mac = Math.min(100, (pb / 9000 * 60) + (pme * 30));
-            let pot = Math.min(100, (wlRatio * 40) + (winRate * 30));
-            let cst = Math.min(100, (totalMatches > 8000 ? 50 : totalMatches/160) + (winRate > 0.5 ? 50 : winRate*100));
+            // 4. V7.0 五維極限計算 (拉大高手與凡人的差距)
+            // 武力(STR): 極度依賴LEX與OPI
+            let str = Math.min(100, (lexScore * 0.6) + (opiRaw * 2.5) + (winRate*10)); 
+            // 防禦(DEF): ZBR與TRI結合，高勝率給予保底加成
+            let def = Math.min(100, (triScore * 0.5) + (zbrDisplay * 0.7) + (winRate > 0.55 ? 15 : 0)); 
+            // 營運(MAC): 採用【指數曲線】，9000盃才配拿滿分，6000盃只會拿到極低分
+            let mac = Math.min(100, Math.pow(pb / 9000, 2) * 70 + (pme * 40));
+            // 潛力(POT): 採用【勝率平方】加權，勝率差距被無限放大
+            let pot = Math.min(100, (wlRatio * 25) + Math.pow(winRate, 2) * 50);
+            // 穩定(CST): 場次破萬才有高分，且強烈綁定勝率
+            let cst = Math.min(100, (totalMatches > 10000 ? 40 : totalMatches/250) + (winRate > 0.55 ? 60 : winRate*100));
 
-            // 動態雷達圖顏色 (偏重防守就藍，偏重進攻就紅)
-            const radarColor = str > def ? '#ff003c' : (def > str ? '#4a90e2' : '#ffde00');
-            const radarBg = str > def ? 'rgba(255, 0, 60, 0.15)' : (def > str ? 'rgba(74, 144, 226, 0.15)' : 'rgba(255, 222, 0, 0.15)');
+            const radarColor = str > def + 15 ? '#ff003c' : (def > str + 15 ? '#4a90e2' : '#ffb700');
+            const radarBg = str > def + 15 ? 'rgba(255, 0, 60, 0.15)' : (def > str + 15 ? 'rgba(74, 144, 226, 0.15)' : 'rgba(255, 183, 0, 0.15)');
             
             radarChart.data.datasets[0].borderColor = radarColor;
             radarChart.data.datasets[0].backgroundColor = radarBg;
@@ -425,53 +435,54 @@
             radarChart.update();
             await sleep(200);
 
-            // 戰術傾向
             let sum = str + def + mac;
             doughnutChart.data.datasets[0].data = [str/sum*100, def/sum*100, mac/sum*100];
             doughnutChart.update();
             await sleep(200);
 
-            await tLog(`> 編譯最終諸神黃昏評級...`);
+            await tLog(`> 產生 APEX 神階綜合指數...`, 'sys-info');
             
-            const ncr = Math.round((str*0.3) + (def*0.2) + (mac*0.2) + (pot*0.15) + (cst*0.15)); // 在 Ragnarok 引擎中，火力權重最高
+            // 5. V7.0 NCR 神階權重計算
+            // 大幅提高實力佔比(STR 35%, MAC 25%, DEF 25%)，削弱純場次影響(CST 5%)
+            const ncr = Math.round((str*0.35) + (def*0.25) + (mac*0.25) + (pot*0.10) + (cst*0.05));
             const ncrEl = document.getElementById('ui-ncr');
             const classEl = document.getElementById('ui-class');
             
             ncrEl.innerText = ncr;
             ncrEl.setAttribute('data-text', ncr);
 
-            let rankClass = "級別 D", color = "#666", threat = "低度危險";
-            if(ncr >= 90) { rankClass = "級別 S"; color = str > def ? "var(--danger-glow)" : "var(--shield-blue)"; threat = str > def ? "末日級 (絕對湮滅)" : "神盾級 (堅不可摧)"; }
-            else if(ncr >= 75) { rankClass = "級別 A"; color = "var(--lethal-orange)"; threat = "阿爾法級 (極度危險)"; }
-            else if(ncr >= 60) { rankClass = "級別 B"; color = "var(--neon-cyan)"; threat = "貝塔級 (威脅升高)"; }
-            else if(ncr >= 45) { rankClass = "級別 C"; color = "var(--success-green)"; threat = "伽馬級 (中度威脅)"; }
+            // V7.0 極端閾值評級
+            let rankClass = "凡人 (MORTAL)", color = "#666", threat = "無威脅";
+            if(ncr >= 92) { rankClass = "神階 (APEX PREDATOR)"; color = "var(--apex-gold)"; threat = "神性領域 (不可戰勝)"; }
+            else if(ncr >= 82) { rankClass = "傳奇 (LEGENDARY)"; color = "var(--danger-glow)"; threat = "極度危險 (毀滅打擊)"; }
+            else if(ncr >= 65) { rankClass = "大師 (MASTER)"; color = "var(--neon-cyan)"; threat = "高度威脅 (精英操作)"; }
+            else if(ncr >= 50) { rankClass = "專家 (EXPERT)"; color = "var(--success-green)"; threat = "中度威脅 (具備基礎)"; }
 
             ncrEl.style.color = color;
-            ncrEl.style.textShadow = `0 0 30px ${color}`;
+            ncrEl.style.textShadow = `0 0 40px ${color}`;
             classEl.innerText = rankClass;
             classEl.style.color = color;
 
             const threatEl = document.getElementById('ui-threat');
             threatEl.innerText = threat;
             threatEl.style.color = color;
-            if(ncr >= 90) threatEl.style.borderColor = color;
+            if(ncr >= 82) threatEl.style.borderColor = color;
 
-            // 智能標籤 (進攻 vs 防禦 互斥邏輯)
+            // 智能標籤 (神階專屬)
             const tagsBox = document.getElementById('ui-tags');
             let tags = [];
             
-            // 頂級標籤
-            if(opiRaw >= 35) tags.push({t: "抹殺者", c: "var(--danger-glow)"});
-            if(lexScore >= 85) tags.push({t: "處刑人", c: "var(--lethal-orange)"});
-            if(def >= 85 && str < 60) tags.push({t: "嘆息之牆", c: "var(--shield-blue)"});
+            if(ncr >= 92) tags.push({t: "絕對真理", c: "var(--apex-gold)"});
+            if(pb >= 8500 && mac >= 80) tags.push({t: "天梯統治者", c: "var(--apex-gold)"});
+            if(opiRaw >= 40) tags.push({t: "神級抹殺", c: "var(--danger-glow)"});
+            if(lexScore >= 95) tags.push({t: "死神本能", c: "var(--lethal-orange)"});
+            if(def >= 90) tags.push({t: "不朽之壁", c: "var(--shield-blue)"});
             
-            // 風格標籤
-            if(str > def + 35) tags.push({t: "狂戰士", c: "var(--danger-glow)"});
-            else if(def > str + 35) tags.push({t: "攻城機器", c: "var(--shield-blue)"});
-            else if(Math.abs(str - def) < 10 && ncr > 70) tags.push({t: "完美平衡", c: "var(--neon-yellow)"});
+            if(str > def + 40) tags.push({t: "極端暴徒", c: "var(--danger-glow)"});
+            else if(def > str + 40) tags.push({t: "極端鐵龜", c: "var(--shield-blue)"});
 
-            if(wlRatio >= 1.6) tags.push({t: "數據異常", c: "var(--neon-magenta)"});
-            if(tags.length === 0) tags.push({t: "標準量產型", c: "#888"});
+            if(wlRatio >= 2.0) tags.push({t: "勝率怪物", c: "var(--neon-magenta)"});
+            if(tags.length === 0) tags.push({t: "大眾水平", c: "#888"});
 
             tags.forEach(tag => {
                 const span = document.createElement('div');
@@ -483,7 +494,7 @@
                 tagsBox.appendChild(span);
             });
 
-            await tLog(`> 諸神黃昏協議執行完畢。目標掃描完成。`, 'sys-info');
+            await tLog(`> APEX 審判完畢。真理已揭曉。`, 'sys-crit');
         }
 
         window.onload = initCharts;

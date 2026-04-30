@@ -3,26 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>神經矩陣 MAXIMA | V39.0 APEX ANALYTICA</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Noto+Sans+TC:wght@300;500;700&display=swap" rel="stylesheet">
+    <title>神經矩陣 MAXIMA | V41.0 KINETIC OVERLOAD</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Noto+Sans+TC:wght@300;500;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* * V39.0 定製化 CSS 系統 - 賽博龐克終端風格 
+        /* * V41.0 動能過載樣式表 
+         * 引入攻擊性視覺語言：血刃紅與戰術黑的對比
          */
         :root {
-            --bg-deep: #020205;
-            --panel-bg: rgba(10, 10, 20, 0.95);
+            --bg-deep: #050101;
+            --panel-bg: rgba(15, 2, 2, 0.95);
             --laser-cyan: #00ffcc;
-            --quantum-purple: #9d00ff;
-            --alert-red: #ff2a2a;
-            --warning-yellow: #ffcc00;
-            --text-main: #e6d9f2;
-            --text-dim: #776699;
-            --border-glow: rgba(0, 255, 204, 0.2);
-            --sidebar-width: 350px;
+            --kinetic-red: #ff2a2a;
+            --dark-red: #880000;
+            --warning-yellow: #ffaa00;
+            --tech-blue: #0088ff;
+            --text-main: #f2e6e6;
+            --text-dim: #775555;
+            --border-glow: rgba(255, 42, 42, 0.25);
+            --neon-shadow: 0 0 20px rgba(255, 42, 42, 0.4);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * { box-sizing: border-box; margin: 0; padding: 0; cursor: crosshair; }
         
         body {
             background-color: var(--bg-deep);
@@ -33,40 +35,34 @@
             display: flex;
             flex-direction: column;
             background-image: 
-                radial-gradient(circle at 50% 50%, #160a25 0%, #020205 100%),
-                linear-gradient(rgba(0, 255, 204, 0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 255, 204, 0.02) 1px, transparent 1px);
-            background-size: 100% 100%, 40px 40px, 40px 40px;
-        }
-
-        /* 頂部裝飾條 */
-        .top-bar {
-            height: 4px;
-            background: linear-gradient(90deg, var(--quantum-purple), var(--laser-cyan), var(--alert-red));
-            width: 100%;
-            z-index: 100;
+                radial-gradient(circle at 50% 50%, #1a0505 0%, #050101 100%),
+                linear-gradient(rgba(255, 42, 42, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 42, 42, 0.03) 1px, transparent 1px);
+            background-size: 100% 100%, 25px 25px, 25px 25px;
         }
 
         header {
-            padding: 15px 25px;
+            padding: 12px 25px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid var(--border-glow);
-            background: rgba(0, 0, 0, 0.3);
+            border-bottom: 2px solid var(--kinetic-red);
+            background: rgba(20, 0, 0, 0.8);
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.1);
         }
 
-        .logo { font-family: 'Orbitron'; font-weight: 900; font-size: 20px; color: var(--laser-cyan); letter-spacing: 2px; }
-        .version-tag { font-size: 10px; background: var(--quantum-purple); padding: 2px 8px; border-radius: 10px; margin-left: 10px; vertical-align: middle; }
+        .system-status { display: flex; gap: 20px; font-size: 11px; color: var(--kinetic-red); font-weight: bold; letter-spacing: 2px; }
+        .status-node { display: flex; align-items: center; gap: 6px; }
+        .dot { width: 8px; height: 8px; background: var(--kinetic-red); border-radius: 50%; box-shadow: var(--neon-shadow); }
+        .blink { animation: pulse 1s infinite; }
 
-        /* 主佈局 */
         main {
             display: grid;
-            grid-template-columns: var(--sidebar-width) 1fr 320px;
+            grid-template-columns: 380px 1fr 340px;
             flex: 1;
             overflow: hidden;
-            gap: 1px;
-            background: rgba(255, 255, 255, 0.05);
+            gap: 2px;
+            background: rgba(255, 0, 0, 0.05);
         }
 
         .column {
@@ -77,171 +73,158 @@
             position: relative;
         }
 
-        /* 滾動條美化 */
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--border-glow); border-radius: 10px; }
-
-        /* 面板標題 */
-        .section-header {
-            padding: 12px 20px;
+        .section-label {
+            padding: 12px 15px;
             font-family: 'Orbitron';
-            font-size: 11px;
-            background: rgba(0, 255, 204, 0.05);
-            border-bottom: 1px solid var(--border-glow);
-            color: var(--laser-cyan);
+            font-size: 10px;
+            background: linear-gradient(90deg, rgba(255, 42, 42, 0.1), transparent);
+            color: var(--kinetic-red);
+            border-bottom: 1px solid rgba(255, 42, 42, 0.2);
             display: flex;
             justify-content: space-between;
-            letter-spacing: 1px;
+            text-transform: uppercase;
         }
 
-        /* 數值面板元件 */
-        .mvi-container { padding: 30px 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .mvi-label { font-size: 10px; color: var(--text-dim); margin-bottom: 10px; letter-spacing: 3px; }
-        .mvi-value { font-family: 'Orbitron'; font-size: 64px; font-weight: 900; color: #fff; text-shadow: 0 0 20px rgba(0, 255, 204, 0.4); line-height: 1; }
-        .player-name { font-family: 'Orbitron'; font-size: 16px; margin-top: 15px; color: var(--laser-cyan); }
+        /* 大型數值顯示器 */
+        .hero-stats { padding: 30px 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.02); }
+        .hero-value { font-family: 'Orbitron'; font-size: 88px; font-weight: 900; color: #fff; line-height: 0.8; margin-bottom: 15px; text-shadow: var(--neon-shadow); }
+        .hero-name { font-family: 'Orbitron'; font-size: 18px; color: var(--text-main); letter-spacing: 5px; }
 
-        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: rgba(255,255,255,0.05); }
-        .stat-box { background: var(--bg-deep); padding: 15px; display: flex; flex-direction: column; align-items: center; }
-        .stat-box .label { font-size: 9px; color: var(--text-dim); margin-bottom: 5px; }
-        .stat-box .value { font-family: 'Orbitron'; font-size: 20px; color: var(--text-main); }
-        .stat-box.highlight .value { color: var(--laser-cyan); text-shadow: 0 0 10px var(--laser-cyan); }
-
-        /* 雷達圖容器 */
-        .radar-area { flex: 1; min-height: 350px; display: flex; align-items: center; justify-content: center; position: relative; }
-        .chart-wrapper { width: 90%; height: 90%; }
-
-        /* 心理狀態監測 */
-        .mental-status { padding: 20px; background: rgba(0,0,0,0.3); margin: 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); }
-        .mental-bar-bg { height: 6px; background: #222; border-radius: 3px; margin: 10px 0; overflow: hidden; }
-        .mental-bar-fill { height: 100%; width: 0%; background: var(--laser-cyan); transition: 1s ease-out; }
-        .tilt-warning { color: var(--alert-red); font-weight: bold; animation: pulse 2s infinite; font-size: 12px; }
-
-        /* 分析報告區 */
-        .report-content { padding: 20px; }
-        .archetype-tag { display: inline-block; padding: 4px 12px; background: var(--quantum-purple); border-radius: 4px; font-weight: bold; margin-bottom: 15px; font-size: 14px; }
-        .report-text { font-size: 14px; line-height: 1.7; color: #bbaadd; margin-bottom: 20px; }
+        /* 矩陣數據網格 */
+        .data-matrix { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: rgba(255, 42, 42, 0.15); }
+        .cell { background: var(--bg-deep); padding: 20px 10px; text-align: center; position: relative; transition: 0.3s; }
+        .cell:hover { background: #110000; }
+        .cell::after { content: ""; position: absolute; top: 0; left: 0; width: 6px; height: 6px; border-left: 2px solid var(--kinetic-red); border-top: 2px solid var(--kinetic-red); }
         
-        .tactic-card { background: rgba(255,255,255,0.03); border-left: 3px solid var(--laser-cyan); padding: 15px; margin-bottom: 10px; }
-        .tactic-card h4 { font-size: 12px; color: var(--laser-cyan); margin-bottom: 5px; text-transform: uppercase; }
-        .tactic-card p { font-size: 13px; }
+        .cell-label { font-size: 9px; color: var(--text-dim); margin-bottom: 8px; letter-spacing: 1px; font-weight: bold; }
+        .cell-val { font-family: 'Orbitron'; font-size: 26px; color: #fff; }
+        
+        /* 特別突顯進攻端 */
+        .cell.highlight-atk { box-shadow: inset 0 0 15px rgba(255, 42, 42, 0.1); }
+        .cell.highlight-atk .cell-val { color: var(--kinetic-red); text-shadow: 0 0 15px var(--kinetic-red); font-weight: 900; }
+        
+        .cell.highlight-def .cell-val { color: var(--laser-cyan); }
 
-        /* 輸入控制 */
-        .controls { padding: 20px; border-top: 1px solid var(--border-glow); }
-        .input-group { margin-bottom: 15px; }
-        .input-group label { display: block; font-size: 10px; color: var(--text-dim); margin-bottom: 5px; }
+        /* 進攻動能可視化 */
+        .kinetic-monitor { padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .k-bar-bg { height: 8px; background: #220000; border-radius: 4px; position: relative; margin: 10px 0; overflow: hidden; border: 1px solid #440000; }
+        .k-bar-fill { height: 100%; width: 0; background: linear-gradient(90deg, #880000, var(--kinetic-red)); box-shadow: 0 0 10px var(--kinetic-red); transition: 1s cubic-bezier(0.1, 0, 0, 1); }
+
+        /* 雷達圖與報告區 */
+        .vis-container { flex: 1; display: flex; flex-direction: column; padding: 20px; position: relative; }
+        #radarWrapper { flex: 1; min-height: 380px; }
+        
+        .report-overlay {
+            background: rgba(10, 0, 0, 0.8);
+            border: 1px solid var(--kinetic-red);
+            padding: 20px;
+            margin-top: 15px;
+            border-left: 4px solid var(--kinetic-red);
+        }
+
+        /* 輸入端 */
+        .io-panel { padding: 20px; border-top: 1px solid var(--border-glow); background: rgba(0,0,0,0.8); }
         input { 
-            width: 100%; background: #000; border: 1px solid #332244; padding: 12px; 
-            color: var(--laser-cyan); font-family: 'Orbitron'; outline: none; border-radius: 4px; 
+            width: 100%; background: #050000; border: 1px solid var(--dark-red); padding: 15px; 
+            color: var(--kinetic-red); font-family: 'Orbitron'; font-size: 16px; outline: none; transition: 0.3s;
+            text-align: center; letter-spacing: 2px;
         }
-        input:focus { border-color: var(--laser-cyan); }
-        .btn-scan { 
-            width: 100%; padding: 15px; background: rgba(0, 255, 204, 0.1); border: 1px solid var(--laser-cyan); 
-            color: var(--laser-cyan); font-family: 'Orbitron'; cursor: pointer; transition: 0.3s; 
-            font-weight: bold; letter-spacing: 2px;
+        input:focus { border-color: var(--kinetic-red); box-shadow: 0 0 15px rgba(255, 42, 42, 0.2); }
+        .btn-prime { 
+            width: 100%; padding: 18px; margin-top: 10px; background: rgba(255, 42, 42, 0.1); color: var(--kinetic-red); 
+            font-family: 'Orbitron'; font-weight: 900; font-size: 16px; border: 1px solid var(--kinetic-red); cursor: pointer;
+            letter-spacing: 3px; transition: 0.2s;
         }
-        .btn-scan:hover { background: var(--laser-cyan); color: #000; box-shadow: 0 0 20px rgba(0, 255, 204, 0.4); }
+        .btn-prime:hover { background: var(--kinetic-red); color: #000; box-shadow: var(--neon-shadow); }
 
-        /* 虛擬演習日誌 */
-        .sim-log { font-size: 11px; padding: 15px; font-family: 'Share Tech Mono'; color: #66ccaa; }
-        .log-entry { margin-bottom: 8px; border-left: 1px solid #333; padding-left: 10px; }
-        .log-time { color: #555; margin-right: 5px; }
-        .log-tag { color: var(--quantum-purple); margin-right: 5px; }
+        /* 模擬對戰日誌 */
+        .sim-log { flex: 1; font-family: 'Share Tech Mono'; font-size: 12px; padding: 15px; color: #ff8888; overflow-y: auto; }
+        .log-line { margin-bottom: 8px; border-left: 2px solid #550000; padding-left: 10px; line-height: 1.4; }
+        .log-ts { color: #884444; margin-right: 10px; font-size: 10px; }
+        .log-tag { padding: 2px 5px; border-radius: 2px; font-size: 10px; margin-right: 8px; text-transform: uppercase; font-weight: bold; }
+        
+        .tag-atk { background: var(--kinetic-red); color: #000; }
+        .tag-sys { background: #330000; color: #ffaaaa; }
+        .tag-def { background: var(--laser-cyan); color: #000; }
 
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-
-        /* 響應式微調 */
-        @media (max-width: 1200px) {
-            main { grid-template-columns: 300px 1fr; }
-            .column:last-child { display: none; }
-        }
+        @keyframes pulse { 0% { opacity: 0.2; } 50% { opacity: 1; } 100% { opacity: 0.2; } }
+        
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--dark-red); }
     </style>
 </head>
 <body>
 
-    <div class="top-bar"></div>
-    
     <header>
-        <div class="logo">NEURAL MATRIX <span class="version-tag">V39.0 APEX</span></div>
-        <div id="connection-status" style="font-size: 10px; color: var(--laser-cyan);">● SYSTEM_LINK_ESTABLISHED</div>
+        <div class="system-status">
+            <div class="status-node"><div class="dot blink"></div> PROTOCOL: KINETIC_OVERLOAD_V41</div>
+            <div class="status-node" id="top-lethality">LETHALITY_INDEX: AWAITING</div>
+        </div>
+        <div style="font-family: 'Orbitron'; font-size: 14px; letter-spacing: 4px; color: #fff;">MAXIMA_STRIKE_MATRIX</div>
     </header>
 
     <main>
         <section class="column">
-            <div class="section-header"><span>BASIC_TELEMETRY</span><span>UNIT_01</span></div>
-            
-            <div class="mvi-container">
-                <div class="mvi-label">MAXIMA VALUE INDEX</div>
-                <div id="ui-mvi" class="mvi-value">00.0</div>
-                <div id="ui-name" class="player-name">AWAITING_INPUT</div>
+            <div class="section-label"><span>COMBAT_PROFILER</span><span>ID: 808</span></div>
+            <div class="hero-stats">
+                <div class="hero-value" id="ui-mvi">00</div>
+                <div class="hero-name" id="ui-name">TARGET_LOCK</div>
             </div>
 
-            <div class="stat-grid">
-                <div class="stat-box"><div class="label">STR (OFFENSE)</div><div id="val-str" class="value">--</div></div>
-                <div class="stat-box highlight"><div class="label">DEF (DEFENSE)</div><div id="val-def" class="value">--</div></div>
-                <div class="stat-box"><div class="label">MIC (MICRO)</div><div id="val-mic" class="value">--</div></div>
-                <div class="stat-box"><div class="label">MAC (MACRO)</div><div id="val-mac" class="value">--</div></div>
-                <div class="stat-box"><div class="label">PSY (MENTAL)</div><div id="val-psy" class="value">--</div></div>
-                <div class="stat-item" style="grid-column: span 2; background: #000; padding: 10px; text-align: center;">
-                    <div class="label" style="font-size: 8px; color: var(--text-dim);">PAY_TO_WIN_FACTOR</div>
-                    <div id="val-pay" class="value" style="font-size: 14px; color: var(--warning-yellow);">--</div>
-                </div>
+            <div class="data-matrix">
+                <div class="cell highlight-atk"><div class="cell-label">KINETIC (STR)</div><div class="cell-val" id="val-str">--</div></div>
+                <div class="cell highlight-def"><div class="cell-label">PHALANX (DEF)</div><div class="cell-val" id="val-def">--</div></div>
+                <div class="cell"><div class="cell-label">MICRO_CTRL</div><div class="cell-val" id="val-mic">--</div></div>
+                <div class="cell"><div class="cell-label">MACRO_PLAN</div><div class="cell-val" id="val-mac">--</div></div>
+                <div class="cell"><div class="cell-label">LETHALITY (LET)</div><div class="cell-val" id="val-let">--</div></div>
+                <div class="cell"><div class="cell-label">EXECUTION (EXE)</div><div class="cell-val" id="val-exe">--</div></div>
             </div>
 
-            <div class="mental-status">
-                <div style="display: flex; justify-content: space-between; font-size: 10px;">
-                    <span>TILT_PROBABILITY</span>
-                    <span id="tilt-pct">0%</span>
+            <div class="kinetic-monitor">
+                <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-main); font-weight: bold;">
+                    <span>ARMOR_PIERCING (穿甲係數)</span>
+                    <span id="ui-ap-pct" style="color: var(--warning-yellow);">0.0</span>
                 </div>
-                <div class="mental-bar-bg"><div id="tilt-bar" class="mental-bar-fill"></div></div>
-                <div id="tilt-msg" style="font-size: 10px; color: var(--text-dim);">穩定性：掃描中...</div>
+                <div class="k-bar-bg"><div class="k-bar-fill" id="ui-ap-bar"></div></div>
+                <div id="ui-ap-status" style="font-size: 10px; color: var(--text-dim);">計算目標的高分段三冠轉化率...</div>
             </div>
 
-            <div class="controls">
-                <div class="input-group">
-                    <label>PLAYER_TAG</label>
-                    <input type="text" id="tagInput" placeholder="#P8PYR0..." value="">
-                </div>
-                <div class="input-group">
-                    <label>ACCESS_PROXY</label>
-                    <input type="text" id="proxyInput" value="/api/clash-proxy">
-                </div>
-                <button class="btn-scan" onclick="runAnalysis()">INITIATE DEEP SCAN</button>
-            </div>
-        </section>
-
-        <section class="column" style="background: rgba(5,5,10,0.8);">
-            <div class="section-header"><span>TACTICAL_VISUALIZER</span><span>SIGMOID_MODEL</span></div>
-            
-            <div class="radar-area">
-                <div class="chart-wrapper">
-                    <canvas id="radarChart"></canvas>
-                </div>
-            </div>
-
-            <div id="report-box" class="report-content">
-                <div id="ui-archetype" class="archetype-tag" style="display: none;">ARCHETYPE_PENDING</div>
-                <div id="ui-report-text" class="report-text">
-                    等待掃描指令。請輸入目標玩家標籤並啟動 APEX 分析矩陣。
-                </div>
-                <div id="ui-tactics">
-                    </div>
+            <div class="io-panel">
+                <input type="text" id="tagInput" placeholder="ENTER ENEMY TAG" spellcheck="false" value="#CR_TEST_SUBJECT">
+                <button class="btn-prime" onclick="initiateStrikeSequence()">ENGAGE TARGET</button>
             </div>
         </section>
 
         <section class="column">
-            <div class="section-header"><span>SIMULATION_LOG</span><span>LOG_V9</span></div>
-            <div id="ui-log" class="sim-log">
-                <div class="log-entry"><span class="log-time">[00:00:00]</span> 系統待命。</div>
-                <div class="log-entry"><span class="log-time">[00:00:00]</span> 權重引擎 V39.0 就緒。</div>
+            <div class="section-label"><span>TACTICAL_VECTOR_MAP</span><span>KINETIC_VIEW</span></div>
+            <div class="vis-container">
+                <div id="radarWrapper">
+                    <canvas id="mainChart"></canvas>
+                </div>
+                
+                <div class="report-overlay" id="report-container">
+                    <div id="ui-archetype" style="font-family: 'Orbitron'; color: var(--kinetic-red); font-size: 18px; font-weight: 900; margin-bottom: 12px; letter-spacing: 1px;">SYSTEM_STANDBY</div>
+                    <div id="ui-desc" style="font-size: 14px; line-height: 1.7; color: #ccaadd;">
+                        等待鎖定目標。V41.0 動能過載協定將深度解析敵方的壓迫節奏與致死打擊率。
+                    </div>
+                </div>
             </div>
-            
-            <div style="margin-top: auto; padding: 20px; background: rgba(0,0,0,0.4); border-top: 1px solid var(--border-glow);">
-                <div style="font-size: 10px; color: var(--laser-cyan); margin-bottom: 10px;">SUB_INDICATORS</div>
-                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 11px;">
-                    <div style="display: flex; justify-content: space-between;"><span>Consistency (CST)</span><span id="sub-cst">--</span></div>
-                    <div style="display: flex; justify-content: space-between;"><span>Execution (EXE)</span><span id="sub-exe">--</span></div>
-                    <div style="display: flex; justify-content: space-between;"><span>Endurance (END)</span><span id="sub-end">--</span></div>
+        </section>
+
+        <section class="column">
+            <div class="section-label"><span>STRIKE_SIMULATION_FEED</span><span>LIVE</span></div>
+            <div id="log-feed" class="sim-log">
+                <div class="log-line"><span class="log-ts">00:00:00</span> <span class="log-tag tag-sys">SYS</span> 進攻模組 KINETIC_V41 加載完畢。</div>
+                <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-tag tag-sys">SYS</span> 穿甲係數與動能熵值算法就緒。</div>
+            </div>
+
+            <div style="padding: 20px; background: rgba(10,0,0,0.8); border-top: 1px solid var(--border-glow);">
+                <div class="section-label" style="background:transparent; padding: 0 0 10px 0; border: none; color: #fff;"><span>AGGRESSION_METRICS</span></div>
+                <div style="display: flex; flex-direction: column; gap: 12px; font-size: 12px; font-family: 'Orbitron';">
+                    <div style="display: flex; justify-content: space-between;"><span>Tempo Conversion</span><span id="sub-tempo" style="color: var(--warning-yellow);">--</span></div>
+                    <div style="display: flex; justify-content: space-between;"><span>Aggression Entropy</span><span id="sub-agg" style="color: var(--kinetic-red);">--</span></div>
+                    <div style="display: flex; justify-content: space-between;"><span>Win Rate (Base)</span><span id="sub-wr" style="color: #fff;">--</span></div>
                 </div>
             </div>
         </section>
@@ -249,25 +232,26 @@
 
     <script>
         /**
-         * V39.0 APEX ANALYTICA 核心腳本
+         * V41.0 KINETIC OVERLOAD - 攻擊性邏輯引擎
          */
-        let radar;
-        let isAnalyzing = false;
+        let chart;
+        const LOG_LIMIT = 50;
 
-        // 初始化圖表
-        function initRadar() {
-            const ctx = document.getElementById('radarChart').getContext('2d');
-            radar = new Chart(ctx, {
+        function init() {
+            const ctx = document.getElementById('mainChart').getContext('2d');
+            chart = new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: ['STR', 'DEF', 'MIC', 'MAC', 'PSY', 'CST', 'EXE', 'END'],
+                    labels: ['STR(進攻)', 'DEF(防守)', 'MIC(微操)', 'MAC(宏觀)', 'LET(致死)', 'EXE(斬殺)', 'PSY(心理)', 'VOL(波動)'],
                     datasets: [{
-                        data: [0, 0, 0, 0, 0, 0, 0, 0],
-                        backgroundColor: 'rgba(0, 255, 204, 0.15)',
-                        borderColor: '#00ffcc',
+                        label: 'KINETIC_VECTOR',
+                        data: [0,0,0,0,0,0,0,0],
+                        backgroundColor: 'rgba(255, 42, 42, 0.15)',
+                        borderColor: '#ff2a2a',
                         borderWidth: 2,
-                        pointBackgroundColor: '#00ffcc',
-                        pointRadius: 3
+                        pointRadius: 3,
+                        pointBackgroundColor: '#ffaa00',
+                        pointBorderColor: '#ff2a2a'
                     }]
                 },
                 options: {
@@ -275,9 +259,9 @@
                     maintainAspectRatio: false,
                     scales: {
                         r: {
-                            angleLines: { color: 'rgba(255,255,255,0.05)' },
-                            grid: { color: 'rgba(255,255,255,0.1)' },
-                            pointLabels: { color: '#776699', font: { family: 'Orbitron', size: 10 } },
+                            angleLines: { color: 'rgba(255, 42, 42, 0.15)' },
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            pointLabels: { color: '#ccaadd', font: { family: 'Orbitron', size: 10, weight: 'bold' } },
                             ticks: { display: false, max: 100, min: 0 }
                         }
                     },
@@ -286,157 +270,161 @@
             });
         }
 
-        // 模擬數據獲取 (在實際環境中替換為 Fetch)
-        async function runAnalysis() {
-            if (isAnalyzing) return;
+        async function initiateStrikeSequence() {
             const tag = document.getElementById('tagInput').value.trim();
-            if (!tag) {
-                addLog("ERROR", "請輸入玩家標籤");
-                return;
+            if(!tag) return writeLog("SYS", "無法鎖定：目標標籤為空。");
+
+            writeLog("SYS", `鎖定目標 [${tag}]，啟動深層動能掃描...`);
+            
+            // 模擬 API 請求與運算延遲
+            for(let i=0; i<2; i++) {
+                await new Promise(r => setTimeout(r, 400));
+                writeLog("SYS", `解析攻擊向量... 階段 ${i+1}`);
             }
 
-            isAnalyzing = true;
-            addLog("SYSTEM", `開始掃描目標: ${tag}`);
-            document.querySelector('.btn-scan').innerText = "ANALYZING...";
+            // 模擬複雜對手數據 (偏向進攻極端型玩家)
+            const mockData = {
+                name: "BLOOD_HOUND",
+                wins: 6200,
+                losses: 5100,
+                trophies: 8900,  // 高端局
+                threeCrownWins: 1850, // 三冠率偏高
+                streak: 4
+            };
 
-            // 模擬網絡延遲
-            setTimeout(() => {
-                // 這裡模擬從 API 獲得的數據
-                const mockData = {
-                    name: "戰神_測試員",
-                    wins: 4500,
-                    losses: 3800,
-                    threeCrownWins: 1200,
-                    trophies: 7850,
-                    streak: -4 // 假設處於連敗
-                };
-                
-                calculateMetrics(mockData);
-                isAnalyzing = false;
-                document.querySelector('.btn-scan').innerText = "INITIATE DEEP SCAN";
-                addLog("SUCCESS", "分析矩陣構建完成");
-            }, 1500);
+            processKineticVector(mockData);
         }
 
         /**
-         * 核心計算引擎 V39.0
+         * 核心計算矩陣 - V41.0 攻擊權重升級
          */
-        function calculateMetrics(data) {
-            const total = data.wins + data.losses;
+        function processKineticVector(data) {
+            const total = data.wins + data.losses || 1;
             const wr = data.wins / total;
             const tcr = data.threeCrownWins / data.wins;
             
-            // 正規化 (Z-Scores)
-            const n_mmr = (data.trophies - 5000) / 1000;
-            const z_total = Math.log10(total) - 3;
-            const z_wr = (wr - 0.5) * 20;
-            const z_tcr = (tcr - 0.15) * 10;
+            // 1. 環境壓力因子 (Elo-Normalization)
+            const e_factor = Math.max(0.1, (data.trophies - 4000) / 5000);
+            
+            // 2. 波動率 (Volatility)
+            const vol = Math.abs(wr - 0.5) * 10 + (1 / Math.sqrt(total)) * 50;
 
-            const S = (x) => Math.max(10.0, Math.min(99.9, 100 / (1 + Math.exp(-x))));
+            // =========================================
+            // 🔥 V41.0 KINETIC 核心升級：進攻端公式
+            // =========================================
+            
+            // A. 環境加權三冠率 (Armor Piercing) - 越高端的三冠越值錢
+            const tcr_weighted = tcr * (1 + (e_factor * 2.5));
+            const armor_piercing = Math.min(10.0, tcr_weighted * 10);
+            
+            // B. 動能混亂度 (Aggression Entropy) - 些微的不穩定代表打法具備侵略性
+            const agg_entropy = (wr * 2.0) + (vol * 0.15) + (data.streak * 0.05);
+            
+            // C. 節奏轉化率 (Tempo Conversion) - 贏局中拿三冠的絕對統治力
+            const tempo_conv = (tcr * wr * 100);
 
-            // 權重分配 (V39.0 戰影協定：DEF 與 TCR 脫鉤)
-            const def = S((n_mmr * 1.3) + (z_wr * 1.0) + (z_total * 0.5));
-            const str = S((z_tcr * 1.6) + (z_wr * 0.4) + (n_mmr * 0.2));
-            const mic = S((z_wr * 1.5) + (n_mmr * 0.5));
-            const mac = S((n_mmr * 1.5) + (z_total * 0.5));
-            const psy = S((z_total * 0.8) + (z_wr * 0.5) + (data.streak * 0.2));
-            const cst = S((z_total * 1.0) + (z_wr * 1.0));
-            const exe = S((z_tcr * 2.0));
-            const end = S((z_total * 1.5));
-            const pay = S((n_mmr * 1.5) - (z_wr * 1.2)); // 簡易課金係數
+            // Sigmoid 收斂函數
+            const sigma = (x, k=1.0) => 100 / (1 + Math.exp(-k * (x - 2)));
 
-            const scores = [str, def, mic, mac, psy, cst, exe, end];
-            const mvi = scores.reduce((a, b) => a + b) / scores.length;
+            // 維度評分計算
+            // 新版 STR：深度結合 MMR 加權、混亂度與節奏
+            const str_raw = (tcr_weighted * 12) + (agg_entropy * 3) + (tempo_conv * 0.1);
+            const str = Math.min(99.9, sigma(str_raw, 0.9));
+            
+            // 致死打擊率 (Lethality) - 專注於絕對終結能力
+            const let_score = Math.min(99.9, sigma(armor_piercing * 1.5 + wr * 2, 0.8));
 
-            updateUI(data.name, scores, mvi, pay, data.streak);
+            // 保留 V40 防守邏輯做對比
+            const d_entropy = (wr * 1.5) + (e_factor * 2.0) + (Math.log10(total) / 10);
+            const def = Math.min(99.9, sigma(d_entropy * 1.3, 1.2));
+            
+            const mic = Math.min(99.9, sigma(wr * 3 + e_factor * 1.5, 1.1));
+            const mac = Math.min(99.9, sigma(e_factor * 4 + (total/10000), 1.0));
+            const exe = Math.min(99.9, sigma(tcr_weighted * 5 + wr * 3, 1.1));
+            const psy = Math.min(99.9, 100 - (vol * 1.5 - data.streak * 2));
+            const vol_score = Math.min(99.9, vol * 5); // 在圖表上顯示原始波動度
+
+            const scores = [str, def, mic, mac, let_score, exe, psy, vol_score];
+            updateKineticUI(data, scores, wr, armor_piercing, tempo_conv, agg_entropy);
         }
 
-        function updateUI(name, scores, mvi, pay, streak) {
-            document.getElementById('ui-name').innerText = name;
-            document.getElementById('ui-mvi').innerText = mvi.toFixed(1);
+        function updateKineticUI(data, scores, wr, ap, tempo, agg) {
+            const mvi = scores.slice(0,6).reduce((a,b)=>a+b)/6;
+            document.getElementById('ui-mvi').innerText = Math.round(mvi);
+            document.getElementById('ui-name').innerText = data.name;
             
-            // 更新基礎指標
             document.getElementById('val-str').innerText = scores[0].toFixed(1);
             document.getElementById('val-def').innerText = scores[1].toFixed(1);
             document.getElementById('val-mic').innerText = scores[2].toFixed(1);
             document.getElementById('val-mac').innerText = scores[3].toFixed(1);
-            document.getElementById('val-psy').innerText = scores[4].toFixed(1);
-            document.getElementById('val-pay').innerText = pay > 75 ? "極高 (WHALE DETECTED)" : (pay > 50 ? "中等" : "低");
+            document.getElementById('val-let').innerText = scores[4].toFixed(1);
+            document.getElementById('val-exe').innerText = scores[5].toFixed(1);
 
-            document.getElementById('sub-cst').innerText = scores[5].toFixed(1);
-            document.getElementById('sub-exe').innerText = scores[6].toFixed(1);
-            document.getElementById('sub-end').innerText = scores[7].toFixed(1);
-
-            // 更新雷達圖
-            radar.data.datasets[0].data = scores;
-            radar.update();
-
-            // 心理狀態計算
-            const tiltProb = streak < 0 ? Math.min(95, Math.abs(streak) * 20) : 5;
-            document.getElementById('tilt-pct').innerText = tiltProb + "%";
-            document.getElementById('tilt-bar').style.width = tiltProb + "%";
-            document.getElementById('tilt-bar').style.backgroundColor = tiltProb > 60 ? "#ff2a2a" : "#00ffcc";
-            document.getElementById('tilt-msg').innerHTML = tiltProb > 60 ? "<span class='tilt-warning'>檢測到精神崩潰風險</span>" : "精神狀態穩定";
-
-            generateReport(scores, pay, streak);
-        }
-
-        function generateReport(scores, pay, streak) {
-            const [str, def, mic, mac, psy] = scores;
-            const uiArchetype = document.getElementById('ui-archetype');
-            const uiReportText = document.getElementById('ui-report-text');
-            const uiTactics = document.getElementById('ui-tactics');
+            // 穿甲係數 UI
+            const ap_pct = Math.min(100, ap * 10);
+            document.getElementById('ui-ap-pct').innerText = ap.toFixed(2) + "x";
+            document.getElementById('ui-ap-bar').style.width = ap_pct + "%";
             
-            uiArchetype.style.display = "inline-block";
-            let report = "";
-            let tactics = [];
-
-            // 判斷邏輯
-            if (def > 80 && mac > 75) {
-                uiArchetype.innerText = "鐵壁大師 (IRON WALL)";
-                report = "該玩家展現了極高的防守純度與大局觀。他不依賴暴力進攻，而是透過完美的拉扯與聖水差優勢擊敗對手。";
-                tactics = [
-                    { h: "消耗戰術", p: "利用毒藥、礦工或火球進行塔血消耗，對手擅長防守部隊，但難以防禦直接法術。" },
-                    { h: "換路奇襲", p: "在雙倍聖水前，利用兩路均衡壓力迫使對方交出核心防守建築。" }
-                ];
-            } else if (str > 80 && mic > 70) {
-                uiArchetype.innerText = "狂暴死士 (BERSERKER)";
-                report = "極端侵略型對手。擅長利用極限操作強攻，通常在開局就會發動高壓攻勢。";
-                tactics = [
-                    { h: "穩定防守", p: "保留核心防禦牌（如建築、大皮卡），不要輕易交出。對方一旦攻勢受挫，心理防線極易受損。" },
-                    { h: "反擊平推", p: "吃下一波傷害後，利用殘餘部隊組成一波對方無法防禦的回推。" }
-                ];
+            if(ap > 5.0) {
+                document.getElementById('ui-ap-status').innerHTML = "<span style='color:var(--kinetic-red)'>危險：偵測到極限破甲能力 (高分段屠夫)</span>";
             } else {
-                uiArchetype.innerText = "均衡型玩家 (STANDARD)";
-                report = "表現平庸且穩定。沒有明顯弱點，但也沒有致命的殺招。";
-                tactics = [{ h: "基本功對決", p: "維持正常的聖水輪轉，等待對方犯錯。" }];
+                document.getElementById('ui-ap-status').innerText = "常規打擊力度。";
             }
 
-            uiReportText.innerText = report;
-            uiTactics.innerHTML = tactics.map(t => `<div class="tactic-card"><h4>${t.h}</h4><p>${t.p}</p></div>`).join('');
+            document.getElementById('top-lethality').innerText = `LETHALITY_INDEX: ${scores[4].toFixed(0)}`;
+
+            // 雷達圖
+            chart.data.datasets[0].data = scores;
+            chart.update();
+
+            // 進攻指標矩陣
+            document.getElementById('sub-tempo').innerText = tempo.toFixed(1);
+            document.getElementById('sub-agg').innerText = agg.toFixed(2);
+            document.getElementById('sub-wr').innerText = (wr * 100).toFixed(1) + "%";
+
+            generateStrikeReport(scores, ap);
+        }
+
+        function generateStrikeReport(scores, ap) {
+            const [str, def, mic, mac, let_score] = scores;
+            const uiArch = document.getElementById('ui-archetype');
+            const uiDesc = document.getElementById('ui-desc');
             
-            // 增加連敗特別戰術
-            if (streak <= -3) {
-                uiTactics.innerHTML += `
-                    <div class="tactic-card" style="border-color: var(--alert-red);">
-                        <h4 style="color: var(--alert-red);">破防利用協定 (TILT EXPLOIT)</h4>
-                        <p>目標處於連敗，開局直接進攻並配合表情嘲諷，對手極高機率會出現不理智的虧費操作。</p>
-                    </div>
-                `;
+            writeLog("SYS", "生成戰術動能報告...");
+
+            if (str > 88 && ap > 4.5) {
+                uiArch.innerText = "OMEGA STRIKER (奧米加打擊者)";
+                uiDesc.innerHTML = "極端危險。該目標在<strong>高壓環境下仍具備極高的致死率（穿甲係數異常）</strong>。對手擅長使用一波流或橋頭極限施壓摧毀防線。<br><br><span style='color:var(--warning-yellow)'>對策建議：保留核心解牌，切勿在單倍聖水期虧費試探。必要時直接選擇換路互拆。</span>";
+                writeLog("ATK", "警告：目標具備摧毀整條防線的瞬間爆發力。");
+            } else if (def > 85 && str < 70) {
+                uiArch.innerText = "IRON TURTLE (鐵王八)";
+                uiDesc.innerHTML = "防守反擊型玩家。進攻動能較弱，不擅長主動打破僵局，依賴對手的失誤進行反打。<br><br><span style='color:var(--laser-cyan)'>對策建議：採用塔血消耗戰術（Miner/Poison/Spell Cycle），拒絕給予對方防守反擊的部隊。</span>";
+                writeLog("DEF", "目標傾向於防守，主動侵略性極低。");
+            } else {
+                uiArch.innerText = "TACTICAL BRAWLER (戰術格鬥家)";
+                uiDesc.innerHTML = "攻守均衡，能根據場面切換節奏。致死率處於標準區間，通常依賴穩定的聖水交換來推進戰線。<br><br><span style='color:#fff'>對策建議：干擾其固有輪轉，在雙倍時期進行頻繁的兩路拉扯。</span>";
+                writeLog("ATK", "目標具備標準動能，建議常規交戰。");
             }
         }
 
-        function addLog(tag, msg) {
-            const log = document.getElementById('ui-log');
+        function writeLog(tag, msg) {
+            const feed = document.getElementById('log-feed');
+            const div = document.createElement('div');
+            div.className = 'log-line';
             const now = new Date();
-            const timeStr = `[${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}]`;
-            const entry = document.createElement('div');
-            entry.className = 'log-entry';
-            entry.innerHTML = `<span class="log-time">${timeStr}</span> <span class="log-tag">[${tag}]</span> ${msg}`;
-            log.prepend(entry);
+            const ts = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
+            
+            let tagClass = 'tag-sys';
+            if(tag === 'ATK') tagClass = 'tag-atk';
+            if(tag === 'DEF') tagClass = 'tag-def';
+
+            div.innerHTML = `<span class="log-ts">${ts}</span><span class="log-tag ${tagClass}">${tag}</span> ${msg}`;
+            feed.prepend(div);
+
+            if(feed.children.length > LOG_LIMIT) feed.lastChild.remove();
         }
 
-        window.onload = initRadar;
+        window.onload = init;
     </script>
 </body>
 </html>

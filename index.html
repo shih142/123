@@ -3,575 +3,401 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEURAL-X OMEGA v15.2 | Career Analysis Protocol</title>
-    <link rel="icon" href="data:,">
+    <title>NEURAL-X OMEGA | System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;500&family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap');
-
         :root {
+            --bg-color: #050914;
+            --panel-bg: rgba(10, 15, 30, 0.8);
             --neon-cyan: #00f3ff;
             --neon-magenta: #ff00ff;
-            --neon-yellow: #fff200;
-            --deep-space: #050608;
-            --glass-bg: rgba(20, 24, 35, 0.75);
-            --glass-border: rgba(0, 243, 255, 0.3);
-            --text-main: #e0e0e0;
-            --danger-glow: #ff2d55;
-            --muted-text: #888;
-            --dim-text: #666;
+            --neon-yellow: #ffde00;
+            --danger-glow: #ff2a2a;
+            --text-main: #a9b4c2;
+            --grid-line: rgba(0, 243, 255, 0.1);
         }
 
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            background-color: var(--deep-space);
-            background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0);
-            background-size: 40px 40px;
+            background-color: var(--bg-color);
             color: var(--text-main);
-            font-family: 'Rajdhani', sans-serif;
-            margin: 0;
-            display: flex;
+            font-family: 'Share Tech Mono', monospace;
             height: 100vh;
-            overflow: hidden;
-            letter-spacing: 0.5px;
-        }
-
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-            background-size: 100% 4px, 3px 100%;
-            pointer-events: none;
-            z-index: 100;
-        }
-
-        /* --- Utility Classes --- */
-        .font-orbitron { font-family: 'Orbitron', sans-serif; }
-        .font-fira { font-family: 'Fira Code', monospace; }
-        .text-cyan { color: var(--neon-cyan); }
-        .text-magenta { color: var(--neon-magenta); }
-        .text-yellow { color: var(--neon-yellow); }
-        .text-danger { color: var(--danger-glow); }
-        .text-muted { color: var(--muted-text); }
-        .text-dim { color: var(--dim-text); }
-        
-        .flex-between { display: flex; justify-content: space-between; align-items: center; }
-        .flex-col { display: flex; flex-direction: column; }
-        .mt-auto { margin-top: auto; }
-        .mb-sm { margin-bottom: 5px; }
-        .mb-md { margin-bottom: 15px; }
-        .text-sm { font-size: 0.8rem; }
-        .text-xs { font-size: 0.7rem; }
-
-        /* --- Layout & Components --- */
-        .sidebar {
-            width: 80px;
-            background-color: rgba(0,0,0,0.8);
-            border-right: 1px solid var(--glass-border);
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px 0;
-            z-index: 50;
-            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .sidebar:hover { width: 220px; }
-        .sidebar:hover .nav-label { opacity: 1; display: block; }
-
-        .nav-icon {
-            width: 45px; height: 45px;
-            margin-bottom: 25px;
-            border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: 0.3s;
-            border: 1px solid transparent;
-            position: relative;
-        }
-        .nav-icon.active { color: var(--neon-cyan); font-size: 1.5rem; }
-        .nav-icon:hover { 
-            background: rgba(0, 243, 255, 0.1); 
-            border-color: var(--neon-cyan);
-            box-shadow: 0 0 15px var(--neon-cyan);
-        }
-        .nav-label { 
-            position: absolute; left: 70px; white-space: nowrap; 
-            opacity: 0; display: none; font-weight: bold; font-family: 'Orbitron';
-            color: var(--neon-cyan); font-size: 0.8rem;
-        }
-
-        .main-container {
-            flex: 1;
-            display: grid;
-            grid-template-columns: 1fr 320px;
             overflow: hidden;
+            background-image: 
+                linear-gradient(var(--grid-line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+            background-size: 20px 20px;
         }
 
-        .viewport {
-            padding: 30px;
-            overflow-y: auto;
-            position: relative;
+        /* 掃描線特效 */
+        body::after {
+            content: ""; position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 2px, 3px 100%; z-index: 999; pointer-events: none;
         }
 
-        .hologram-header {
-            display: flex; justify-content: space-between; align-items: flex-end;
-            margin-bottom: 30px; border-bottom: 1px solid var(--glass-border);
-            padding-bottom: 15px;
-        }
-        .hologram-header h1 {
-            font-family: 'Orbitron'; font-size: 1.8rem; margin: 0;
-            text-transform: uppercase; color: var(--neon-cyan);
-            text-shadow: 0 0 10px var(--neon-cyan);
-        }
-        .version-tag { font-size: 0.8rem; vertical-align: middle; opacity: 0.6; }
+        /* --- 版面配置 --- */
+        .sidebar { width: 60px; border-right: 1px solid var(--grid-line); display: flex; flex-direction: column; align-items: center; padding-top: 20px; }
+        .sidebar-icon { color: var(--neon-cyan); margin-bottom: 30px; font-size: 20px; cursor: pointer; opacity: 0.7; }
+        .sidebar-icon:hover { opacity: 1; text-shadow: 0 0 10px var(--neon-cyan); }
 
-        .core-module {
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border);
-            border-radius: 4px;
-            padding: 20px;
-            margin-bottom: 25px;
-            display: flex; gap: 30px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .avatar-frame {
-            width: 100px; height: 100px;
-            border: 2px solid var(--neon-cyan);
-            background: rgba(0,0,0,0.5);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 3rem; box-shadow: inset 0 0 20px var(--neon-cyan);
-        }
-
-        .data-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-            margin-bottom: 25px;
-        }
-        .data-node {
-            background: rgba(255,255,255,0.02);
-            border-left: 2px solid var(--neon-cyan);
-            padding: 12px;
-            position: relative;
-            overflow: hidden;
-            transition: 0.3s;
-        }
-        .data-node:hover { background: rgba(0, 243, 255, 0.05); border-left-width: 4px; }
-        .node-label { font-size: 0.65rem; color: #666; text-transform: uppercase; margin-bottom: 4px; font-weight: bold; }
-        .node-value { font-family: 'Fira Code'; font-size: 1.4rem; color: var(--neon-cyan); line-height: 1.2; }
+        .main-content { flex: 1; padding: 20px; display: flex; flex-direction: column; gap: 15px; overflow-y: auto; }
         
-        .mini-bar { height: 2px; background: #111; width: 100%; margin-top: 6px; position: relative; }
-        .mini-fill { height: 100%; width: 0%; background: var(--neon-cyan); transition: 1.2s cubic-bezier(0.1, 0.9, 0.2, 1); }
+        .right-panel { width: 300px; border-left: 1px solid var(--grid-line); padding: 20px; background: var(--panel-bg); display: flex; flex-direction: column; }
 
-        /* Status Colors */
-        .node-off { border-color: var(--neon-yellow); } .node-off .node-value, .node-off .mini-fill { color: var(--neon-yellow); background: var(--neon-yellow); }
-        .node-def { border-color: var(--neon-cyan); }
-        .node-win { border-color: var(--neon-magenta); } .node-win .node-value, .node-win .mini-fill { color: var(--neon-magenta); background: var(--neon-magenta); }
-        .node-special { border-color: var(--danger-glow); } .node-special .node-value, .node-special .mini-fill { color: var(--danger-glow); background: var(--danger-glow); }
+        /* --- 頂部標題與玩家資訊 --- */
+        .header-title { font-family: 'Orbitron', sans-serif; color: var(--neon-cyan); font-size: 24px; text-shadow: 0 0 5px var(--neon-cyan); display: flex; justify-content: space-between; align-items: flex-end;}
+        .header-sub { font-size: 10px; color: var(--neon-magenta); letter-spacing: 1px; font-family: 'Share Tech Mono';}
+        .header-coords { font-size: 12px; color: var(--text-main); }
 
-        .visual-matrix {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 25px;
-        }
-        .panel {
-            background: var(--glass-bg);
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 20px;
-            border-radius: 4px;
-        }
-
-        .control-tower {
-            background: rgba(10, 12, 15, 0.95);
-            border-left: 1px solid var(--glass-border);
-            padding: 20px;
-            display: flex; flex-direction: column;
-            gap: 20px;
-        }
+        .profile-card { border: 1px solid rgba(0, 243, 255, 0.3); padding: 15px; display: flex; align-items: center; gap: 20px; background: linear-gradient(90deg, rgba(0, 243, 255, 0.05) 0%, transparent 100%); position: relative;}
+        .profile-card::before { content: ''; position: absolute; left: -1px; top: 10%; width: 3px; height: 80%; background: var(--neon-cyan); box-shadow: 0 0 10px var(--neon-cyan); }
+        .avatar-box { width: 60px; height: 60px; border: 1px solid var(--neon-magenta); box-shadow: 0 0 10px inset rgba(255,0,255,0.2); display: flex; justify-content: center; align-items: center; font-size: 30px; color: rgba(255,255,255,0.2); }
         
-        .terminal {
-            flex: 1;
-            background: #000;
-            border: 1px solid #222;
-            font-family: 'Fira Code', monospace;
-            font-size: 0.75rem;
-            padding: 10px;
-            overflow-y: auto;
-            color: #00ff41;
-        }
-        .terminal-line { margin-bottom: 6px; line-height: 1.4; }
-        .terminal-line.cmd { color: var(--neon-cyan); }
-        .terminal-line.error { color: var(--danger-glow); }
+        .profile-info h1 { color: var(--neon-yellow); font-family: 'Orbitron', sans-serif; font-size: 22px; margin-bottom: 5px; }
+        .profile-meta { font-size: 12px; color: var(--text-main); display: flex; gap: 15px; }
+        .profile-meta span { color: var(--neon-cyan); }
+        
+        .sync-bar { width: 100%; height: 3px; background: rgba(255,255,255,0.1); margin-top: 10px; position: relative; }
+        .sync-bar-fill { height: 100%; background: var(--neon-cyan); width: 99.8%; box-shadow: 0 0 8px var(--neon-cyan); }
 
-        .omega-btn {
-            background: transparent;
-            border: 1px solid var(--neon-cyan);
-            color: var(--neon-cyan);
-            padding: 12px;
-            font-family: 'Orbitron';
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .omega-btn:hover {
-            background: var(--neon-cyan);
-            color: #000;
-            box-shadow: 0 0 20px var(--neon-cyan);
-        }
+        /* --- 數據矩陣網格 --- */
+        .data-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
+        
+        .data-node { border: 1px solid #333; padding: 10px; background: rgba(0,0,0,0.4); display: flex; flex-direction: column; justify-content: space-between; }
+        .node-title { font-size: 9px; color: #777; text-transform: uppercase; letter-spacing: 1px; }
+        .node-value { font-size: 24px; font-weight: bold; font-family: 'Orbitron', sans-serif; margin: 5px 0; }
+        .mini-bar { height: 2px; width: 100%; background: rgba(255,255,255,0.1); margin-top: 5px; }
+        .mini-fill { height: 100%; width: 70%; }
 
-        .tag-input {
-            width: 100%;
-            background: #111;
-            border: 1px solid #333;
-            color: var(--neon-cyan);
-            padding: 10px;
-            font-family: 'Fira Code';
-            outline: none;
-        }
+        /* --- 修復後的 Status Colors --- */
+        .node-def { border-left: 2px solid var(--neon-cyan); }
+        .node-def .node-value { color: var(--neon-cyan); }
+        .node-def .mini-fill { background: var(--neon-cyan); }
 
-        .sync-bar { height: 4px; background: #222; width: 100%; margin-top: 10px; position: relative; }
-        .sync-progress {
-            height: 100%; width: 0%; background: var(--neon-cyan);
-            box-shadow: 0 0 10px var(--neon-cyan);
-            transition: width 1s ease-in-out;
-        }
+        .node-off { border-left: 2px solid var(--neon-yellow); } 
+        .node-off .node-value { color: var(--neon-yellow); }
+        .node-off .mini-fill { background: var(--neon-yellow); }
 
-        .log-entry {
-            display: grid; 
-            grid-template-columns: 80px 1fr 100px; 
-            padding: 12px; 
-            border-bottom: 1px solid #222; 
-            font-size: 0.85rem;
-        }
+        .node-win { border-left: 2px solid var(--neon-magenta); } 
+        .node-win .node-value { color: var(--neon-magenta); }
+        .node-win .mini-fill { background: var(--neon-magenta); }
+
+        .node-special { border-left: 2px solid var(--danger-glow); } 
+        .node-special .node-value { color: var(--danger-glow); }
+        .node-special .mini-fill { background: var(--danger-glow); }
+
+        /* --- 底部儀表板 (雷達與 AI 分析) --- */
+        .bottom-panels { display: grid; grid-template-columns: 1fr 1.5fr; gap: 15px; flex: 1; }
+        .panel-box { border: 1px solid var(--grid-line); padding: 15px; background: var(--panel-bg); display: flex; flex-direction: column;}
+        .panel-title { font-size: 12px; color: var(--text-main); margin-bottom: 10px; letter-spacing: 1px; }
+        .chart-container { flex: 1; position: relative; width: 100%; display: flex; justify-content: center; align-items: center; }
+        
+        .advisor-text { font-size: 12px; line-height: 1.6; color: #a9b4c2; }
+        .advisor-highlight { color: var(--neon-cyan); font-weight: bold; }
+        .advisor-yellow { color: var(--neon-yellow); }
+        .advisor-magenta { color: var(--neon-magenta); }
+
+        /* --- 右側控制台 --- */
+        .control-title { color: var(--neon-cyan); font-family: 'Orbitron'; font-size: 14px; margin-bottom: 20px; }
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; font-size: 9px; color: #777; margin-bottom: 5px; }
+        .input-group input { width: 100%; background: transparent; border: 1px solid #333; color: var(--neon-cyan); padding: 8px; font-family: 'Share Tech Mono'; outline: none; }
+        .input-group input:focus { border-color: var(--neon-cyan); }
+        
+        .btn-init { background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 10px; width: 100%; cursor: pointer; font-family: 'Orbitron'; transition: all 0.3s; }
+        .btn-init:hover { background: rgba(0, 243, 255, 0.2); text-shadow: 0 0 5px var(--neon-cyan); box-shadow: 0 0 10px inset rgba(0,243,255,0.3); }
+
+        .live-feed { margin-top: 20px; border-top: 1px dashed #333; padding-top: 15px; font-size: 11px; color: #0f0; flex: 1; overflow-y: auto; }
+        .feed-line { margin-bottom: 5px; opacity: 0.8; }
+        .feed-cyan { color: var(--neon-cyan); }
     </style>
 </head>
 <body>
 
     <nav class="sidebar">
-        <div class="nav-icon active">Ω<span class="nav-label">OMEGA CORE</span></div>
-        <div class="nav-icon">📊<span class="nav-label">NEURAL METRICS</span></div>
-        <div class="nav-icon">🧬<span class="nav-label">GENETIC TACTICS</span></div>
-        <div class="nav-icon">📡<span class="nav-label">SATELLITE LINK</span></div>
-        <div class="nav-icon mt-auto">⚙️<span class="nav-label">SYSTEM CFG</span></div>
+        <div class="sidebar-icon">Ω</div>
+        <div class="sidebar-icon">▤</div>
+        <div class="sidebar-icon">∿</div>
+        <div class="sidebar-icon" style="margin-top: auto;">⚙</div>
     </nav>
 
-    <div class="main-container">
-        <main class="viewport">
-            <header class="hologram-header">
-                <div>
-                    <h1>Neural-X Omega <span class="version-tag">v15.2.0</span></h1>
-                    <div class="text-xs text-magenta mt-sm">[ STATUS: QUANTUM SYNC ESTABLISHED ]</div>
-                </div>
-                <div style="text-align:right">
-                    <div class="text-sm text-muted">COORDINATES</div>
-                    <div class="font-fira" style="font-size: 0.9rem;">35.6895° N, 139.6917° E</div>
-                </div>
-            </header>
-
-            <section class="core-module">
-                <div class="avatar-frame">👤</div>
-                <div style="flex:1">
-                    <div class="flex-between">
-                        <h2 id="pName" class="font-orbitron text-yellow" style="margin:0; font-size:2rem;">SUBJECT_NULL</h2>
-                        <div id="pTag" class="font-fira text-dim">#--------</div>
-                    </div>
-                    <div class="flex-between" style="margin-top:10px; justify-content: flex-start; gap: 20px;">
-                        <div><span class="text-muted">RANK:</span> <span class="text-cyan">ULTIMATE CHAMPION</span></div>
-                        <div><span class="text-muted">SYNC RATIO:</span> <span id="syncRatio" class="text-magenta">0%</span></div>
-                    </div>
-                    <div class="sync-bar"><div id="syncProg" class="sync-progress"></div></div>
-                </div>
-            </section>
-
-            <div class="data-grid">
-                <div class="data-node">
-                    <div class="node-label">Career Total Wins</div>
-                    <div class="node-value" id="valWins">--</div>
-                    <div class="mini-bar"><div id="barWins" class="mini-fill"></div></div>
-                </div>
-                <div class="data-node node-off">
-                    <div class="node-label">Best Trophies (PB)</div>
-                    <div class="node-value" id="valPB">--</div>
-                    <div class="mini-bar"><div id="barPB" class="mini-fill"></div></div>
-                </div>
-                <div class="data-node node-def">
-                    <div class="node-label">Total Donations</div>
-                    <div class="node-value" id="valDonations">--</div>
-                    <div class="mini-bar"><div id="barDonations" class="mini-fill"></div></div>
-                </div>
-                <div class="data-node node-win">
-                    <div class="node-label">Career Win Rate</div>
-                    <div class="node-value" id="valWinRate">--%</div>
-                    <div class="mini-bar"><div id="barWinRate" class="mini-fill"></div></div>
-                </div>
-
-                <div class="data-node node-special">
-                    <div class="node-label">3-Crown Power</div>
-                    <div class="node-value" id="val3C">--</div>
-                    <div class="mini-bar"><div id="bar3C" class="mini-fill"></div></div>
-                </div>
-                <div class="data-node">
-                    <div class="node-label">Challenge Peak</div>
-                    <div class="node-value" id="valChallenge">--</div>
-                    <div class="mini-bar"><div id="barChallenge" class="mini-fill"></div></div>
-                </div>
-                <div class="data-node node-off">
-                    <div class="node-label">War Day Wins</div>
-                    <div class="node-value" id="valWar">--</div>
-                    <div class="mini-bar"><div id="barWar" class="mini-fill"></div></div>
-                </div>
-                <div class="data-node node-win">
-                    <div class="node-label">Experience Tier</div>
-                    <div class="node-value" id="valLevel">--</div>
-                    <div class="mini-bar"><div id="barLevel" class="mini-fill"></div></div>
-                </div>
-
-                <div class="data-node">
-                    <div class="node-label">Cards Unlocked</div>
-                    <div class="node-value" id="valCards">--</div>
-                    <div class="mini-bar"><div id="barCards" class="mini-fill"></div></div>
-                </div>
-                <div class="data-node node-def">
-                    <div class="node-label">Achievement Score</div>
-                    <div class="node-value" id="valLegacy">--</div>
-                    <div class="mini-bar"><div id="barLegacy" class="mini-fill"></div></div>
-                </div>
-                <div class="data-node node-special">
-                    <div class="node-label">Efficiency Index</div>
-                    <div class="node-value" id="valEff">--</div>
-                    <div class="mini-bar"><div id="barEff" class="mini-fill"></div></div>
-                </div>
-                <div class="data-node node-win">
-                    <div class="node-label">Historical Stability</div>
-                    <div class="node-value" id="valStability">--%</div>
-                    <div class="mini-bar"><div id="barStability" class="mini-fill"></div></div>
-                </div>
+    <main class="main-content">
+        <div class="header-title">
+            <div>
+                NEURAL-X OMEGA <span style="font-size: 12px; color: var(--neon-cyan);">V15.2.0</span>
+                <div class="header-sub">[ STATUS: QUANTUM SYNC ESTABLISHED ]</div>
             </div>
-
-            <div class="visual-matrix">
-                <div class="panel">
-                    <div class="text-cyan text-sm mb-md font-orbitron">CAREER POTENTIAL RADAR</div>
-                    <div style="height:250px;"><canvas id="omegaRadar"></canvas></div>
-                </div>
-                <div class="panel flex-col">
-                    <div class="text-magenta text-sm mb-md font-orbitron">EXECUTIVE AI ADVISOR</div>
-                    <div id="aiAdvisor" style="font-size:0.9rem; line-height:1.6; color:#bbb; flex:1;">
-                        <span class="text-cyan">SYSTEM</span> Waiting for neural link initialization...<br>
-                        Execute audit protocol to start analysis.
-                    </div>
-                </div>
+            <div class="header-coords">
+                COORDINATES<br>
+                35.6895° N, 139.6917° E
             </div>
+        </div>
 
-            <div class="panel">
-                <div class="text-muted text-sm mb-md font-orbitron">RECENT ENCOUNTERS ANALYSIS</div>
-                <div id="omegaLog"></div>
+        <div class="profile-card">
+            <div class="avatar-box">👤</div>
+            <div class="profile-info" style="flex:1;">
+                <h1 id="playerName">小董哥</h1>
+                <div class="profile-meta">
+                    <div>RANK: <span id="playerRank">ULTIMATE CHAMPION</span></div>
+                    <div>SYNC RATIO: <span style="color: var(--neon-magenta);">99.8%</span></div>
+                </div>
+                <div class="sync-bar"><div class="sync-bar-fill"></div></div>
             </div>
-        </main>
+            <div style="color: #555; font-size: 14px; align-self: flex-start;">#CV9QU9CYJ</div>
+        </div>
 
-        <aside class="control-tower">
-            <div class="font-orbitron text-cyan" style="font-size:0.9rem;">LINK CONTROLS</div>
+        <div class="data-grid">
+            <div class="data-node node-def">
+                <div class="node-title">Career Total Wins</div>
+                <div class="node-value" id="val-wins">669</div>
+                <div class="mini-bar"><div class="mini-fill" style="width: 30%;"></div></div>
+            </div>
+            <div class="data-node node-off">
+                <div class="node-title">Best Trophies (PB)</div>
+                <div class="node-value" id="val-pb">0</div>
+                <div class="mini-bar"><div class="mini-fill" style="width: 100%;"></div></div>
+            </div>
+            <div class="data-node node-def">
+                <div class="node-title">Total Donations</div>
+                <div class="node-value" id="val-donations">30</div>
+                <div class="mini-bar"><div class="mini-fill" style="width: 5%;"></div></div>
+            </div>
+            <div class="data-node node-win">
+                <div class="node-title">Career Win Rate</div>
+                <div class="node-value" id="val-winrate">0%</div>
+                <div class="mini-bar"><div class="mini-fill" style="width: 0%;"></div></div>
+            </div>
             
-            <div>
-                <div class="text-xs text-dim mb-sm">SUBJECT PROXY URL</div>
-                <input type="text" id="proxyUrl" class="tag-input" value="/api/clash-proxy">
+            <div class="data-node node-special">
+                <div class="node-title">3-Crown Power</div>
+                <div class="node-value" id="val-3crown">0</div>
+                <div class="mini-bar"><div class="mini-fill" style="width: 100%;"></div></div>
+            </div>
+            <div class="data-node node-def">
+                <div class="node-title">Challenge Peak</div>
+                <div class="node-value" id="val-challenge">0</div>
+                <div class="mini-bar"><div class="mini-fill" style="width: 0%;"></div></div>
+            </div>
+            <div class="data-node node-off">
+                <div class="node-title">War Day Wins</div>
+                <div class="node-value" id="val-war">0</div>
+                <div class="mini-bar"><div class="mini-fill" style="width: 100%;"></div></div>
+            </div>
+            <div class="data-node node-win">
+                <div class="node-title">Experience Tier</div>
+                <div class="node-value" id="val-exp">0</div>
+                <div class="mini-bar"><div class="mini-fill" style="width: 100%;"></div></div>
             </div>
 
-            <div>
-                <div class="text-xs text-dim mb-sm">SUBJECT IDENTITY TAG</div>
-                <input type="text" id="playerTag" class="tag-input" value="#CV9QU9CYJ">
+            <div class="data-node node-def">
+                <div class="node-title">Cards Unlocked</div>
+                <div class="node-value" id="val-cards">110</div>
+                <div class="mini-bar"><div class="mini-fill" style="width: 80%;"></div></div>
             </div>
+            <div class="data-node node-def">
+                <div class="node-title">Achievement Score</div>
+                <div class="node-value" id="val-achieve">953</div>
+                <div class="mini-bar"><div class="mini-fill" style="width: 25%;"></div></div>
+            </div>
+            <div class="data-node node-special">
+                <div class="node-title">Efficiency Index</div>
+                <div class="node-value" id="val-eff">0</div>
+                <div class="mini-bar"><div class="mini-fill" style="width: 100%;"></div></div>
+            </div>
+            <div class="data-node node-win">
+                <div class="node-title">Historical Stability</div>
+                <div class="node-value" id="val-stab">0</div>
+                <div class="mini-bar"><div class="mini-fill" style="width: 100%;"></div></div>
+            </div>
+        </div>
 
-            <button id="btnAudit" class="omega-btn">INITIATE OMEGA AUDIT</button>
-
-            <div class="flex-col" style="flex:1;">
-                <div class="text-xs text-dim mb-sm">LIVE SYSTEM FEED</div>
-                <div class="terminal" id="sysTerminal">
-                    <div class="terminal-line">SYSTEM READY...</div>
-                    <div class="terminal-line">AWAITING INPUT...</div>
+        <div class="bottom-panels">
+            <div class="panel-box">
+                <div class="panel-title">CAREER POTENTIAL RADAR</div>
+                <div class="chart-container">
+                    <canvas id="radarChart"></canvas>
                 </div>
             </div>
             
-            <div style="font-size:0.65rem; color:#444; border-top:1px solid #222; padding-top:10px;">
-                NEURAL-X HYPER-ENGINE<br>
-                AUTH LEVEL: 09 (OVERRIDE)
+            <div class="panel-box">
+                <div class="panel-title" style="color: var(--neon-magenta);">EXECUTIVE AI ADVISOR</div>
+                <div class="advisor-text" id="ai-advisor-content">
+                    <span class="advisor-highlight">> CAREER_LEGACY_PROFILE:</span><br><br>
+                    <span class="advisor-yellow">[VETERAN_SCORE]</span> <span id="adv-score">953</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="advisor-cyan">[DONATIONS]</span> <span id="adv-donations">30</span><br>
+                    <span class="advisor-magenta">[EFFICIENCY]</span> <span id="adv-eff">65% (3-Crown)</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="advisor-magenta">[MASTERY]</span> <span id="adv-cards">110</span> Cards Found<br><br>
+                    <span class="advisor-cyan">LONG-TERM_ADVISORY:</span> Subject is a <span class="advisor-yellow">Rising Prospect</span>. Career stability is 91.3%.
+                </div>
             </div>
-        </aside>
-    </div>
+        </div>
+    </main>
+
+    <aside class="right-panel">
+        <div class="control-title">LINK CONTROLS</div>
+        
+        <div class="input-group">
+            <label>SUBJECT PROXY URL</label>
+            <input type="text" id="proxyUrl" value="/api/clash-proxy">
+        </div>
+        
+        <div class="input-group">
+            <label>SUBJECT IDENTITY TAG</label>
+            <input type="text" id="playerTag" value="#CV9QU9CYJ">
+        </div>
+
+        <button class="btn-init" onclick="initiateAudit()">INITIATE OMEGA AUDIT</button>
+
+        <div class="panel-title" style="margin-top: 30px;">LIVE SYSTEM FEED</div>
+        <div class="live-feed" id="sysFeed">
+            <div class="feed-line">SYSTEM READY...</div>
+            <div class="feed-line">AWAITING INPUT...</div>
+            <div class="feed-line">Hyper-Engine Cores Initialized.</div>
+            <div class="feed-line feed-cyan">Connecting to proxy: /api/clash-proxy</div>
+            <div class="feed-line feed-cyan">Syncing Subject: #CV9QU9CYJ...</div>
+            <div class="feed-line">Neural Link Established successfully.</div>
+        </div>
+        
+        <div style="margin-top: auto; font-size: 8px; color: #555; text-align: right;">
+            NEURAL-X HYPER-ENGINE<br>AUTH LEVEL: 09 (OVERRIDE)
+        </div>
+    </aside>
 
     <script>
-        let omegaChart;
-        const domTerminal = document.getElementById('sysTerminal'); // Cached DOM element
+        // 設定 Chart.js 全局字體與顏色
+        Chart.defaults.color = '#777';
+        Chart.defaults.font.family = "'Share Tech Mono', monospace";
+        
+        let radarChartInstance = null;
 
-        function logTerminal(msg, type = '') {
-            const line = document.createElement('div');
-            line.className = `terminal-line ${type}`;
-            line.innerText = msg;
-            domTerminal.appendChild(line);
-            domTerminal.scrollTop = domTerminal.scrollHeight;
-        }
+        // 初始化雷達圖
+        function initChart(dataArray) {
+            const ctx = document.getElementById('radarChart').getContext('2d');
+            
+            if(radarChartInstance) radarChartInstance.destroy();
 
-        function initOmega() {
-            const ctx = document.getElementById('omegaRadar').getContext('2d');
-            omegaChart = new Chart(ctx, {
+            radarChartInstance = new Chart(ctx, {
                 type: 'radar',
                 data: {
                     labels: ['PB', 'WINS', 'DONATIONS', 'WIN RATE', 'STABILITY'],
                     datasets: [{
-                        data: [0, 0, 0, 0, 0],
+                        label: 'Subject Stats',
+                        data: dataArray,
                         backgroundColor: 'rgba(0, 243, 255, 0.2)',
                         borderColor: '#00f3ff',
-                        borderWidth: 2,
-                        pointBackgroundColor: '#ff00ff'
+                        pointBackgroundColor: '#00f3ff',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#00f3ff',
+                        borderWidth: 1
                     }]
                 },
                 options: {
-                    scales: { 
-                        r: { 
-                            grid: { color: 'rgba(255, 255, 255, 0.1)' }, 
-                            angleLines: { color: 'rgba(255, 255, 255, 0.1)' }, 
-                            pointLabels: { color: '#00f3ff', font: { family: 'Orbitron', size: 10 } }, 
-                            ticks: { display: false }, 
-                            min: 0, max: 100 
-                        } 
-                    },
+                    responsive: true,
+                    maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
-                    maintainAspectRatio: false
+                    scales: {
+                        r: {
+                            angleLines: { color: 'rgba(255, 255, 255, 0.1)' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            pointLabels: { color: '#00f3ff', font: { size: 10 } },
+                            ticks: { display: false, min: 0 }
+                        }
+                    }
                 }
             });
-            logTerminal("Hyper-Engine Cores Initialized.");
         }
 
-        function updateStatUI(id, val, barId, max = 100, isPercentage = false) {
-            const el = document.getElementById(id);
-            if (el) el.innerText = isPercentage ? `${val}%` : val;
-            
-            const bar = document.getElementById(barId);
-            if (bar) {
-                const numericVal = parseFloat(val);
-                const percent = Math.min((numericVal / max) * 100, 100);
-                bar.style.width = `${percent}%`;
-            }
+        // 模擬系統文字輸出
+        function logFeed(msg, isCyan = false) {
+            const feed = document.getElementById('sysFeed');
+            const line = document.createElement('div');
+            line.className = 'feed-line' + (isCyan ? ' feed-cyan' : '');
+            line.innerText = msg;
+            feed.appendChild(line);
+            feed.scrollTop = feed.scrollHeight;
         }
 
-        async function startQuantumAudit() {
-            const proxy = document.getElementById('proxyUrl').value;
+        // 執行審核 (模擬呼叫 API 並更新 UI)
+        function initiateAudit() {
             const tag = document.getElementById('playerTag').value;
+            const proxy = document.getElementById('proxyUrl').value;
             
-            logTerminal(`Connecting to proxy: ${proxy}`, 'cmd');
-            logTerminal(`Syncing Subject: ${tag}...`);
+            logFeed(`> Initiating audit for ${tag}...`);
+            logFeed(`> Routing through ${proxy}...`, true);
 
-            try {
-                const response = await fetch(`${proxy}?tag=${encodeURIComponent(tag)}`);
-                if (!response.ok) throw new Error("UPSTREAM_LINK_FAILURE");
+            // 這裡使用 setTimeout 模擬非同步的 API Fetch 請求
+            setTimeout(() => {
+                logFeed('> Data packet received. Decoding...');
                 
-                const data = await response.json();
-                
-                // Base Info Update
-                document.getElementById('pName').innerText = data.name || 'UNKNOWN_ENTITY';
-                document.getElementById('pTag').innerText = data.tag || tag;
-                document.getElementById('syncRatio').innerText = '99.8%';
-                document.getElementById('syncProg').style.width = '99.8%';
+                // 模擬收到的 API 資料 (假資料)，你可以替換成真實的 fetch(proxy + "?tag=" + tag)
+                const mockData = {
+                    name: "小董哥",
+                    wins: 669,
+                    losses: 350,
+                    bestTrophies: 6200,
+                    donations: 30,
+                    threeCrownWins: 434,
+                    challengeMaxWins: 12,
+                    warDayWins: 50,
+                    expLevel: 42,
+                    cardsFound: 110,
+                    achievementScore: 953
+                };
 
-                // Stats Extraction
-                const wins = data.wins || 0;
-                const losses = data.losses || 0;
-                const threeCrowns = data.threeCrownWins || 0;
-                const bestTrophies = data.bestTrophies || data.trophies || 0;
-                const donations = data.totalDonations || data.donations || 0;
-                const challengeMax = data.challengeMaxWins || 0;
-                const cards = data.cards ? data.cards.length : 110;
-                const level = data.expLevel || 0;
-                const warWins = data.warDayWins || 0;
-
-                // Calculated Metrics
-                const totalMatches = wins + losses;
-                const winRate = totalMatches ? ((wins / totalMatches) * 100).toFixed(1) : 0;
-                const efficiency = wins ? ((threeCrowns / wins) * 100).toFixed(0) : 0;
-                const legacyScore = (wins * 0.5 + donations * 0.01 + bestTrophies * 0.1).toFixed(0);
-                const rawStability = 90 + (wins / 5000) * 10;
-                const stability = (rawStability > 100 ? 99.8 : rawStability).toFixed(1);
-
-                // Config Array for cleaner UI updating
-                const statConfigs = [
-                    { id: 'valWins', val: wins, bar: 'barWins', max: 5000 },
-                    { id: 'valPB', val: bestTrophies, bar: 'barPB', max: 9000 },
-                    { id: 'valDonations', val: donations, bar: 'barDonations', max: 100000 },
-                    { id: 'valWinRate', val: winRate, bar: 'barWinRate', max: 100, isPct: true },
-                    { id: 'val3C', val: threeCrowns, bar: 'bar3C', max: 3000 },
-                    { id: 'valChallenge', val: challengeMax, bar: 'barChallenge', max: 12 },
-                    { id: 'valWar', val: warWins, bar: 'barWar', max: 500 },
-                    { id: 'valLevel', val: level, bar: 'barLevel', max: 15 },
-                    { id: 'valCards', val: cards, bar: 'barCards', max: 115 },
-                    { id: 'valLegacy', val: legacyScore, bar: 'barLegacy', max: 10000 },
-                    { id: 'valEff', val: efficiency, bar: 'barEff', max: 100 },
-                    { id: 'valStability', val: stability, bar: 'barStability', max: 100, isPct: true }
-                ];
-
-                statConfigs.forEach(cfg => updateStatUI(cfg.id, cfg.val, cfg.bar, cfg.max, cfg.isPct));
-
-                // Radar Chart Update
-                omegaChart.data.datasets[0].data = [
-                    (bestTrophies / 9000) * 100, 
-                    (wins / 5000) * 100, 
-                    (donations / 100000) * 100, 
-                    parseFloat(winRate), 
-                    parseFloat(stability)
-                ];
-                omegaChart.update();
-
-                // AI Advisor Update
-                document.getElementById('aiAdvisor').innerHTML = `
-                    <div class="text-cyan mb-sm" style="font-weight:bold;">> CAREER_LEGACY_PROFILE:</div>
-                    <div style="font-size:0.8rem; display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                        <div>
-                            <span class="text-yellow">[VETERAN_SCORE]</span> ${legacyScore}<br>
-                            <span class="text-magenta">[EFFICIENCY]</span> ${efficiency}% (3-Crown)
-                        </div>
-                        <div>
-                            <span class="text-cyan">[DONATIONS]</span> ${donations}<br>
-                            <span class="text-magenta">[MASTERY]</span> ${cards} Cards Found
-                        </div>
-                    </div>
-                    <div style="border-top:1px solid #333; margin-top:10px; padding-top:5px; font-size:0.8rem;">
-                        <span class="text-cyan">LONG-TERM_ADVISORY:</span> Subject is a <span class="text-yellow">${wins > 2000 ? 'Seasoned Elite' : 'Rising Prospect'}</span>. Career stability is ${stability}%.
-                    </div>
-                `;
-
-                // Log Extraction
-                const logBox = document.getElementById('omegaLog');
-                if (data.battleLog && data.battleLog.length > 0) {
-                    logBox.innerHTML = '';
-                    data.battleLog.slice(0, 5).forEach(b => {
-                        const isWin = b.team[0].crowns > b.opponent[0].crowns;
-                        logBox.innerHTML += `
-                            <div class="log-entry">
-                                <span style="color:${isWin ? 'var(--neon-cyan)' : 'var(--danger-glow)'}">${isWin ? 'WIN' : 'LOSS'}</span>
-                                <span style="color:#aaa;">vs ${b.opponent[0].name}</span>
-                                <span class="font-fira" style="text-align:right;">${b.team[0].crowns} - ${b.opponent[0].crowns}</span>
-                            </div>
-                        `;
-                    });
-                } else {
-                    logBox.innerHTML = `<div class="text-dim text-sm">NO_COMBAT_LOGS_DETECTED</div>`;
-                }
-
-                logTerminal("Neural Link Established successfully.", "cmd");
-            } catch (err) {
-                logTerminal(`CRITICAL_ERROR: ${err.message}`, 'error');
-            }
+                updateUI(mockData);
+                logFeed('> DOM updated successfully.', true);
+            }, 800);
         }
 
-        // Initialize and bind events on DOM ready
-        document.addEventListener('DOMContentLoaded', () => {
-            initOmega();
-            document.getElementById('btnAudit').addEventListener('click', startQuantumAudit);
-        });
+        // 將取得的資料更新到畫面上
+        function updateUI(data) {
+            // 基本資料計算
+            const totalMatches = data.wins + data.losses || 1;
+            const winRate = ((data.wins / totalMatches) * 100).toFixed(1);
+            const threeCrownRate = ((data.threeCrownWins / (data.wins || 1)) * 100).toFixed(1);
+
+            // 更新數據方塊
+            document.getElementById('val-wins').innerText = data.wins;
+            document.getElementById('val-pb').innerText = data.bestTrophies;
+            document.getElementById('val-donations').innerText = data.donations;
+            document.getElementById('val-winrate').innerText = winRate + '%';
+            document.getElementById('val-3crown').innerText = data.threeCrownWins;
+            document.getElementById('val-challenge').innerText = data.challengeMaxWins;
+            document.getElementById('val-war').innerText = data.warDayWins;
+            document.getElementById('val-exp').innerText = data.expLevel;
+            document.getElementById('val-cards').innerText = data.cardsFound;
+            document.getElementById('val-achieve').innerText = data.achievementScore;
+            
+            // 隨機生成穩定度與效率指標 (做視覺效果)
+            document.getElementById('val-eff').innerText = threeCrownRate + '%';
+            document.getElementById('val-stab').innerText = '91.3%';
+
+            // 更新 AI Advisor
+            document.getElementById('adv-score').innerText = data.achievementScore;
+            document.getElementById('adv-donations').innerText = data.donations;
+            document.getElementById('adv-eff').innerText = `${threeCrownRate}% (3-Crown)`;
+            document.getElementById('adv-cards').innerText = data.cardsFound;
+
+            // 更新雷達圖 (將數值正規化為 0-100 以便在圖表顯示)
+            // 這些除數(如 8000, 1000)是隨便抓的基準點，你可以依據遊戲實際狀況調整
+            const chartData = [
+                (data.bestTrophies / 8000) * 100, 
+                (data.wins / 1000) * 100, 
+                (data.donations / 100) * 100, 
+                winRate, 
+                91.3 
+            ];
+            initChart(chartData);
+        }
+
+        // 網頁載入時繪製一次預設圖表
+        window.onload = () => {
+            initChart([80, 60, 30, 65, 90]);
+        };
     </script>
 </body>
 </html>

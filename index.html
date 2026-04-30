@@ -3,21 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>神經矩陣 MAXIMA | V48.0 APEX-SYNTHESIS 深度剖析版</title>
+    <title>神經矩陣 MAXIMA | V49.0 APEX-MANIFOLD 拓樸流形版</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* V48.0 專業平衡風格 (量子藍 x 冷鍛白) */
+        /* V49.0 拓樸流形風格 (量子藍 x 空間紫) */
         :root {
-            --bg-deep: #050b14;
-            --panel-bg: rgba(9, 17, 30, 0.95);
-            --stat-primary: #00e5ff; /* 量子藍 */
-            --stat-secondary: #82b1ff;
+            --bg-deep: #030712;
+            --panel-bg: rgba(9, 14, 25, 0.95);
+            --stat-primary: #00e5ff;
+            --stat-secondary: #b388ff; /* 拓樸紫 */
+            --stat-alert: #ff1744;
             --text-main: #f1f5f9;
-            --text-dim: #94a3b8;
-            --border-glow: rgba(0, 229, 255, 0.2);
-            --neon-shadow: 0 0 15px rgba(0, 229, 255, 0.4);
-            --chart-fill: rgba(0, 229, 255, 0.1);
+            --text-dim: #64748b;
+            --border-glow: rgba(179, 136, 255, 0.2);
+            --neon-shadow: 0 0 15px rgba(179, 136, 255, 0.3);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; cursor: default; }
@@ -28,137 +28,72 @@
             font-family: 'Share Tech Mono', 'Noto Sans TC', sans-serif;
             min-height: 100vh; overflow-x: hidden; display: flex; flex-direction: column;
             background-image: 
-                linear-gradient(rgba(130, 177, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(130, 177, 255, 0.03) 1px, transparent 1px);
-            background-size: 30px 30px;
+                radial-gradient(circle at 50% 50%, rgba(179, 136, 255, 0.05) 0%, transparent 50%),
+                linear-gradient(rgba(0, 229, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 229, 255, 0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 40px 40px, 40px 40px;
         }
 
-        header { padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--stat-primary); background: rgba(5, 11, 20, 0.95); box-shadow: var(--neon-shadow); }
-        .system-status { display: flex; gap: 20px; font-size: 12px; color: var(--stat-primary); font-weight: bold; letter-spacing: 2px; }
+        header { padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--stat-secondary); background: rgba(3, 7, 18, 0.95); box-shadow: var(--neon-shadow); }
+        .system-status { display: flex; gap: 20px; font-size: 12px; color: var(--stat-secondary); font-weight: bold; letter-spacing: 2px; }
         .status-node { display: flex; align-items: center; gap: 6px; }
-        .dot { width: 8px; height: 8px; background: var(--stat-primary); border-radius: 50%; box-shadow: 0 0 8px var(--stat-primary); }
+        .dot { width: 8px; height: 8px; background: var(--stat-secondary); border-radius: 50%; box-shadow: 0 0 8px var(--stat-secondary); }
         .blink { animation: pulse 2s infinite; }
 
         main { display: grid; grid-template-columns: 380px 1fr 340px; flex: 1; gap: 2px; }
-        .column { background: var(--panel-bg); display: flex; flex-direction: column; position: relative; border-right: 1px solid rgba(0, 229, 255, 0.1); }
+        .column { background: var(--panel-bg); display: flex; flex-direction: column; position: relative; border-right: 1px solid rgba(179, 136, 255, 0.1); }
 
-        .section-label { padding: 12px 15px; font-family: 'Orbitron'; font-size: 11px; background: linear-gradient(90deg, rgba(0, 229, 255, 0.1), transparent); color: var(--stat-secondary); border-bottom: 1px solid rgba(0, 229, 255, 0.2); display: flex; justify-content: space-between; text-transform: uppercase; letter-spacing: 1.5px; }
+        .section-label { padding: 12px 15px; font-family: 'Orbitron'; font-size: 11px; background: linear-gradient(90deg, rgba(179, 136, 255, 0.1), transparent); color: var(--stat-secondary); border-bottom: 1px solid rgba(179, 136, 255, 0.2); display: flex; justify-content: space-between; text-transform: uppercase; letter-spacing: 1.5px; }
 
         .hero-stats { padding: 30px 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .hero-value { font-family: 'Orbitron'; font-size: 88px; font-weight: 900; color: #fff; line-height: 0.8; margin-bottom: 15px; text-shadow: 0 0 20px rgba(0, 229, 255, 0.3); }
-        .hero-name { font-family: 'Orbitron'; font-size: 18px; color: var(--stat-secondary); letter-spacing: 4px; font-weight: bold;}
+        .hero-value { font-family: 'Orbitron'; font-size: 88px; font-weight: 900; color: #fff; line-height: 0.8; margin-bottom: 15px; text-shadow: 0 0 20px rgba(179, 136, 255, 0.4); }
+        .hero-name { font-family: 'Orbitron'; font-size: 18px; color: var(--stat-primary); letter-spacing: 4px; font-weight: bold;}
 
-        .data-matrix { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: rgba(0, 229, 255, 0.1); }
+        .data-matrix { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: rgba(179, 136, 255, 0.1); }
         .cell { background: var(--bg-deep); padding: 20px 10px; text-align: center; position: relative; transition: 0.3s; }
-        .cell:hover { background: #0c1627; }
+        .cell:hover { background: #0a0f1c; }
         .cell-label { font-size: 10px; color: var(--text-dim); margin-bottom: 8px; letter-spacing: 1px; font-weight: bold; }
         .cell-val { font-family: 'Orbitron'; font-size: 28px; color: #fff; }
         
         .highlight-synth::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--stat-primary); }
         .highlight-synth .cell-val { color: var(--stat-primary); text-shadow: 0 0 10px rgba(0, 229, 255, 0.2); }
+        
+        .highlight-topo::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--stat-secondary); }
+        .highlight-topo .cell-val { color: var(--stat-secondary); text-shadow: 0 0 10px rgba(179, 136, 255, 0.3); }
 
         .vis-container { flex: 1; display: flex; flex-direction: column; padding: 20px; position: relative; min-height: 400px; }
         #radarWrapper { flex: 1; min-height: 380px; }
-        
-        /* 深度分析報告專屬 UI 升級 */
-        .report-overlay {
-            background: rgba(5, 11, 20, 0.9);
-            border: 1px solid var(--stat-primary);
-            padding: 25px;
-            margin-top: 15px;
-            font-size: 13px;
-            position: relative;
-            border-top: 4px solid var(--stat-primary);
-            box-shadow: inset 0 0 20px rgba(0,229,255,0.05), 0 5px 15px rgba(0,0,0,0.5);
-            backdrop-filter: blur(8px);
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
 
-        .report-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            border-bottom: 1px solid rgba(0, 229, 255, 0.2);
-            padding-bottom: 10px;
-        }
-
-        #ui-archetype {
-            font-family: 'Orbitron';
-            color: var(--stat-primary);
-            font-size: 18px;
-            font-weight: 900;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
-        .threat-level {
-            font-family: 'Orbitron';
-            font-size: 12px;
-            padding: 3px 8px;
-            border-radius: 3px;
-            background: rgba(255, 23, 68, 0.1);
-            color: #ff1744;
-            border: 1px solid #ff1744;
-        }
-
-        .report-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        .report-module {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(130, 177, 255, 0.1);
-            padding: 12px;
-        }
-
-        .module-title {
-            font-family: 'Share Tech Mono';
-            color: var(--stat-secondary);
-            font-size: 11px;
-            margin-bottom: 8px;
-            letter-spacing: 1px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .module-title::before { content: "▸"; color: var(--stat-primary); }
-
-        .module-content {
-            color: #cbd5e1;
-            line-height: 1.5;
-            font-size: 12px;
-        }
-
+        .report-overlay { background: rgba(3, 7, 18, 0.9); border: 1px solid var(--stat-secondary); padding: 25px; margin-top: 15px; font-size: 13px; position: relative; border-top: 4px solid var(--stat-secondary); box-shadow: inset 0 0 20px rgba(179,136,255,0.05), 0 5px 15px rgba(0,0,0,0.5); backdrop-filter: blur(8px); display: flex; flex-direction: column; gap: 15px; }
+        .report-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid rgba(179, 136, 255, 0.2); padding-bottom: 10px; }
+        #ui-archetype { font-family: 'Orbitron'; font-size: 18px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; }
+        .threat-level { font-family: 'Orbitron'; font-size: 12px; padding: 3px 8px; border-radius: 3px; }
+        .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .report-module { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(179, 136, 255, 0.1); padding: 12px; }
+        .module-title { font-family: 'Share Tech Mono'; color: var(--stat-primary); font-size: 11px; margin-bottom: 8px; letter-spacing: 1px; display: flex; align-items: center; gap: 5px; }
+        .module-title::before { content: "▸"; color: var(--stat-secondary); }
+        .module-content { color: #cbd5e1; line-height: 1.5; font-size: 12px; }
         .module-full { grid-column: span 2; }
 
         .io-panel { padding: 20px; border-top: 1px solid var(--border-glow); background: rgba(0,0,0,0.4); }
-        input { width: 100%; background: #050b14; border: 1px solid #1e293b; padding: 15px; color: #fff; font-family: 'Orbitron'; font-size: 16px; outline: none; transition: 0.3s; text-align: center; letter-spacing: 2px; }
-        input:focus { border-color: var(--stat-primary); box-shadow: var(--neon-shadow); }
-        input:disabled { opacity: 0.5; cursor: not-allowed; }
+        input { width: 100%; background: #030712; border: 1px solid #1e293b; padding: 15px; color: #fff; font-family: 'Orbitron'; font-size: 16px; outline: none; transition: 0.3s; text-align: center; letter-spacing: 2px; }
+        input:focus { border-color: var(--stat-secondary); box-shadow: var(--neon-shadow); }
         
-        .btn-prime { width: 100%; padding: 18px; margin-top: 10px; background: rgba(0, 229, 255, 0.05); color: var(--stat-primary); font-family: 'Orbitron'; font-weight: 900; font-size: 14px; border: 1px solid var(--stat-primary); cursor: pointer; letter-spacing: 2px; transition: 0.2s; }
-        .btn-prime:hover:not(:disabled) { background: var(--stat-primary); color: #000; box-shadow: var(--neon-shadow); }
-        .btn-prime:disabled { background: #0f172a; color: #475569; border-color: #1e293b; cursor: wait; }
+        .btn-prime { width: 100%; padding: 18px; margin-top: 10px; background: rgba(179, 136, 255, 0.05); color: var(--stat-secondary); font-family: 'Orbitron'; font-weight: 900; font-size: 14px; border: 1px solid var(--stat-secondary); cursor: pointer; letter-spacing: 2px; transition: 0.2s; }
+        .btn-prime:hover:not(:disabled) { background: var(--stat-secondary); color: #000; box-shadow: var(--neon-shadow); }
 
         .sim-log { flex: 1; font-family: 'Share Tech Mono'; font-size: 11px; padding: 15px; color: var(--text-dim); overflow-y: auto; max-height: 300px; }
         .log-line { margin-bottom: 8px; border-left: 2px solid #334155; padding-left: 10px; line-height: 1.4; }
-        .log-ts { color: #64748b; margin-right: 10px; font-size: 10px; }
+        .log-ts { color: #475569; margin-right: 10px; font-size: 10px; }
         .log-tag { padding: 2px 5px; border-radius: 2px; font-size: 9px; margin-right: 8px; text-transform: uppercase; font-weight: bold; color:#000; }
-        
         .tag-sys { background: #64748b; color: #fff; }
         .tag-calc { background: var(--stat-primary); }
-        .tag-info { background: #3b82f6; color: #fff; }
+        .tag-topo { background: var(--stat-secondary); }
 
-        @keyframes pulse { 0% { opacity: 0.3; } 50% { opacity: 1; } 100% { opacity: 0.3; } }
         ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--stat-primary); }
+        ::-webkit-scrollbar-thumb { background: var(--stat-secondary); }
 
-        .data-box { padding: 15px; background: rgba(0,229,255,0.02); border: 1px solid rgba(0,229,255,0.15); margin-top: auto; font-family: 'Orbitron'; }
+        .data-box { padding: 15px; background: rgba(179,136,255,0.02); border: 1px solid rgba(179,136,255,0.15); margin-top: auto; font-family: 'Orbitron'; }
         .d-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 12px; }
         .d-label { color: var(--text-dim); }
         .d-val { color: #fff; font-weight: bold; }
@@ -168,8 +103,8 @@
 
     <header>
         <div class="system-status">
-            <div class="status-node"><div class="dot blink"></div> V48.0 APEX-SYNTHESIS | PRO-BALANCE TIER</div>
-            <div class="status-node" id="top-lethality">ALGORITHM: BAYESIAN SIGMOID ACTIVE</div>
+            <div class="status-node"><div class="dot blink"></div> V49.0 APEX-MANIFOLD | ALGEBRAIC TOPOLOGY</div>
+            <div class="status-node">ALGORITHM: PERSISTENT HOMOLOGY PROXY</div>
         </div>
         <div style="font-family: 'Orbitron'; font-size: 16px; letter-spacing: 4px; color: #fff;">MAXIMA_DATACENTER</div>
     </header>
@@ -188,18 +123,18 @@
                 <div class="cell highlight-synth"><div class="cell-label">TACTICAL-DEF (TDR)</div><div class="cell-val" id="val-def">--</div></div>
                 <div class="cell"><div class="cell-label">BAYESIAN CONF (B-CF)</div><div class="cell-val" id="val-mic">--</div></div>
                 <div class="cell"><div class="cell-label">OBJECTIVE BASE (OEI)</div><div class="cell-val" id="val-mac">--</div></div>
-                <div class="cell"><div class="cell-label">SIGMOID MOD (S-MOD)</div><div class="cell-val" id="val-cst">--</div></div>
-                <div class="cell"><div class="cell-label">DYNAMIC ADAPT (DYN)</div><div class="cell-val" id="val-exe" style="color: var(--stat-primary);">--</div></div>
+                <div class="cell highlight-topo"><div class="cell-label">TOPO-GEOMETRY (TPG)</div><div class="cell-val" id="val-tpg">--</div></div>
+                <div class="cell"><div class="cell-label">1D HOLE DENSITY (H1)</div><div class="cell-val" id="val-h1" style="color: var(--text-dim);">--</div></div>
             </div>
 
             <div class="io-panel">
                 <input type="text" id="tagInput" placeholder="PLAYER TAG (#...)" spellcheck="false">
-                <button class="btn-prime" id="btn-engage" onclick="fetchAndAnalyze()">RUN SYNTHESIS PROTOCOL</button>
+                <button class="btn-prime" id="btn-engage" onclick="fetchAndAnalyze()">MAP TOPOLOGY PROTOCOL</button>
             </div>
         </section>
 
         <section class="column">
-            <div class="section-label"><span>EQUILIBRIUM_VECTORS</span><span>RADAR_PLOT</span></div>
+            <div class="section-label"><span>MANIFOLD_VECTORS</span><span>RADAR_PLOT</span></div>
             <div class="vis-container">
                 <div id="radarWrapper">
                     <canvas id="mainChart"></canvas>
@@ -207,13 +142,13 @@
                 
                 <div class="report-overlay" id="report-container">
                     <div class="report-header">
-                        <div id="ui-archetype" style="text-shadow: 0 0 10px #94a3b8; color: #94a3b8;">SYSTEM STANDBY</div>
-                        <div class="threat-level" style="color: #94a3b8; border-color: #94a3b8; background: rgba(148, 163, 184, 0.1);">AWAITING TARGET</div>
+                        <div id="ui-archetype" style="text-shadow: 0 0 10px #64748b; color: #64748b;">SYSTEM STANDBY</div>
+                        <div class="threat-level" style="color: #64748b; border: 1px solid #64748b; background: rgba(100, 116, 139, 0.1);">AWAITING TARGET</div>
                     </div>
                     <div class="report-grid">
                         <div class="report-module module-full">
-                            <div class="module-title">BEHAVIORAL_ANALYSIS (行為解析)</div>
-                            <div class="module-content">系統已實裝 V48.0 頂點合成協定。結合貝氏平滑估計與 Sigmoid 曲線，在激進爆發與保守底線中取得數學上的黃金平衡。專為職業賽事與高階環境設計的無死角評估模型。</div>
+                            <div class="module-title">TOPOLOGICAL_ANALYSIS (流形解析)</div>
+                            <div class="module-content">系統已載入代數拓樸模型。將透過玩家勝負場次與盃數的非線性關聯，投射出爬分軌跡的幾何特徵，偵測隱藏在數據中的「拓樸孔洞（無效勝負循環）」。</div>
                         </div>
                     </div>
                 </div>
@@ -223,16 +158,15 @@
         <section class="column">
             <div class="section-label"><span>ANALYSIS_LOG</span><span>PROXY_NETWORK</span></div>
             <div id="log-feed" class="sim-log">
-                <div class="log-line"><span class="log-ts">00:00:00</span> <span class="log-tag tag-sys">SYS</span> APEX-SYNTHESIS V48.0 核心上線。</div>
-                <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-tag tag-info">INFO</span> 載入貝氏平滑參數與非線性 S 曲線權重。</div>
-                <div class="log-line"><span class="log-ts">00:00:02</span> <span class="log-tag tag-sys">SYS</span> 預測性神經輪廓模組 (PNP) 部署完畢。</div>
+                <div class="log-line"><span class="log-ts">00:00:00</span> <span class="log-tag tag-sys">SYS</span> APEX-MANIFOLD V49.0 拓樸核心上線。</div>
+                <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-tag tag-topo">TOPO</span> 持續同調代理 (Persistent Homology Proxy) 引擎就緒。</div>
             </div>
 
             <div class="data-box">
                 <div class="d-row"><span class="d-label">Raw Win Rate (p)</span><span class="d-val" id="sub-p">--</span></div>
-                <div class="d-row"><span class="d-label">Bayesian Rate (θ)</span><span class="d-val" id="sub-bayes" style="color: var(--stat-primary);">--</span></div>
-                <div class="d-row"><span class="d-label">Wilson Lower (WLB)</span><span class="d-val" id="sub-wlb">--</span></div>
-                <div class="d-row"><span class="d-label">Sigmoid Multiplier</span><span class="d-val" id="sub-sig">--</span></div>
+                <div class="d-row"><span class="d-label">Betti-1 Hole Proxy (H1)</span><span class="d-val" id="sub-h1" style="color: var(--stat-secondary);">--</span></div>
+                <div class="d-row"><span class="d-label">Euler Char Proxy (χ)</span><span class="d-val" id="sub-euler">--</span></div>
+                <div class="d-row"><span class="d-label">Topo Resonance (τ)</span><span class="d-val" id="sub-tau">--</span></div>
             </div>
         </section>
     </main>
@@ -246,25 +180,24 @@
             chart = new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: ['SOR(綜合進攻)', 'TDR(戰術防守)', 'B-CF(貝氏置信)', 'OEI(客觀底盤)', 'DYN(動態適應)', 'ASI(頂點合成)'],
+                    labels: ['SOR(綜合進攻)', 'TDR(戰術防守)', 'B-CF(貝氏置信)', 'OEI(客觀底盤)', 'TPG(拓樸幾何)', 'ASI(頂點合成)'],
                     datasets: [{
-                        label: 'SYNTHESIS_VECTOR',
+                        label: 'MANIFOLD_VECTOR',
                         data: [0,0,0,0,0,0],
-                        backgroundColor: 'rgba(0, 229, 255, 0.1)',
-                        borderColor: '#00e5ff',
+                        backgroundColor: 'rgba(179, 136, 255, 0.15)',
+                        borderColor: '#b388ff',
                         borderWidth: 2,
                         pointRadius: 4,
                         pointBackgroundColor: '#fff',
-                        pointBorderColor: '#00e5ff'
+                        pointBorderColor: '#b388ff'
                     }]
                 },
                 options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
+                    responsive: true, maintainAspectRatio: false,
                     scales: {
                         r: {
-                            angleLines: { color: 'rgba(0, 229, 255, 0.1)' },
-                            grid: { color: 'rgba(0, 229, 255, 0.1)' },
+                            angleLines: { color: 'rgba(179, 136, 255, 0.15)' },
+                            grid: { color: 'rgba(179, 136, 255, 0.15)' },
                             pointLabels: { color: '#94a3b8', font: { family: 'Share Tech Mono', size: 11, weight: 'bold' } },
                             ticks: { display: false, max: 100, min: 0 }
                         }
@@ -276,100 +209,84 @@
 
         async function fetchAndAnalyze() {
             let tagRaw = document.getElementById('tagInput').value.trim();
-            if(!tagRaw) return writeLog("INFO", "請輸入玩家標籤以啟動合成協定。");
+            if(!tagRaw) return writeLog("TOPO", "請輸入實體座標 (玩家標籤) 以投射拓樸流形。");
 
             const btn = document.getElementById('btn-engage');
-            const input = document.getElementById('tagInput');
-            btn.disabled = true; input.disabled = true;
-            btn.innerText = "SYNTHESIZING DATA...";
+            btn.disabled = true; btn.innerText = "MAPPING TOPOLOGY...";
 
             let tagClean = tagRaw.replace('#', '');
-            let encodedTag = encodeURIComponent('#' + tagClean);
-
-            writeLog("SYS", `獲取目標數據 [#${tagClean}]，啟動動態平衡演算...`);
+            writeLog("SYS", `擷取空間座標 [#${tagClean}]，啟動同調代理運算...`);
             
             try {
-                const apiUrl = `/api/clash-proxy?tag=${encodedTag}`;
-                const response = await fetch(apiUrl);
+                const response = await fetch(`/api/clash-proxy?tag=${encodeURIComponent('#'+tagClean)}`);
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const rawData = await response.json();
-                writeLog("SYS", `握手成功。正在映射至 S 曲線函數。`);
-
-                const playerData = {
-                    name: rawData.name || "UNKNOWN",
-                    wins: rawData.wins || 0,
-                    losses: rawData.losses || 0,
-                    trophies: rawData.trophies || 0
-                };
-                runSynthesisModel(playerData);
-
+                runManifoldModel({ name: rawData.name || "UNKNOWN", wins: rawData.wins || 0, losses: rawData.losses || 0, trophies: rawData.trophies || 0 });
             } catch (error) {
-                writeLog("INFO", `API 離線 (${error.message})。載入職業級均衡測試數據。`);
-                // 模擬一個典型的中高階職業玩家：場次多，勝率穩定微高 (約58%)，進攻防守均衡
-                runSynthesisModel({ name: "PRO_EQUILIBRIUM", wins: 5800, losses: 4200, trophies: 7500 });
-                // 若要測試「非對稱突擊手」，可更換下方註解的數據集：
-                // runSynthesisModel({ name: "ASYM_STRIKER", wins: 850, losses: 500, trophies: 6800 });
+                writeLog("TOPO", `API 未響應。載入預設 [拓樸畸變體] 測試數據。`);
+                // 測試數據：勝率普通，但場次極多盃數偏低 (代表充滿拓樸孔洞)
+                runManifoldModel({ name: "TOPOLOGICAL_ANOMALY", wins: 12000, losses: 11500, trophies: 6500 });
             } finally {
-                btn.disabled = false; input.disabled = false;
-                btn.innerText = "RUN SYNTHESIS PROTOCOL";
-                input.focus();
+                btn.disabled = false; btn.innerText = "MAP TOPOLOGY PROTOCOL";
             }
         }
 
-        function runSynthesisModel(data) {
-            writeLog("CALC", "執行貝氏平滑與非線性激進/保守校正...");
+        // V49.0 加入代數拓樸運算
+        function runManifoldModel(data) {
+            writeLog("CALC", "計算貝蒂數代理與歐拉特徵...");
 
             const W = data.wins;
             const L = data.losses;
             const N = W + L || 1; 
             const T = data.trophies;
-
             const p = W / N; 
+
+            // 1. 基礎貝氏與 S 曲線
+            const theta = (W + 50) / (N + 100);
+            const WLB = Math.max(0, (p + 1.92/N - 1.96*Math.sqrt((p*(1-p))/N + 0.96/(N*N))) / (1 + 3.84/N));
+            const OEI = (Math.log10(T > 10 ? T : 10) / 3.9) * (1 + (W - L) / N);
+            const sigmoidMod = 1 / (1 + Math.exp(-12 * (theta - 0.5)));
+
+            // 2. 拓樸幾何核心 (Algebraic Topology Proxy)
+            // H1 (Betti-1 Proxy): 1維拓樸孔洞密度。敗場越多、總場次越多、盃數越低，孔洞越大。
+            const H1_raw = (L * Math.log(N + 1)) / ((T > 0 ? T : 1) + 100);
+            const H1 = Math.min(1.0, H1_raw * 0.1); // 正規化
             
-            // 1. 貝氏置信勝率 (Bayesian Smoothing)
-            const alpha = 50; 
-            const beta = 50;
-            const theta = (W + alpha) / (N + alpha + beta);
+            // Euler Characteristic Proxy: 流形結構完整性
+            const eulerChar = (W - L) - (H1 * 1000); 
 
-            // 2. 威爾遜極限 (保守防禦基底)
-            const z = 1.96;
-            const denom = 1 + (z * z) / N;
-            const term1 = p + (z * z) / (2 * N);
-            const term2 = z * Math.sqrt((p * (1 - p)) / N + (z * z) / (4 * N * N));
-            const WLB = Math.max(0, (term1 - term2) / denom); 
+            // TPG (Topological Geometry Index): 指數衰減映射，孔洞越多分數越低
+            const k_topo = 4.5;
+            const TPG_raw = Math.exp(-k_topo * H1);
 
-            // 3. 客觀底盤 OEI
-            const G = Math.log10(T > 10 ? T : 10) / 3.9;
-            const OEI = G * (1 + (W - L) / N);
-
-            // 4. S 曲線進攻函數
-            const k = 12; 
-            const sigmoidMod = 1 / (1 + Math.exp(-k * (theta - 0.5)));
-
-            // 綜合指標
+            // ==========================================
             const SOR_raw = sigmoidMod * OEI * 1.5; 
-            const survivalRate = 1 - (L / N);
-            const TDR_raw = Math.sqrt(WLB * survivalRate) * OEI * 1.2;
+            const TDR_raw = Math.sqrt(WLB * (1 - L/N)) * OEI * 1.2;
+            const B_CF = Math.max(0.1, 1 - (1.96 * Math.sqrt((theta * (1 - theta)) / (N + 100))));
 
-            const standardError = Math.sqrt((theta * (1 - theta)) / (N + alpha + beta));
-            const B_CF = Math.max(0.1, 1 - (z * standardError));
-
-            const mapScore = (val, maxExpected) => Math.min(99.9, Math.max(0.1, (val / maxExpected) * 100));
+            const mapScore = (val, max) => Math.min(99.9, Math.max(0.1, (val / max) * 100));
 
             const score_SOR = mapScore(SOR_raw, 1.2); 
             const score_TDR = mapScore(TDR_raw, 0.8);
             const score_BCF = mapScore(B_CF, 1.0); 
             const score_OEI = mapScore(OEI, 1.2);
             
-            const score_DYN = mapScore((theta - 0.5) * 2 + B_CF, 1.5);
-            const score_ASI = (score_SOR * 0.45) + (score_TDR * 0.35) + (score_OEI * 0.2);
+            // 將拓樸幾何轉為百分制評分
+            const score_TPG = TPG_raw * 100;
+            
+            // 新版 ASI 演算法：加入拓樸權重 (TPG 作為動態調節因子)
+            const base_ASI = (score_SOR * 0.45) + (score_TDR * 0.35) + (score_OEI * 0.2);
+            // 如果拓樸幾何極差(充滿無效循環)，ASI 會受到懲罰；反之則有微小加成
+            const topo_multiplier = 0.8 + (TPG_raw * 0.4); // 0.8x ~ 1.2x
+            const score_ASI = Math.min(99.9, base_ASI * topo_multiplier);
 
-            const scores = [score_SOR, score_TDR, score_BCF, score_OEI, score_DYN, score_ASI];
-            updateDashboard(data, scores, p, theta, WLB, sigmoidMod);
+            const scores = [score_SOR, score_TDR, score_BCF, score_OEI, score_TPG, score_ASI];
+            updateDashboard(data, scores, p, H1, eulerChar, TPG_raw);
         }
 
-        function updateDashboard(data, scores, p, theta, WLB, sigmoidMod) {
+        function updateDashboard(data, scores, p, h1, euler, tau) {
             const asi = scores[5]; 
+            const tpg = scores[4];
             
             document.getElementById('ui-mvi').innerText = Math.round(asi);
             document.getElementById('ui-name').innerText = data.name.toUpperCase();
@@ -378,101 +295,83 @@
             document.getElementById('val-def').innerText = scores[1].toFixed(1);
             document.getElementById('val-mic').innerText = scores[2].toFixed(1);
             document.getElementById('val-mac').innerText = scores[3].toFixed(1);
-            document.getElementById('val-cst').innerText = sigmoidMod.toFixed(3);
-            document.getElementById('val-exe').innerText = scores[4].toFixed(1);
+            document.getElementById('val-tpg').innerText = tpg.toFixed(1);
+            document.getElementById('val-h1').innerText = h1.toFixed(3);
 
             document.getElementById('sub-p').innerText = (p * 100).toFixed(2) + "%";
-            document.getElementById('sub-bayes').innerText = (theta * 100).toFixed(2) + "%";
-            document.getElementById('sub-wlb').innerText = (WLB * 100).toFixed(2) + "%";
-            document.getElementById('sub-sig').innerText = sigmoidMod.toFixed(3);
+            document.getElementById('sub-h1').innerText = h1.toFixed(3);
+            document.getElementById('sub-euler').innerText = euler.toFixed(0);
+            document.getElementById('sub-tau').innerText = tau.toFixed(3);
 
             chart.data.datasets[0].data = scores;
             chart.update();
 
-            generateSynthesisReport(scores[0], scores[1], asi, theta);
+            generateTopoReport(scores[0], scores[1], asi, tpg, h1);
         }
 
-        // 升級版：預測性神經輪廓深度解析引擎
-        function generateSynthesisReport(sor, tdr, asi, theta) {
-            const reportContainer = document.getElementById('report-container');
-            
-            // 預設變數
-            let archetype = "STANDARD EQUILIBRIUM";
-            let threatText = "THREAT: MODERATE";
-            let threatColor = "#94a3b8";
-            let analysisText = "各項指標皆處於系統預測的中位數區間。勝率與場次符合常態分佈，尚未展現出能夠打破數學平衡的特異性表現。";
-            let weaknessText = "目前無明顯極端短板，但也意味著缺乏絕對的致勝手段。";
-            let counterText = "維持常規營運節奏即可。透過穩定的費用交換來積累優勢，對手通常無法在逆風時打出奇蹟翻盤。";
+        function generateTopoReport(sor, tdr, asi, tpg, h1) {
+            const rc = document.getElementById('report-container');
+            let archetype = "STABLE MANIFOLD (穩定流形)";
+            let threat = "THREAT: MODERATE";
+            let color = "#82b1ff";
+            let analysis = "爬分軌跡符合標準歐拉特徵，未檢測出明顯的無效勝負循環。數據流形平滑。";
+            let weakness = "流形結構過於標準，缺乏破局的突變爆發力。";
+            let counter = "採用標準戰術應對即可。";
 
-            // 邏輯判斷樹
-            if (asi >= 85 && sor > 80 && tdr > 80) {
-                archetype = "PRO-CIRCUIT ELITE";
-                threatText = "THREAT: EXTREME";
-                threatColor = "#00e5ff"; 
-                analysisText = "該目標在最嚴苛的動態平衡算法下，既具備 S 曲線的激進突破力，也擁有堅實的威爾遜防守基底。其攻守轉換幾乎沒有數學上的死角，是極度危險的六邊形戰士。";
-                weaknessText = "近乎無懈可擊。唯一的潛在盲區在於其對「最優解」的依賴，面對極度非主流或混亂的快節奏陣型時，可能會因運算過度而產生微小延遲。";
-                counterText = "避免與其進行傳統的陣地戰或拼防守反擊。必須利用不可預測的雙路施壓，強制打亂其既定的 S 曲線平滑節奏。";
+            if (tpg < 40 && h1 > 0.6) {
+                archetype = "TOPOLOGICAL ANOMALY (拓樸畸變體)";
+                threat = "THREAT: LOW (TILT LOOP)";
+                color = "#ff1744"; 
+                analysis = `檢測到大量的 1 維拓樸孔洞 (H1: ${h1.toFixed(2)})。該目標陷入了嚴重的勝負折疊，耗費極大場次卻無法提升盃數，代表其心理狀態或戰術邏輯存在致命迴圈。`;
+                weakness = "心態極度脆弱（處於 Tilt 狀態）。容易在逆風時做出非理性的激進防守，導致崩盤。";
+                counter = "開局給予高壓試探。一旦他們在初期處於劣勢，其拓樸結構極易自我坍塌，放棄抵抗。";
+                writeLog("TOPO", "警告：偵測到軌跡中的拓樸孔洞過多，目標處於 Tilt 循環。");
             } 
-            else if (sor > 80 && (sor - tdr) > 15) {
-                archetype = "ASYMMETRIC STRIKER";
-                threatText = "THREAT: HIGH (OFFENSIVE)";
-                threatColor = "#ff1744"; 
-                analysisText = `S 曲線進攻模組 (SOR: ${sor.toFixed(1)}) 呈現高度活躍，遠超其戰術防守 (TDR: ${tdr.toFixed(1)})。傾向於透過高頻率的進攻來掩蓋防守端的漏洞。`;
-                weaknessText = "防守資源分配極度不均。當第一波進攻被完美化解時，該目標極易陷入費用真空期，且其防守走位往往過於激進。";
-                counterText = "最高指導原則：忍耐。保留核心防禦法術與建築，完全放空其佯攻路。一旦成功防守其主攻波，直接在同路下重兵進行毀滅性反推。";
-            } 
-            else if (tdr > 80 && (tdr - sor) > 15) {
-                archetype = "TACTICAL BASTION";
-                threatText = "THREAT: HIGH (DEFENSIVE)";
-                threatColor = "#ffea00"; 
-                analysisText = `戰術防守 (TDR: ${tdr.toFixed(1)}) 極度穩固，威爾遜下限評級極高。擅長透過抓對手失誤來賺取費用差，防守陣型滴水不漏。`;
-                weaknessText = "主動撕裂防線的爆發力不足。由於過度依賴防守反擊，如果對手完全不發動總攻，他們往往會失去比賽的節奏主導權。";
-                counterText = "拒絕其預期的防守反擊戰場。採用「極限消耗（Chip Damage）」戰術，利用法術或遠程單位慢慢磨血。切忌孤注一擲下大費單位讓對方賺取防守價值。";
+            else if (asi >= 85 && tpg > 85) {
+                archetype = "FLAWLESS GEOMETRY (完美幾何)";
+                threat = "THREAT: EXTREME";
+                color = "#00e5ff"; 
+                analysis = `拓樸幾何指數 (TPG: ${tpg.toFixed(1)}) 極高，爬分軌跡近乎為一條無折疊的平滑射線。勝率與盃數轉化率達到了數學極限。`;
+                weakness = "理論上無結構性弱點。唯一盲點是未曾經歷過「拓樸坍塌」，可能對極端的混亂陣型缺乏適應力。";
+                counter = "必須引入「混沌」。使用高度非主流或不可預測的卡組，迫使對手離開其完美的演算軌跡。";
             }
-            else if (asi < 40) {
-                archetype = "VULNERABLE TARGET";
-                threatText = "THREAT: LOW";
-                threatColor = "#475569";
-                analysisText = "貝氏勝率評估低下，無論是進攻端的突破力還是防守端的穩定性，都處於系統的安全閾值之下。";
-                weaknessText = "容易在攻守轉換中出現重大失誤（如空法術、重疊下兵）。";
-                counterText = "保持基本專注力即可，對手通常會因為自身的營運失誤而崩盤。";
+            else if (sor > tdr + 15) {
+                archetype = "ASYMMETRIC PROJECTILE (非對稱投射物)";
+                threat = "THREAT: HIGH (OFFENSIVE)";
+                color = "#b388ff"; 
+                analysis = "軌跡流形呈現出強烈的向外張力（進攻大於防守）。";
+                weakness = "防禦基底 (WLB) 不足以支撐其張力。";
+                counter = "避其鋒芒，防守反推。";
             }
 
-            // 動態渲染 HTML 結構
-            reportContainer.innerHTML = `
+            rc.innerHTML = `
                 <div class="report-header">
-                    <div id="ui-archetype" style="text-shadow: 0 0 10px ${threatColor}; color: ${threatColor};">${archetype}</div>
-                    <div class="threat-level" style="color: ${threatColor}; border-color: ${threatColor}; background: ${threatColor}20;">${threatText}</div>
+                    <div id="ui-archetype" style="text-shadow: 0 0 10px ${color}; color: ${color};">${archetype}</div>
+                    <div class="threat-level" style="color: ${color}; border: 1px solid ${color}; background: ${color}20;">${threat}</div>
                 </div>
                 <div class="report-grid">
                     <div class="report-module module-full">
-                        <div class="module-title">BEHAVIORAL_ANALYSIS (行為解析)</div>
-                        <div class="module-content">${analysisText}</div>
+                        <div class="module-title">TOPOLOGICAL_ANALYSIS (流形解析)</div>
+                        <div class="module-content">${analysis}</div>
                     </div>
                     <div class="report-module">
-                        <div class="module-title">EXPLOITABLE_WEAKNESS (弱點預測)</div>
-                        <div class="module-content">${weaknessText}</div>
+                        <div class="module-title">STRUCTURAL_FLAW (結構性盲區)</div>
+                        <div class="module-content">${weakness}</div>
                     </div>
                     <div class="report-module">
-                        <div class="module-title">COUNTER_STRATEGY (反制協議)</div>
-                        <div class="module-content">${counterText}</div>
+                        <div class="module-title">COUNTER_TOPOLOGY (反制拓樸)</div>
+                        <div class="module-content">${counter}</div>
                     </div>
                 </div>
             `;
-            writeLog("INFO", `分析報告已產出：${archetype}`);
         }
 
         function writeLog(tag, msg) {
             const feed = document.getElementById('log-feed');
-            const div = document.createElement('div');
-            div.className = 'log-line';
-            const now = new Date();
-            const ts = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
-            
+            const div = document.createElement('div'); div.className = 'log-line';
+            const now = new Date(); const ts = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
             let tagClass = 'tag-sys';
-            if(tag === 'CALC') tagClass = 'tag-calc';
-            if(tag === 'INFO') tagClass = 'tag-info';
-
+            if(tag === 'CALC') tagClass = 'tag-calc'; if(tag === 'TOPO') tagClass = 'tag-topo';
             div.innerHTML = `<span class="log-ts">${ts}</span><span class="log-tag ${tagClass}">${tag}</span> ${msg}`;
             feed.prepend(div);
             if(feed.children.length > LOG_LIMIT) feed.lastChild.remove();

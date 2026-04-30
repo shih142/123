@@ -3,29 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>神經矩陣 AEGIS | V7.5 絕對神盾</title>
+    <title>神經矩陣 EQUILIBRIUM | V8.0 均衡之秤</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --bg-deep: #02060f;
-            --panel-bg: rgba(3, 10, 20, 0.85);
+            --bg-deep: #07050a;
+            --panel-bg: rgba(10, 7, 15, 0.85);
             --neon-cyan: #00f3ff;
-            --neon-magenta: #ff00ff;
-            --neon-yellow: #ffde00;
+            --neon-purple: #b100ff;
+            --psy-pink: #ff00aa;
             --danger-glow: #ff003c;
-            --lethal-orange: #ff5500;
-            --success-green: #00ff66;
-            --shield-blue: #4a90e2;
-            --aegis-core: #00aaff;
-            --text-main: #c7d2e2;
-            --grid: rgba(74, 144, 226, 0.05);
+            --shield-blue: #0088ff;
+            --balance-green: #00ff88;
+            --text-main: #d0c7e2;
+            --grid: rgba(177, 0, 255, 0.05);
             --apex-gold: #ffb700;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
         ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-thumb { background: var(--aegis-core); }
+        ::-webkit-scrollbar-thumb { background: var(--neon-purple); }
 
         body {
             background-color: var(--bg-deep);
@@ -35,7 +33,7 @@
             display: flex;
             overflow: hidden;
             background-image: 
-                radial-gradient(circle at 50% 0%, rgba(74, 144, 226, 0.15), transparent 50%),
+                radial-gradient(circle at 50% 0%, rgba(177, 0, 255, 0.1), transparent 50%),
                 linear-gradient(var(--grid) 1px, transparent 1px),
                 linear-gradient(90deg, var(--grid) 1px, transparent 1px);
             background-size: 100% 100%, 30px 30px, 30px 30px;
@@ -49,69 +47,77 @@
 
         .layout-grid { display: grid; grid-template-columns: 320px 1fr 320px; gap: 20px; width: 100%; height: 100%; padding: 20px; z-index: 10; }
 
-        .panel { background: var(--panel-bg); border: 1px solid rgba(74, 144, 226, 0.3); backdrop-filter: blur(10px); display: flex; flex-direction: column; overflow: hidden; position: relative; box-shadow: inset 0 0 25px rgba(0,0,0,0.9);}
-        .panel::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, var(--aegis-core), transparent); }
-        .panel-header { padding: 12px 15px; border-bottom: 1px solid rgba(74, 144, 226, 0.2); font-family: 'Orbitron', 'Microsoft JhengHei'; font-size: 12px; color: #fff; letter-spacing: 2px; display: flex; justify-content: space-between; background: rgba(0,0,0,0.6); font-weight: bold;}
-        .panel-header span:last-child { color: var(--aegis-core); text-shadow: 0 0 8px var(--aegis-core); }
+        .panel { background: var(--panel-bg); border: 1px solid rgba(177, 0, 255, 0.3); backdrop-filter: blur(10px); display: flex; flex-direction: column; overflow: hidden; position: relative; box-shadow: inset 0 0 25px rgba(0,0,0,0.9);}
+        .panel::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, var(--balance-green), var(--neon-purple), transparent); }
+        .panel-header { padding: 12px 15px; border-bottom: 1px solid rgba(177, 0, 255, 0.2); font-family: 'Orbitron', 'Microsoft JhengHei'; font-size: 12px; color: #fff; letter-spacing: 2px; display: flex; justify-content: space-between; background: rgba(0,0,0,0.6); font-weight: bold;}
+        .panel-header span:last-child { color: var(--balance-green); text-shadow: 0 0 8px var(--balance-green); }
 
         /* 左側欄位 */
         .left-col { display: flex; flex-direction: column; gap: 20px; }
         .profile-card { padding: 20px; text-align: center; }
-        .avatar-glitch { width: 100px; height: 100px; border: 2px solid var(--aegis-core); margin: 0 auto 15px; display: flex; justify-content: center; align-items: center; font-size: 40px; background: rgba(0,170,255,0.05); box-shadow: 0 0 25px rgba(0,170,255,0.3); position: relative; border-radius: 50%;}
-        .p-name { font-family: 'Orbitron'; font-size: 24px; color: #fff; font-weight: 900; text-transform: uppercase; margin-bottom: 5px; text-shadow: 0 0 10px rgba(0,170,255,0.5);}
-        .p-tag { color: var(--neon-cyan); font-size: 12px; }
+        .avatar-glitch { width: 100px; height: 100px; border: 2px solid var(--neon-purple); margin: 0 auto 15px; display: flex; justify-content: center; align-items: center; font-size: 40px; background: rgba(177,0,255,0.05); box-shadow: 0 0 25px rgba(177,0,255,0.3); position: relative; border-radius: 10px; transform: rotate(45deg);}
+        .avatar-glitch span { transform: rotate(-45deg); display: block; }
+        .p-name { font-family: 'Orbitron'; font-size: 24px; color: #fff; font-weight: 900; text-transform: uppercase; margin-bottom: 5px; text-shadow: 0 0 10px rgba(177,0,255,0.5);}
+        .p-tag { color: var(--psy-pink); font-size: 12px; }
 
-        .ncr-display { margin-top: 20px; padding: 15px; border: 1px solid #112; background: #000; position: relative; overflow: hidden;}
-        .ncr-title { font-size: 11px; color: #68a; margin-bottom: 5px; font-weight: bold;}
+        .ncr-display { margin-top: 20px; padding: 15px; border: 1px solid #213; background: #000; position: relative; overflow: hidden;}
+        .ncr-title { font-size: 11px; color: #86a; margin-bottom: 5px; font-weight: bold;}
         .ncr-value { font-family: 'Orbitron'; font-size: 60px; font-weight: 900; line-height: 1; text-shadow: 0 0 15px rgba(255,255,255,0.2); transition: all 1s ease-out;}
         
-        .threat-level { margin-top: 15px; padding: 10px; border: 1px dashed var(--aegis-core); text-align: center; background: rgba(0,170,255,0.05);}
-        .threat-text { font-family: 'Microsoft JhengHei'; font-size: 14px; font-weight: bold; color: var(--aegis-core); letter-spacing: 3px; animation: blink 2s infinite;}
+        .threat-level { margin-top: 15px; padding: 10px; border: 1px dashed var(--balance-green); text-align: center; background: rgba(0,255,136,0.05);}
+        .threat-text { font-family: 'Microsoft JhengHei'; font-size: 14px; font-weight: bold; color: var(--balance-green); letter-spacing: 3px; animation: blink 2s infinite;}
 
         /* 中間：圖表與升級版 10 核心矩陣 */
         .mid-col { display: flex; flex-direction: column; gap: 20px; }
-        .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; height: 280px; }
+        .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; height: 260px; }
         .chart-box { padding: 15px; display: flex; justify-content: center; align-items: center; position: relative; }
         
         /* 10 核心矩陣 (5x2) */
-        .metrics-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; flex: 1; }
-        .metric-node { background: rgba(0,5,15,0.8); border: 1px solid #1a2a40; padding: 12px; display: flex; flex-direction: column; justify-content: space-between; border-left: 3px solid #335588; opacity: 0; transform: translateY(20px); transition: all 0.5s ease-out; position: relative; overflow: hidden;}
-        .metric-node::after { content: ''; position: absolute; top: 0; right: 0; width: 25px; height: 25px; background: linear-gradient(135deg, transparent 50%, rgba(0,170,255,0.05) 50%); }
+        .metrics-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+        .metric-node { background: rgba(5,0,10,0.8); border: 1px solid #203; padding: 12px; display: flex; flex-direction: column; justify-content: space-between; border-left: 3px solid #528; opacity: 0; transform: translateY(20px); transition: all 0.5s ease-out; position: relative; overflow: hidden;}
+        .metric-node::after { content: ''; position: absolute; top: 0; right: 0; width: 25px; height: 25px; background: linear-gradient(135deg, transparent 50%, rgba(177,0,255,0.05) 50%); }
         .metric-node.visible { opacity: 1; transform: translateY(0); }
         
         /* 陣營顏色區分 */
-        .defense-node { border-left-color: var(--aegis-core); background: rgba(0,170,255,0.08); border-right: 1px solid rgba(0,170,255,0.2); box-shadow: inset 0 0 15px rgba(0,170,255,0.1);}
-        .offense-node { border-left-color: var(--danger-glow); background: rgba(255,0,60,0.03); border-right: 1px solid rgba(255,0,60,0.1);}
-        .neutral-node { border-left-color: var(--shield-blue); }
+        .defense-node { border-left-color: var(--shield-blue); }
+        .offense-node { border-left-color: var(--danger-glow); }
+        .macro-node { border-left-color: var(--apex-gold); }
+        .psy-node { border-left-color: var(--psy-pink); background: rgba(255,0,170,0.05); border-right: 1px solid rgba(255,0,170,0.2); box-shadow: inset 0 0 10px rgba(255,0,170,0.1);}
         
-        .mn-title { font-size: 11px; color: #79b; font-weight: bold; letter-spacing: 1px;}
+        .mn-title { font-size: 11px; color: #97a; font-weight: bold; letter-spacing: 1px;}
         .mn-val { font-family: 'Orbitron'; font-size: 20px; font-weight: bold; color: #fff; margin-top: 8px;}
-        .mn-sub { font-size: 10px; color: #579; margin-top: 5px; }
+        .mn-sub { font-size: 10px; color: #648; margin-top: 5px; }
+
+        /* 競技心理素質報告區塊 */
+        .psy-report-panel { flex: 1; display: flex; flex-direction: column; border: 1px solid var(--neon-purple); background: rgba(20, 5, 30, 0.6); margin-top: 5px;}
+        .psy-content { padding: 15px; font-size: 13px; line-height: 1.8; color: #e0d0ff; font-family: 'Microsoft JhengHei'; letter-spacing: 1px; }
+        .psy-highlight { color: var(--balance-green); font-weight: bold; }
+        .psy-warn { color: var(--danger-glow); font-weight: bold; }
 
         /* 右側欄位 */
         .right-col { display: flex; flex-direction: column; gap: 20px; }
         .control-form { padding: 20px; }
-        .input-group label { display: block; font-size: 11px; color: #68a; margin-bottom: 5px; font-weight: bold;}
-        .input-group input { width: 100%; background: rgba(0,5,15,0.9); border: 1px solid #1a2a40; color: var(--aegis-core); padding: 12px; font-family: 'Share Tech Mono'; margin-bottom: 20px; outline: none; transition: 0.3s; font-size: 14px;}
-        .input-group input:focus { border-color: var(--aegis-core); box-shadow: inset 0 0 15px rgba(0,170,255,0.4); }
+        .input-group label { display: block; font-size: 11px; color: #86a; margin-bottom: 5px; font-weight: bold;}
+        .input-group input { width: 100%; background: rgba(5,0,10,0.9); border: 1px solid #203; color: var(--neon-cyan); padding: 12px; font-family: 'Share Tech Mono'; margin-bottom: 20px; outline: none; transition: 0.3s; font-size: 14px;}
+        .input-group input:focus { border-color: var(--neon-purple); box-shadow: inset 0 0 15px rgba(177,0,255,0.4); }
         
-        .btn-exe { width: 100%; background: rgba(0,170,255,0.1); border: 1px solid var(--aegis-core); color: var(--aegis-core); padding: 15px; font-family: 'Microsoft JhengHei'; font-weight: 900; font-size: 15px; letter-spacing: 2px; cursor: pointer; transition: all 0.3s; text-transform: uppercase; text-shadow: 0 0 5px var(--aegis-core);}
-        .btn-exe:hover { background: var(--aegis-core); color: #000; box-shadow: 0 0 30px rgba(0,170,255,0.8); }
+        .btn-exe { width: 100%; background: rgba(177,0,255,0.1); border: 1px solid var(--neon-purple); color: var(--neon-purple); padding: 15px; font-family: 'Microsoft JhengHei'; font-weight: 900; font-size: 15px; letter-spacing: 2px; cursor: pointer; transition: all 0.3s; text-transform: uppercase; text-shadow: 0 0 5px var(--neon-purple);}
+        .btn-exe:hover { background: var(--neon-purple); color: #fff; box-shadow: 0 0 30px rgba(177,0,255,0.8); }
         
         .terminal-panel { flex: 1; display: flex; flex-direction: column; }
-        .terminal-screen { flex: 1; padding: 15px; overflow-y: auto; font-size: 12px; line-height: 1.6; color: var(--aegis-core); }
+        .terminal-screen { flex: 1; padding: 15px; overflow-y: auto; font-size: 12px; line-height: 1.6; color: var(--neon-cyan); }
         .log-line { margin-bottom: 4px; opacity: 0; animation: fadeIn 0.1s forwards; }
-        .sys-info { color: var(--neon-cyan); }
-        .sys-def { color: var(--aegis-core); font-weight: bold; text-shadow: 0 0 5px var(--aegis-core);}
-        .sys-crit { color: var(--apex-gold); font-weight: bold; }
+        .sys-info { color: var(--text-main); }
+        .sys-psy { color: var(--psy-pink); font-weight: bold; text-shadow: 0 0 5px var(--psy-pink);}
+        .sys-crit { color: var(--balance-green); font-weight: bold; }
 
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
         @keyframes fadeIn { to { opacity: 1; } }
         
         .glitch-text { position: relative; }
         .glitch-text::before, .glitch-text::after { content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; }
-        .glitch-text::before { left: 2px; text-shadow: -1px 0 #00aaff; clip: rect(24px, 550px, 90px, 0); animation: glitch-anim 2s infinite linear alternate-reverse; }
-        .glitch-text::after { left: -2px; text-shadow: -1px 0 #4a90e2; clip: rect(85px, 550px, 140px, 0); animation: glitch-anim 2.5s infinite linear alternate-reverse; }
+        .glitch-text::before { left: 2px; text-shadow: -1px 0 #b100ff; clip: rect(24px, 550px, 90px, 0); animation: glitch-anim 2s infinite linear alternate-reverse; }
+        .glitch-text::after { left: -2px; text-shadow: -1px 0 #00ff88; clip: rect(85px, 550px, 140px, 0); animation: glitch-anim 2.5s infinite linear alternate-reverse; }
         @keyframes glitch-anim {
             0% { clip: rect(20px, 9999px, 21px, 0); }
             20% { clip: rect(45px, 9999px, 56px, 0); }
@@ -127,27 +133,27 @@
     <div class="layout-grid">
         <div class="left-col">
             <div class="panel">
-                <div class="panel-header"><span>目標識別碼</span><span>[ 加密連線 ]</span></div>
+                <div class="panel-header"><span>目標識別碼</span><span>[ 同步連線 ]</span></div>
                 <div class="profile-card">
-                    <div class="avatar-glitch">🛡️</div>
+                    <div class="avatar-glitch"><span>☯</span></div>
                     <div class="p-name" id="ui-name">等待輸入...</div>
                     <div class="p-tag" id="ui-tag">無目標</div>
                     
                     <div class="ncr-display">
-                        <div class="ncr-title">N.C.R (絕對神盾指數)</div>
+                        <div class="ncr-title">N.C.R (均衡神階指數)</div>
                         <div class="ncr-value glitch-text" data-text="00" id="ui-ncr">00</div>
-                        <div style="font-family: 'Microsoft JhengHei'; font-weight: bold; color: var(--aegis-core); margin-top: 5px; font-size: 16px; text-shadow: 0 0 10px var(--aegis-core);" id="ui-class">未分級</div>
+                        <div style="font-family: 'Microsoft JhengHei'; font-weight: bold; color: var(--balance-green); margin-top: 5px; font-size: 16px; text-shadow: 0 0 10px var(--balance-green);" id="ui-class">未分級</div>
                     </div>
 
                     <div class="threat-level">
-                        <div style="font-size: 10px; color: #579;">AI 防禦壁壘評估</div>
+                        <div style="font-size: 10px; color: #68a;">全域作戰評估</div>
                         <div class="threat-text" id="ui-threat">未知</div>
                     </div>
                 </div>
             </div>
 
             <div class="panel" style="flex:1;">
-                <div class="panel-header"><span>AI 戰鬥輪廓分析</span><span>[ 鐵壁標籤 ]</span></div>
+                <div class="panel-header"><span>心理狀態與作戰輪廓</span><span>[ 分析標籤 ]</span></div>
                 <div style="padding: 15px; display: flex; flex-wrap: wrap; gap: 8px;" id="ui-tags"></div>
             </div>
         </div>
@@ -155,79 +161,87 @@
         <div class="mid-col">
             <div class="charts-row">
                 <div class="panel chart-box">
-                    <div class="panel-header" style="position:absolute; top:0; left:0; width:100%; border:none; background:transparent;">神盾五維雷達</div>
+                    <div class="panel-header" style="position:absolute; top:0; left:0; width:100%; border:none; background:transparent;">五維雷達 (均衡系)</div>
                     <canvas id="radarChart"></canvas>
                 </div>
                 <div class="panel chart-box">
-                    <div class="panel-header" style="position:absolute; top:0; left:0; width:100%; border:none; background:transparent;">戰術傾向 (防禦主導)</div>
+                    <div class="panel-header" style="position:absolute; top:0; left:0; width:100%; border:none; background:transparent;">能量分佈</div>
                     <canvas id="doughnutChart"></canvas>
                 </div>
             </div>
 
-            <div class="panel" style="flex: 1;">
-                <div class="panel-header"><span>10核心湮滅矩陣</span><span>[ V7.5 絕對神盾 ]</span></div>
-                <div style="padding: 15px; display: flex; flex-direction: column; height: 100%;">
+            <div class="panel">
+                <div class="panel-header"><span>10核心矩陣</span><span>[ V8.0 攻守兼備 ]</span></div>
+                <div style="padding: 12px;">
                     <div class="metrics-grid" id="metrics-container">
-                        <div class="metric-node neutral-node" id="node-1">
-                            <div class="mn-title">勝負比 (W/L)</div>
-                            <div class="mn-val" id="val-wl" style="color:var(--neon-yellow);">0.00x</div>
-                            <div class="mn-sub">整體壓制力</div>
-                        </div>
-                        <div class="metric-node neutral-node" id="node-2">
-                            <div class="mn-title">勝率 (WIN RATE)</div>
+                        <div class="metric-node macro-node" id="node-1">
+                            <div class="mn-title">勝率 (W.R)</div>
                             <div class="mn-val" id="val-wr">0.0%</div>
-                            <div class="mn-sub">防線穩定度</div>
+                            <div class="mn-sub">基礎穩定度</div>
                         </div>
-                        <div class="metric-node neutral-node" id="node-3">
-                            <div class="mn-title">巔峰效率 (P.M.E)</div>
-                            <div class="mn-val" id="val-pme" style="color:var(--neon-magenta);">0.00</div>
-                            <div class="mn-sub">盃數勝場轉換率</div>
-                        </div>
-                        <div class="metric-node neutral-node" id="node-4">
+                        <div class="metric-node macro-node" id="node-2">
                             <div class="mn-title">歷史最高盃數</div>
-                            <div class="mn-val" id="val-pb" style="color:var(--neon-cyan);">0</div>
-                            <div class="mn-sub">系統極限值</div>
+                            <div class="mn-val" id="val-pb">0</div>
+                            <div class="mn-sub">大局營運極限</div>
                         </div>
-                        <div class="metric-node neutral-node" id="node-5">
-                            <div class="mn-title">總對戰場次</div>
-                            <div class="mn-val" id="val-matches" style="color:#aaa;">0</div>
-                            <div class="mn-sub">數據樣本數</div>
-                        </div>
-
-                        <div class="metric-node defense-node" id="node-6">
+                        
+                        <div class="metric-node defense-node" id="node-3">
                             <div class="mn-title">絕對零封率 (Z.B.R)</div>
-                            <div class="mn-val" id="val-zbr" style="color:var(--aegis-core);">0.0%</div>
-                            <div class="mn-sub" style="color:var(--aegis-core);">指數級完封機率</div>
+                            <div class="mn-val" id="val-zbr" style="color:var(--shield-blue);">0.0%</div>
+                            <div class="mn-sub">防線堅固度</div>
                         </div>
-                        <div class="metric-node defense-node" id="node-7">
+                        <div class="metric-node defense-node" id="node-4">
                             <div class="mn-title">皇家塔存活 (T.R.I)</div>
-                            <div class="mn-val" id="val-tri" style="color:var(--neon-cyan);">00</div>
-                            <div class="mn-sub" style="color:var(--aegis-core);">平方加權防禦力</div>
+                            <div class="mn-val" id="val-tri" style="color:var(--shield-blue);">00</div>
+                            <div class="mn-sub">防禦綜合得分</div>
                         </div>
 
-                        <div class="metric-node offense-node" id="node-8">
-                            <div class="mn-title">三冠轉換率</div>
-                            <div class="mn-val" id="val-3c" style="color:#cc4444;">0.0%</div>
-                            <div class="mn-sub" style="color:#884444;">基礎侵略比例</div>
-                        </div>
-                        <div class="metric-node offense-node" id="node-9">
+                        <div class="metric-node offense-node" id="node-5">
                             <div class="mn-title">絕對破防 (O.P.I)</div>
-                            <div class="mn-val" id="val-opi" style="color:#dd5555;">0.0%</div>
-                            <div class="mn-sub" style="color:#884444;">完全輾壓機率</div>
+                            <div class="mn-val" id="val-opi" style="color:var(--danger-glow);">0.0%</div>
+                            <div class="mn-sub">進攻壓制力</div>
                         </div>
-                        <div class="metric-node offense-node" id="node-10">
+                        <div class="metric-node offense-node" id="node-6">
                             <div class="mn-title">斬殺執行力 (L.E.X)</div>
-                            <div class="mn-val" id="val-lex" style="color:#ee7733;">00</div>
-                            <div class="mn-sub" style="color:#884444;">致命一擊本能</div>
+                            <div class="mn-val" id="val-lex" style="color:var(--danger-glow);">00</div>
+                            <div class="mn-sub">武力綜合得分</div>
+                        </div>
+
+                        <div class="metric-node psy-node" id="node-7">
+                            <div class="mn-title">心理韌性商數</div>
+                            <div class="mn-val" id="val-mtq" style="color:var(--psy-pink);">00</div>
+                            <div class="mn-sub">抗壓與逆境能力 (M.T.Q)</div>
+                        </div>
+                        <div class="metric-node psy-node" id="node-8">
+                            <div class="mn-title">情緒穩定度</div>
+                            <div class="mn-val" id="val-emo" style="color:var(--psy-pink);">00</div>
+                            <div class="mn-sub">連敗阻斷率</div>
+                        </div>
+                        <div class="metric-node psy-node" id="node-9">
+                            <div class="mn-title">大賽經驗值</div>
+                            <div class="mn-val" id="val-exp" style="color:var(--psy-pink);">0</div>
+                            <div class="mn-sub">場次閱歷累積</div>
+                        </div>
+                        <div class="metric-node psy-node" id="node-10">
+                            <div class="mn-title">巔峰心態檢定</div>
+                            <div class="mn-val" id="val-pms" style="color:var(--psy-pink);">PASS</div>
+                            <div class="mn-sub">高壓環境抗性</div>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <div class="panel psy-report-panel">
+                <div class="panel-header"><span>競技心理深度剖析 (PSYCHO-ANALYSIS)</span><span>[ AI 行為學專家 ]</span></div>
+                <div class="psy-content" id="psy-report">
+                    等待分析數據輸入...
                 </div>
             </div>
         </div>
 
         <div class="right-col">
             <div class="panel control-form">
-                <div class="panel-header" style="margin-bottom: 20px; padding:0; border:none; background:transparent;">神盾覆寫協議</div>
+                <div class="panel-header" style="margin-bottom: 20px; padding:0; border:none; background:transparent;">系統校準指令</div>
                 <div class="input-group">
                     <label>API 代理節點 (PROXY)</label>
                     <input type="text" id="proxyUrl" value="/api/clash-proxy">
@@ -236,22 +250,23 @@
                     <label>目標玩家標籤 (TAG)</label>
                     <input type="text" id="playerTag" value="#CV9QU9CYJ">
                 </div>
-                <button class="btn-exe" id="btn-run" onclick="initiateAegisSequence()">展開絕對神盾領域</button>
+                <button class="btn-exe" id="btn-run" onclick="initiateEquilibrium()">啟動全維度平衡運算</button>
             </div>
 
             <div class="panel terminal-panel">
-                <div class="panel-header"><span>防禦演算日誌</span><span>[ 嚴格審查 ]</span></div>
+                <div class="panel-header"><span>系統日誌</span><span>[ 記錄中 ]</span></div>
                 <div class="terminal-screen" id="termLog">
-                    <div class="log-line">> V7.5 絕對神盾引擎 (AEGIS PROTOCOL) 已啟動。</div>
-                    <div class="log-line" style="color:var(--shield-blue);">> 警告：防禦權重已強制提升至 40%。</div>
-                    <div class="log-line">> 等待操作員輸入指令...</div>
+                    <div class="log-line">> V8.0 均衡之秤已啟動。</div>
+                    <div class="log-line" style="color:var(--balance-green);">> 攻/守權重已平衡為 30% / 30%。</div>
+                    <div class="log-line" style="color:var(--psy-pink);">> 競技心理素質 (PSY) 模組掛載完成。</div>
+                    <div class="log-line">> 等待操作員...</div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        Chart.defaults.color = '#579';
+        Chart.defaults.color = '#789';
         Chart.defaults.font.family = "'Share Tech Mono', 'Microsoft JhengHei', sans-serif";
         
         let radarChart, doughnutChart;
@@ -264,31 +279,31 @@
             radarChart = new Chart(ctxR, {
                 type: 'radar',
                 data: {
-                    labels: ['武力(STR)', '絕對防禦(DEF)', '大局營運(MAC)', '潛力(POT)', '穩定(CST)'],
+                    labels: ['武力(STR)', '防禦(DEF)', '營運(MAC)', '心理(PSY)', '穩定(CST)'],
                     datasets: [{
-                        data: [0,0,0,0,0], backgroundColor: 'rgba(0, 170, 255, 0.15)',
-                        borderColor: '#00aaff', borderWidth: 2, pointBackgroundColor: '#fff', pointRadius: 2
+                        data: [0,0,0,0,0], backgroundColor: 'rgba(177, 0, 255, 0.2)',
+                        borderColor: '#b100ff', borderWidth: 2, pointBackgroundColor: '#fff', pointRadius: 2
                     }]
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
-                    scales: { r: { angleLines: { color: 'rgba(0,170,255,0.15)' }, grid: { color: 'rgba(0,170,255,0.15)' }, pointLabels: { color: '#8ac', font: { size: 10, family: 'Microsoft JhengHei', weight: 'bold' } }, ticks: { display: false, min: 0, max: 100 } } }
+                    scales: { r: { angleLines: { color: 'rgba(255,255,255,0.05)' }, grid: { color: 'rgba(255,255,255,0.05)' }, pointLabels: { color: '#abc', font: { size: 10, family: 'Microsoft JhengHei', weight: 'bold' } }, ticks: { display: false, min: 0, max: 100 } } }
                 }
             });
 
             doughnutChart = new Chart(ctxD, {
                 type: 'doughnut',
                 data: {
-                    labels: ['進攻', '絕對防禦', '營運'],
+                    labels: ['進攻(STR)', '防禦(DEF)', '心理(PSY)', '營運(MAC)'],
                     datasets: [{
-                        data: [25, 50, 25],
-                        backgroundColor: ['#dd4455', '#00aaff', '#ffb700'],
+                        data: [30, 30, 20, 20],
+                        backgroundColor: ['#ff003c', '#0088ff', '#ff00aa', '#ffb700'],
                         borderWidth: 0, hoverOffset: 4
                     }]
                 },
                 options: {
-                    responsive: true, maintainAspectRatio: false, cutout: '75%',
-                    plugins: { legend: { position: 'bottom', labels: { color: '#79b', font: {size: 11, family: 'Microsoft JhengHei', weight: 'bold'} } } }
+                    responsive: true, maintainAspectRatio: false, cutout: '70%',
+                    plugins: { legend: { position: 'right', labels: { color: '#9ab', font: {size: 10, family: 'Microsoft JhengHei', weight: 'bold'} } } }
                 }
             });
         }
@@ -306,7 +321,7 @@
                     line.innerHTML += msg.charAt(i);
                     i++;
                     if (i >= msg.length) { clearInterval(interval); resolve(); }
-                }, 8);
+                }, 10);
             });
         }
 
@@ -317,19 +332,20 @@
             document.getElementById('ui-ncr').innerText = "00";
             document.getElementById('ui-ncr').setAttribute('data-text', "00");
             document.getElementById('ui-ncr').style.color = "#fff";
-            document.getElementById('ui-threat').innerText = "掃描防壁中...";
-            document.getElementById('ui-threat').style.color = "#579";
+            document.getElementById('ui-threat').innerText = "運算中...";
+            document.getElementById('ui-threat').style.color = "#68a";
             document.getElementById('ui-tags').innerHTML = '';
+            document.getElementById('psy-report').innerHTML = '等待分析數據輸入...';
             radarChart.data.datasets[0].data = [0,0,0,0,0]; radarChart.update();
-            doughnutChart.data.datasets[0].data = [25,50,25]; doughnutChart.update();
+            doughnutChart.data.datasets[0].data = [30,30,20,20]; doughnutChart.update();
         }
 
-        async function initiateAegisSequence() {
+        async function initiateEquilibrium() {
             if(isProcessing) return;
             isProcessing = true;
             const btn = document.getElementById('btn-run');
-            btn.innerText = "神盾防壁構築中...";
-            btn.style.borderColor = "#345"; btn.style.color = "#345"; btn.style.background = "transparent";
+            btn.innerText = "全維度掃描中...";
+            btn.style.borderColor = "#444"; btn.style.color = "#444"; btn.style.background = "transparent";
             
             const tag = document.getElementById('playerTag').value.trim();
             const proxy = document.getElementById('proxyUrl').value.trim();
@@ -337,26 +353,26 @@
             resetUI();
             document.getElementById('termLog').innerHTML = '';
             
-            await tLog(`> [AEGIS] 鎖定目標 [${tag}]，啟動防禦矩陣深層掃描...`, 'sys-def');
+            await tLog(`> 鎖定目標 [${tag}]，啟動均衡之秤...`, 'sys-info');
             await sleep(200);
 
             let playerData;
             try {
-                await tLog(`> 存取底層戰鬥序列...`);
+                await tLog(`> 下載玩家歷史作戰序列...`);
                 const res = await fetch(`${proxy}?tag=${tag.replace('#', '%23')}`);
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 playerData = await res.json();
-                await tLog(`> 數據已注入。載入 V7.5 防禦特化算法...`, 'sys-info');
+                await tLog(`> 序列完整。掛載 V8.0 心理學演算法...`, 'sys-psy');
             } catch (err) {
-                await tLog(`> API防火牆阻擋。切換至 [頂級防守型模擬數據] 進行展示...`, 'sys-def');
-                // 模擬一個勝率極高、但三冠極少（防守反擊/消耗戰為主）的頂級玩家
-                playerData = { name: "IRON_WALL", wins: 12500, losses: 5100, bestTrophies: 8850, threeCrownWins: 1200 };
+                await tLog(`> API無法連線。切換至 [全能平衡型模擬數據] 進行測算...`, 'sys-info');
+                // 模擬一個攻守平衡、且場次極多（心態老練）的玩家
+                playerData = { name: "ZEN_MASTER", wins: 18500, losses: 14000, bestTrophies: 8600, threeCrownWins: 4500 };
             }
 
             await runMathEngine(playerData);
             
-            btn.innerText = "展開絕對神盾領域";
-            btn.style.borderColor = "var(--aegis-core)"; btn.style.color = "var(--aegis-core)"; btn.style.background = "rgba(0,170,255,0.1)";
+            btn.innerText = "啟動全維度平衡運算";
+            btn.style.borderColor = "var(--neon-purple)"; btn.style.color = "var(--neon-purple)"; btn.style.background = "rgba(177,0,255,0.1)";
             isProcessing = false;
         }
 
@@ -373,88 +389,96 @@
 
             const winRate = wins / totalMatches;
             const threeCrownRate = threeCrowns / (wins || 1);
-            const wlRatio = wins / (losses || 1);
-            const pme = pb / totalMatches;
-
-            // ==========================================
-            // 🛡️ V7.5 絕對神盾核心算法 (AEGIS WEIGHTS) 🛡️
-            // ==========================================
-
-            // 2. V7.5 極致防禦模塊 (高強度拉抬)
             const non3CrownWins = wins - threeCrowns;
-            // ZBR: 採用 1.2 次方放大，只要非三冠獲勝比例高，數據將會暴衝
-            const zbrDisplay = Math.min(100, Math.pow((non3CrownWins / totalMatches), 1.2) * 100 * 1.6);
-            
-            // TRI: 引入 (非三冠勝場/總勝場) 的平方加權，極端獎勵依賴防守獲勝的玩家
-            const triScore = Math.min(100, (wlRatio * 25) + Math.pow(non3CrownWins / (wins||1), 2) * 70 + (winRate * 40));
+            const wlRatio = wins / (losses || 1);
 
-            // 3. V7.0 進攻數據 (保留但影響力下降)
+            // ==========================================
+            // ⚖️ V8.0 攻守平衡與心理學核心演算法 ⚖️
+            // ==========================================
+
+            // --- 進攻 (STR) 算法 ---
             const opiRaw = (threeCrowns / totalMatches) * 100;
-            const lexScore = Math.min(100, (threeCrownRate * 120) + (winRate > 0.5 ? (winRate-0.5)*150 : 0) + (wlRatio * 10));
+            const lexScore = Math.min(100, (threeCrownRate * 120) + (winRate > 0.5 ? (winRate-0.5)*100 : 0));
+
+            // --- 防守 (DEF) 算法 ---
+            const zbrDisplay = Math.min(100, (non3CrownWins / totalMatches) * 100 * 1.3);
+            const triScore = Math.min(100, (wlRatio * 20) + ((non3CrownWins / (wins||1)) * 60) + (winRate * 30));
+
+            // --- 心理素質 (PSY) 算法 ---
+            // MTQ (Mental Toughness Quotient): 基於勝負比的極端環境生存力與高盃段壓力測試
+            let mtq = Math.min(100, (wlRatio * 30) + (pb > 7500 ? (pb-7500)/20 : 0) + (winRate * 40));
+            // EMO (情緒穩定度): 經驗值越多、勝率越穩定，越不容易連敗崩潰
+            let emo = Math.min(100, (totalMatches > 10000 ? 30 : totalMatches/333) + (winRate > 0.52 ? 70 : winRate*100));
+            // PMS (巔峰心態檢定): 判斷是否有大賽型選手特質
+            let pmsState = (mtq > 85 && emo > 80) ? "EXCELLENT" : (mtq > 60 ? "NORMAL" : "FRAGILE");
+            let pmsColor = pmsState === "EXCELLENT" ? "var(--balance-green)" : (pmsState === "NORMAL" ? "var(--apex-gold)" : "var(--danger-glow)");
 
             const nodesData = [
-                { id: 'val-wl', val: wlRatio.toFixed(2) + 'x' },
                 { id: 'val-wr', val: (winRate*100).toFixed(1) + '%' },
-                { id: 'val-pme', val: pme.toFixed(3) },
                 { id: 'val-pb', val: pb },
-                { id: 'val-matches', val: totalMatches },
                 { id: 'val-zbr', val: zbrDisplay.toFixed(1) + '%' },
                 { id: 'val-tri', val: Math.round(triScore) },
-                { id: 'val-3c', val: (threeCrownRate*100).toFixed(1) + '%' },
                 { id: 'val-opi', val: opiRaw.toFixed(1) + '%' },
-                { id: 'val-lex', val: Math.round(lexScore) }
+                { id: 'val-lex', val: Math.round(lexScore) },
+                { id: 'val-mtq', val: Math.round(mtq) },
+                { id: 'val-emo', val: Math.round(emo) },
+                { id: 'val-exp', val: totalMatches > 20000 ? "極高" : (totalMatches > 10000 ? "豐富" : "普通") },
+                { id: 'val-pms', val: pmsState }
             ];
 
-            await tLog(`> 套用防禦平方加權指數...`);
+            await tLog(`> 解析操作矩陣與神經反饋數據...`);
             for(let i=0; i<10; i++) {
                 document.getElementById(nodesData[i].id).innerText = nodesData[i].val;
+                if(i===9) document.getElementById(nodesData[i].id).style.color = pmsColor;
                 document.getElementById(`node-${i+1}`).classList.add('visible');
-                await sleep(40);
+                await sleep(50);
             }
 
-            await tLog(`> 啟動神盾壁壘，正在壓制武力權重...`, 'sys-def');
+            await tLog(`> 進行心理行為學交叉比對...`, 'sys-psy');
             
-            // 4. V7.5 五維極限計算
+            // --- 五維計算與 NCR 神階 ---
             let str = Math.min(100, (lexScore * 0.5) + (opiRaw * 2.0) + (winRate*10)); 
-            
-            // 防禦(DEF): 拉高ZBR與TRI的融合係數，高勝率給予變態的保底防禦加成 (突破60%勝率直接+25)
-            let def = Math.min(100, (triScore * 0.6) + (zbrDisplay * 0.8) + (winRate > 0.60 ? 25 : (winRate > 0.50 ? 10 : 0))); 
-            
-            let mac = Math.min(100, Math.pow(pb / 9000, 2) * 70 + (pme * 40));
-            let pot = Math.min(100, (wlRatio * 25) + Math.pow(winRate, 2) * 50);
-            let cst = Math.min(100, (totalMatches > 10000 ? 40 : totalMatches/250) + (winRate > 0.55 ? 60 : winRate*100));
+            let def = Math.min(100, (triScore * 0.5) + (zbrDisplay * 0.8) + (winRate > 0.55 ? 15 : 0)); 
+            let mac = Math.min(100, Math.pow(pb / 9000, 2) * 80 + (winRate * 20));
+            let psyScore = Math.min(100, (mtq * 0.6) + (emo * 0.4));
+            let cst = Math.min(100, emo * 0.8 + (totalMatches > 5000 ? 20 : 0));
 
-            const radarColor = '#00aaff';
-            const radarBg = 'rgba(0, 170, 255, 0.2)';
+            // 更新雷達圖
+            radarChart.data.datasets[0].data = [str, def, mac, psyScore, cst];
+            
+            let radarColor = '#b100ff'; // 預設紫色(均衡)
+            if (str > def + 20) radarColor = '#ff003c'; // 偏重進攻
+            else if (def > str + 20) radarColor = '#0088ff'; // 偏重防守
+            else if (psyScore >= 90) radarColor = '#00ff88'; // 心態極佳
             
             radarChart.data.datasets[0].borderColor = radarColor;
-            radarChart.data.datasets[0].backgroundColor = radarBg;
-            radarChart.data.datasets[0].data = [str, def, mac, pot, cst];
+            radarChart.data.datasets[0].backgroundColor = `rgba(${radarColor === '#00ff88' ? '0,255,136' : (radarColor === '#ff003c' ? '255,0,60' : '177,0,255')}, 0.2)`;
             radarChart.update();
             await sleep(200);
 
-            let sum = str + def + mac;
-            doughnutChart.data.datasets[0].data = [str/sum*100, def/sum*100, mac/sum*100];
+            // 更新環形圖
+            let sum = str + def + psyScore + mac;
+            doughnutChart.data.datasets[0].data = [str/sum*100, def/sum*100, psyScore/sum*100, mac/sum*100];
             doughnutChart.update();
             await sleep(200);
 
-            await tLog(`> 結算神盾防禦佔比 (40%)...`, 'sys-crit');
+            await tLog(`> 輸出 V8.0 均衡神階指數...`, 'sys-crit');
             
-            // 5. V7.5 N.C.R 神盾權重計算 (DEF佔據絕對統治地位)
-            // 防禦 40%, 武力 25%, 營運 20%, 潛力 10%, 穩定 5%
-            const ncr = Math.round((str*0.25) + (def*0.40) + (mac*0.20) + (pot*0.10) + (cst*0.05));
+            // --- V8.0 N.C.R 權重 ---
+            // 進攻 30%, 防守 30%, 營運 20%, 心理 15%, 穩定 5%
+            const ncr = Math.round((str*0.30) + (def*0.30) + (mac*0.20) + (psyScore*0.15) + (cst*0.05));
             const ncrEl = document.getElementById('ui-ncr');
             const classEl = document.getElementById('ui-class');
             
             ncrEl.innerText = ncr;
             ncrEl.setAttribute('data-text', ncr);
 
-            // V7.5 評級
-            let rankClass = "脆弱防線 (FRAGILE)", color = "#579", threat = "輕易貫穿";
-            if(ncr >= 92 && def >= 95) { rankClass = "絕對神盾 (AEGIS)"; color = "var(--aegis-core)"; threat = "不可撼動之壁"; }
-            else if(ncr >= 82) { rankClass = "嘆息之牆 (WALL)"; color = "var(--shield-blue)"; threat = "極度難以突破"; }
-            else if(ncr >= 65) { rankClass = "重裝堡壘 (FORT)"; color = "var(--neon-cyan)"; threat = "堅實防禦體系"; }
-            else if(ncr >= 50) { rankClass = "標準護甲 (ARMOR)"; color = "var(--success-green)"; threat = "具備基礎防護"; }
+            // 評級
+            let rankClass = "情緒化玩家", color = "#888", threat = "容易針對";
+            if(ncr >= 90) { rankClass = "全能神境 (OMNIPOTENT)"; color = "var(--balance-green)"; threat = "毫無破綻 (完美六邊形)"; }
+            else if(ncr >= 80) { rankClass = "戰術大師 (TACTICIAN)"; color = "var(--neon-purple)"; threat = "極度危險 (攻守一體)"; }
+            else if(ncr >= 65) { rankClass = "菁英鬥士 (ELITE)"; color = "var(--shield-blue)"; threat = "高威脅度 (熟練操作)"; }
+            else if(ncr >= 50) { rankClass = "合格傭兵 (MERCENARY)"; color = "var(--apex-gold)"; threat = "中等威脅 (具備基礎)"; }
 
             ncrEl.style.color = color;
             ncrEl.style.textShadow = `0 0 40px ${color}`;
@@ -464,20 +488,17 @@
             const threatEl = document.getElementById('ui-threat');
             threatEl.innerText = threat;
             threatEl.style.color = color;
-            if(ncr >= 82) threatEl.style.borderColor = color;
 
-            // 鐵壁標籤
+            // 智能標籤 (包含心理)
             const tagsBox = document.getElementById('ui-tags');
             let tags = [];
             
-            if(def >= 95) tags.push({t: "神級守門員", c: "var(--aegis-core)"});
-            if(zbrDisplay >= 70) tags.push({t: "絕對零封", c: "var(--neon-cyan)"});
-            if(wlRatio >= 2.0 && def >= 85) tags.push({t: "銅牆鐵壁", c: "var(--shield-blue)"});
-            
-            if(def > str + 40) tags.push({t: "極端防禦特化", c: "var(--aegis-core)"});
-            else if(str > def + 20) tags.push({t: "防線破口", c: "var(--danger-glow)"});
-
-            if(tags.length === 0) tags.push({t: "標準陣地", c: "#579"});
+            if(Math.abs(str - def) <= 5 && ncr >= 75) tags.push({t: "絕對均衡", c: "var(--neon-purple)"});
+            if(psyScore >= 88) tags.push({t: "大心臟特質", c: "var(--psy-pink)"});
+            if(totalMatches > 15000) tags.push({t: "百戰老將", c: "var(--apex-gold)"});
+            if(str > def + 15) tags.push({t: "偏好進攻", c: "var(--danger-glow)"});
+            if(def > str + 15) tags.push({t: "偏好防禦", c: "var(--shield-blue)"});
+            if(psyScore < 50) tags.push({t: "易受干擾", c: "#888"});
 
             tags.forEach(tag => {
                 const span = document.createElement('div');
@@ -489,7 +510,34 @@
                 tagsBox.appendChild(span);
             });
 
-            await tLog(`> AEGIS 協議執行完畢。神盾領域已展開。`, 'sys-def');
+            // 生成競技心理報告
+            const psyReportEl = document.getElementById('psy-report');
+            let reportText = "";
+            
+            if (psyScore >= 85) {
+                reportText = `經系統演算法研判，該目標具備<span class="psy-highlight">職業級的「大心臟」特質 (M.T.Q 頂標)</span>。在經歷高達 ${totalMatches} 場的戰鬥洗禮後，其心態已趨於完美。即使處於極端逆風或遭遇連續掉塔的打擊，依然能維持高水準的戰術執行力，<span class="psy-highlight">幾乎不會發生「心態崩潰(Tilt)」的無腦送頭行為</span>。`;
+            } else if (psyScore >= 70) {
+                reportText = `該目標擁有<span class="psy-highlight">優秀的競技韌性</span>。勝負波動對其操作的影響有限，能夠在大部分高壓對局中保持冷靜。數據顯示其情緒防護網運作良好，建議在對戰時使用「消耗戰術」逐漸消磨其耐心。`;
+            } else if (psyScore >= 50) {
+                reportText = `具備標準玩家的心智模型。其狀態<span class="psy-warn">容易受到勝負結果(W/L Ratio)的連鎖影響</span>。若在開局給予其強烈的血量壓制，或透過嘲諷表情施加心理壓力，目標發生「戰術失誤」的機率將大幅上升。`;
+            } else {
+                reportText = `<span class="psy-warn">警告：檢測到極度脆弱的心理防線。</span>該目標的抗壓性極低，經常在處於劣勢時放棄防守或進行非理性的進攻操作（情緒化下兵）。只要承受一波有效打擊，其防線將從內部自行瓦解。`;
+            }
+
+            await tLog(`> 正在生成競技心理深度剖析...`, 'sys-psy');
+            psyReportEl.innerHTML = "";
+            for (let i = 0; i < reportText.length; i++) {
+                if(reportText.charAt(i) === '<') {
+                    let endIdx = reportText.indexOf('>', i);
+                    psyReportEl.innerHTML += reportText.substring(i, endIdx + 1);
+                    i = endIdx;
+                } else {
+                    psyReportEl.innerHTML += reportText.charAt(i);
+                    await sleep(5);
+                }
+            }
+
+            await tLog(`> 運算完畢。均衡之理已確立。`, 'sys-crit');
         }
 
         window.onload = initCharts;

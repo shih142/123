@@ -3,20 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>神經矩陣 MAXIMA | V24.0 貝氏動態期望協議</title>
+    <title>神經矩陣 MAXIMA | V25.0 狄拉克微操協議</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --bg-deep: #030508;
-            --panel-bg: rgba(8, 12, 18, 0.95);
+            --bg-deep: #020305;
+            --panel-bg: rgba(6, 10, 16, 0.95);
             --neon-blue: #00b3ff;
             --tech-orange: #ff6600;
+            --quantum-pink: #ff007f;
             --alert-red: #ff2a2a;
-            --data-purple: #b84dff;
             --text-main: #d9e6f2;
-            --border-glow: rgba(0, 179, 255, 0.25);
-            --grid-color: rgba(255, 255, 255, 0.02);
+            --border-glow: rgba(0, 179, 255, 0.2);
+            --grid-color: rgba(255, 255, 255, 0.015);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -28,7 +28,7 @@
             background-image: 
                 linear-gradient(var(--grid-color) 1px, transparent 1px), 
                 linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
-            background-size: 40px 40px;
+            background-size: 35px 35px;
         }
 
         .layout-grid { display: grid; grid-template-columns: 360px 1fr 360px; gap: 20px; width: 100%; height: 100%; padding: 20px; }
@@ -36,41 +36,41 @@
         
         .panel-header { padding: 12px 18px; border-bottom: 1px solid var(--border-glow); font-family: 'Orbitron'; font-size: 10px; letter-spacing: 2px; display: flex; justify-content: space-between; color: var(--neon-blue); background: linear-gradient(90deg, rgba(0,179,255,0.08), transparent); }
         
-        .ncr-section { padding: 40px 20px; text-align: center; }
-        .ncr-title { font-family: 'Orbitron'; font-size: 11px; color: #6688aa; margin-bottom: 10px; }
+        .ncr-section { padding: 40px 20px; text-align: center; border-bottom: 1px solid var(--border-glow); }
+        .ncr-title { font-family: 'Orbitron'; font-size: 11px; color: #6688aa; margin-bottom: 10px; letter-spacing: 1px; }
         .ncr-value { font-family: 'Orbitron'; font-size: 84px; font-weight: 900; color: #fff; text-shadow: 0 0 25px rgba(0, 179, 255, 0.6); line-height: 1; }
 
         .stats-wall { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border-glow); flex: 1; }
-        .stat-item { background: var(--bg-deep); padding: 25px 20px; display: flex; flex-direction: column; justify-content: center; }
+        .stat-item { background: var(--bg-deep); padding: 20px 20px; display: flex; flex-direction: column; justify-content: center; }
         .stat-label { font-size: 10px; color: #557799; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
-        .stat-val { font-family: 'Orbitron'; font-size: 28px; color: var(--text-main); }
+        .stat-val { font-family: 'Orbitron'; font-size: 28px; color: var(--text-main); transition: 0.3s; }
         
         .stat-val.active-str { color: var(--alert-red); text-shadow: 0 0 15px rgba(255,42,42,0.5); font-weight: bold; }
         .stat-val.active-def { color: var(--tech-orange); text-shadow: 0 0 15px rgba(255,102,0,0.5); font-weight: bold; }
+        .stat-val.active-mic { color: var(--quantum-pink); text-shadow: 0 0 15px rgba(255,0,127,0.5); font-weight: bold; }
 
         .chart-container { flex: 1; padding: 30px; position: relative; background: rgba(0,0,0,0.3); }
-        .report-console { height: 240px; background: rgba(0,0,0,0.6); border-top: 1px solid var(--border-glow); padding: 20px; font-size: 13px; color: #99aabb; overflow-y: auto; line-height: 1.8; }
+        .report-console { height: 260px; background: rgba(0,0,0,0.6); border-top: 1px solid var(--border-glow); padding: 20px; font-size: 13px; color: #99aabb; overflow-y: auto; line-height: 1.8; }
 
         .input-box { width: 100%; background: #000; border: 1px solid #1a334d; padding: 15px; color: var(--neon-blue); font-family: 'Orbitron'; font-size: 14px; margin-bottom: 15px; outline: none; text-align: center; transition: 0.3s; }
-        .input-box:focus { border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(0,179,255,0.2); }
+        .input-box:focus { border-color: var(--quantum-pink); box-shadow: 0 0 15px rgba(255,0,127,0.2); }
         
-        .btn-prime { width: 100%; padding: 18px; background: rgba(0,179,255,0.1); color: var(--neon-blue); border: 1px solid var(--neon-blue); font-family: 'Orbitron'; font-weight: bold; cursor: pointer; transition: 0.3s; letter-spacing: 2px; }
+        .btn-prime { width: 100%; padding: 18px; background: rgba(0,179,255,0.05); color: var(--neon-blue); border: 1px solid var(--neon-blue); font-family: 'Orbitron'; font-weight: bold; cursor: pointer; transition: 0.3s; letter-spacing: 2px; }
         .btn-prime:hover { background: var(--neon-blue); color: #000; box-shadow: 0 0 25px rgba(0,179,255,0.5); }
 
-        .math-box { font-size: 10px; color: #6688aa; padding: 20px; border-top: 1px solid var(--border-glow); line-height: 2; background: rgba(0,0,0,0.4); }
-        .hl-blue { color: var(--neon-blue); font-weight: bold; }
-        .hl-orange { color: var(--tech-orange); font-weight: bold; }
+        .math-box { font-size: 10px; color: #6688aa; padding: 20px; border-top: 1px solid var(--border-glow); line-height: 1.8; background: rgba(0,0,0,0.4); }
+        .hl-pink { color: var(--quantum-pink); font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div class="layout-grid">
         <div class="panel">
-            <div class="panel-header"><span>ANALYSIS_CORE</span><span>V24.0_BAYESIAN</span></div>
+            <div class="panel-header"><span>NEURAL_ENGINE</span><span>V25.0_DIRAC_MIC</span></div>
             <div class="ncr-section">
                 <div class="ncr-title">MAXIMA VALUE INDEX (MVI)</div>
                 <div id="ui-ncr" class="ncr-value">00.0</div>
-                <div id="ui-name" style="margin-top:20px; font-size: 14px; letter-spacing: 3px; color: var(--neon-blue);">WAITING_FOR_DATA</div>
+                <div id="ui-name" style="margin-top:20px; font-size: 14px; letter-spacing: 3px; color: var(--neon-blue);">AWAITING_TELEMETRY</div>
             </div>
             <div class="stats-wall">
                 <div class="stat-item"><div class="stat-label">Offense (STR)</div><div id="val-str" class="stat-val">--</div></div>
@@ -78,23 +78,20 @@
                 <div class="stat-item"><div class="stat-label">Micro (MIC)</div><div id="val-mic" class="stat-val">--</div></div>
                 <div class="stat-item"><div class="stat-label">Macro (MAC)</div><div id="val-mac" class="stat-val">--</div></div>
             </div>
-            <div id="ui-log" style="padding: 15px; font-size: 10px; color: #557788; line-height: 1.6;">
-                > 系統：貝氏動態期望協議載入完畢。<br>> 預期勝率 (EWR) 將根據雙曲正切函數動態生成。
-            </div>
         </div>
 
         <div class="panel">
-            <div class="panel-header"><span>VISUALIZATION</span><span>DELTA_DISTRIBUTION</span></div>
+            <div class="panel-header"><span>RADAR_VISUALIZATION</span><span>SIGMOID_CONVERGENCE</span></div>
             <div class="chart-container">
                 <canvas id="mainRadar"></canvas>
             </div>
             <div id="ui-report" class="report-console">
-                客觀測算待命中。將計算實際勝率與 MMR 理論預期勝率之間的 Δ (Delta) 溢出值。
+                系統重構完成。V25.0 已將微操精度 (MIC) 從線性 MMR 函數替換為「極限容錯壓縮 (Clutch Rate)」與「邊際收益槓桿 (Leverage)」之獨立雙軌運算。
             </div>
         </div>
 
         <div class="panel">
-            <div class="panel-header"><span>INPUT_COMMAND</span><span>BACKEND_API</span></div>
+            <div class="panel-header"><span>COMMAND_NODE</span><span>PROXY_ROUTER</span></div>
             <div style="padding: 25px;">
                 <label style="font-size: 9px; color: #557799; margin-bottom: 8px; display: block;">TARGET_PLAYER_TAG</label>
                 <input type="text" id="tagInput" placeholder="ENTER TAG" class="input-box">
@@ -102,19 +99,18 @@
                 <label style="font-size: 9px; color: #557799; margin-bottom: 8px; display: block;">ROUTER_PATH</label>
                 <input type="text" id="proxyInput" value="/api/clash-proxy" class="input-box">
                 
-                <button id="btn-run" class="btn-prime" onclick="fetchLiveData()">EXECUTE ANALYSIS</button>
+                <button id="btn-run" class="btn-prime" onclick="fetchLiveData()">INITIATE SCAN</button>
             </div>
             
             <div class="math-box">
-                [ V24.0 Bayesian EWR Model ]<br><br>
-                <span class="hl-blue">1. Dynamic Expected Win Rate:</span><br>
-                EWR = 0.50 + 0.05 * Tanh((MMR - 1600) / 450)<br><br>
-                <span class="hl-orange">2. Performance Delta (Δ):</span><br>
-                Δ_WR = Actual_WR - EWR<br>
-                Z_Delta = Δ_WR / 0.035<br><br>
-                3. Z_Base = (MMR - 1600) / 350<br>
-                Z_DEF = (Z_Base * 0.40) + (Z_Delta * 0.60)<br>
-                DEF_Score = 100 / (1 + e^(-Z_DEF))
+                [ V25.0 Dirac Micro Model ]<br><br>
+                <span class="hl-pink">1. Clutch Rate (極限纏鬥率):</span><br>
+                CR = (Wins - 3C_Wins) / Wins<br>
+                Z_Clutch = (CR - 0.75) / 0.12<br><br>
+                <span class="hl-pink">2. Marginal Leverage (邊際槓桿):</span><br>
+                Z_Leverage = Z_Delta * (MMR / 1600)^1.2<br><br>
+                3. Z_MIC = (Z_Clutch * 0.35) + (Z_Leverage * 0.65)<br>
+                MIC_Score = 100 / (1 + e^(-Z_MIC))
             </div>
         </div>
     </div>
@@ -128,7 +124,7 @@
             radarChart = new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: ['破防進攻 (STR)', '絕對防禦 (DEF)', '操作精度 (MIC)', '戰略維度 (MAC)', '抗壓韌性 (PSY)', '勝率一致性 (CST)'],
+                    labels: ['爆發破防 (STR)', '動態防禦 (DEF)', '極限微操 (MIC)', '戰略運營 (MAC)', '抗壓韌性 (PSY)', '數據一致性 (CST)'],
                     datasets: [{
                         data: [0,0,0,0,0,0],
                         backgroundColor: 'rgba(0, 179, 255, 0.15)',
@@ -160,7 +156,7 @@
             if(!tag) return;
             
             isProcessing = true;
-            document.getElementById('btn-run').innerText = "ANALYZING...";
+            document.getElementById('btn-run').innerText = "CALCULATING...";
             
             try {
                 const response = await fetch(`${proxy}?tag=${tag}`);
@@ -173,7 +169,7 @@
                     pol = rawJson.leagueStatistics.currentSeason.trophies;
                 }
 
-                processBayesianMatrix({
+                processDiracMatrix({
                     name: rawJson.name,
                     wins: rawJson.wins || 0,
                     losses: rawJson.losses || 0,
@@ -185,46 +181,56 @@
                 console.error(e);
             } finally {
                 isProcessing = false;
-                document.getElementById('btn-run').innerText = "EXECUTE ANALYSIS";
+                document.getElementById('btn-run').innerText = "INITIATE SCAN";
             }
         }
 
-        function processBayesianMatrix(data) {
+        function processDiracMatrix(data) {
             const total = data.wins + data.losses;
             if (total === 0) return;
 
             const wr = data.wins / total;
-            const tcwRate = data.threeCrownWins / data.wins; 
             const mmr = data.mmr;
 
-            // --- V24.0 核心改動：動態預期勝率 (EWR) ---
-            // Tanh (雙曲正切) 會產生一個介於 -1 到 1 的平滑S型曲線
-            // 基礎為 50%，MMR 每提升 450 分，預期勝率會平滑逼近 55%
+            // --- 基礎環境參數 ---
             const ewr = 0.50 + 0.05 * Math.tanh((mmr - 1600) / 450);
-            
-            // 計算「實際勝率」與「預期勝率」的差值 (Delta)
             const deltaWR = wr - ewr;
-            
-            // 客觀標準化 (標準差設為 3.5%)
-            const zDelta = deltaWR / 0.035; 
             const zBase = (mmr - 1600) / 350; 
-            
-            // 防禦分數 = 40% 環境難度基數 + 60% 超越預期表現的溢出值
+            const zDelta = deltaWR / 0.035; 
+
+            // --- DEF (防禦: 穩定性維持) ---
             const zDEF = (zBase * 0.40) + (zDelta * 0.60);
             let defScore = 100 / (1 + Math.exp(-zDEF));
 
-            // --- STR (保持原有的相對進攻火力邏輯) ---
+            // --- STR (進攻: 三冠火力) ---
+            const tcwRate = data.threeCrownWins / data.wins;
             const z3C = (tcwRate - 0.20) / 0.10;
             const zSTR = (z3C * 0.60) + (zBase * 0.40);
             let strScore = 100 / (1 + Math.exp(-zSTR));
 
-            // 輔助維度更新 (同樣基於 Delta 值優化)
-            let mic = 100 / (1 + Math.exp(-((mmr - 1800) / 350)));
-            let mac = 100 / (1 + Math.exp(-(zDelta * 1.5 + zBase * 0.5)));
-            let psy = Math.min(99, (mmr / 25));
-            let cst = 100 / (1 + Math.exp(-(deltaWR * 20)));
+            // ==========================================
+            // 🔥 NEW MIC: V25.0 狄拉克微操精度 (Dirac Precision)
+            // ==========================================
+            // 1. 極限纏鬥率 (Clutch Rate): 在勝場中，只有一/兩冠的比例。
+            // 假設高端玩家平均 75% 的局是非三冠險勝，標準差為 12%
+            const clutchRate = (data.wins - data.threeCrownWins) / data.wins;
+            const zClutch = (clutchRate - 0.75) / 0.12;
 
-            renderUI(data.name, [strScore, defScore, mic, mac, psy, cst], {wr, ewr, deltaWR, mmr});
+            // 2. 邊際槓桿 (Marginal Leverage): 微操難度隨 MMR 呈指數上升。
+            // 我們將你的「淨勝溢出(zDelta)」乘上 MMR 的 1.2 次方進行放大。
+            const mmrMultiplier = Math.pow(Math.max(1, mmr / 1600), 1.2);
+            const zLeverage = zDelta * mmrMultiplier;
+
+            // 3. 綜合微操指數: 65% 看你在高壓下的勝率溢出，35% 看你的殘局把控能力。
+            const zMIC = (zClutch * 0.35) + (zLeverage * 0.65);
+            let micScore = 100 / (1 + Math.exp(-zMIC));
+
+            // --- 輔助優化 ---
+            let mac = 100 / (1 + Math.exp(-(zDelta * 1.5 + zBase * 0.5))); // 戰略大局觀
+            let psy = Math.min(99.9, 100 / (1 + Math.exp(-zBase))); // 抗壓
+            let cst = 100 / (1 + Math.exp(-(deltaWR * 25))); // 穩定度
+
+            renderUI(data.name, [strScore, defScore, micScore, mac, psy, cst], {wr, ewr, deltaWR, mmr, clutchRate});
         }
 
         function renderUI(name, scores, raw) {
@@ -233,31 +239,42 @@
             
             document.getElementById('val-str').innerText = scores[0].toFixed(1);
             document.getElementById('val-def').innerText = scores[1].toFixed(1);
-            document.getElementById('val-mic').innerText = Math.round(scores[2]);
+            document.getElementById('val-mic').innerText = scores[2].toFixed(1);
             document.getElementById('val-mac').innerText = Math.round(scores[3]);
 
-            if (scores[1] > 80) document.getElementById('val-def').className = 'stat-val active-def';
-            else document.getElementById('val-def').className = 'stat-val';
+            // 重置樣式
+            document.getElementById('val-str').className = 'stat-val';
+            document.getElementById('val-def').className = 'stat-val';
+            document.getElementById('val-mic').className = 'stat-val';
+
+            let hlColor = '#00b3ff';
+            if (scores[2] > 82) {
+                document.getElementById('val-mic').className = 'stat-val active-mic';
+                hlColor = '#ff007f'; // 頂級微操顯示量子粉色
+                radarChart.data.datasets[0].borderColor = hlColor;
+                radarChart.data.datasets[0].backgroundColor = 'rgba(255, 0, 127, 0.15)';
+                radarChart.data.datasets[0].pointBackgroundColor = hlColor;
+            } else if (scores[1] > 80) {
+                document.getElementById('val-def').className = 'stat-val active-def';
+            } else if (scores[0] > 80) {
+                document.getElementById('val-str').className = 'stat-val active-str';
+            }
 
             radarChart.data.datasets[0].data = scores;
             radarChart.update();
 
-            let report = `<span class="hl-blue">[ V24.0 客觀防禦解析報告 ]</span><br><br>`;
-            report += `當前環境難度：<span class="hl-blue">${raw.mmr} MMR</span><br>`;
-            report += `實際存活率 (Actual WR)：<span style="color:#fff">${(raw.wr*100).toFixed(2)}%</span><br>`;
-            report += `系統預期勝率 (EWR)：<span style="color:#8899aa">${(raw.ewr*100).toFixed(2)}%</span><br>`;
+            let report = `<span style="color:${hlColor}">[ V25.0 狄拉克微操解析 ]</span><br><br>`;
+            report += `當前環境壓力：<span class="hl-pink">${raw.mmr} MMR</span><br>`;
+            report += `極限纏鬥勝率 (Clutch Rate)：<span style="color:#fff">${(raw.clutchRate*100).toFixed(1)}%</span><br>`;
+            report += `勝率溢出值 (Δ WR)：${(raw.deltaWR*100).toFixed(2)}%<br><br>`;
             
-            const deltaColor = raw.deltaWR >= 0 ? "var(--tech-orange)" : "var(--alert-red)";
-            const deltaSign = raw.deltaWR >= 0 ? "+" : "";
-            report += `淨勝溢出值 (Δ WR)：<span style="color:${deltaColor}; font-weight:bold">${deltaSign}${(raw.deltaWR*100).toFixed(2)}%</span><br><br>`;
-            
-            report += `>> <span style="color:#fff">演算法評估：</span><br>`;
-            if (raw.deltaWR > 0.035) { // 超過 1個標準差
-                report += `目標表現出<span class="hl-orange">超常規的防線穩定性</span>。其勝率不僅滿足高分段的基本生存要求，更超越同儕預期達 ${ (raw.deltaWR*100).toFixed(1) }%，屬頂級防守者。`;
-            } else if (raw.deltaWR >= 0) {
-                report += `目標的防守能力完全符合當前 MMR 分段的系統期望，展現了稱職的陣地控制力。`;
+            report += `>> <span style="color:#fff">分析結論：</span><br>`;
+            if (scores[2] > 82) {
+                report += `偵測到<span class="hl-pink">神經網絡級別的極限微操 (MIC > 82)</span>。該玩家在極高壓環境中依然能產生巨額的正向收益槓桿，並具備頂尖的殘局拉扯能力，能頻繁在 1 冠分差中極限取勝。`;
+            } else if (scores[2] > 60) {
+                report += `微操精度優良。能夠有效執行當前分段所需的戰術拉扯與容錯控制。`;
             } else {
-                report += `目標實際勝率低於系統對當前分段的數學期望。防線面臨嚴重透支壓力。`;
+                report += `微操精度受限。數據顯示該玩家在高壓殘局中容易出現失誤，或是過度依賴卡牌/流派克制而非細節操作來贏得比賽。`;
             }
             
             document.getElementById('ui-report').innerHTML = report;

@@ -322,35 +322,71 @@
         }
 
         // 執行審核 (模擬呼叫 API 並更新 UI)
-        function initiateAudit() {
-            const tag = document.getElementById('playerTag').value;
-            const proxy = document.getElementById('proxyUrl').value;
+        // 執行審核 (真實 API 抓取版)
+        async function initiateAudit() {
+            // 取得輸入值，並處理 Tag (有些 API 規定不能傳 #，有些規定要轉碼為 %23)
+            let tag = document.getElementById('playerTag').value.trim();
+            // 如果你的 proxy 網址需要把 # 轉為 %23，可以打開下面這行註解：
+            // tag = tag.replace('#', '%23'); 
+            
+            const proxy = document.getElementById('proxyUrl').value.trim();
             
             logFeed(`> Initiating audit for ${tag}...`);
             logFeed(`> Routing through ${proxy}...`, true);
 
-            // 這裡使用 setTimeout 模擬非同步的 API Fetch 請求
-            setTimeout(() => {
-                logFeed('> Data packet received. Decoding...');
+            try {
+                // 組合完整的 API 請求網址 (請依據你的 proxy 路由規則調整)
+                // 假設你的 proxy 寫法是：/api/clash-proxy?tag=%23CV9QU9CYJ
+                const requestUrl = `${proxy}?tag=${tag.replace('#', '%23')}`;
                 
-                // 模擬收到的 API 資料 (假資料)，你可以替換成真實的 fetch(proxy + "?tag=" + tag)
-                const mockData = {
-                    name: "小董哥",
-                    wins: 669,
-                    losses: 350,
-                    bestTrophies: 6200,
-                    donations: 30,
-                    threeCrownWins: 434,
-                    challengeMaxWins: 12,
-                    warDayWins: 50,
-                    expLevel: 42,
-                    cardsFound: 110,
-                    achievementScore: 953
+                const response = await fetch(requestUrl);
+                
+                // 檢查 HTTP 狀態碼是否為 200 OK
+                if (!response.ok) {
+                    throw new Error(`伺服器錯誤: ${response.status} ${response.statusText}`);
+                }
+
+                const rawData = await response.json();
+                logFeed('> Data packet received. Decoding...');
+
+                // 【關鍵】將真實 API 的 JSON 欄位，對應到我們 UI 需要的格式
+                // 這裡的 rawData.xxx 必須完全吻合皇室戰爭官方 API 的命名
+                const mappedData = {
+                    name: rawData.name || "UNKNOWN",
+                    wins: rawData.wins || 0,
+                    losses: rawData.losses || 0,
+                    bestTrophies: rawData.bestTrophies || 0,
+                    // 官方 API 的捐贈數量通常叫 totalDonations
+                    donations: rawData.totalDonations || 0, 
+                    threeCrownWins: rawData.threeCrownWins || 0,
+                    challengeMaxWins: rawData.challengeMaxWins || 0,
+                    warDayWins: rawData.warDayWins || 0,
+                    expLevel: rawData.expLevel || 0,
+                    // 官方 API 的卡牌是一個陣列，我們要抓它的長度 (length)
+                    cardsFound: rawData.cards ? rawData.cards.length : 0, 
+                    // 官方可能沒有 achievementScore，這裡先拿 starPoints 或其他數值頂替，沒有就給 0
+                    achievementScore: rawData.starPoints || 0 
                 };
 
-                updateUI(mockData);
+                // 更新畫面
+                document.getElementById('playerName').innerText = mappedData.name;
+                updateUI(mappedData);
+                
                 logFeed('> DOM updated successfully.', true);
-            }, 800);
+
+            } catch (error) {
+                // 抓取錯誤時的防呆處理
+                logFeed(`> ERROR: FETCH FAILED`, false);
+                logFeed(`> ${error.message}`, false);
+                console.error("API 抓取失敗詳細資訊:", error);
+                
+                // 可以在這裡顯示全 0 的狀態以防畫面崩潰
+                updateUI({
+                    wins: 0, losses: 0, bestTrophies: 0, donations: 0, 
+                    threeCrownWins: 0, challengeMaxWins: 0, warDayWins: 0, 
+                    expLevel: 0, cardsFound: 0, achievementScore: 0
+                });
+            }
         }
 
         // 將取得的資料更新到畫面上

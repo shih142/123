@@ -3,21 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>神經矩陣 MAXIMA | V51.5 OMNI-KINETIC 量子動能版</title>
+    <title>神經矩陣 MAXIMA | V52.0 COGNITIVE-TACTICAL</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* V51.5 實戰動能風格 (神經綠 x 量子藍) */
+        /* V52.0 認知戰術風格 */
         :root {
             --bg-deep: #010a08;
             --panel-bg: rgba(4, 18, 15, 0.95);
-            --stat-primary: #00fa9a; /* 神經綠 */
-            --stat-secondary: #00e5ff; /* 量子藍 */
+            --stat-primary: #00fa9a; 
+            --stat-secondary: #ffab00; /* 將量子藍改為戰術金，代表認知維度 */
             --stat-tertiary: #b388ff;
             --text-main: #f1f5f9;
             --text-dim: #475569;
             --border-glow: rgba(0, 250, 154, 0.2);
-            --neon-shadow: 0 0 15px rgba(0, 250, 154, 0.3);
+            --neon-shadow: 0 0 15px rgba(255, 171, 0, 0.3);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; cursor: default; }
@@ -27,28 +27,28 @@
             font-family: 'Share Tech Mono', 'Noto Sans TC', sans-serif;
             min-height: 100vh; overflow-x: hidden; display: flex; flex-direction: column;
             background-image: 
-                radial-gradient(circle at 10% 20%, rgba(0, 250, 154, 0.03) 0%, transparent 40%),
+                radial-gradient(circle at 10% 20%, rgba(255, 171, 0, 0.03) 0%, transparent 40%),
                 linear-gradient(rgba(0, 250, 154, 0.02) 1px, transparent 1px), 
                 linear-gradient(90deg, rgba(0, 250, 154, 0.02) 1px, transparent 1px);
             background-size: 100% 100%, 30px 30px, 30px 30px;
         }
 
-        header { padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--stat-primary); background: rgba(1, 10, 8, 0.95); box-shadow: var(--neon-shadow); }
-        .system-status { display: flex; gap: 20px; font-size: 12px; color: var(--stat-primary); font-weight: bold; letter-spacing: 2px; }
+        header { padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--stat-secondary); background: rgba(1, 10, 8, 0.95); box-shadow: var(--neon-shadow); }
+        .system-status { display: flex; gap: 20px; font-size: 12px; color: var(--stat-secondary); font-weight: bold; letter-spacing: 2px; }
         .status-node { display: flex; align-items: center; gap: 6px; }
-        .dot { width: 8px; height: 8px; background: var(--stat-primary); border-radius: 50%; box-shadow: 0 0 8px var(--stat-primary); }
+        .dot { width: 8px; height: 8px; background: var(--stat-secondary); border-radius: 50%; box-shadow: 0 0 8px var(--stat-secondary); }
         .blink { animation: pulse 2s infinite; }
 
         main { display: grid; grid-template-columns: 420px 1fr 340px; flex: 1; gap: 2px; }
-        .column { background: var(--panel-bg); display: flex; flex-direction: column; position: relative; border-right: 1px solid rgba(0, 250, 154, 0.1); }
-        .section-label { padding: 12px 15px; font-family: 'Orbitron'; font-size: 11px; background: linear-gradient(90deg, rgba(0, 250, 154, 0.1), transparent); color: var(--stat-primary); border-bottom: 1px solid rgba(0, 250, 154, 0.2); display: flex; justify-content: space-between; text-transform: uppercase; letter-spacing: 1.5px; }
+        .column { background: var(--panel-bg); display: flex; flex-direction: column; position: relative; border-right: 1px solid rgba(255, 171, 0, 0.1); }
+        .section-label { padding: 12px 15px; font-family: 'Orbitron'; font-size: 11px; background: linear-gradient(90deg, rgba(255, 171, 0, 0.1), transparent); color: var(--stat-secondary); border-bottom: 1px solid rgba(255, 171, 0, 0.2); display: flex; justify-content: space-between; text-transform: uppercase; letter-spacing: 1.5px; }
 
         .hero-stats { padding: 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .hero-value { font-family: 'Orbitron'; font-size: 72px; font-weight: 900; color: #fff; line-height: 0.8; margin-bottom: 10px; text-shadow: 0 0 20px rgba(0, 250, 154, 0.4); }
+        .hero-value { font-family: 'Orbitron'; font-size: 72px; font-weight: 900; color: #fff; line-height: 0.8; margin-bottom: 10px; text-shadow: 0 0 20px rgba(255, 171, 0, 0.4); }
         .hero-name { font-family: 'Orbitron'; font-size: 18px; color: var(--stat-secondary); letter-spacing: 4px; font-weight: bold;}
 
-        /* 擴充為 12 格矩陣 (3x4) */
-        .data-matrix { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: rgba(0, 250, 154, 0.1); }
+        /* 12 格資料矩陣 */
+        .data-matrix { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: rgba(255, 171, 0, 0.1); }
         .cell { background: var(--bg-deep); padding: 12px 5px; text-align: center; position: relative; transition: 0.3s; }
         .cell:hover { background: #04120f; }
         .cell-label { font-size: 10px; color: #64748b; margin-bottom: 4px; letter-spacing: 0.5px; font-weight: bold; }
@@ -56,40 +56,40 @@
         
         .highlight-synth::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--stat-primary); }
         .highlight-synth .cell-val { color: var(--stat-primary); text-shadow: 0 0 10px rgba(0, 250, 154, 0.3); }
-        .highlight-kine::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--stat-secondary); }
-        .highlight-kine .cell-val { color: var(--stat-secondary); text-shadow: 0 0 10px rgba(0, 229, 255, 0.3); }
+        .highlight-cog::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--stat-secondary); }
+        .highlight-cog .cell-val { color: var(--stat-secondary); text-shadow: 0 0 10px rgba(255, 171, 0, 0.3); }
 
         .vis-container { flex: 1; display: flex; flex-direction: column; padding: 20px; position: relative; min-height: 400px; }
         #radarWrapper { flex: 1; min-height: 400px; }
 
-        .report-overlay { background: rgba(1, 10, 8, 0.9); border: 1px solid var(--stat-primary); padding: 20px; margin-top: 10px; font-size: 13px; border-top: 4px solid var(--stat-primary); box-shadow: inset 0 0 20px rgba(0,250,154,0.05), 0 5px 15px rgba(0,0,0,0.5); backdrop-filter: blur(8px); display: flex; flex-direction: column; gap: 15px; }
-        .report-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid rgba(0, 250, 154, 0.2); padding-bottom: 10px; }
+        .report-overlay { background: rgba(1, 10, 8, 0.9); border: 1px solid var(--stat-secondary); padding: 20px; margin-top: 10px; font-size: 13px; border-top: 4px solid var(--stat-secondary); box-shadow: inset 0 0 20px rgba(255,171,0,0.05), 0 5px 15px rgba(0,0,0,0.5); backdrop-filter: blur(8px); display: flex; flex-direction: column; gap: 15px; }
+        .report-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid rgba(255, 171, 0, 0.2); padding-bottom: 10px; }
         #ui-archetype { font-family: 'Orbitron'; font-size: 18px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; }
         .threat-level { font-family: 'Orbitron'; font-size: 12px; padding: 3px 8px; border-radius: 3px; }
         .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .report-module { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(0, 250, 154, 0.1); padding: 12px; }
+        .report-module { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 171, 0, 0.1); padding: 12px; }
         .module-title { font-family: 'Share Tech Mono'; color: var(--stat-secondary); font-size: 11px; margin-bottom: 8px; letter-spacing: 1px; display: flex; align-items: center; gap: 5px; }
-        .module-title::before { content: "▸"; color: var(--stat-primary); }
+        .module-title::before { content: "▸"; color: var(--stat-secondary); }
         .module-content { color: #cbd5e1; line-height: 1.5; font-size: 12px; }
         .module-full { grid-column: span 2; }
 
         .io-panel { padding: 15px; border-top: 1px solid var(--border-glow); background: rgba(0,0,0,0.4); }
         input { width: 100%; background: #010a08; border: 1px solid #1e293b; padding: 12px; color: #fff; font-family: 'Orbitron'; font-size: 14px; outline: none; transition: 0.3s; text-align: center; letter-spacing: 2px; }
-        input:focus { border-color: var(--stat-primary); box-shadow: var(--neon-shadow); }
-        .btn-prime { width: 100%; padding: 15px; margin-top: 10px; background: rgba(0, 250, 154, 0.05); color: var(--stat-primary); font-family: 'Orbitron'; font-weight: 900; font-size: 14px; border: 1px solid var(--stat-primary); cursor: pointer; letter-spacing: 2px; transition: 0.2s; }
-        .btn-prime:hover:not(:disabled) { background: var(--stat-primary); color: #000; box-shadow: var(--neon-shadow); }
+        input:focus { border-color: var(--stat-secondary); box-shadow: var(--neon-shadow); }
+        .btn-prime { width: 100%; padding: 15px; margin-top: 10px; background: rgba(255, 171, 0, 0.05); color: var(--stat-secondary); font-family: 'Orbitron'; font-weight: 900; font-size: 14px; border: 1px solid var(--stat-secondary); cursor: pointer; letter-spacing: 2px; transition: 0.2s; }
+        .btn-prime:hover:not(:disabled) { background: var(--stat-secondary); color: #000; box-shadow: var(--neon-shadow); }
 
         .sim-log { flex: 1; font-family: 'Share Tech Mono'; font-size: 11px; padding: 15px; color: #64748b; overflow-y: auto; max-height: 300px; }
         .log-line { margin-bottom: 8px; border-left: 2px solid #1e293b; padding-left: 10px; line-height: 1.4; }
         .log-ts { color: #475569; margin-right: 10px; font-size: 10px; }
         .log-tag { padding: 2px 5px; border-radius: 2px; font-size: 9px; margin-right: 8px; text-transform: uppercase; font-weight: bold; color:#000; }
         .tag-sys { background: #475569; color: #fff; }
-        .tag-kine { background: var(--stat-primary); }
+        .tag-kine { background: var(--stat-secondary); }
 
         ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: var(--stat-primary); }
+        ::-webkit-scrollbar-thumb { background: var(--stat-secondary); }
 
-        .data-box { padding: 15px; background: rgba(0,229,255,0.02); border: 1px solid rgba(0,229,255,0.15); margin-top: auto; font-family: 'Orbitron'; }
+        .data-box { padding: 15px; background: rgba(255,171,0,0.02); border: 1px solid rgba(255,171,0,0.15); margin-top: auto; font-family: 'Orbitron'; }
         .d-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 12px; }
         .d-label { color: var(--text-dim); }
         .d-val { color: #fff; font-weight: bold; }
@@ -101,14 +101,14 @@
 
     <header>
         <div class="system-status">
-            <div class="status-node"><div class="dot blink"></div> V51.5 OMNI-KINETIC | QUANTUM DATA LINK</div>
+            <div class="status-node"><div class="dot blink"></div> V52.0 COGNITIVE-TACTICAL | NEURAL GEOMETRY LINK</div>
         </div>
         <div style="font-family: 'Orbitron'; font-size: 16px; letter-spacing: 4px; color: #fff;">MAXIMA_DATACENTER</div>
     </header>
 
     <main>
         <section class="column">
-            <div class="section-label"><span>KINETIC_METRICS</span><span>DATA_STREAM</span></div>
+            <div class="section-label"><span>COGNITIVE_METRICS</span><span>DATA_STREAM</span></div>
             <div class="hero-stats">
                 <div class="hero-value" id="ui-mvi">00</div>
                 <div class="hero-name" id="ui-name">AWAITING_INPUT</div>
@@ -120,9 +120,9 @@
                 <div class="cell highlight-synth"><div class="cell-label">TACTICAL-DEF</div><div class="cell-val" id="val-tdr">--</div></div>
                 <div class="cell"><div class="cell-label">BAYES-CONF</div><div class="cell-val" id="val-bcf">--</div></div>
                 
-                <div class="cell highlight-kine"><div class="cell-label">TOWER-DMG (TDE)</div><div class="cell-val" id="val-tde">--</div></div>
-                <div class="cell highlight-kine"><div class="cell-label">ELIXIR-LEAK (ELR)</div><div class="cell-val" id="val-elr">--</div></div>
-                <div class="cell highlight-kine"><div class="cell-label">REACTION (RXT)</div><div class="cell-val" id="val-rxt">--</div></div>
+                <div class="cell highlight-cog"><div class="cell-label">SPELL-VALUE (SVE)</div><div class="cell-val" id="val-sve">--</div></div>
+                <div class="cell highlight-cog"><div class="cell-label">DECISION-LAG (DTI)</div><div class="cell-val" id="val-dti">--</div></div>
+                <div class="cell highlight-cog"><div class="cell-label">SPATIAL-ACC (SIA)</div><div class="cell-val" id="val-sia">--</div></div>
                 
                 <div class="cell"><div class="cell-label">MICRO-CTRL</div><div class="cell-val" id="val-mcr">--</div></div>
                 <div class="cell"><div class="cell-label">SURVIVAL (AST)</div><div class="cell-val" id="val-ast">--</div></div>
@@ -135,7 +135,7 @@
 
             <div class="io-panel">
                 <input type="text" id="tagInput" placeholder="PLAYER TAG (#...)" spellcheck="false">
-                <button class="btn-prime" id="btn-engage" onclick="fetchAndAnalyze()">RUN QUANTUM SCAN</button>
+                <button class="btn-prime" id="btn-engage" onclick="fetchAndAnalyze()">RUN COGNITIVE SCAN</button>
             </div>
         </section>
 
@@ -153,8 +153,8 @@
                     </div>
                     <div class="report-grid">
                         <div class="report-module module-full">
-                            <div class="module-title">KINETIC_PROFILING (實戰動能深度掃描)</div>
-                            <div class="module-content">V51.5 引入費米-狄拉克分佈與邏輯斯諦複合函數。系統正在等待目標進入探測範圍，準備解析後端傳回的真實物理封包。</div>
+                            <div class="module-title">COGNITIVE_PROFILING (大腦認知深度掃描)</div>
+                            <div class="module-content">V52.0 已切換至戰術心智模型。系統正在等待目標，準備解析其法術榨取效率、決策停滯週期與空間幾何攔截精準度。</div>
                         </div>
                     </div>
                 </div>
@@ -162,16 +162,16 @@
         </section>
 
         <section class="column">
-            <div class="section-label"><span>REALTIME_KINETICS</span><span>PROXY_NETWORK</span></div>
+            <div class="section-label"><span>TACTICAL_TELEMETRY</span><span>PROXY_NETWORK</span></div>
             <div id="log-feed" class="sim-log">
-                <div class="log-line"><span class="log-ts">00:00:00</span> <span class="log-tag tag-sys">SYS</span> OMNI-KINETIC V51.5 量子數據端點啟動。</div>
-                <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-tag tag-kine">KINE</span> 等待後端 Proxy 提供深層對戰日誌解析。</div>
+                <div class="log-line"><span class="log-ts">00:00:00</span> <span class="log-tag tag-sys">SYS</span> COGNITIVE MATRIX V52.0 戰術端點啟動。</div>
+                <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-tag tag-kine">TACT</span> 等待解析目標的幾何佈署與決策延遲。</div>
             </div>
 
             <div class="data-box">
-                <div class="d-row"><span class="d-label">Average Tower Dmg</span><span class="d-val kine-val" id="sub-tdm">-- dmg</span></div>
-                <div class="d-row"><span class="d-label">Elixir Leak Rate</span><span class="d-val kine-val" id="sub-elr">-- %</span></div>
-                <div class="d-row"><span class="d-label">Deployment Delay</span><span class="d-val kine-val" id="sub-rxt">-- ms</span></div>
+                <div class="d-row"><span class="d-label">Net Spell Value</span><span class="d-val kine-val" id="sub-sve">-- Elixir</span></div>
+                <div class="d-row"><span class="d-label">Decision Stagnation</span><span class="d-val kine-val" id="sub-dti">-- sec</span></div>
+                <div class="d-row"><span class="d-label">Spatial Deviation</span><span class="d-val kine-val" id="sub-sia">-- Tiles</span></div>
                 <div class="d-row"><span class="d-label">Avg Survival Time</span><span class="d-val kine-val" id="sub-ast">-- sec</span></div>
             </div>
         </section>
@@ -186,25 +186,25 @@
             chart = new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    // 12 維雷達圖
-                    labels: ['SOR(進攻)', 'TDE(塔傷)', 'RXT(反應)', 'MCR(微操)', 'RCE(轉化)', 'TPG(拓樸)', 'CFI(抗壓)', 'AST(存活)', 'TDR(防守)', 'ELR(控費)', 'B-CF(貝氏)', 'OEI(客觀)'],
+                    // 更新雷達圖維度標籤
+                    labels: ['SOR(進攻)', 'SVE(法術)', 'SIA(空間)', 'MCR(微操)', 'RCE(轉化)', 'TPG(拓樸)', 'CFI(抗壓)', 'AST(存活)', 'TDR(防守)', 'DTI(決策)', 'B-CF(貝氏)', 'OEI(客觀)'],
                     datasets: [{
-                        label: 'KINETIC_VECTOR',
+                        label: 'TACTICAL_VECTOR',
                         data: [0,0,0,0,0,0,0,0,0,0,0,0],
-                        backgroundColor: 'rgba(0, 250, 154, 0.1)',
-                        borderColor: '#00fa9a',
+                        backgroundColor: 'rgba(255, 171, 0, 0.1)',
+                        borderColor: '#ffab00',
                         borderWidth: 2,
                         pointRadius: 3,
                         pointBackgroundColor: '#fff',
-                        pointBorderColor: '#00fa9a'
+                        pointBorderColor: '#ffab00'
                     }]
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false,
                     scales: {
                         r: {
-                            angleLines: { color: 'rgba(0, 250, 154, 0.15)' },
-                            grid: { color: 'rgba(0, 250, 154, 0.15)' },
+                            angleLines: { color: 'rgba(255, 171, 0, 0.15)' },
+                            grid: { color: 'rgba(255, 171, 0, 0.15)' },
                             pointLabels: { color: '#64748b', font: { family: 'Share Tech Mono', size: 10, weight: 'bold' } },
                             ticks: { display: false, max: 100, min: 0 }
                         }
@@ -216,38 +216,39 @@
 
         async function fetchAndAnalyze() {
             let tagRaw = document.getElementById('tagInput').value.trim();
-            if(!tagRaw) return writeLog("KINE", "請輸入座標以擷取物理參數。");
+            if(!tagRaw) return writeLog("TACT", "請輸入座標以擷取戰術參數。");
 
             const btn = document.getElementById('btn-engage');
-            btn.disabled = true; btn.innerText = "CAPTURING KINETICS...";
+            btn.disabled = true; btn.innerText = "CAPTURING COGNITION...";
 
             let tagClean = tagRaw.replace('#', '');
-            writeLog("SYS", `掛載目標 [#${tagClean}]，啟動深層封包解析...`);
+            writeLog("SYS", `掛載目標 [#${tagClean}]，啟動幾何與決策解析...`);
             
             try {
-                // 呼叫你的後端 Proxy (後端需負責解析官方 API 或進階對戰日誌)
                 const response = await fetch(`/api/clash-proxy?tag=${encodeURIComponent('#'+tagClean)}`);
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                
-                // 獲取真實 JSON 封包
                 const rawData = await response.json();
-                
-                // 將整包真實數據傳遞給動能引擎
                 runKineticModel(rawData);
             } catch (error) {
-                writeLog("ERR", `資料庫連線失敗或目標不存在 (${error.message})。切換至離線測試集。`);
-                // 若後端未啟動，提供一組預設測試數據維持展示運作
-                const fallbackData = { name: "TEST_SUBJECT_X", wins: 5400, losses: 4600, trophies: 8200, avgTowerDamage: 1850, elixirLeakRate: 1.8, avgReactionTime: 240, avgSurvivalTime: 210 };
+                writeLog("ERR", `資料庫連線失敗或目標不存在 (${error.message})。切換至高階戰術離線測試集。`);
+                // 提供符合新指標的測試數據
+                const fallbackData = { 
+                    name: "GEOMETRY_GHOST", wins: 6200, losses: 4100, trophies: 8800, 
+                    spellValueExtracted: 1.8,  // 每次法術賺 1.8 費
+                    decisionStall: 0.4,        // 幾乎無猶豫
+                    spatialDeviation: 0.3,     // 下兵偏差僅 0.3 格
+                    avgSurvivalTime: 210 
+                };
                 runKineticModel(fallbackData);
             } finally {
-                btn.disabled = false; btn.innerText = "RUN QUANTUM SCAN";
+                btn.disabled = false; btn.innerText = "RUN COGNITIVE SCAN";
             }
         }
 
         function runKineticModel(rawData) {
-            writeLog("CALC", "套用 V51.5 費米-狄拉克分佈與邏輯斯諦複合函數...");
+            writeLog("CALC", "編譯決策矩陣與高斯衰減幾何...");
 
-            // 1. 提取基礎 API 數據
+            // 1. 基礎數據
             const name = rawData.name || "UNKNOWN_TARGET";
             const W = rawData.wins || 0; 
             const L = rawData.losses || 0; 
@@ -255,10 +256,10 @@
             const N = W + L || 1; 
             const p = W / N; 
 
-            // 2. 提取深層實戰數據
-            const real_towerDmg = rawData.avgTowerDamage !== undefined ? rawData.avgTowerDamage : 1500; 
-            const real_elixirLeak = rawData.elixirLeakRate !== undefined ? rawData.elixirLeakRate : 2.0;   
-            const real_reactionMs = rawData.avgReactionTime !== undefined ? rawData.avgReactionTime : 300; 
+            // 2. 提取認知戰術數據 (SVE, DTI, SIA)
+            const real_sve = rawData.spellValueExtracted !== undefined ? rawData.spellValueExtracted : 0.8; 
+            const real_dti = rawData.decisionStall !== undefined ? rawData.decisionStall : 1.2;   
+            const real_sia = rawData.spatialDeviation !== undefined ? rawData.spatialDeviation : 1.5; 
             const real_survival = rawData.avgSurvivalTime !== undefined ? rawData.avgSurvivalTime : 180;    
 
             // 3. 基礎拓樸與貝氏運算
@@ -267,26 +268,24 @@
             const OEI_raw = (Math.log10(T > 10 ? T : 10) / 3.9) * (1 + (W - L) / N);
             const H1 = Math.min(1.0, ((L * Math.log(N + 1)) / ((T > 0 ? T : 1) + 100)) * 0.1); 
 
-            // ======== V51.5 專業動能轉化 (Advanced Kinetic Scoring) ========
             const mapScore = (val, max) => Math.min(99.9, Math.max(0.1, (val / max) * 100));
 
-            // [升級] S_TDE (火力傾瀉): 邏輯斯諦複合函數 (Logistic Composite)
-            // 70% 權重取決於是否突破 1400 斬殺線 (Sigmoid)，30% 權重為基礎線性壓制能力
-            const tde_sigmoid = 1 / (1 + Math.exp(-0.003 * (real_towerDmg - 1400)));
-            const tde_linear = Math.min(1.0, real_towerDmg / 2800);
-            const score_TDE = Math.min(99.9, 100 * (0.7 * tde_sigmoid + 0.3 * tde_linear));
+            // ======== V52.0 認知戰術轉化 (Cognitive Scoring) ========
             
-            // [升級] S_ELR (漏費控制): 費米-狄拉克分佈 (Fermi-Dirac Distribution)
-            // E_crit = 2.2% (臨界崩潰點), lambda = 2.5 (斷崖斜率)
-            const elr_crit = 2.2;
-            const elr_lambda = 2.5;
-            const score_ELR = Math.min(99.9, 100 / (1 + Math.exp(elr_lambda * (real_elixirLeak - elr_crit))));
+            // 1. S_SVE (法術榨取率): 邏輯斯諦複合 (Sigmoid Threshold = 1.5 Elixir)
+            const sve_sigmoid = 1 / (1 + Math.exp(-3 * (real_sve - 1.5)));
+            const sve_linear = Math.min(1.0, real_sve / 3.0);
+            const score_SVE = Math.min(99.9, 100 * (0.8 * sve_sigmoid + 0.2 * sve_linear));
+            
+            // 2. S_DTI (決策停滯指數): 費米-狄拉克分佈 (Crit = 1.2s, Lambda = 3.5)
+            const dti_crit = 1.2;
+            const dti_lambda = 3.5;
+            const score_DTI = Math.min(99.9, 100 / (1 + Math.exp(dti_lambda * (real_dti - dti_crit))));
 
-            // S_RXT (反應神經): 基準 150ms 極限
-            const rxPenalty = Math.max(0, (real_reactionMs - 150) / 800);
-            const score_RXT = Math.max(0.1, 100 * (1 - rxPenalty));
+            // 3. S_SIA (空間攔截精準度): 高斯衰減函數 (Gaussian Decay)
+            const score_SIA = Math.min(99.9, 100 * Math.exp(-1.2 * Math.pow(real_sia, 2)));
 
-            // S_AST (存活時間): 對數縮放以防止過度拖延的高分溢出
+            // S_AST (存活時間)
             const score_AST = mapScore(Math.log(real_survival + 1) * 30, 180);
 
             // 傳統維度
@@ -299,74 +298,73 @@
             const score_BCF = mapScore(Math.max(0.1, 1 - (1.96 * Math.sqrt((theta * (1 - theta)) / (N + 100)))), 1.0); 
             const score_OEI = mapScore(OEI_raw, 1.2);
 
-            // ASI 綜合計算
-            const score_ASI = (score_SOR*0.1) + (score_TDR*0.1) + (score_TDE*0.1) + (score_ELR*0.15) + (score_RXT*0.15) + (score_MCR*0.1) + (score_CFI*0.1) + (score_TPG*0.1) + (score_OEI*0.1);
+            // ASI 綜合計算 (重新分配權重，更看重幾何與決策)
+            const score_ASI = (score_SOR*0.05) + (score_TDR*0.05) + (score_SVE*0.20) + (score_DTI*0.20) + (score_SIA*0.20) + (score_MCR*0.1) + (score_CFI*0.1) + (score_OEI*0.1);
 
-            const kineticRaw = { dmg: real_towerDmg, leak: real_elixirLeak, rx: real_reactionMs, ast: real_survival };
+            const tacRaw = { sve: real_sve, dti: real_dti, sia: real_sia, ast: real_survival };
             
-            const scores = [score_SOR, score_TDE, score_RXT, score_MCR, score_RCE, score_TPG, score_CFI, score_AST, score_TDR, score_ELR, score_BCF, score_OEI];
+            // 依據 Radar Chart 標籤順序: SOR, SVE, SIA, MCR, RCE, TPG, CFI, AST, TDR, DTI, BCF, OEI
+            const scores = [score_SOR, score_SVE, score_SIA, score_MCR, score_RCE, score_TPG, score_CFI, score_AST, score_TDR, score_DTI, score_BCF, score_OEI];
             
-            updateDashboard(name, scores, score_ASI, kineticRaw);
+            updateDashboard(name, scores, score_ASI, tacRaw);
         }
 
-        function updateDashboard(name, scores, asi, rawKine) {
+        function updateDashboard(name, scores, asi, tacRaw) {
             document.getElementById('ui-mvi').innerText = Math.round(asi);
             document.getElementById('ui-name').innerText = name.toUpperCase();
             
-            // 綁定 UI (依據 HTML 的順序)
             document.getElementById('val-sor').innerText = scores[0].toFixed(1);
-            document.getElementById('val-tde').innerText = scores[1].toFixed(1);
-            document.getElementById('val-rxt').innerText = scores[2].toFixed(1);
+            document.getElementById('val-sve').innerText = scores[1].toFixed(1); // 原 TDE 位置
+            document.getElementById('val-sia').innerText = scores[2].toFixed(1); // 原 RXT 位置
             document.getElementById('val-mcr').innerText = scores[3].toFixed(1);
             document.getElementById('val-rce').innerText = scores[4].toFixed(1);
             document.getElementById('val-tpg').innerText = scores[5].toFixed(1);
             document.getElementById('val-cfi').innerText = scores[6].toFixed(1);
             document.getElementById('val-ast').innerText = scores[7].toFixed(1);
             document.getElementById('val-tdr').innerText = scores[8].toFixed(1);
-            document.getElementById('val-elr').innerText = scores[9].toFixed(1);
+            document.getElementById('val-dti').innerText = scores[9].toFixed(1); // 原 ELR 位置
             document.getElementById('val-bcf').innerText = scores[10].toFixed(1);
             document.getElementById('val-oei').innerText = scores[11].toFixed(1);
 
-            document.getElementById('sub-tdm').innerText = rawKine.dmg.toFixed(0) + " Dps";
-            document.getElementById('sub-elr').innerText = rawKine.leak.toFixed(2) + " %";
-            document.getElementById('sub-rxt').innerText = rawKine.rx.toFixed(0) + " ms";
-            document.getElementById('sub-ast').innerText = rawKine.ast.toFixed(0) + " sec";
+            document.getElementById('sub-sve').innerText = "+" + tacRaw.sve.toFixed(1) + " Elixir";
+            document.getElementById('sub-dti').innerText = tacRaw.dti.toFixed(2) + " sec";
+            document.getElementById('sub-sia').innerText = tacRaw.sia.toFixed(2) + " Tiles";
+            document.getElementById('sub-ast').innerText = tacRaw.ast.toFixed(0) + " sec";
 
             chart.data.datasets[0].data = scores;
             chart.update();
 
-            generateKineticReport(scores, rawKine);
+            generateKineticReport(scores, tacRaw);
         }
 
-        function generateKineticReport(scores, rawKine) {
+        function generateKineticReport(scores, tacRaw) {
             const rc = document.getElementById('report-container');
-            // 解構：[0:SOR, 1:TDE, 2:RXT, 3:MCR, 4:RCE, 5:TPG, 6:CFI, 7:AST, 8:TDR, 9:ELR, 10:BCF, 11:OEI]
-            const rxt = scores[2]; const elr = scores[9]; const tde = scores[1]; const ast = scores[7];
+            const sve = scores[1]; const sia = scores[2]; const dti = scores[9];
 
-            let archetype = "STANDARD COMBATANT (標準特工)";
+            let archetype = "TACTICAL GRUNT (常規戰術兵)";
             let threat = "THREAT: MODERATE";
             let color = "#00fa9a";
-            let analysis = "生理反應與資源管理均處於常規水準。沒有明顯的硬傷，但在臨界斬殺線上缺乏決定性的突破力。";
-            let tactic = "利用正常的兵線運營即可壓制。";
+            let analysis = "目標的空間計算與決策反應均處於平均區間。具備基礎拉扯觀念，但法術榨取效率無法對戰局造成絕對壓制。";
+            let tactic = "保持穩定的卡牌輪轉，無需特別防範其法術解場。";
 
-            if (rxt > 85 && elr > 85) {
-                archetype = "CYBERNETIC ASSASSIN (神經改造刺客)";
-                threat = "THREAT: EXTREME (APM)";
-                color = "#00e5ff"; 
-                analysis = `檢測到非人級的反應速度 (延遲僅 ${rawKine.rx.toFixed(0)}ms) 且漏費極低 (${rawKine.leak.toFixed(2)}%)，費米分佈判定為完美節奏。該目標的微操精準度極其恐怖。`;
-                tactic = "絕對不要與其比拼法術解場或瞬間下兵。必須透過大兵團壓境，使其高 APM 無法發揮作用。";
-            } else if (tde > 80 && ast < 40) {
-                archetype = "GLASS CANNON (玻璃大砲)";
-                threat = "THREAT: HIGH (BURST)";
+            if (sia > 85 && dti > 85) {
+                archetype = "GEOMETRIC MASTERMIND (空間幾何大師)";
+                threat = "THREAT: EXTREME (MACRO)";
+                color = "#ffab00"; 
+                analysis = `極端危險。空間網格偏差僅 ${tacRaw.sia.toFixed(2)} 格，且決策停滯期幾乎為零 (${tacRaw.dti.toFixed(2)}s)。目標能完美計算所有單位的拉扯極限與仇恨判定。`;
+                tactic = "放棄中場拉扯博弈。建議採用沉底推進或大閃電等無法被空間幾何干擾的絕對力量（不可避傷害）進行壓制。";
+            } else if (sve > 85 && dti < 40) {
+                archetype = "VALUE PREDATOR (價值掠奪者)";
+                threat = "THREAT: HIGH (TRADE)";
                 color = "#ff1744";
-                analysis = `邏輯斯諦曲線顯示其塔傷輕易突破斬殺閾值，但存活時間過短。這是一套極致的快攻或一波流戰術。`;
-                tactic = "起手保留關鍵防禦。只要扛住前兩波最猛烈的衝擊，對方就會因資源耗盡而自我瓦解。";
-            } else if (elr < 40 && ast > 80) {
-                archetype = "SLUGGISH DEFENDER (遲鈍守備者)";
-                threat = "THREAT: LOW (MACRO)";
+                analysis = `邏輯斯諦模型顯示，目標的法術榨取能力極強 (單次淨賺 +${tacRaw.sve.toFixed(1)} 費)，但決策容易猶豫。其戰術極度依賴防守反擊與法術斬殺。`;
+                tactic = "絕對禁止兵力扎堆！拉開部隊間距 (Spacing)，迫使其法術無法獲得額外價值，對方陣腳將會因無利可圖而大亂。";
+            } else if (dti < 30) {
+                archetype = "COGNITIVE OVERLOAD (認知過載者)";
+                threat = "THREAT: LOW (STAGNANT)";
                 color = "#b388ff";
-                analysis = `存活時間長，但漏費率高達 ${rawKine.leak.toFixed(2)}%，已跌破費米臨界點。該目標容易在猶豫中浪費資源。`;
-                tactic = "採取雙路分推。迫使其在猶豫中不斷漏費，最終導致防線全面崩潰。";
+                analysis = `費米崩潰判定確立。目標面臨多線壓力時，決策停滯時間高達 ${tacRaw.dti.toFixed(2)} 秒，大腦處理器處於宕機邊緣。`;
+                tactic = "採取高頻率的雙路速轉進攻 (Split-Lane Pressure)，使其認知過載，防線自然瓦解。";
             }
 
             rc.innerHTML = `
@@ -376,23 +374,23 @@
                 </div>
                 <div class="report-grid">
                     <div class="report-module module-full">
-                        <div class="module-title">QUANTUM-KINETIC SCAN (量子動能解析)</div>
+                        <div class="module-title">COGNITIVE-TACTICAL SCAN (大腦認知深度解析)</div>
                         <div class="module-content">${analysis}</div>
                     </div>
                     <div class="report-module module-full">
-                        <div class="module-title">TACTICAL_EXPLOIT (戰術弱點突破)</div>
+                        <div class="module-title">PSYCHOLOGICAL_EXPLOIT (心理戰術突破)</div>
                         <div class="module-content">${tactic}</div>
                     </div>
                 </div>
             `;
-            writeLog("KINE", `動能掃描完成：評定為 [${archetype}]`);
+            writeLog("TACT", `認知掃描完成：評定為 [${archetype}]`);
         }
 
         function writeLog(tag, msg) {
             const feed = document.getElementById('log-feed');
             const div = document.createElement('div'); div.className = 'log-line';
             const now = new Date(); const ts = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
-            let tagClass = 'tag-sys'; if(tag === 'CALC') tagClass = 'tag-calc'; if(tag === 'KINE') tagClass = 'tag-kine'; if(tag === 'ERR') tagClass = 'tag-sys';
+            let tagClass = 'tag-sys'; if(tag === 'CALC') tagClass = 'tag-calc'; if(tag === 'TACT') tagClass = 'tag-kine'; if(tag === 'ERR') tagClass = 'tag-sys';
             div.innerHTML = `<span class="log-ts">${ts}</span><span class="log-tag ${tagClass}">${tag}</span> ${msg}`;
             feed.prepend(div);
             if(feed.children.length > LOG_LIMIT) feed.lastChild.remove();

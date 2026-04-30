@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEURAL-X OMEGA | System</title>
+    <title>NEURAL-X OMEGA | Advanced System</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -33,26 +33,24 @@
             background-size: 20px 20px;
         }
 
-        /* 掃描線特效 */
         body::after {
             content: ""; position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
             background-size: 100% 2px, 3px 100%; z-index: 999; pointer-events: none;
         }
 
-        /* --- 版面配置 --- */
-        .sidebar { width: 60px; border-right: 1px solid var(--grid-line); display: flex; flex-direction: column; align-items: center; padding-top: 20px; }
+        /* --- 版面佈局 --- */
+        .sidebar { width: 60px; border-right: 1px solid var(--grid-line); display: flex; flex-direction: column; align-items: center; padding-top: 20px; z-index: 10;}
         .sidebar-icon { color: var(--neon-cyan); margin-bottom: 30px; font-size: 20px; cursor: pointer; opacity: 0.7; }
         .sidebar-icon:hover { opacity: 1; text-shadow: 0 0 10px var(--neon-cyan); }
 
-        .main-content { flex: 1; padding: 20px; display: flex; flex-direction: column; gap: 15px; overflow-y: auto; }
-        
-        .right-panel { width: 300px; border-left: 1px solid var(--grid-line); padding: 20px; background: var(--panel-bg); display: flex; flex-direction: column; }
+        .main-content { flex: 1; padding: 20px; display: flex; flex-direction: column; gap: 15px; overflow-y: auto; z-index: 10;}
+        .right-panel { width: 300px; border-left: 1px solid var(--grid-line); padding: 20px; background: var(--panel-bg); display: flex; flex-direction: column; z-index: 10;}
 
-        /* --- 頂部標題與玩家資訊 --- */
+        /* --- 頂部資訊 --- */
         .header-title { font-family: 'Orbitron', sans-serif; color: var(--neon-cyan); font-size: 24px; text-shadow: 0 0 5px var(--neon-cyan); display: flex; justify-content: space-between; align-items: flex-end;}
         .header-sub { font-size: 10px; color: var(--neon-magenta); letter-spacing: 1px; font-family: 'Share Tech Mono';}
-        .header-coords { font-size: 12px; color: var(--text-main); }
+        .header-coords { font-size: 12px; color: var(--text-main); text-align: right;}
 
         .profile-card { border: 1px solid rgba(0, 243, 255, 0.3); padding: 15px; display: flex; align-items: center; gap: 20px; background: linear-gradient(90deg, rgba(0, 243, 255, 0.05) 0%, transparent 100%); position: relative;}
         .profile-card::before { content: ''; position: absolute; left: -1px; top: 10%; width: 3px; height: 80%; background: var(--neon-cyan); box-shadow: 0 0 10px var(--neon-cyan); }
@@ -65,16 +63,15 @@
         .sync-bar { width: 100%; height: 3px; background: rgba(255,255,255,0.1); margin-top: 10px; position: relative; }
         .sync-bar-fill { height: 100%; background: var(--neon-cyan); width: 99.8%; box-shadow: 0 0 8px var(--neon-cyan); }
 
-        /* --- 數據矩陣網格 --- */
+        /* --- 數據網格 --- */
         .data-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
-        
         .data-node { border: 1px solid #333; padding: 10px; background: rgba(0,0,0,0.4); display: flex; flex-direction: column; justify-content: space-between; }
         .node-title { font-size: 9px; color: #777; text-transform: uppercase; letter-spacing: 1px; }
         .node-value { font-size: 24px; font-weight: bold; font-family: 'Orbitron', sans-serif; margin: 5px 0; }
         .mini-bar { height: 2px; width: 100%; background: rgba(255,255,255,0.1); margin-top: 5px; }
         .mini-fill { height: 100%; width: 70%; }
 
-        /* --- 修復後的 Status Colors --- */
+        /* 狀態顏色 (修復版) */
         .node-def { border-left: 2px solid var(--neon-cyan); }
         .node-def .node-value { color: var(--neon-cyan); }
         .node-def .mini-fill { background: var(--neon-cyan); }
@@ -91,12 +88,25 @@
         .node-special .node-value { color: var(--danger-glow); }
         .node-special .mini-fill { background: var(--danger-glow); }
 
-        /* --- 底部儀表板 (雷達與 AI 分析) --- */
-        .bottom-panels { display: grid; grid-template-columns: 1fr 1.5fr; gap: 15px; flex: 1; }
+        /* --- 底部儀表板 (三欄配置) --- */
+        .bottom-panels { display: grid; grid-template-columns: 1fr 1fr 1.5fr; gap: 15px; flex: 1; }
         .panel-box { border: 1px solid var(--grid-line); padding: 15px; background: var(--panel-bg); display: flex; flex-direction: column;}
         .panel-title { font-size: 12px; color: var(--text-main); margin-bottom: 10px; letter-spacing: 1px; }
-        .chart-container { flex: 1; position: relative; width: 100%; display: flex; justify-content: center; align-items: center; }
+        .chart-container { flex: 1; position: relative; width: 100%; display: flex; justify-content: center; align-items: center; min-height: 120px; }
         
+        /* 戰術進階長條圖 */
+        .tactical-box { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
+        .tac-row { display: flex; flex-direction: column; gap: 5px; }
+        .tac-label { font-size: 10px; display: flex; justify-content: space-between; color: #a9b4c2; }
+        .tac-bar-bg { width: 100%; height: 6px; background: rgba(255,255,255,0.05); border: 1px solid #333; position: relative; }
+        .tac-fill-atk { height: 100%; background: var(--danger-glow); box-shadow: 0 0 8px var(--danger-glow); transition: width 0.5s; }
+        .tac-fill-def { height: 100%; background: var(--neon-cyan); box-shadow: 0 0 8px var(--neon-cyan); transition: width 0.5s; }
+        
+        .bias-meter { display: flex; height: 10px; width: 100%; margin-top: 5px; }
+        .bias-atk { background: var(--danger-glow); height: 100%; display: flex; align-items: center; padding-left: 5px; font-size: 8px; color:#fff; transition: width 0.5s; overflow: hidden; white-space: nowrap;}
+        .bias-def { background: var(--neon-cyan); height: 100%; display: flex; justify-content: flex-end; align-items: center; padding-right: 5px; font-size: 8px; color:#000; transition: width 0.5s; overflow: hidden; white-space: nowrap;}
+
+        /* AI 顧問文字 */
         .advisor-text { font-size: 12px; line-height: 1.6; color: #a9b4c2; }
         .advisor-highlight { color: var(--neon-cyan); font-weight: bold; }
         .advisor-yellow { color: var(--neon-yellow); }
@@ -109,12 +119,14 @@
         .input-group input { width: 100%; background: transparent; border: 1px solid #333; color: var(--neon-cyan); padding: 8px; font-family: 'Share Tech Mono'; outline: none; }
         .input-group input:focus { border-color: var(--neon-cyan); }
         
-        .btn-init { background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 10px; width: 100%; cursor: pointer; font-family: 'Orbitron'; transition: all 0.3s; }
+        .btn-init { background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 10px; width: 100%; cursor: pointer; font-family: 'Orbitron'; transition: all 0.3s; margin-top: 10px;}
         .btn-init:hover { background: rgba(0, 243, 255, 0.2); text-shadow: 0 0 5px var(--neon-cyan); box-shadow: 0 0 10px inset rgba(0,243,255,0.3); }
 
-        .live-feed { margin-top: 20px; border-top: 1px dashed #333; padding-top: 15px; font-size: 11px; color: #0f0; flex: 1; overflow-y: auto; }
+        .live-feed { margin-top: 20px; border-top: 1px dashed #333; padding-top: 15px; font-size: 11px; color: #0f0; flex: 1; overflow-y: auto; max-height: 300px;}
         .feed-line { margin-bottom: 5px; opacity: 0.8; }
+        .feed-error { color: var(--danger-glow); }
         .feed-cyan { color: var(--neon-cyan); }
+        .feed-yellow { color: var(--neon-yellow); }
     </style>
 </head>
 <body>
@@ -129,32 +141,31 @@
     <main class="main-content">
         <div class="header-title">
             <div>
-                NEURAL-X OMEGA <span style="font-size: 12px; color: var(--neon-cyan);">V15.2.0</span>
+                NEURAL-X OMEGA <span style="font-size: 12px; color: var(--neon-cyan);">V16.0.TACTICAL</span>
                 <div class="header-sub">[ STATUS: QUANTUM SYNC ESTABLISHED ]</div>
             </div>
             <div class="header-coords">
-                COORDINATES<br>
-                35.6895° N, 139.6917° E
+                COORDINATES<br>35.6895° N, 139.6917° E
             </div>
         </div>
 
         <div class="profile-card">
             <div class="avatar-box">👤</div>
             <div class="profile-info" style="flex:1;">
-                <h1 id="playerName">小董哥</h1>
+                <h1 id="playerName">AWAITING SUBJECT...</h1>
                 <div class="profile-meta">
-                    <div>RANK: <span id="playerRank">ULTIMATE CHAMPION</span></div>
+                    <div>RANK: <span id="playerRank">ANALYZING</span></div>
                     <div>SYNC RATIO: <span style="color: var(--neon-magenta);">99.8%</span></div>
                 </div>
                 <div class="sync-bar"><div class="sync-bar-fill"></div></div>
             </div>
-            <div style="color: #555; font-size: 14px; align-self: flex-start;">#CV9QU9CYJ</div>
+            <div id="displayTag" style="color: #555; font-size: 14px; align-self: flex-start;">NO TAG</div>
         </div>
 
         <div class="data-grid">
             <div class="data-node node-def">
                 <div class="node-title">Career Total Wins</div>
-                <div class="node-value" id="val-wins">669</div>
+                <div class="node-value" id="val-wins">0</div>
                 <div class="mini-bar"><div class="mini-fill" style="width: 30%;"></div></div>
             </div>
             <div class="data-node node-off">
@@ -164,7 +175,7 @@
             </div>
             <div class="data-node node-def">
                 <div class="node-title">Total Donations</div>
-                <div class="node-value" id="val-donations">30</div>
+                <div class="node-value" id="val-donations">0</div>
                 <div class="mini-bar"><div class="mini-fill" style="width: 5%;"></div></div>
             </div>
             <div class="data-node node-win">
@@ -174,7 +185,7 @@
             </div>
             
             <div class="data-node node-special">
-                <div class="node-title">3-Crown Power</div>
+                <div class="node-title">3-Crown Wins</div>
                 <div class="node-value" id="val-3crown">0</div>
                 <div class="mini-bar"><div class="mini-fill" style="width: 100%;"></div></div>
             </div>
@@ -196,41 +207,63 @@
 
             <div class="data-node node-def">
                 <div class="node-title">Cards Unlocked</div>
-                <div class="node-value" id="val-cards">110</div>
+                <div class="node-value" id="val-cards">0</div>
                 <div class="mini-bar"><div class="mini-fill" style="width: 80%;"></div></div>
             </div>
             <div class="data-node node-def">
                 <div class="node-title">Achievement Score</div>
-                <div class="node-value" id="val-achieve">953</div>
+                <div class="node-value" id="val-achieve">0</div>
                 <div class="mini-bar"><div class="mini-fill" style="width: 25%;"></div></div>
             </div>
             <div class="data-node node-special">
-                <div class="node-title">Efficiency Index</div>
-                <div class="node-value" id="val-eff">0</div>
+                <div class="node-title">3-Crown Efficiency</div>
+                <div class="node-value" id="val-eff">0%</div>
                 <div class="mini-bar"><div class="mini-fill" style="width: 100%;"></div></div>
             </div>
             <div class="data-node node-win">
-                <div class="node-title">Historical Stability</div>
-                <div class="node-value" id="val-stab">0</div>
+                <div class="node-title">System Stability</div>
+                <div class="node-value" id="val-stab">0%</div>
                 <div class="mini-bar"><div class="mini-fill" style="width: 100%;"></div></div>
             </div>
         </div>
 
         <div class="bottom-panels">
             <div class="panel-box">
-                <div class="panel-title">CAREER POTENTIAL RADAR</div>
+                <div class="panel-title">COMBAT RADAR</div>
                 <div class="chart-container">
                     <canvas id="radarChart"></canvas>
+                </div>
+            </div>
+
+            <div class="panel-box">
+                <div class="panel-title" style="color: var(--neon-yellow);">TACTICAL TELEMETRY</div>
+                <div class="tactical-box">
+                    <div class="tac-row">
+                        <div class="tac-label"><span>OFFENSIVE (火力)</span> <span id="val-off-score">0</span></div>
+                        <div class="tac-bar-bg"><div class="tac-fill-atk" id="bar-off" style="width: 0%;"></div></div>
+                    </div>
+                    <div class="tac-row" style="margin-top: 5px;">
+                        <div class="tac-label"><span>DEFENSIVE (防禦)</span> <span id="val-def-score">0</span></div>
+                        <div class="tac-bar-bg"><div class="tac-fill-def" id="bar-def" style="width: 0%;"></div></div>
+                    </div>
+                    <div class="tac-row" style="margin-top: 15px;">
+                        <div class="tac-label"><span>COMBAT BIAS (戰術傾向)</span></div>
+                        <div class="bias-meter">
+                            <div class="bias-atk" id="bias-atk-bar" style="width: 50%;">ATK</div>
+                            <div class="bias-def" id="bias-def-bar" style="width: 50%;">DEF</div>
+                        </div>
+                    </div>
                 </div>
             </div>
             
             <div class="panel-box">
                 <div class="panel-title" style="color: var(--neon-magenta);">EXECUTIVE AI ADVISOR</div>
                 <div class="advisor-text" id="ai-advisor-content">
-                    <span class="advisor-highlight">> CAREER_LEGACY_PROFILE:</span><br><br>
-                    <span class="advisor-yellow">[VETERAN_SCORE]</span> <span id="adv-score">953</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="advisor-cyan">[DONATIONS]</span> <span id="adv-donations">30</span><br>
-                    <span class="advisor-magenta">[EFFICIENCY]</span> <span id="adv-eff">65% (3-Crown)</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="advisor-magenta">[MASTERY]</span> <span id="adv-cards">110</span> Cards Found<br><br>
-                    <span class="advisor-cyan">LONG-TERM_ADVISORY:</span> Subject is a <span class="advisor-yellow">Rising Prospect</span>. Career stability is 91.3%.
+                    <span class="advisor-highlight">> COMBAT_STYLE_ANALYSIS:</span><br><br>
+                    <span class="advisor-yellow">Primary Tactic:</span> <span id="adv-style" style="color:#fff;">AWAITING DATA...</span><br>
+                    <span class="advisor-magenta">Lethality:</span> <span id="adv-lethal">0 PT</span><br>
+                    <span class="advisor-cyan">Survival:</span> <span id="adv-survive">0 PT</span><br><br>
+                    <span class="advisor-highlight">CONCLUSION:</span> <span id="adv-conclusion">System standby.</span>
                 </div>
             </div>
         </div>
@@ -240,7 +273,7 @@
         <div class="control-title">LINK CONTROLS</div>
         
         <div class="input-group">
-            <label>SUBJECT PROXY URL</label>
+            <label>PROXY URL (API ENDPOINT)</label>
             <input type="text" id="proxyUrl" value="/api/clash-proxy">
         </div>
         
@@ -255,10 +288,6 @@
         <div class="live-feed" id="sysFeed">
             <div class="feed-line">SYSTEM READY...</div>
             <div class="feed-line">AWAITING INPUT...</div>
-            <div class="feed-line">Hyper-Engine Cores Initialized.</div>
-            <div class="feed-line feed-cyan">Connecting to proxy: /api/clash-proxy</div>
-            <div class="feed-line feed-cyan">Syncing Subject: #CV9QU9CYJ...</div>
-            <div class="feed-line">Neural Link Established successfully.</div>
         </div>
         
         <div style="margin-top: auto; font-size: 8px; color: #555; text-align: right;">
@@ -267,24 +296,20 @@
     </aside>
 
     <script>
-        // 設定 Chart.js 全局字體與顏色
         Chart.defaults.color = '#777';
         Chart.defaults.font.family = "'Share Tech Mono', monospace";
-        
         let radarChartInstance = null;
 
-        // 初始化雷達圖
         function initChart(dataArray) {
             const ctx = document.getElementById('radarChart').getContext('2d');
-            
             if(radarChartInstance) radarChartInstance.destroy();
 
             radarChartInstance = new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: ['PB', 'WINS', 'DONATIONS', 'WIN RATE', 'STABILITY'],
+                    labels: ['OFFENSE', 'DEFENSE', 'STABILITY', 'EXP', 'PEAK'],
                     datasets: [{
-                        label: 'Subject Stats',
+                        label: 'Combat Stats',
                         data: dataArray,
                         backgroundColor: 'rgba(0, 243, 255, 0.2)',
                         borderColor: '#00f3ff',
@@ -303,100 +328,89 @@
                         r: {
                             angleLines: { color: 'rgba(255, 255, 255, 0.1)' },
                             grid: { color: 'rgba(255, 255, 255, 0.1)' },
-                            pointLabels: { color: '#00f3ff', font: { size: 10 } },
-                            ticks: { display: false, min: 0 }
+                            pointLabels: { color: '#00f3ff', font: { size: 9 } },
+                            ticks: { display: false, min: 0, max: 100 }
                         }
                     }
                 }
             });
         }
 
-        // 模擬系統文字輸出
-        function logFeed(msg, isCyan = false) {
+        function logFeed(msg, type = 'normal') {
             const feed = document.getElementById('sysFeed');
             const line = document.createElement('div');
-            line.className = 'feed-line' + (isCyan ? ' feed-cyan' : '');
+            line.className = 'feed-line';
+            if(type === 'cyan') line.classList.add('feed-cyan');
+            if(type === 'error') line.classList.add('feed-error');
+            if(type === 'yellow') line.classList.add('feed-yellow');
             line.innerText = msg;
             feed.appendChild(line);
             feed.scrollTop = feed.scrollHeight;
         }
 
-        // 執行審核 (模擬呼叫 API 並更新 UI)
-        // 執行審核 (真實 API 抓取版)
         async function initiateAudit() {
-            // 取得輸入值，並處理 Tag (有些 API 規定不能傳 #，有些規定要轉碼為 %23)
             let tag = document.getElementById('playerTag').value.trim();
-            // 如果你的 proxy 網址需要把 # 轉為 %23，可以打開下面這行註解：
-            // tag = tag.replace('#', '%23'); 
-            
             const proxy = document.getElementById('proxyUrl').value.trim();
             
-            logFeed(`> Initiating audit for ${tag}...`);
-            logFeed(`> Routing through ${proxy}...`, true);
+            document.getElementById('displayTag').innerText = tag;
+            logFeed(`\n> Initiating scan for ${tag}...`);
+            logFeed(`> Routing through proxy...`, 'cyan');
 
             try {
-                // 組合完整的 API 請求網址 (請依據你的 proxy 路由規則調整)
-                // 假設你的 proxy 寫法是：/api/clash-proxy?tag=%23CV9QU9CYJ
+                // 發送真實請求 (處理 # 號轉換)
                 const requestUrl = `${proxy}?tag=${tag.replace('#', '%23')}`;
-                
                 const response = await fetch(requestUrl);
                 
-                // 檢查 HTTP 狀態碼是否為 200 OK
-                if (!response.ok) {
-                    throw new Error(`伺服器錯誤: ${response.status} ${response.statusText}`);
-                }
-
+                if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+                
                 const rawData = await response.json();
-                logFeed('> Data packet received. Decoding...');
+                logFeed('> Target acquired. Decoding data...', 'cyan');
 
-                // 【關鍵】將真實 API 的 JSON 欄位，對應到我們 UI 需要的格式
-                // 這裡的 rawData.xxx 必須完全吻合皇室戰爭官方 API 的命名
+                // 資料格式映射 (根據官方 API 結構)
                 const mappedData = {
                     name: rawData.name || "UNKNOWN",
                     wins: rawData.wins || 0,
                     losses: rawData.losses || 0,
                     bestTrophies: rawData.bestTrophies || 0,
-                    // 官方 API 的捐贈數量通常叫 totalDonations
                     donations: rawData.totalDonations || 0, 
                     threeCrownWins: rawData.threeCrownWins || 0,
                     challengeMaxWins: rawData.challengeMaxWins || 0,
                     warDayWins: rawData.warDayWins || 0,
                     expLevel: rawData.expLevel || 0,
-                    // 官方 API 的卡牌是一個陣列，我們要抓它的長度 (length)
                     cardsFound: rawData.cards ? rawData.cards.length : 0, 
-                    // 官方可能沒有 achievementScore，這裡先拿 starPoints 或其他數值頂替，沒有就給 0
                     achievementScore: rawData.starPoints || 0 
                 };
 
-                // 更新畫面
                 document.getElementById('playerName').innerText = mappedData.name;
+                document.getElementById('playerRank').innerText = "DATA SYNCED";
                 updateUI(mappedData);
-                
-                logFeed('> DOM updated successfully.', true);
+                logFeed('> UI Telemetry Updated.', 'cyan');
 
             } catch (error) {
-                // 抓取錯誤時的防呆處理
-                logFeed(`> ERROR: FETCH FAILED`, false);
-                logFeed(`> ${error.message}`, false);
-                console.error("API 抓取失敗詳細資訊:", error);
+                logFeed(`> API Fetch Failed: ${error.message}`, 'error');
+                logFeed('> [WARNING] FALLBACK TO SIMULATION DATA', 'yellow');
                 
-                // 可以在這裡顯示全 0 的狀態以防畫面崩潰
-                updateUI({
-                    wins: 0, losses: 0, bestTrophies: 0, donations: 0, 
-                    threeCrownWins: 0, challengeMaxWins: 0, warDayWins: 0, 
-                    expLevel: 0, cardsFound: 0, achievementScore: 0
-                });
+                // 為了視覺展示，載入假資料 (讓測試時即使沒後端也不會空轉)
+                const mockData = {
+                    name: "SIMULATION_MODE", wins: 850, losses: 420, bestTrophies: 7100, 
+                    donations: 120, threeCrownWins: 550, challengeMaxWins: 15, warDayWins: 80, 
+                    expLevel: 50, cardsFound: 112, achievementScore: 1250
+                };
+                
+                document.getElementById('playerName').innerText = mockData.name;
+                document.getElementById('playerRank').innerText = "SIMULATED";
+                document.getElementById('playerName').style.color = 'var(--danger-glow)';
+                updateUI(mockData);
             }
         }
 
-        // 將取得的資料更新到畫面上
         function updateUI(data) {
-            // 基本資料計算
+            // 1. 基礎計算
             const totalMatches = data.wins + data.losses || 1;
             const winRate = ((data.wins / totalMatches) * 100).toFixed(1);
             const threeCrownRate = ((data.threeCrownWins / (data.wins || 1)) * 100).toFixed(1);
 
-            // 更新數據方塊
+            // 更新上方面板
             document.getElementById('val-wins').innerText = data.wins;
             document.getElementById('val-pb').innerText = data.bestTrophies;
             document.getElementById('val-donations').innerText = data.donations;
@@ -407,32 +421,63 @@
             document.getElementById('val-exp').innerText = data.expLevel;
             document.getElementById('val-cards').innerText = data.cardsFound;
             document.getElementById('val-achieve').innerText = data.achievementScore;
-            
-            // 隨機生成穩定度與效率指標 (做視覺效果)
             document.getElementById('val-eff').innerText = threeCrownRate + '%';
-            document.getElementById('val-stab').innerText = '91.3%';
+            document.getElementById('val-stab').innerText = winRate > 50 ? 'STABLE' : 'UNSTABLE';
 
-            // 更新 AI Advisor
-            document.getElementById('adv-score').innerText = data.achievementScore;
-            document.getElementById('adv-donations').innerText = data.donations;
-            document.getElementById('adv-eff').innerText = `${threeCrownRate}% (3-Crown)`;
-            document.getElementById('adv-cards').innerText = data.cardsFound;
+            // 2. 攻守演算法
+            let offenseScore = Math.min(100, (data.threeCrownWins / (data.wins || 1)) * 3.3 * 100).toFixed(0);
+            let defenseScore = Math.min(100, (winRate * 1.5) - 20).toFixed(0); 
+            if (defenseScore < 0) defenseScore = 0;
 
-            // 更新雷達圖 (將數值正規化為 0-100 以便在圖表顯示)
-            // 這些除數(如 8000, 1000)是隨便抓的基準點，你可以依據遊戲實際狀況調整
+            const totalCombatScore = Number(offenseScore) + Number(defenseScore) || 1;
+            const atkRatio = ((Number(offenseScore) / totalCombatScore) * 100).toFixed(0);
+            const defRatio = 100 - atkRatio;
+
+            // 更新戰術長條圖
+            document.getElementById('val-off-score').innerText = offenseScore;
+            document.getElementById('bar-off').style.width = offenseScore + '%';
+            
+            document.getElementById('val-def-score').innerText = defenseScore;
+            document.getElementById('bar-def').style.width = defenseScore + '%';
+
+            document.getElementById('bias-atk-bar').style.width = atkRatio + '%';
+            document.getElementById('bias-atk-bar').innerText = `ATK ${atkRatio}%`;
+            document.getElementById('bias-def-bar').style.width = defRatio + '%';
+            document.getElementById('bias-def-bar').innerText = `${defRatio}% DEF`;
+
+            // 3. AI 總評
+            let combatStyle = "BALANCED (均衡型)";
+            let conclusion = "Subject displays highly adaptable combat protocols.";
+            if (atkRatio > 60) {
+                combatStyle = "AGGRESSIVE RUSHER (狂犬突擊型)";
+                conclusion = "Subject prioritizes heavy penetration. Warning: High risk of counter-attacks.";
+                document.getElementById('adv-style').style.color = "var(--danger-glow)";
+            } else if (defRatio > 60) {
+                combatStyle = "IRON WALL (鐵壁防禦型)";
+                conclusion = "Subject utilizes counter-push mechanics. Excellent damage mitigation.";
+                document.getElementById('adv-style').style.color = "var(--neon-cyan)";
+            } else {
+                document.getElementById('adv-style').style.color = "var(--neon-yellow)";
+            }
+
+            document.getElementById('adv-style').innerText = combatStyle;
+            document.getElementById('adv-lethal').innerText = offenseScore + ' PT';
+            document.getElementById('adv-survive').innerText = defenseScore + ' PT';
+            document.getElementById('adv-conclusion').innerText = conclusion;
+
+            // 4. 更新雷達圖 (火力, 防禦, 穩定, 經驗, 極限)
             const chartData = [
-                (data.bestTrophies / 8000) * 100, 
-                (data.wins / 1000) * 100, 
-                (data.donations / 100) * 100, 
+                offenseScore, 
+                defenseScore, 
                 winRate, 
-                91.3 
+                Math.min(100, (data.expLevel / 60) * 100), 
+                Math.min(100, (data.bestTrophies / 9000) * 100) 
             ];
             initChart(chartData);
         }
 
-        // 網頁載入時繪製一次預設圖表
         window.onload = () => {
-            initChart([80, 60, 30, 65, 90]);
+            initChart([0, 0, 0, 0, 0]); // 初始化空圖表
         };
     </script>
 </body>

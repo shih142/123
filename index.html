@@ -3,23 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>神經矩陣 MAXIMA | V42.2 IRONCLAD (WILSON KERNEL)</title>
+    <title>神經矩陣 MAXIMA | V43.0 OMNI-WILSON</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Noto+Sans+TC:wght@300;500;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* V42.2 專業數據樣式表 (深淵鐵壁風) */
+        /* V43.0 OMNI-WILSON 樣式表 (雙極科技風) */
         :root {
-            --bg-deep: #020406;
-            --panel-bg: rgba(6, 12, 18, 0.95);
+            --bg-deep: #050508;
+            --panel-bg: rgba(10, 10, 15, 0.95);
             --stat-cyan: #00e5ff;
-            --stat-blue: #2979ff;
-            --stat-purple: #b388ff;
-            --alert-orange: #ff9100;
-            --def-emerald: #00c853; /* 象徵絕對防禦的翠綠 */
-            --text-main: #e0f2f1;
-            --text-dim: #546e7a;
-            --border-glow: rgba(0, 200, 83, 0.2);
-            --neon-shadow: 0 0 15px rgba(0, 200, 83, 0.3);
+            --atk-orange: #ff3d00; /* 極限進攻橘紅 */
+            --def-emerald: #00e676; /* 絕對防禦翠綠 */
+            --text-main: #eceff1;
+            --text-dim: #607d8b;
+            --border-glow: rgba(0, 229, 255, 0.15);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; cursor: crosshair; }
@@ -30,75 +27,84 @@
             font-family: 'Share Tech Mono', 'Noto Sans TC', sans-serif;
             min-height: 100vh; overflow-x: hidden; display: flex; flex-direction: column;
             background-image: 
-                radial-gradient(circle at 50% 50%, #061118 0%, #020406 100%),
-                linear-gradient(rgba(0, 200, 83, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 200, 83, 0.03) 1px, transparent 1px);
-            background-size: 100% 100%, 30px 30px, 30px 30px;
+                radial-gradient(circle at 50% 50%, #0a0a12 0%, #050508 100%),
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 40px 40px, 40px 40px;
         }
 
-        header { padding: 12px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--def-emerald); background: rgba(2, 10, 15, 0.9); box-shadow: 0 5px 20px rgba(0, 200, 83, 0.1); }
-        .system-status { display: flex; gap: 20px; font-size: 11px; color: var(--def-emerald); font-weight: bold; letter-spacing: 2px; }
+        header { padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--stat-cyan); background: rgba(5, 5, 10, 0.9); box-shadow: 0 4px 20px rgba(0, 229, 255, 0.1); }
+        .system-status { display: flex; gap: 20px; font-size: 12px; color: var(--stat-cyan); font-weight: bold; letter-spacing: 2px; }
         .status-node { display: flex; align-items: center; gap: 6px; }
-        .dot { width: 8px; height: 8px; background: var(--def-emerald); border-radius: 50%; box-shadow: var(--neon-shadow); }
+        .dot { width: 8px; height: 8px; background: var(--stat-cyan); border-radius: 50%; box-shadow: 0 0 10px var(--stat-cyan); }
         .blink { animation: pulse 1.5s infinite; }
 
-        main { display: grid; grid-template-columns: 380px 1fr 340px; flex: 1; gap: 2px; background: rgba(0, 200, 83, 0.02); }
-        .column { background: var(--panel-bg); display: flex; flex-direction: column; position: relative; }
+        main { display: grid; grid-template-columns: 380px 1fr 340px; flex: 1; gap: 2px; }
+        .column { background: var(--panel-bg); display: flex; flex-direction: column; position: relative; border-right: 1px solid rgba(255,255,255,0.05); }
 
-        .section-label { padding: 12px 15px; font-family: 'Orbitron'; font-size: 10px; background: linear-gradient(90deg, rgba(0, 200, 83, 0.1), transparent); color: var(--def-emerald); border-bottom: 1px solid rgba(0, 200, 83, 0.2); display: flex; justify-content: space-between; text-transform: uppercase; letter-spacing: 1px; }
+        .section-label { padding: 12px 15px; font-family: 'Orbitron'; font-size: 11px; background: rgba(255,255,255,0.02); color: var(--stat-cyan); border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; text-transform: uppercase; letter-spacing: 1.5px; }
 
-        .hero-stats { padding: 30px 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.02); }
-        .hero-value { font-family: 'Orbitron'; font-size: 88px; font-weight: 900; color: #fff; line-height: 0.8; margin-bottom: 15px; text-shadow: var(--neon-shadow); }
-        .hero-name { font-family: 'Orbitron'; font-size: 16px; color: var(--text-main); letter-spacing: 3px; font-weight: bold;}
+        .hero-stats { padding: 30px 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.02); background: radial-gradient(circle at top, rgba(0, 229, 255, 0.05), transparent 70%); }
+        .hero-value { font-family: 'Orbitron'; font-size: 88px; font-weight: 900; color: #fff; line-height: 0.8; margin-bottom: 15px; text-shadow: 0 0 20px rgba(0,229,255,0.3); }
+        .hero-name { font-family: 'Orbitron'; font-size: 18px; color: var(--stat-cyan); letter-spacing: 4px; font-weight: bold;}
 
-        .data-matrix { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: rgba(0, 200, 83, 0.1); }
+        .data-matrix { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: rgba(255,255,255,0.05); }
         .cell { background: var(--bg-deep); padding: 20px 10px; text-align: center; position: relative; transition: 0.3s; }
-        .cell:hover { background: #051015; }
-        .cell::after { content: ""; position: absolute; top: 0; left: 0; width: 6px; height: 6px; border-left: 2px solid var(--stat-cyan); border-top: 2px solid var(--stat-cyan); }
-        .cell-label { font-size: 9px; color: var(--text-dim); margin-bottom: 8px; letter-spacing: 1px; font-weight: bold; }
-        .cell-val { font-family: 'Orbitron'; font-size: 26px; color: #fff; }
+        .cell:hover { background: #0a0a12; }
+        .cell-label { font-size: 10px; color: var(--text-dim); margin-bottom: 8px; letter-spacing: 1px; font-weight: bold; }
+        .cell-val { font-family: 'Orbitron'; font-size: 28px; color: #fff; }
         
-        .highlight-atk .cell-val { color: var(--alert-orange); text-shadow: 0 0 10px rgba(255, 145, 0, 0.3); }
-        .highlight-def .cell-val { color: var(--def-emerald); text-shadow: 0 0 15px rgba(0, 200, 83, 0.5); font-weight: 900; } 
+        /* 攻守兩端的視覺強化 */
+        .highlight-atk::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--atk-orange); }
+        .highlight-atk .cell-val { color: var(--atk-orange); text-shadow: 0 0 15px rgba(255, 61, 0, 0.4); }
+        
+        .highlight-def::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--def-emerald); }
+        .highlight-def .cell-val { color: var(--def-emerald); text-shadow: 0 0 15px rgba(0, 230, 118, 0.4); } 
 
         .vis-container { flex: 1; display: flex; flex-direction: column; padding: 20px; position: relative; min-height: 400px; }
         #radarWrapper { flex: 1; min-height: 380px; }
-        .report-overlay { background: rgba(2, 8, 12, 0.9); border: 1px solid var(--def-emerald); padding: 20px; margin-top: 15px; border-left: 4px solid var(--def-emerald); font-size: 13px; }
+        .report-overlay { background: rgba(0, 0, 0, 0.8); border: 1px solid rgba(255,255,255,0.1); padding: 20px; margin-top: 15px; font-size: 13px; position: relative; }
+        .report-overlay::before { content: ""; position: absolute; left: 0; top: 0; width: 4px; height: 100%; background: linear-gradient(to bottom, var(--atk-orange), var(--def-emerald)); }
 
-        .io-panel { padding: 20px; border-top: 1px solid var(--border-glow); background: rgba(0,0,0,0.8); }
-        input { width: 100%; background: #010204; border: 1px solid var(--stat-cyan); padding: 15px; color: var(--stat-cyan); font-family: 'Orbitron'; font-size: 16px; outline: none; transition: 0.3s; text-align: center; letter-spacing: 2px; }
-        input:focus { border-color: var(--def-emerald); box-shadow: 0 0 15px rgba(0, 200, 83, 0.2); }
+        .io-panel { padding: 20px; border-top: 1px solid rgba(255,255,255,0.05); background: rgba(0,0,0,0.5); }
+        input { width: 100%; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); padding: 15px; color: #fff; font-family: 'Orbitron'; font-size: 16px; outline: none; transition: 0.3s; text-align: center; letter-spacing: 2px; }
+        input:focus { border-color: var(--stat-cyan); box-shadow: 0 0 15px rgba(0, 229, 255, 0.2); background: rgba(0,229,255,0.02); }
         input:disabled { opacity: 0.5; cursor: not-allowed; }
         
-        .btn-prime { width: 100%; padding: 18px; margin-top: 10px; background: rgba(0, 200, 83, 0.1); color: var(--def-emerald); font-family: 'Orbitron'; font-weight: 900; font-size: 14px; border: 1px solid var(--def-emerald); cursor: pointer; letter-spacing: 2px; transition: 0.2s; }
-        .btn-prime:hover:not(:disabled) { background: var(--def-emerald); color: #000; box-shadow: var(--neon-shadow); }
-        .btn-prime:disabled { background: #002211; color: #446655; border-color: #002211; cursor: wait; box-shadow: none; }
+        .btn-prime { width: 100%; padding: 18px; margin-top: 10px; background: transparent; color: var(--stat-cyan); font-family: 'Orbitron'; font-weight: 900; font-size: 14px; border: 1px solid var(--stat-cyan); cursor: pointer; letter-spacing: 2px; transition: 0.2s; }
+        .btn-prime:hover:not(:disabled) { background: var(--stat-cyan); color: #000; box-shadow: 0 0 20px rgba(0, 229, 255, 0.4); }
+        .btn-prime:disabled { background: rgba(255,255,255,0.05); color: #555; border-color: #333; cursor: wait; }
 
-        .sim-log { flex: 1; font-family: 'Share Tech Mono'; font-size: 12px; padding: 15px; color: #88ccaa; overflow-y: auto; max-height: 300px; }
-        .log-line { margin-bottom: 8px; border-left: 2px solid #114422; padding-left: 10px; line-height: 1.4; }
-        .log-ts { color: #448866; margin-right: 10px; font-size: 10px; }
-        .log-tag { padding: 2px 5px; border-radius: 2px; font-size: 10px; margin-right: 8px; text-transform: uppercase; font-weight: bold; color:#000; }
+        .sim-log { flex: 1; font-family: 'Share Tech Mono'; font-size: 11px; padding: 15px; color: #8a9ba8; overflow-y: auto; max-height: 300px; }
+        .log-line { margin-bottom: 8px; border-left: 2px solid #334; padding-left: 10px; line-height: 1.4; }
+        .log-ts { color: #455a64; margin-right: 10px; font-size: 10px; }
+        .log-tag { padding: 2px 5px; border-radius: 2px; font-size: 9px; margin-right: 8px; text-transform: uppercase; font-weight: bold; color:#000; }
         
-        .tag-sys { background: var(--def-emerald); }
+        .tag-sys { background: #b0bec5; }
         .tag-calc { background: var(--stat-cyan); }
-        .tag-err { background: #ff0055; color: #fff; }
+        .tag-warn { background: var(--atk-orange); color: #fff; }
 
         @keyframes pulse { 0% { opacity: 0.2; } 50% { opacity: 1; } 100% { opacity: 0.2; } }
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--def-emerald); }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); }
 
-        @media (max-width: 1200px) { main { display: flex; flex-direction: column; } .column { overflow-y: visible; height: auto; border-bottom: 2px solid var(--def-emerald); } .vis-container { min-height: 450px; } .sim-log { min-height: 250px; max-height: none; } header { flex-direction: column; align-items: flex-start; gap: 10px; } }
+        /* WUB WLB 雙重顯示區塊 */
+        .dual-bound { display: flex; justify-content: space-between; padding: 15px; background: rgba(255,255,255,0.02); margin-top: auto; border-top: 1px solid rgba(255,255,255,0.05); font-family: 'Orbitron'; text-align: center; }
+        .bound-box { flex: 1; }
+        .bound-label { font-size: 9px; color: var(--text-dim); margin-bottom: 5px; letter-spacing: 1px; }
+        .bound-val-wub { font-size: 18px; color: var(--atk-orange); font-weight: bold; }
+        .bound-val-wlb { font-size: 18px; color: var(--def-emerald); font-weight: bold; }
     </style>
 </head>
 <body>
 
     <header>
         <div class="system-status">
-            <div class="status-node"><div class="dot blink"></div> IRONCLAD V42.2 | WILSON SCORE KERNEL</div>
+            <div class="status-node"><div class="dot blink"></div> V43.0 OMNI-WILSON | DUAL-BOUND KERNEL</div>
             <div class="status-node" id="top-lethality">SYSTEM: ONLINE</div>
         </div>
-        <div style="font-family: 'Orbitron'; font-size: 14px; letter-spacing: 4px; color: #fff;">MAXIMA_DATACENTER</div>
+        <div style="font-family: 'Orbitron'; font-size: 16px; letter-spacing: 4px; color: #fff;">MAXIMA_DATACENTER</div>
     </header>
 
     <main>
@@ -115,27 +121,27 @@
                 <div class="cell highlight-def"><div class="cell-label">DEFENSE (DRS)</div><div class="cell-val" id="val-def">--</div></div>
                 <div class="cell"><div class="cell-label">TACTICS (MIC)</div><div class="cell-val" id="val-mic">--</div></div>
                 <div class="cell"><div class="cell-label">STRATEGY (MAC)</div><div class="cell-val" id="val-mac">--</div></div>
-                <div class="cell"><div class="cell-label">LETHALITY (ELV)</div><div class="cell-val" id="val-let">--</div></div>
-                <div class="cell"><div class="cell-label">STABILITY (WLB)</div><div class="cell-val" id="val-exe">--</div></div>
+                <div class="cell"><div class="cell-label">LETHALITY (LR)</div><div class="cell-val" id="val-let">--</div></div>
+                <div class="cell"><div class="cell-label">VARIANCE (VOL)</div><div class="cell-val" id="val-exe">--</div></div>
             </div>
 
             <div class="io-panel">
                 <input type="text" id="tagInput" placeholder="PLAYER TAG (#...)" spellcheck="false">
-                <button class="btn-prime" id="btn-engage" onclick="fetchAndAnalyze()">RUN WILSON ANALYSIS</button>
+                <button class="btn-prime" id="btn-engage" onclick="fetchAndAnalyze()">RUN OMNI-WILSON ANALYSIS</button>
             </div>
         </section>
 
         <section class="column">
-            <div class="section-label"><span>WILSON_INTERVAL_MAPPING</span><span>RADAR_PLOT</span></div>
+            <div class="section-label"><span>DUAL_WILSON_MATRIX</span><span>RADAR_PLOT</span></div>
             <div class="vis-container">
                 <div id="radarWrapper">
                     <canvas id="mainChart"></canvas>
                 </div>
                 
                 <div class="report-overlay" id="report-container">
-                    <div id="ui-archetype" style="font-family: 'Orbitron'; color: var(--def-emerald); font-size: 16px; font-weight: 900; margin-bottom: 10px; letter-spacing: 1px;">AWAITING DATA</div>
-                    <div id="ui-desc" style="line-height: 1.6; color: #a0b0b5;">
-                        已載入 V42.2 IRONCLAD 協定。防守分數已全面剝離對「非三冠」的依賴，轉為計算勝率的威爾遜區間下限 (Wilson Lower Bound)。
+                    <div id="ui-archetype" style="font-family: 'Orbitron'; color: var(--stat-cyan); font-size: 16px; font-weight: 900; margin-bottom: 10px; letter-spacing: 1px;">AWAITING DATA</div>
+                    <div id="ui-desc" style="line-height: 1.6; color: #b0bec5;">
+                        系統已載入 V43.0 全知威爾遜雙極協定。攻守數據現由 95% 置信區間的上限 (WUB) 與下限 (WLB) 共同驅動，徹底消除牌組流派造成的數據偏差。
                     </div>
                 </div>
             </div>
@@ -144,17 +150,24 @@
         <section class="column">
             <div class="section-label"><span>ANALYSIS_LOG</span><span>PROXY_NETWORK</span></div>
             <div id="log-feed" class="sim-log">
-                <div class="log-line"><span class="log-ts">00:00:00</span> <span class="log-tag tag-sys">SYS</span> IRONCLAD V42.2 核心初始化。</div>
-                <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-tag tag-sys">SYS</span> 棄用 GR 參數，掛載威爾遜統計模型。</div>
+                <div class="log-line"><span class="log-ts">00:00:00</span> <span class="log-tag tag-sys">SYS</span> OMNI-WILSON V43.0 核心初始化。</div>
+                <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-tag tag-sys">SYS</span> 雙重邊界模組 (WUB & WLB) 掛載完成。</div>
             </div>
 
-            <div style="padding: 20px; background: rgba(0,0,0,0.6); border-top: 1px solid var(--border-glow); margin-top: auto;">
-                <div class="section-label" style="background:transparent; padding: 0 0 10px 0; border: none; color: #fff;"><span>OBJECTIVE_METRICS</span></div>
-                <div style="display: flex; flex-direction: column; gap: 12px; font-size: 12px; font-family: 'Share Tech Mono';">
-                    <div style="display: flex; justify-content: space-between;"><span>Empirical Win Rate</span><span id="sub-p" style="color: var(--stat-cyan);">--</span></div>
-                    <div style="display: flex; justify-content: space-between;"><span>Trophy Diff (TDI)</span><span id="sub-tdi" style="color: var(--stat-purple);">--</span></div>
-                    <div style="display: flex; justify-content: space-between;"><span>Wilson Lower Bound (WLB)</span><span id="sub-wlb" style="color: var(--def-emerald); font-weight: bold;">--</span></div>
-                    <div style="display: flex; justify-content: space-between;"><span>Confidence Interval Margin</span><span id="sub-margin" style="color: var(--alert-orange);">--</span></div>
+            <div style="padding: 20px; display: flex; flex-direction: column; gap: 10px; font-size: 12px; font-family: 'Share Tech Mono';">
+                <div style="display: flex; justify-content: space-between;"><span>Empirical Win Rate</span><span id="sub-p" style="color: #fff;">--</span></div>
+                <div style="display: flex; justify-content: space-between;"><span>Trophy Diff (TDI)</span><span id="sub-tdi" style="color: var(--stat-cyan);">--</span></div>
+                <div style="display: flex; justify-content: space-between;"><span>Lethality Ratio (LR)</span><span id="sub-lr" style="color: #fff;">--</span></div>
+            </div>
+
+            <div class="dual-bound">
+                <div class="bound-box" style="border-right: 1px solid rgba(255,255,255,0.05);">
+                    <div class="bound-label">WILSON UPPER BOUND (WUB)</div>
+                    <div class="bound-val-wub" id="sub-wub">--</div>
+                </div>
+                <div class="bound-box">
+                    <div class="bound-label">WILSON LOWER BOUND (WLB)</div>
+                    <div class="bound-val-wlb" id="sub-wlb">--</div>
                 </div>
             </div>
         </section>
@@ -169,16 +182,16 @@
             chart = new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: ['OER(進攻)', 'DRS(防守)', 'MIC(戰術)', 'MAC(宏觀)', 'ELV(致死)', 'WLB(下限)', 'EXP(經驗)', 'VOL(波動)'],
+                    labels: ['OER(上限進攻)', 'DRS(下限防守)', 'MIC(微操)', 'MAC(宏觀)', 'LR(致死率)', 'EXP(經驗)'],
                     datasets: [{
                         label: 'STAT_VECTOR',
-                        data: [0,0,0,0,0,0,0,0],
-                        backgroundColor: 'rgba(0, 200, 83, 0.15)',
-                        borderColor: '#00c853',
+                        data: [0,0,0,0,0,0],
+                        backgroundColor: 'rgba(0, 229, 255, 0.1)',
+                        borderColor: '#00e5ff',
                         borderWidth: 2,
-                        pointRadius: 3,
+                        pointRadius: 4,
                         pointBackgroundColor: '#fff',
-                        pointBorderColor: '#00c853'
+                        pointBorderColor: '#00e5ff'
                     }]
                 },
                 options: {
@@ -188,7 +201,7 @@
                         r: {
                             angleLines: { color: 'rgba(255, 255, 255, 0.05)' },
                             grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                            pointLabels: { color: '#a0b0b5', font: { family: 'Share Tech Mono', size: 11 } },
+                            pointLabels: { color: '#8a9ba8', font: { family: 'Share Tech Mono', size: 11 } },
                             ticks: { display: false, max: 100, min: 0 }
                         }
                     },
@@ -199,12 +212,12 @@
 
         async function fetchAndAnalyze() {
             let tagRaw = document.getElementById('tagInput').value.trim();
-            if(!tagRaw) return writeLog("ERR", "請輸入有效的玩家標籤。");
+            if(!tagRaw) return writeLog("WARN", "請輸入有效的玩家標籤。");
 
             const btn = document.getElementById('btn-engage');
             const input = document.getElementById('tagInput');
             btn.disabled = true; input.disabled = true;
-            btn.innerText = "CALCULATING WILSON MATRIX...";
+            btn.innerText = "CALCULATING OMNI-MATRIX...";
 
             let tagClean = tagRaw.replace('#', '');
             let encodedTag = encodeURIComponent('#' + tagClean);
@@ -216,7 +229,7 @@
                 const response = await fetch(apiUrl);
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const rawData = await response.json();
-                writeLog("SYS", `數據連接成功。啟動底線測試。`);
+                writeLog("SYS", `數據連接成功。啟動雙極極限測試。`);
 
                 const playerData = {
                     name: rawData.name || "UNKNOWN",
@@ -228,21 +241,21 @@
                 runStatisticalModel(playerData);
 
             } catch (error) {
-                writeLog("ERR", `API 回應錯誤 (${error.message})，執行壓力測試用模擬數據。`);
-                // 模擬一個樣本數極大的老手，來測試威爾遜下限
-                runStatisticalModel({ name: "WILSON_VETERAN", wins: 15000, losses: 14000, trophies: 8800, threeCrownWins: 5000 });
+                writeLog("WARN", `API 回應錯誤 (${error.message})，執行壓力測試用模擬數據。`);
+                // 模擬一個消耗型牌組的高手 (高勝率，但三冠率極低)
+                runStatisticalModel({ name: "MINER_CONTROL_PRO", wins: 12000, losses: 9000, trophies: 8500, threeCrownWins: 1200 });
             } finally {
                 btn.disabled = false; input.disabled = false;
-                btn.innerText = "RUN WILSON ANALYSIS";
+                btn.innerText = "RUN OMNI-WILSON ANALYSIS";
                 input.focus();
             }
         }
 
         /**
-         * V42.2 核心算法：Wilson Score Interval
+         * V43.0 雙極核心算法：Wilson Score Interval (Upper & Lower)
          */
         function runStatisticalModel(data) {
-            writeLog("CALC", "計算 95% 置信區間之威爾遜下限...");
+            writeLog("CALC", "計算 95% 雙重置信區間 (WUB / WLB)...");
 
             const W = data.wins;
             const L = data.losses;
@@ -250,58 +263,48 @@
             const T = data.trophies;
             const TC = data.threeCrownWins;
 
-            // 1. 基礎指標
-            const p = W / N; // 實際經驗勝率 (Empirical Win Rate)
-            const z = 1.96;  // 95% 置信度 Z-score
-
-            // 2. 威爾遜區間下限 (Wilson Lower Bound - WLB)
-            // 這是用來定義「絕對防守下限」的純數學指標。不依賴三冠與否。
+            const p = W / N; 
+            const z = 1.96; 
             const denominator = 1 + (z * z) / N;
             const term1 = p + (z * z) / (2 * N);
             const term2 = z * Math.sqrt((p * (1 - p)) / N + (z * z) / (4 * N * N));
-            const WLB = Math.max(0, (term1 - term2) / denominator);
+
+            // 雙極限萃取
+            const WLB = Math.max(0, (term1 - term2) / denominator); // 防守地板
+            const WUB = Math.min(1, (term1 + term2) / denominator); // 進攻天花板
             
-            // 誤差邊距 (Margin)
-            const margin = p - WLB;
+            const margin = WUB - WLB; // 波動帶寬
 
-            // 3. 盃數難度指數 (Trophy Difficulty Index)
             const TDI = 1 / (1 + Math.exp(-0.002 * (T - 7000)));
-            const LR = W > 0 ? (TC / W) : 0; // 進攻端保留三冠率
+            const LR = W > 0 ? (TC / W) : 0; 
 
-            // 4. 維度映射 (1-100)
             const mapScore = (val, maxExpected) => Math.min(99.9, Math.max(0.1, (val / maxExpected) * 100));
 
-            // 【進攻效率 OER】 - 勝率 * 三冠致死率 * 盃段難度
-            const OER = mapScore(p * LR * TDI * 2.5, 1.0); 
+            // 【進攻效率 OER 3.0】 - 依賴 WUB，並對三冠率(LR)進行對數收斂，不再歧視小費消耗牌組
+            const LR_modifier = 1 + Math.log10(1 + LR); 
+            const OER = mapScore(WUB * TDI * LR_modifier * 1.5, 1.0); 
 
-            // 【防守韌性 DRS】(V42.2 全新邏輯)
-            // 完全由「威爾遜下限 (WLB)」與「高壓環境 (TDI)」決定，代表「最壞情況下仍能穩住局面的能力」。
+            // 【防守韌性 DRS 3.0】 - 完全依賴 WLB，代表絕對的抗壓下限
             const DRS = mapScore(WLB * TDI * 1.8, 1.0);
 
-            // 【戰術微操 MIC】 - 降低進攻權重，著重於 WLB 的穩定貢獻
-            const MIC = mapScore(WLB * 1.5 + TDI * 0.5, 1.0);
-
-            // 【宏觀營運 MAC】 - 樣本數與盃數
+            // 【微操與宏觀】
+            const MIC = mapScore((WUB * 0.5 + WLB * 0.5) + TDI * 0.2, 1.0);
             const experienceLog = Math.log10(N > 0 ? N : 1) / 5; 
             const MAC = mapScore(experienceLog * 0.5 + TDI * 0.5, 1.0);
 
-            // 【致死打擊 ELV】
-            const ELV_raw = p * LR * TDI;
-            const ELV = mapScore(ELV_raw * 3.5, 1.0);
-
-            // 【穩定性 / 下限分數】直接使用 WLB 映射
-            const WLB_Score = mapScore(WLB, 0.65); // 假設65%威爾遜下限是天花板
-
-            // 經驗 EXP 與 波動 VOL
+            // 【致死率指標】純粹顯示
+            const LethalityScore = mapScore(LR * 3, 1.0);
+            
+            // 【波動與經驗】
             const EXP = mapScore(experienceLog, 1.0);
-            const VOL = mapScore(margin * 50, 1.0); // 誤差邊距越大，波動越高
+            const VOL = mapScore(margin * 40, 1.0); 
 
-            const scores = [OER, DRS, MIC, MAC, ELV, WLB_Score, EXP, VOL];
-            updateDashboard(data, scores, p, TDI, WLB, margin);
+            const scores = [OER, DRS, MIC, MAC, LethalityScore, EXP];
+            updateDashboard(data, scores, p, TDI, WUB, WLB, LR, VOL);
         }
 
-        function updateDashboard(data, scores, p, TDI, WLB, margin) {
-            const cpr = (scores[0]*0.2 + scores[1]*0.3 + scores[2]*0.2 + scores[3]*0.2 + scores[5]*0.1); 
+        function updateDashboard(data, scores, p, TDI, WUB, WLB, LR, VOL) {
+            const cpr = (scores[0]*0.25 + scores[1]*0.25 + scores[2]*0.2 + scores[3]*0.2 + scores[5]*0.1); 
             
             document.getElementById('ui-mvi').innerText = Math.round(cpr);
             document.getElementById('ui-name').innerText = data.name.toUpperCase();
@@ -310,41 +313,46 @@
             document.getElementById('val-def').innerText = scores[1].toFixed(1);
             document.getElementById('val-mic').innerText = scores[2].toFixed(1);
             document.getElementById('val-mac').innerText = scores[3].toFixed(1);
-            document.getElementById('val-let').innerText = scores[4].toFixed(1);
-            document.getElementById('val-exe').innerText = scores[5].toFixed(1);
+            document.getElementById('val-let').innerText = (LR * 100).toFixed(1) + "%";
+            document.getElementById('val-exe').innerText = VOL.toFixed(1);
 
             document.getElementById('sub-p').innerText = (p * 100).toFixed(2) + "%";
             document.getElementById('sub-tdi').innerText = TDI.toFixed(3);
+            document.getElementById('sub-lr').innerText = (LR * 100).toFixed(2) + "%";
+            
+            document.getElementById('sub-wub').innerText = (WUB * 100).toFixed(2) + "%";
             document.getElementById('sub-wlb').innerText = (WLB * 100).toFixed(2) + "%";
-            document.getElementById('sub-margin').innerText = "±" + (margin * 100).toFixed(2) + "%";
 
-            document.getElementById('top-lethality').innerText = `DEF_FLOOR_PROB: ${(WLB * 100).toFixed(1)}%`;
+            document.getElementById('top-lethality').innerText = `MARGIN: ${((WUB - WLB)*100).toFixed(2)}%`;
 
             chart.data.datasets[0].data = scores;
             chart.update();
 
-            generateAnalyticalReport(scores, WLB, TDI);
+            generateAnalyticalReport(scores, WUB, WLB, LR);
         }
 
-        function generateAnalyticalReport(scores, wlb, tdi) {
-            const [oer, drs, mic, mac, elv] = scores;
+        function generateAnalyticalReport(scores, wub, wlb, lr) {
+            const [oer, drs] = scores;
             const uiArch = document.getElementById('ui-archetype');
             const uiDesc = document.getElementById('ui-desc');
             
-            if (drs > 75 && wlb > 0.52) {
-                uiArch.innerText = "IRONCLAD TITAN (絕對鐵壁)";
-                uiArch.style.color = "var(--def-emerald)";
-                uiDesc.innerHTML = `該對手的 95% 置信度勝率下限 (WLB) 突破了極具統治力的 ${(wlb*100).toFixed(1)}%。這意味著其防守表現完全不受運氣與局勢波動影響。<br><br><strong>數據結論：</strong>這是真正的防守大師。他們不會被輕易打崩，塔血交換極度精算。對抗此玩家時，強烈建議避免 All-in 進攻，必須依靠穩定的微小費用優勢（Micro-Elixir Trades）來建立勝勢。`;
-                writeLog("SYS", "目標具備極高的統計下限，防禦體系極端穩固。");
-            } else if (oer > 70 && wlb < 0.48) {
-                uiArch.innerText = "HIGH-VARIANCE STRIKER (高波動射手)";
-                uiArch.style.color = "var(--alert-orange)";
-                uiDesc.innerHTML = `目標具備高進攻效率，但威爾遜下限 (WLB: ${(wlb*100).toFixed(1)}%) 偏低。這意味著其表現具備高度的隨機性與不穩定性。<br><br><strong>防守漏洞：</strong>這類玩家依賴牌組克制或一波流爆發。只要能完美守住其第一波攻勢，對方的防守結構便會輕易崩潰。`;
-                writeLog("SYS", "偵測到目標數據波動巨大，建議採取防守反擊。");
-            } else {
-                uiArch.innerText = "EMPIRICAL TACTICIAN (經驗戰術家)";
+            if (oer > 75 && lr < 0.15) {
+                uiArch.innerText = "SURGICAL STRIKER (精準控制大師)";
                 uiArch.style.color = "var(--stat-cyan)";
-                uiDesc.innerHTML = `攻防矩陣處於標準常態分佈內。防守分數客觀反映了其在當前盃段 (TDI: ${tdi.toFixed(2)}) 的真實抗壓能力。<br><br><strong>數據結論：</strong>沒有明顯的下限崩盤風險，亦沒有過激的進攻傾向，建議採用常規節奏進行應對。`;
+                uiDesc.innerHTML = `該對手展現了極高的進攻天花板 (WUB: ${(wub*100).toFixed(1)}%)，但三冠致死率 (LR) 卻僅有 ${(lr*100).toFixed(1)}%。這在 V43.0 系統中被判定為<strong>頂級消耗型玩家（如毒礦、飛桶、迫擊砲）</strong>。<br><br><strong>數據結論：</strong>此玩家不靠一波流摧毀對手，而是靠著窒息般的節奏控制與精準磨血獲勝。對陣時必須注意法術的施放時機，避免陷入對方的節奏陷阱。`;
+                writeLog("SYS", "偵測到極低三冠率與高 WUB，判定為消耗型牌組高手。");
+            } else if (oer > 75 && lr > 0.4) {
+                uiArch.innerText = "OBLITERATOR (重裝處刑者)";
+                uiArch.style.color = "var(--atk-orange)";
+                uiDesc.innerHTML = `進攻天花板與致死率雙高的毀滅性數據。<br><br><strong>數據結論：</strong>該玩家具有將微小優勢轉化為三冠終結的恐怖能力。一旦費用落後，對方絕對會執行致命的 All-In 推進。`;
+            } else if (drs > 75 && wlb > 0.52) {
+                uiArch.innerText = "OMNI-DEFENDER (全域防禦者)";
+                uiArch.style.color = "var(--def-emerald)";
+                uiDesc.innerHTML = `堅不可摧的威爾遜下限 (WLB: ${(wlb*100).toFixed(1)}%)。無論局勢如何劣勢，該玩家總能將勝率穩定在數學期望值之上。建議採用保守的法術消耗戰術。`;
+            } else {
+                uiArch.innerText = "BALANCED ADVERSARY (均衡對手)";
+                uiArch.style.color = "#eceff1";
+                uiDesc.innerHTML = `攻防雙極限 (WUB & WLB) 均落於常態標準差內。沒有極端的偏科數據，戰局走向將取決於臨場失誤率與牌組適應性。`;
             }
         }
 
@@ -357,7 +365,7 @@
             
             let tagClass = 'tag-sys';
             if(tag === 'CALC') tagClass = 'tag-calc';
-            if(tag === 'ERR') tagClass = 'tag-err';
+            if(tag === 'WARN') tagClass = 'tag-warn';
 
             div.innerHTML = `<span class="log-ts">${ts}</span><span class="log-tag ${tagClass}">${tag}</span> ${msg}`;
             feed.prepend(div);

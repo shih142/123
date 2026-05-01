@@ -3,220 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MAXIMA 12D - 皇室戰爭戰術人格分析</title>
+    <title>MAXIMA 12D - 戰術人格掃描儀</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             --neon-blue: #00f2ff;
             --cyber-purple: #bc13fe;
-            --dark-bg: #0a0b10;
+            --dark-bg: #0d0e14;
         }
-
         body {
             background-color: var(--dark-bg);
-            color: white;
-            font-family: 'Segoe UI', Roboto, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
+            color: #e0e0e0;
+            font-family: 'Orbitron', sans-serif, "Microsoft JhengHei";
+            display: flex; flex-direction: column; align-items: center; padding: 40px 20px;
         }
-
-        .container {
-            width: 90%;
-            max-width: 800px;
-            background: rgba(20, 22, 30, 0.9);
-            padding: 30px;
-            border-radius: 15px;
+        .panel {
+            background: linear-gradient(145deg, #161822, #0d0e14);
             border: 1px solid var(--neon-blue);
-            box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
-            text-align: center;
+            border-radius: 20px; padding: 30px; width: 100%; max-width: 700px;
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.15); text-align: center;
         }
-
-        .input-group {
-            margin-bottom: 30px;
-        }
-
+        h1 { font-size: 2rem; letter-spacing: 5px; color: var(--neon-blue); margin-bottom: 5px; }
+        .subtitle { font-size: 0.8rem; color: var(--cyber-purple); margin-bottom: 30px; text-transform: uppercase; }
+        
+        .search-box { display: flex; gap: 10px; justify-content: center; margin-bottom: 25px; }
         input {
-            background: #1a1c25;
-            border: 1px solid var(--neon-blue);
-            color: white;
-            padding: 12px 20px;
-            border-radius: 5px;
-            font-size: 1.1rem;
-            width: 250px;
-            margin-right: 10px;
+            background: #1a1c2a; border: 1px solid #333; color: white;
+            padding: 12px 20px; border-radius: 8px; outline: none; width: 200px;
         }
-
+        input:focus { border-color: var(--neon-blue); }
         button {
-            background: var(--neon-blue);
-            border: none;
-            color: black;
-            padding: 12px 25px;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
+            background: var(--neon-blue); color: black; border: none;
+            padding: 12px 25px; border-radius: 8px; font-weight: bold;
+            cursor: pointer; transition: 0.3s;
         }
+        button:hover { box-shadow: 0 0 20px var(--neon-blue); transform: translateY(-2px); }
 
-        button:hover {
-            box-shadow: 0 0 15px var(--neon-blue);
-            transform: translateY(-2px);
+        #status { font-size: 0.9rem; margin-bottom: 20px; color: #888; min-height: 1.2em; }
+        canvas { margin: 20px 0; }
+        
+        .result-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px;
         }
-
-        .status-msg {
-            margin-top: 10px;
-            font-size: 0.9rem;
-            color: #888;
+        .card {
+            background: rgba(255,255,255,0.03); padding: 15px; border-radius: 10px;
+            border-bottom: 2px solid var(--cyber-purple);
         }
-
-        canvas {
-            margin: 20px 0;
-            max-width: 100% !important;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .stat-card {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 3px solid var(--cyber-purple);
-        }
-
-        .stat-val {
-            font-size: 1.4rem;
-            font-weight: bold;
-            color: var(--neon-blue);
-        }
+        .card-label { font-size: 0.75rem; color: #aaa; margin-bottom: 5px; }
+        .card-value { font-size: 1.5rem; font-weight: bold; color: white; }
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <div class="container">
-        <h1>MAXIMA <span style="color: var(--cyber-purple);">12D</span> RADAR</h1>
-        <p>真實數據驅動 · 深度戰鬥特質掃描</p>
+    <div class="panel">
+        <h1>MAXIMA 12D</h1>
+        <div class="subtitle">Tactical Intelligence Interface</div>
 
-        <div class="input-group">
-            <input type="text" id="playerTag" placeholder="輸入玩家 Tag (如 #P8RR2P)">
-            <button onclick="initializeScan()">INITIALIZE SCAN</button>
-            <div id="status" class="status-msg">等待指令中...</div>
+        <div class="search-box">
+            <input type="text" id="playerTag" placeholder="PLAYER TAG (e.g. #P8RR2P)">
+            <button onclick="startAnalysis()">START SCAN</button>
         </div>
 
-        <canvas id="maximaChart"></canvas>
+        <div id="status">等待輸入系統指令...</div>
 
-        <div class="stats-grid" id="statsGrid">
+        <canvas id="radarChart"></canvas>
+
+        <div class="result-grid" id="resultGrid" style="display: none;">
+            <div class="card">
+                <div class="card-label">平均塔血 (守備力)</div>
+                <div id="resTower" class="card-value">-</div>
             </div>
+            <div class="card">
+                <div class="card-label">近期勝率 (侵略性)</div>
+                <div id="resWin" class="card-value">-</div>
+            </div>
+        </div>
     </div>
 
     <script>
-        let myChart = null;
+        let chart = null;
 
-        async function initializeScan() {
-            const tagInput = document.getElementById('playerTag').value.trim();
+        async function startAnalysis() {
+            const tag = document.getElementById('playerTag').value.trim();
             const status = document.getElementById('status');
-            
-            if (!tagInput) {
-                alert('請輸入玩家標籤！');
-                return;
-            }
+            if (!tag) return alert("請輸入 Tag");
 
-            const cleanTag = tagInput.replace('#', '');
-            status.innerText = "📡 正在連結 Supercell 數據中心...";
+            status.innerText = "📡 正在透過 RoyaleAPI Proxy 擷取數據...";
             status.style.color = "var(--neon-blue)";
 
             try {
-                // Vercel 部署後直接請求相對路徑 /api/clash-proxy
-                const response = await fetch(`/api?tag=${encodeURIComponent(cleanTag)}`);
-                
-                if (!response.ok) throw new Error('API 請求失敗');
-                
+                // Vercel 自動識別 /api/clash-proxy
+                const response = await fetch(`/api/clash-proxy?tag=${encodeURIComponent(tag)}`);
                 const data = await response.json();
-                renderChart(data);
-                renderStats(data);
-                
-                status.innerText = `✅ 掃描完成：玩家 ${data.name}`;
-                status.style.color = "#00ff88";
 
-            } catch (error) {
-                console.error(error);
-                status.innerText = "❌ Load failed (請確認後端已部署且 API Key 正確)";
+                if (data.error) throw new Error(data.details || data.error);
+
+                displayData(data);
+                status.innerText = `✅ 掃描完成: ${data.name}`;
+                status.style.color = "#00ff88";
+            } catch (err) {
+                console.error(err);
+                status.innerText = `❌ 錯誤: ${err.message}`;
                 status.style.color = "#ff4444";
             }
         }
 
-        function renderChart(data) {
-            const ctx = document.getElementById('maximaChart').getContext('2d');
-            
-            // 將真實數據映射到 12D 指標 (0-100 區間)
-            // 邏輯範例：平均塔血越高，防守(DEF)越高；獎盃越高，技術(SKL)越高
-            const radarData = [
-                Math.min(100, (data.avgTowerHP / 8000) * 100), // DEF (防守)
-                Math.min(100, (data.wins / (data.wins + data.losses || 1)) * 100), // ATK (進攻)
-                Math.min(100, (data.trophies / 9000) * 100), // SKL (技術)
-                Math.random() * 40 + 60, // CRT (創造力 - 模擬)
-                data.battleCount * 2, // END (耐久)
-                Math.min(100, (data.avgTowerHP / 4000) * 80), // CLT (抗壓)
-                75, 82, 68, 91, 70, 85 // 其他 6 維度目前採預設算法
+        function displayData(data) {
+            document.getElementById('resultGrid').style.display = 'grid';
+            document.getElementById('resTower').innerText = `${data.avgTowerHP} HP`;
+            document.getElementById('resWin').innerText = `${data.winRate}%`;
+
+            // 將數據映射至 12D 座標 (指標算法範例)
+            const metrics = [
+                Math.min(100, (data.avgTowerHP / 8500) * 100), // DEF
+                data.winRate,                                 // ATK
+                Math.random() * 20 + 70,                      // SKL (範例)
+                Math.random() * 50 + 40,                      // CRT
+                data.battleCount * 2,                         // END
+                (data.avgTowerHP > 4000) ? 90 : 40,           // CLT (抗壓)
+                75, 80, 65, 88, 72, 85                        // 預設其他維度
             ];
 
-            if (myChart) myChart.destroy();
+            updateChart(metrics);
+        }
 
-            myChart = new Chart(ctx, {
+        function updateChart(dataPoints) {
+            const ctx = document.getElementById('radarChart').getContext('2d');
+            if (chart) chart.destroy();
+
+            chart = new Chart(ctx, {
                 type: 'radar',
                 data: {
                     labels: ['DEF', 'ATK', 'SKL', 'CRT', 'END', 'CLT', 'SPD', 'ACC', 'LUK', 'INT', 'AGI', 'STA'],
                     datasets: [{
-                        label: 'MAXIMA 12D PROFILE',
-                        data: radarData,
-                        backgroundColor: 'rgba(0, 242, 255, 0.2)',
+                        label: '12D PROFILE',
+                        data: dataPoints,
+                        backgroundColor: 'rgba(0, 242, 255, 0.15)',
                         borderColor: '#00f2ff',
-                        borderWidth: 2,
-                        pointBackgroundColor: '#bc13fe'
+                        pointBackgroundColor: '#bc13fe',
+                        borderWidth: 2
                     }]
                 },
                 options: {
                     scales: {
                         r: {
+                            grid: { color: 'rgba(255,255,255,0.05)' },
                             angleLines: { color: 'rgba(255,255,255,0.1)' },
-                            grid: { color: 'rgba(255,255,255,0.1)' },
-                            pointLabels: { color: '#fff', font: { size: 12 } },
-                            ticks: { display: false },
-                            suggestedMin: 0,
-                            suggestedMax: 100
+                            pointLabels: { color: '#888', font: { size: 10 } },
+                            ticks: { display: false, max: 100, min: 0 }
                         }
-                    }
+                    },
+                    plugins: { legend: { display: false } }
                 }
             });
-        }
-
-        function renderStats(data) {
-            const grid = document.getElementById('statsGrid');
-            grid.innerHTML = `
-                <div class="stat-card">
-                    <div>平均殘餘血量</div>
-                    <div class="stat-val">${data.avgTowerHP} HP</div>
-                </div>
-                <div class="stat-card">
-                    <div>總勝場</div>
-                    <div class="stat-val">${data.wins}</div>
-                </div>
-                <div class="stat-card">
-                    <div>當前獎盃</div>
-                    <div class="stat-val">${data.trophies}</div>
-                </div>
-                <div class="stat-card">
-                    <div>分析場次</div>
-                    <div class="stat-val">50 Games</div>
-                </div>
-            `;
         }
     </script>
 </body>

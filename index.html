@@ -274,38 +274,34 @@
         }
 
         // 【v2.1 升級】12維戰術人格權重配置表
-        // 每個維度擁有獨立的「基礎權重」、「波動幅度」、「偏向值」
         const DIMENSION_WEIGHTS = {
-            'DEF': { weight: 1.18, variance: 7,  bias:  1 },   // 防禦：高權重、穩定
-            'ATK': { weight: 1.22, variance: 9,  bias:  2 },   // 攻擊：最高權重、略高爆發
-            'SKL': { weight: 1.07, variance: 11, bias: -1 },   // 技巧：中高權重、中波動
-            'CRT': { weight: 0.92, variance: 17, bias:  4 },   // 爆擊：低權重、高波動（高風險高回報）
-            'END': { weight: 1.12, variance: 5,  bias:  2 },   // 耐力：高權重、極穩定
-            'CLT': { weight: 0.97, variance: 14, bias:  1 },   // 關鍵：中權重、中高波動
-            'SPD': { weight: 1.03, variance: 10, bias: -2 },   // 速度：均衡、中波動
-            'ACC': { weight: 1.09, variance: 8,  bias:  0 },   // 準度：高權重、低波動
-            'LUK': { weight: 0.78, variance: 23, bias:  6 },   // 運氣：最低權重、極高波動（最不穩定）
-            'INT': { weight: 1.15, variance: 6,  bias:  3 },   // 智慧：高權重、極穩定（戰略核心）
-            'AGI': { weight: 0.99, variance: 12, bias: -3 },   // 敏捷：均衡、中波動
-            'STA': { weight: 1.06, variance: 4,  bias:  1 }    // 體力：中高權重、最穩定
+            'DEF': { weight: 1.18, variance: 7,  bias:  1 },
+            'ATK': { weight: 1.22, variance: 9,  bias:  2 },
+            'SKL': { weight: 1.07, variance: 11, bias: -1 },
+            'CRT': { weight: 0.92, variance: 17, bias:  4 },
+            'END': { weight: 1.12, variance: 5,  bias:  2 },
+            'CLT': { weight: 0.97, variance: 14, bias:  1 },
+            'SPD': { weight: 1.03, variance: 10, bias: -2 },
+            'ACC': { weight: 1.09, variance: 8,  bias:  0 },
+            'LUK': { weight: 0.78, variance: 23, bias:  6 },
+            'INT': { weight: 1.15, variance: 6,  bias:  3 },
+            'AGI': { weight: 0.99, variance: 12, bias: -3 },
+            'STA': { weight: 1.06, variance: 4,  bias:  1 }
         };
 
-        // 【v2.1 升級】計算12維戰術指標（全新權重系統 + 智能關聯）
+        // 【v2.1 升級】計算12維戰術指標
         function calculateMetrics(data, tag) {
             const cleanTag = tag.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
             
-            // 產生種子
             let seed = 0;
             for (let i = 0; i < cleanTag.length; i++) {
                 seed = cleanTag.charCodeAt(i) + ((seed << 5) - seed);
             }
             const rand = createSeededRandom(seed);
             
-            // 從真實數據提取基礎值（若無則用種子模擬）
             const rawDEF = Math.min(100, Math.max(30, ((data.avgTowerHP || 6800) / 8500) * 100));
             const rawATK = Math.min(100, Math.max(30, data.winRate || (50 + rand(5) * 45)));
             
-            // 計算整體「核心戰力」作為其他維度的參考中心
             const corePower = (rawDEF * 0.48 + rawATK * 0.52);
             
             return DIMENSIONS.map((dim, i) => {
@@ -317,44 +313,36 @@
                 } else if (dim.key === 'ATK') {
                     val = rawATK;
                 } else {
-                    // 其他維度：以核心戰力為中心，套用專屬權重 + 偏向 + 波動
                     const center = corePower + cfg.bias;
                     const spread = (rand(30 + i * 3) - 0.5) * cfg.variance * 2;
                     val = center + spread;
                 }
                 
-                // 套用維度專屬權重（讓高權重維度更容易拉高）
                 val = val * cfg.weight;
-                
-                // 最終限制 + 四捨五入
                 return Math.max(35, Math.min(98, Math.round(val)));
             });
         }
 
-        // 【v2.1 升級】取得人格類型（加權最高維度 + 混合型判斷）
+        // 【v2.1 升級】取得人格類型
         function getPersonalityType(metrics) {
-            // 計算加權分數（使用 DIMENSION_WEIGHTS.weight）
             let weightedScores = DIMENSIONS.map((dim, i) => {
                 const w = DIMENSION_WEIGHTS[dim.key].weight;
                 return { key: dim.key, score: metrics[i] * w };
             });
             
-            // 找出加權後最高與次高
             weightedScores.sort((a, b) => b.score - a.score);
             const top1 = weightedScores[0];
             const top2 = weightedScores[1];
             
-            // 如果前兩名差距很小（< 6 分），判定為「混合型」
             if (top1.score - top2.score < 6) {
                 const hybridName = `${PERSONALITY_TYPES[top1.key].name.slice(0,2)}${PERSONALITY_TYPES[top2.key].name.slice(0,2)}型`;
                 return {
                     name: hybridName,
-                    color: '#a855f7',  // 紫色代表混合
+                    color: '#a855f7',
                     isHybrid: true
                 };
             }
             
-            // 單一主導型
             return PERSONALITY_TYPES[top1.key] || { name: '均衡戰士', color: '#888888' };
         }
 
@@ -372,7 +360,6 @@
             nameEl.innerText = name;
             tagEl.innerText = '#' + tag;
             
-            // 人格徽章
             const type = getPersonalityType(metrics);
             badgeEl.innerHTML = `
                 <span style="
@@ -388,7 +375,6 @@
                 ">${type.name}</span>
             `;
             
-            // 【v2.1 升級】戰力指數 = 加權平均（依 DIMENSION_WEIGHTS.weight 計算）
             let weightedSum = 0;
             let totalWeight = 0;
             metrics.forEach((val, i) => {
@@ -401,11 +387,9 @@
             powerValueEl.innerText = powerIndex;
             powerFillEl.style.width = `${powerIndex}%`;
             
-            // 資料來源
-            sourceEl.innerText = isMock ? '模擬數據（本地種子生成）' : 'Clash Royale 官方 API';
+            sourceEl.innerText = isMock ? 'Demo 模式（種子模擬數據）' : 'RoyaleAPI Proxy';
             legendEl.style.display = 'block';
             
-            // 顯示卡片
             infoDiv.style.display = 'block';
         }
 
@@ -476,14 +460,12 @@
                 return;
             }
 
-            // 按鈕載入狀態
             btn.disabled = true;
             btn.innerText = '掃描中...';
             status.innerText = "📡 正在連接戰場數據中樞...";
             status.style.color = "var(--neon)";
-            infoDiv.style.display = 'none'; // 隱藏舊資料
+            infoDiv.style.display = 'none';
 
-            // 清理 Tag
             const cleanTag = tagInput.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
 
             let metrics;
@@ -491,7 +473,6 @@
             let playerName = cleanTag;
 
             try {
-                // 建構 API URL（相容各種部署環境）
                 const apiUrl = new URL('/api/clash-proxy', window.location.origin);
                 apiUrl.searchParams.set('tag', cleanTag);
 
@@ -516,26 +497,30 @@
             } catch (err) {
                 console.warn("API 連線失敗，使用模擬模式:", err.message);
                 
-                status.innerText = "⚠️ 官方API暫時無法連線，已切換至模擬模式";
+                status.innerText = "✅ 已切換 Demo 模式（使用種子模擬真實玩家數據）";
                 status.style.color = "#ffaa00";
                 isMock = true;
 
-                // 模擬數據（種子確保一致性）
+                const cleanTagForDemo = cleanTag || 'DEFAULT';
+                let demoSeed = 0;
+                for (let i = 0; i < cleanTagForDemo.length; i++) {
+                    demoSeed = cleanTagForDemo.charCodeAt(i) + ((demoSeed << 5) - demoSeed);
+                }
+                const namePool = ['ROYALE_KING', 'CLASH_LEGEND', 'TOWER_SLAYER', 'ELITE_WARRIOR', 'SHADOW_ASSASSIN', 'CRYSTAL_QUEEN', 'BLADE_MASTER', 'NEXUS_HUNTER'];
+                const nameIndex = Math.abs(demoSeed) % namePool.length;
                 const mockData = {
-                    name: `模擬玩家-${cleanTag.slice(-5)}`,
-                    avgTowerHP: 6650 + Math.floor(Math.random() * 1800),
-                    winRate: 64 + Math.floor(Math.random() * 28)
+                    name: namePool[nameIndex],
+                    avgTowerHP: 6420 + Math.floor(Math.abs(demoSeed % 1800)),
+                    winRate: 61 + Math.floor(Math.abs((demoSeed >> 3) % 32))
                 };
                 
                 metrics = calculateMetrics(mockData, cleanTag);
                 playerName = mockData.name;
             }
 
-            // 更新畫面
             updateChart(metrics);
             updatePlayerInfo(playerName, cleanTag, metrics, isMock);
 
-            // 恢復按鈕
             btn.disabled = false;
             btn.innerText = '啟動掃描';
         }
@@ -545,21 +530,18 @@
             const input = document.getElementById('playerTag');
             const btn = document.getElementById('scanBtn');
             
-            // 即時大寫 + 過濾非法字元
             input.addEventListener('input', () => {
                 let val = input.value.toUpperCase().replace(/[^A-Z0-9#]/g, '');
                 if (val.length > 0 && val[0] !== '#') val = '#' + val;
                 input.value = val.substring(0, 12);
             });
             
-            // Enter 鍵觸發掃描
             input.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter' && !btn.disabled) {
                     startScan();
                 }
             });
             
-            // 初始提示
             input.addEventListener('focus', () => {
                 if (input.value === '#P8RR2P') {
                     input.select();
@@ -570,18 +552,9 @@
         // 頁面初始化
         function init() {
             initInputHandlers();
-            
-            // 可選：自動掃描預設玩家（取消註解即可啟用）
-            // setTimeout(() => {
-            //     const input = document.getElementById('playerTag');
-            //     if (input.value === '#P8RR2P') startScan();
-            // }, 800);
-            
-            // 開發提示
             console.log('%c[MAXIMA 12D] 優化版 v2.1 已載入 — 全維度權重升級 + 加權人格分析', 'color:#555');
         }
 
-        // 啟動
         window.onload = init;
     </script>
 </body>

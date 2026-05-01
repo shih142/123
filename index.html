@@ -3,20 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MAXIMA 12D - VANGUARD TACTICAL HUD</title>
+    <title>MAXIMA 12D - QUANTUM TACTICAL HUD</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700;900&display=swap');
 
         :root {
-            --cyan: #00e5ff;
-            --blue: #2962ff;
-            --gold: #ffab00;
-            --red: #ff1744;
-            --green: #00e676;
-            --bg-dark: #0a0b10;
-            --panel-bg: rgba(16, 20, 30, 0.85);
-            --border-glow: rgba(0, 229, 255, 0.4);
+            --cyan: #00f2ff;
+            --purple: #bc13fe;
+            --red: #ff2a2a;
+            --gold: #ffb700;
+            --blood: #ff003c;
+            --shield: #00ffcc;
+            --bg-dark: #05070f;
+            --panel-bg: rgba(12, 15, 26, 0.85);
+            --disabled: #555555;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -24,94 +25,112 @@
         body {
             background-color: var(--bg-dark);
             background-image: 
-                linear-gradient(rgba(0, 229, 255, 0.04) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 229, 255, 0.04) 1px, transparent 1px);
-            background-size: 40px 40px;
+                linear-gradient(rgba(0, 242, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 242, 255, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
             color: #fff;
             font-family: 'Rajdhani', sans-serif;
             display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 40px 20px;
         }
 
         header { text-align: center; margin-bottom: 30px; text-transform: uppercase; }
-        h1 { font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 3rem; color: #fff; letter-spacing: 5px; text-shadow: 0 0 15px var(--cyan); margin-bottom: 5px; }
-        .sys-status { font-size: 1.1rem; color: var(--cyan); letter-spacing: 4px; font-weight: 700; }
+        h1 { font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 3rem; color: var(--cyan); letter-spacing: 6px; text-shadow: 0 0 20px rgba(0,242,255,0.4); margin-bottom: 5px; }
+        .sys-status { font-size: 1rem; color: var(--gold); letter-spacing: 3px; font-weight: bold; }
 
         .control-hub {
-            background: var(--panel-bg); border: 1px solid var(--cyan); padding: 20px; border-radius: 8px;
-            display: flex; gap: 15px; width: 100%; max-width: 650px; margin-bottom: 30px;
-            box-shadow: 0 0 20px var(--border-glow), inset 0 0 10px rgba(0,0,0,0.5);
-            backdrop-filter: blur(8px);
+            background: var(--panel-bg); border: 1px solid rgba(0, 242, 255, 0.3); padding: 20px; border-radius: 12px;
+            display: flex; gap: 15px; width: 100%; max-width: 600px; margin-bottom: 30px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8), inset 0 0 15px rgba(0,242,255,0.05);
+            backdrop-filter: blur(10px);
         }
 
         input {
-            flex: 1; background: rgba(0, 20, 40, 0.6); border: 1px solid var(--blue); color: #fff;
-            padding: 15px; border-radius: 4px; font-family: 'Orbitron', sans-serif; font-size: 1.1rem; outline: none; transition: 0.3s;
+            flex: 1; background: rgba(0,0,0,0.6); border: 1px solid var(--cyan); color: var(--cyan);
+            padding: 15px; border-radius: 6px; font-family: 'Orbitron', sans-serif; font-size: 1.1rem; outline: none; transition: 0.3s;
         }
-        input:focus { border-color: var(--cyan); box-shadow: 0 0 15px rgba(0, 229, 255, 0.3); }
+        input:focus { box-shadow: 0 0 15px rgba(0, 242, 255, 0.4); }
+        input::placeholder { color: rgba(0, 242, 255, 0.3); }
 
         button {
-            background: linear-gradient(45deg, var(--blue), var(--cyan)); color: #fff; border: none; padding: 0 35px; border-radius: 4px;
-            font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 1.1rem; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px;
+            background: var(--cyan); color: #000; border: none; padding: 0 30px; border-radius: 6px;
+            font-family: 'Orbitron', sans-serif; font-weight: 700; font-size: 1.1rem; cursor: pointer; transition: 0.3s; text-transform: uppercase;
         }
-        button:hover { filter: brightness(1.2); box-shadow: 0 0 20px var(--cyan); }
+        button:hover { background: #fff; box-shadow: 0 0 20px var(--cyan); transform: scale(1.02); }
 
-        #alert-box { display: none; width: 100%; max-width: 650px; padding: 15px; background: rgba(255, 23, 68, 0.15); border-left: 5px solid var(--red); color: #ff8a8a; margin-bottom: 20px; font-weight: bold; border-radius: 4px; text-align: center; }
+        #alert-box { display: none; width: 100%; max-width: 600px; padding: 15px; background: rgba(255, 42, 42, 0.1); border-left: 5px solid var(--red); color: var(--red); margin-bottom: 20px; font-weight: bold; border-radius: 4px; text-align: center; }
 
-        .dashboard { display: none; width: 100%; max-width: 1150px; gap: 25px; align-items: stretch; animation: fadeIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .dashboard {
+            display: none; width: 100%; max-width: 1100px; gap: 25px; align-items: stretch; animation: fadeIn 0.8s ease-out forwards;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
         .panel {
-            background: var(--panel-bg); border: 1px solid rgba(0, 229, 255, 0.2); border-radius: 12px;
-            padding: 30px; backdrop-filter: blur(10px); box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            background: var(--panel-bg); border: 1px solid rgba(0, 242, 255, 0.2); border-radius: 15px;
+            padding: 30px; backdrop-filter: blur(10px); box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
         }
 
         .side-panel { flex: 1; display: flex; flex-direction: column; gap: 20px; }
-        .radar-panel { flex: 1.5; display: flex; justify-content: center; align-items: center; position: relative; min-height: 480px; }
+        .radar-panel { flex: 1.5; display: flex; justify-content: center; align-items: center; position: relative; min-height: 450px; }
 
         .rating-box {
-            background: linear-gradient(135deg, rgba(0,0,0,0.8), rgba(10,20,40,0.9)); border: 2px solid var(--cyan); border-radius: 8px; padding: 20px; text-align: center;
-            box-shadow: inset 0 0 20px rgba(0, 229, 255, 0.1); transition: all 0.4s ease;
+            background: rgba(0, 0, 0, 0.6); border: 2px solid var(--gold); border-radius: 10px; padding: 20px; text-align: center;
+            box-shadow: 0 0 20px rgba(255, 183, 0, 0.2), inset 0 0 15px rgba(255, 183, 0, 0.1);
+            position: relative; overflow: hidden; transition: border-color 0.5s ease;
         }
-        .rating-label { font-size: 1rem; color: var(--cyan); font-weight: bold; letter-spacing: 3px; }
-        .rating-rank { font-family: 'Orbitron', sans-serif; font-size: 4rem; font-weight: 900; line-height: 1.1; margin: 5px 0; text-shadow: 0 0 15px currentColor; transition: color 0.5s ease; }
-        .rating-score { font-size: 1.1rem; color: #aaa; font-family: 'Orbitron', sans-serif; }
-        .score-num { font-weight: bold; color: #fff; font-size: 1.3rem; }
+        .rating-box::before {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: conic-gradient(transparent, transparent, transparent, currentColor);
+            animation: rotate 4s linear infinite; opacity: 0.1; z-index: 0;
+        }
+        @keyframes rotate { 100% { transform: rotate(360deg); } }
+        .rating-label { font-size: 1rem; color: #aaa; font-weight: bold; letter-spacing: 2px; position: relative; z-index: 1; }
+        .rating-rank { 
+            font-family: 'Orbitron', sans-serif; font-size: 4rem; font-weight: 900; line-height: 1.1; margin: 5px 0;
+            text-shadow: 0 0 20px currentColor; position: relative; z-index: 1; transition: color 0.5s ease;
+        }
+        .rating-score { font-size: 1.2rem; color: #fff; font-family: 'Orbitron', sans-serif; position: relative; z-index: 1; }
+        .score-num { color: var(--cyan); font-weight: bold; }
 
-        .player-header { border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; margin-bottom: 5px; }
-        .player-name { font-size: 2rem; font-family: 'Orbitron', sans-serif; font-weight: bold; color: #fff; text-transform: uppercase; }
-        .player-tag { color: #888; font-size: 1rem; letter-spacing: 2px; }
+        .player-header { border-bottom: 2px solid var(--purple); padding-bottom: 10px; margin-bottom: 5px; }
+        .player-name { font-size: 2rem; font-family: 'Orbitron', sans-serif; font-weight: bold; color: #fff; text-transform: uppercase; word-break: break-all; }
+        .player-tag { color: var(--cyan); font-size: 1.1rem; letter-spacing: 2px; }
 
-        .radical-bars { display: flex; flex-direction: column; gap: 15px; margin-top: 5px; }
-        .bar-container { display: flex; flex-direction: column; gap: 6px; }
+        .radical-bars { display: flex; flex-direction: column; gap: 15px; margin-top: 10px; padding-top: 15px; border-top: 1px dashed rgba(255,255,255,0.1); }
+        .bar-container { display: flex; flex-direction: column; gap: 5px; }
         .bar-header { display: flex; justify-content: space-between; align-items: flex-end; }
-        .bar-label { font-family: 'Orbitron', sans-serif; font-size: 0.85rem; font-weight: 700; letter-spacing: 1px; color: #ccc; }
-        .atk-label { color: var(--red); } .def-label { color: var(--cyan); }
-        .bar-val { font-family: 'Orbitron', sans-serif; font-size: 1.3rem; font-weight: 900; }
-        .bar-bg { width: 100%; height: 10px; background: rgba(0,0,0,0.8); border: 1px solid #333; border-radius: 5px; overflow: hidden; }
-        .bar-fill { height: 100%; width: 0%; transition: width 1s cubic-bezier(0.2, 0.8, 0.2, 1); }
-        .atk-fill { background: linear-gradient(90deg, #800, var(--red)); box-shadow: 0 0 10px var(--red); }
-        .def-fill { background: linear-gradient(90deg, #004, var(--cyan)); box-shadow: 0 0 10px var(--cyan); }
+        .bar-label { font-family: 'Orbitron', sans-serif; font-size: 0.85rem; font-weight: bold; letter-spacing: 1px; }
+        .bar-label.atk-label { color: var(--blood); text-shadow: 0 0 5px rgba(255,0,60,0.5); }
+        .bar-label.def-label { color: var(--shield); text-shadow: 0 0 5px rgba(0,255,204,0.5); }
+        .bar-val { font-family: 'Orbitron', sans-serif; font-size: 1.2rem; font-weight: 900; }
+        .bar-bg { width: 100%; height: 12px; background: rgba(0,0,0,0.8); border: 1px solid #333; border-radius: 6px; overflow: hidden; position: relative; }
+        .bar-fill { height: 100%; width: 0%; transition: width 1.5s cubic-bezier(0.2, 0.8, 0.2, 1); box-shadow: inset 0 0 10px rgba(255,255,255,0.3); }
+        .atk-fill { background: linear-gradient(90deg, #550000, var(--blood)); }
+        .def-fill { background: linear-gradient(90deg, #003333, var(--shield)); }
 
-        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
-        .stat-group { background: rgba(255,255,255,0.03); padding: 12px; border-radius: 6px; border-left: 3px solid #555; transition: 0.3s; }
-        .stat-group:hover { background: rgba(255,255,255,0.08); border-left-color: var(--cyan); }
-        .stat-label { font-size: 0.8rem; color: #aaa; text-transform: uppercase; margin-bottom: 2px; }
-        .stat-value { font-size: 1.5rem; font-weight: bold; color: #fff; display: flex; align-items: baseline; gap: 4px; }
-        .stat-unit { font-size: 0.8rem; color: var(--cyan); }
+        .stat-group { background: rgba(255,255,255,0.02); padding: 12px; border-radius: 8px; border-left: 3px solid var(--cyan); }
+        .stat-label { font-size: 0.85rem; color: #888; text-transform: uppercase; margin-bottom: 3px; }
+        .stat-value { font-size: 1.8rem; font-weight: bold; color: #fff; display: flex; align-items: baseline; gap: 5px; }
+        .stat-unit { font-size: 0.9rem; color: var(--cyan); }
+        .decoupled-stat { border-left-color: var(--disabled); opacity: 0.7; }
+        .decoupled-tag { font-size: 0.65rem; color: var(--red); background: rgba(255,0,0,0.1); padding: 2px 6px; border-radius: 4px; margin-left: 8px; vertical-align: middle; }
 
-        @media (max-width: 900px) { .dashboard { flex-direction: column; } .radar-panel { min-height: 380px; } }
+        @media (max-width: 900px) {
+            .dashboard { flex-direction: column; }
+            .radar-panel { min-height: 350px; }
+        }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>VANGUARD HUD</h1>
-        <div class="sys-status" id="sys-status">/// DYNAMIC EQUILIBRIUM PROTOCOL ///</div>
+        <h1>MAXIMA 12D</h1>
+        <div class="sys-status" id="sys-status">/// ABSOLUTE TENSOR INVARIANT ENGINE ///</div>
     </header>
 
     <div class="control-hub">
         <input type="text" id="playerTag" placeholder="ENTER PLAYER TAG (e.g. P8RR2P)" autocomplete="off">
-        <button onclick="runScan()" id="scanBtn">ANALYZE</button>
+        <button onclick="runScan()" id="scanBtn">INITIATE</button>
     </div>
 
     <div id="alert-box"></div>
@@ -120,9 +139,9 @@
         <div class="panel side-panel">
             
             <div class="rating-box" id="rating-container">
-                <div class="rating-label">TACTICAL TIER</div>
+                <div class="rating-label">ABSOLUTE EIGENSTATE</div>
                 <div class="rating-rank" id="ui-rank">--</div>
-                <div class="rating-score">COMPOSITE INDEX: <span class="score-num" id="ui-score">0000</span></div>
+                <div class="rating-score">EIGENVALUE: <span class="score-num" id="ui-score">0000</span></div>
             </div>
 
             <div class="player-header">
@@ -133,29 +152,28 @@
             <div class="radical-bars">
                 <div class="bar-container">
                     <div class="bar-header">
-                        <div class="bar-label atk-label">KINETIC YIELD (ATK)</div>
-                        <div class="bar-val" style="color: var(--red);" id="txt-atk">0</div>
+                        <div class="bar-label atk-label">ANNIHILATION YIELD (ATK)</div>
+                        <div class="bar-val" style="color: var(--blood);" id="txt-atk">0</div>
                     </div>
                     <div class="bar-bg"><div class="bar-fill atk-fill" id="bar-atk"></div></div>
                 </div>
                 <div class="bar-container">
                     <div class="bar-header">
-                        <div class="bar-label def-label">ARMOR INTEGRITY (DEF)</div>
-                        <div class="bar-val" style="color: var(--cyan);" id="txt-def">0</div>
+                        <div class="bar-label def-label">EVENT HORIZON (DEF)</div>
+                        <div class="bar-val" style="color: var(--shield);" id="txt-def">0</div>
                     </div>
                     <div class="bar-bg"><div class="bar-fill def-fill" id="bar-def"></div></div>
                 </div>
             </div>
 
-            <div class="stat-grid">
-                <div class="stat-group">
-                    <div class="stat-label">WIN RATE (OBSERVED)</div>
-                    <div class="stat-value"><span id="ui-win">0</span><span class="stat-unit">%</span></div>
-                </div>
-                <div class="stat-group">
-                    <div class="stat-label">AVG ELIXIR</div>
-                    <div class="stat-value"><span id="ui-elixir">0.0</span><span class="stat-unit">λ</span></div>
-                </div>
+            <div class="stat-group decoupled-stat" style="margin-top: 15px;">
+                <div class="stat-label">OBSERVED WIN RATE <span class="decoupled-tag">0% WEIGHT</span></div>
+                <div class="stat-value"><span id="ui-win">0</span> <span class="stat-unit">%</span></div>
+            </div>
+            
+            <div class="stat-group">
+                <div class="stat-label">PHASE VELOCITY (ELIXIR)</div>
+                <div class="stat-value"><span id="ui-elixir">0.0</span> <span class="stat-unit">λ</span></div>
             </div>
         </div>
 
@@ -168,122 +186,144 @@
         let myChart = null;
 
         function showAlert(msg) {
-            const box = document.getElementById('alert-box'); box.style.display = 'block'; box.innerText = `[SYSTEM ALERT] ${msg}`;
+            const box = document.getElementById('alert-box');
+            box.style.display = 'block';
+            box.innerText = `[SYSTEM ERROR] ${msg}`;
         }
         function hideAlert() { document.getElementById('alert-box').style.display = 'none'; }
 
-        function clamp(val) { return Math.max(0, Math.min(100, val)); }
-        function getStdDev(arr, mean) { return arr.length ? Math.sqrt(arr.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / arr.length) : 0; }
-        function boxMuller() {
+        function calculateStandardDeviation(arr, mean) {
+            if (!arr || arr.length === 0) return 0;
+            const variance = arr.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / arr.length;
+            return Math.sqrt(variance);
+        }
+
+        function clamp(val) { return Math.max(15, Math.min(99, val)); }
+
+        function sigmoid(val, x0, k) {
+            return 100 / (1 + Math.exp(-k * (val - x0)));
+        }
+
+        function boxMullerTransform() {
             let u = 0, v = 0;
-            while(u === 0) u = Math.random(); while(v === 0) v = Math.random();
+            while(u === 0) u = Math.random();
+            while(v === 0) v = Math.random();
             return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
         }
 
+        function calculateL2Norm(vector) {
+            const sumOfSquares = vector.reduce((acc, val) => acc + Math.pow(val, 2), 0);
+            return Math.sqrt(sumOfSquares);
+        }
+
         async function runScan() {
-            const tagInput = document.getElementById('playerTag').value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-            if (!tagInput) return showAlert("INVALID IDENTIFIER.");
-
+            const tagInput = document.getElementById('playerTag').value;
             const btn = document.getElementById('scanBtn');
-            hideAlert(); document.getElementById('dashboard').style.display = "none";
-            btn.innerText = "PROCESSING..."; btn.style.pointerEvents = "none";
+            const dashboard = document.getElementById('dashboard');
+            
+            const cleanTag = tagInput.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+            if (!cleanTag) return showAlert("INVALID TAG FORMAT.");
 
-            document.getElementById('bar-atk').style.width = '0%'; document.getElementById('bar-def').style.width = '0%';
+            hideAlert();
+            dashboard.style.display = "none";
+            btn.innerText = "COMPUTING TENSORS...";
+            btn.style.pointerEvents = "none";
+
+            document.getElementById('bar-atk').style.width = '0%';
+            document.getElementById('bar-def').style.width = '0%';
 
             try {
                 const targetUrl = new URL('/api/clash-proxy', window.location.origin);
-                targetUrl.searchParams.append('tag', tagInput);
+                targetUrl.searchParams.append('tag', cleanTag);
+
                 const response = await fetch(targetUrl.toString(), { method: 'GET', headers: { 'Accept': 'application/json' } });
                 const data = await response.json();
-                if (!response.ok) throw new Error(data.details || data.error || "Connection Interrupted.");
+                
+                if (!response.ok) throw new Error(data.details || data.error || "Connection Failed.");
+
                 updateUI(data);
+                
             } catch (error) {
+                console.error("Scan Failed:", error);
                 showAlert(error.message);
             } finally {
-                btn.innerText = "ANALYZE"; btn.style.pointerEvents = "auto";
+                btn.innerText = "INITIATE";
+                btn.style.pointerEvents = "auto";
             }
         }
 
         function updateUI(data) {
             document.getElementById('dashboard').style.display = "flex";
             
+            const rawWinR = data.winRate || 0;
+            const battleCount = Math.max(1, data.battleCount || 1);
+            const displayThreeCrownR = (data.threeCrownRate || 0) * 100;
+            
             document.getElementById('ui-tag').innerText = `#${data.tag}`;
             document.getElementById('ui-name').innerText = data.name;
-            document.getElementById('ui-win').innerText = (data.winRate || 0).toFixed(1);
-            document.getElementById('ui-elixir').innerText = data.avgDeckElixir || '0.0';
+            document.getElementById('ui-win').innerText = rawWinR.toFixed(1);
+            document.getElementById('ui-elixir').innerText = data.avgDeckElixir || 'N/A';
 
-            const avgElixir = parseFloat(data.avgDeckElixir) || 3.2; 
+            const avgElixir = parseFloat(data.avgDeckElixir) || 3.5; 
             const avgTowerHP = Math.max(1, parseFloat(data.avgTowerHP) || 3000); 
-            const hpStdDev = getStdDev(data.hpHistory || [], avgTowerHP);
-            const lowHpClutchR = data.lowHpClutchRate || 0; 
-            const clutchR = data.clutchRate || 0; 
-            const C_earned = parseFloat(data.avgCrownsEarned) || 0;
-            const C_lost = parseFloat(data.avgCrownsLost) || 0;
-            const r_3C = data.threeCrownRate || 0;
-            const N = Math.max(1, data.battleCount || 1);
-            const hpRatio = clamp(avgTowerHP / 8500.0 * 100) / 100; // 0~1
+            const hpStdDev = calculateStandardDeviation(data.hpHistory, avgTowerHP);
+            const lowHpClutchR = (data.lowHpClutchRate || 0); 
+            const clutchR = (data.clutchRate || 0); 
+            const crownsEarned = parseFloat(data.avgCrownsEarned) || 0;
+            const crownsLost = parseFloat(data.avgCrownsLost) || 0;
+            const hpPercent = (avgTowerHP / 8500); 
 
             // ==========================================
-            // VANGUARD: 動態平衡演算法 (Dynamic Equilibrium)
+            // 高階數學優化：漸近攻防引擎 (Optimized Asymptotic Kinematics)
             // ==========================================
-
-            // 1. ATK (Kinetic Yield): 50% 線性基礎 + 50% 二次方爆發。兼顧常態分佈與頂尖獎勵。
-            const ATK = clamp(100 * (0.5 * (C_earned / 3.0) + 0.5 * Math.pow(C_earned / 2.5, 2)) + (r_3C * 50));
-
-            // 2. DEF (Armor Integrity): 混合物理韌性 (根號) 與絕對血量 (線性)，加上中度指數衰退。
-            const DEF = clamp(100 * (0.6 * Math.sqrt(hpRatio) + 0.4 * hpRatio) * Math.exp(-0.5 * C_lost));
-
-            // 3. SKL (Execution Skill): Tanh 函數映射，在表現達到某個閾值前平滑上升，隨後趨近飽和。
-            const SKL = clamp(100 * Math.tanh(clutchR * 2.0 + lowHpClutchR * 3.0));
-
-            // 4. CRT (Critical Mass): 三冠率與低費率的線性聯動。
-            const CRT = clamp(r_3C * 100 * (3.5 / avgElixir));
-
-            // 5. END (Tenacity): 大數法則的溫和對數曲線。
-            const END = clamp(100 * (Math.log10(N + 1) / 3.5)); 
-
-            // 6. CLT (Clutch Survival): 殘血反殺率的平滑漸近線。
-            const CLT = clamp(100 * Math.tanh(lowHpClutchR * 4.5));
-
-            // 7. SPD (Cycle Kinematics): 針對均費的溫和指數獎勵 (1.5次方)。
-            const SPD = clamp(Math.pow((3.0 / avgElixir), 1.5) * 45); 
             
-            // 8. ACC (Net Domination): 淨勝冠數的映射，保留零和博弈精神，但不會太過苛刻。
-            const netCrowns = C_earned - C_lost;
-            const ACC = clamp(50 + (netCrowns * 25)); 
+            // 【攻擊】動能殲滅當量 V2 (Hyperbolic Tangent Asymptote)
+            // 透過 tanh() 函數，讓攻擊力擁有完美的漸近極限。二次方放大基礎皇冠數，避免立方函數的過早溢出。
+            const atkEnergy = (0.3 * Math.pow(crownsEarned, 2)) + (0.015 * displayThreeCrownR);
+            const ATK = clamp(100 * Math.tanh(atkEnergy));
 
-            // 9. STA (Variance Stability): 變異係數的懲罰機制，乘上 1.5 倍強化波動的負面影響。
-            const STA = clamp(100 * (1 - (hpStdDev / avgTowerHP) * 1.5));
-            
-            // 10. AGI (RMS Vector): 保留數學界最完美的均方根向量長度。
-            const AGI = clamp(Math.sqrt((Math.pow(SPD, 2) + Math.pow(CLT, 2) + Math.pow(ATK, 2)) / 3));
-            
-            // 11. INT (Tactical Density): 聖水轉換效率。
-            const INT = clamp(100 * (C_earned / (avgElixir * 0.8)));
-            
-            // 12. LUK (Stochastic Variance): 收斂的高斯分佈，標準差設為 8。
-            const LUK = clamp(50 + (boxMuller() * 8));
+            // 【防禦】絕對事件視界 V2 (Exponential Decay & Structural Tensor)
+            // 採用自然指數衰退 (e) 取代算術相減。每掉一冠，防禦力依循熱力學原理衰退；塔血量保留率開根號作為緩衝支撐。
+            const DEF = clamp(100 * Math.exp(-0.6 * crownsLost) * Math.sqrt(hpPercent));
 
             setTimeout(() => {
                 document.getElementById('bar-atk').style.width = `${ATK}%`;
                 document.getElementById('bar-def').style.width = `${DEF}%`;
-                animateValue("txt-atk", 0, Math.round(ATK), 1200);
-                animateValue("txt-def", 0, Math.round(DEF), 1200);
+                animateValue("txt-atk", 0, Math.round(ATK), 1500);
+                animateValue("txt-def", 0, Math.round(DEF), 1500);
             }, 100);
+
+            // 其餘 10 維度計算保持絕對張量不變量引擎邏輯
+            const baseEnergyLevel = 3.3; 
+            const elixirDeviation = Math.pow(avgElixir - baseEnergyLevel, 2); 
+            const SKL = clamp(sigmoid(50 * (1 + elixirDeviation * 0.6) * (1 + lowHpClutchR * 3.0), 75, 0.035));
+
+            const baseCycleFreq = 3.8 / Math.max(1.8, avgElixir); 
+            const reactionKinematics = 1 + (clutchR * 2.5) + (lowHpClutchR * 4.0); 
+            const SPD = clamp(sigmoid(baseCycleFreq * reactionKinematics * 40, 75, 0.04));
+
+            const STA = clamp(100 - ((hpStdDev / avgTowerHP) * 150));
+            const CLT = clamp(20 + (Math.log((lowHpClutchR * 6 + clutchR * 2) * 100 + 1) * 15));
+            const INT = clamp(sigmoid(hpPercent * 50 * Math.log(avgElixir + 2.5), 35, 0.08));
+            const CRT = clamp(sigmoid(displayThreeCrownR * (5.0 / Math.max(2.0, avgElixir)), 12, 0.15));
+            const END = clamp(20 + (Math.log10(battleCount + 1) * 12) + (clutchR * 100 * 0.5));
+            const ACC = clamp(sigmoid(crownsEarned - crownsLost, 0.0, 1.2));
+            const AGI = clamp((SPD * 0.4) + (SKL * 0.3) + (CLT * 0.3));
+            const LUK = clamp(50 + (boxMullerTransform() * 8) + (clutchR * 100 * 0.2));
 
             const metrics = [DEF, ATK, SKL, CRT, END, CLT, SPD, ACC, LUK, STA, AGI, INT];
 
-            // 總分採用歐幾里得 L2 範數
-            const tensorMagnitude = Math.sqrt(metrics.reduce((acc, val) => acc + Math.pow(val, 2), 0));
+            // 絕對 L2 範數結算
+            const tensorMagnitude = calculateL2Norm(metrics);
             const rawScore = Math.round((tensorMagnitude / 346.41) * 10000); 
             
-            // 級別判定 (平衡型標準)
-            let rank = 'C'; let rankColor = '#aaa';
-            if (rawScore >= 8800) { rank = 'X (OMEGA)'; rankColor = '#ffab00'; } 
-            else if (rawScore >= 7800) { rank = 'SS (ELITE)'; rankColor = '#ff1744'; } 
-            else if (rawScore >= 6500) { rank = 'S (VANGUARD)'; rankColor = '#bc13fe'; }  
-            else if (rawScore >= 5000) { rank = 'A (EXPERT)'; rankColor = '#00e5ff'; }  
-            else if (rawScore >= 3500) { rank = 'B (STANDARD)'; rankColor = '#00e676'; }  
+            let rank = 'D-'; let rankColor = '#aaa';
+            if (rawScore >= 8800) { rank = 'Ω (OMEGA)'; rankColor = '#ffb700'; } 
+            else if (rawScore >= 7800) { rank = 'Δ (DELTA)'; rankColor = '#ff2a2a'; } 
+            else if (rawScore >= 6800) { rank = 'Σ (SIGMA)'; rankColor = '#bc13fe'; }  
+            else if (rawScore >= 5800) { rank = 'α (ALPHA)'; rankColor = '#00f2ff'; }  
+            else if (rawScore >= 4800) { rank = 'β (BETA)'; rankColor = '#00ff44'; }  
+            else if (rawScore >= 3800) { rank = 'γ (GAMMA)'; rankColor = '#fff'; }     
 
             const uiRank = document.getElementById('ui-rank');
             const ratingContainer = document.getElementById('rating-container');
@@ -297,7 +337,8 @@
         }
 
         function animateValue(id, start, end, duration) {
-            const obj = document.getElementById(id); let startTimestamp = null;
+            const obj = document.getElementById(id);
+            let startTimestamp = null;
             const step = (timestamp) => {
                 if (!startTimestamp) startTimestamp = timestamp;
                 const progress = Math.min((timestamp - startTimestamp) / duration, 1);
@@ -310,28 +351,48 @@
         function drawChart(dataValues, mainColor) {
             const ctx = document.getElementById('radarChart').getContext('2d');
             if (myChart) myChart.destroy(); 
-            Chart.defaults.color = '#888'; Chart.defaults.font.family = 'Orbitron';
+            
+            Chart.defaults.color = '#888';
+            Chart.defaults.font.family = 'Orbitron';
+
             myChart = new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: ['DEF (Armor)', 'ATK (Yield)', 'SKL (Execution)', 'CRT (Critical)', 'END (Tenacity)', 'CLT (Clutch)', 'SPD (Cycle)', 'ACC (Dominate)', 'LUK (Variance)', 'STA (Stability)', 'AGI (Momentum)', 'INT (Density)'],
+                    labels: ['DEF (絕對事件視界)', 'ATK (動能殲滅當量)', 'SKL (絕對複雜度)', 'CRT (結構躍遷)', 'END (衰變抗性)', 'CLT (臨界生存)', 'SPD (絕對相速度)', 'ACC (納許均衡)', 'LUK (高斯噪聲)', 'STA (變異係數)', 'AGI (空間投影)', 'INT (資訊密度)'],
                     datasets: [{
-                        label: 'VANGUARD SPECS', data: dataValues,
-                        backgroundColor: `${mainColor}25`, borderColor: mainColor, borderWidth: 2,
-                        pointBackgroundColor: '#fff', pointBorderColor: mainColor, pointRadius: 3, pointHoverRadius: 6
+                        label: 'ABSOLUTE STATES',
+                        data: dataValues,
+                        backgroundColor: `${mainColor}25`,
+                        borderColor: mainColor,
+                        borderWidth: 2,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: mainColor,
+                        pointHoverBackgroundColor: mainColor,
+                        pointHoverBorderColor: '#fff',
+                        pointRadius: 3,
+                        pointHoverRadius: 6
                     }]
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false,
                     scales: {
-                        r: { 
-                            angleLines: { color: 'rgba(255,255,255,0.05)', lineWidth: 1 }, 
-                            grid: { color: 'rgba(255,255,255,0.1)' }, 
-                            pointLabels: { color: '#bbb', font: { size: 10, weight: 'bold' } }, 
-                            ticks: { display: false, min: 0, max: 100 } 
+                        r: {
+                            angleLines: { color: 'rgba(255, 255, 255, 0.1)', lineWidth: 1 },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)', circular: true },
+                            pointLabels: { color: mainColor, font: { size: 10, weight: 'bold' } },
+                            ticks: { display: false, min: 0, max: 100 }
                         }
                     },
-                    plugins: { legend: { display: false }, tooltip: { backgroundColor: 'rgba(0,0,0,0.85)', titleColor: mainColor, bodyFont: {family: 'Rajdhani', size: 14}, borderColor: mainColor, borderWidth: 1 } }
+                    plugins: { 
+                        legend: { display: false }, 
+                        tooltip: { 
+                            backgroundColor: 'rgba(0,0,0,0.9)', 
+                            titleColor: mainColor, 
+                            bodyFont: {size: 14, family: 'Rajdhani'},
+                            borderColor: mainColor,
+                            borderWidth: 1
+                        } 
+                    }
                 }
             });
         }

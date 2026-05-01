@@ -2,16 +2,13 @@
   "name": "maxima-cr-api-proxy",
   "version": "1.0.0",
   "description": "Clash Royale API proxy for Vercel Serverless Functions",
-  "main": "api/clash-proxy.js",
+  "main": "api/clash-proxy",
   "scripts": {
     "start": "node api/clash-proxy.js",
     "dev": "vercel dev"
   },
   "dependencies": {
     "axios": "^1.6.0"
-  },
-  "devDependencies": {
-    "vercel": "^32.0.0"
   },
   "engines": {
     "node": "20.x"

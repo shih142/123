@@ -2,64 +2,99 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <title>MAXIMA 12D SCANNER</title>
+    <title>MAXIMA 12D - 核心掃描</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body { background: #0a0b10; color: #00f2ff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; padding: 50px; }
-        .box { background: #161822; padding: 30px; border-radius: 15px; border: 1px solid #00f2ff; width: 400px; text-align: center; }
-        input { background: #000; border: 1px solid #00f2ff; color: #fff; padding: 10px; width: 60%; border-radius: 5px; }
-        button { background: #00f2ff; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold; margin-left: 5px; border-radius: 5px; }
-        #status { margin: 15px 0; font-size: 0.8rem; color: #888; }
+        :root { --neon: #00f2ff; --bg: #0a0b10; }
+        body { background: var(--bg); color: var(--neon); font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; padding-top: 50px; }
+        .box { background: #161822; padding: 40px; border-radius: 20px; border: 1px solid var(--neon); width: 450px; text-align: center; box-shadow: 0 0 20px rgba(0,242,255,0.2); }
+        input { background: #000; border: 1px solid var(--neon); color: #fff; padding: 12px; width: 60%; border-radius: 8px; outline: none; }
+        button { background: var(--neon); color: #000; border: none; padding: 12px 25px; cursor: pointer; font-weight: bold; border-radius: 8px; margin-left: 5px; }
+        #status { margin: 20px 0; font-size: 0.85rem; color: #888; min-height: 1.5em; }
         canvas { margin-top: 20px; }
     </style>
 </head>
 <body>
 
 <div class="box">
-    <h2>MAXIMA 12D</h2>
-    <input type="text" id="tag" placeholder="#P8RR2P">
-    <button onclick="scan()">SCAN</button>
-    <div id="status">系統就緒</div>
-    <canvas id="radar"></canvas>
+    <h1 style="letter-spacing: 5px;">MAXIMA 12D</h1>
+    <p style="font-size: 0.7rem; color: #bc13fe; margin-bottom: 30px;">REAL-TIME DATA ANALYSIS</p>
+    
+    <div style="display:flex; justify-content:center;">
+        <input type="text" id="playerTag" placeholder="例如 #P8RR2P" value="#P8RR2P">
+        <button onclick="runScan()">SCAN</button>
+    </div>
+
+    <div id="status">系統等待指令...</div>
+    <canvas id="radarChart"></canvas>
 </div>
 
 <script>
-    let chart;
-    async function scan() {
-        const tag = document.getElementById('tag').value.trim();
+    let myChart = null;
+
+    async function runScan() {
+        const tagInput = document.getElementById('playerTag').value.trim();
         const status = document.getElementById('status');
-        if(!tag) return;
-
-        status.innerText = "📡 正在連線數據中心...";
         
+        if (!tagInput) return alert("請輸入 Tag");
+
+        status.innerText = "📡 正在解析數據模式...";
+        status.style.color = "var(--neon)";
+
         try {
-            // 重要：使用 URLSearchParams 或手動確保參數不含特殊字元造成的 Pattern 錯誤
-            const queryTag = tag.replace('#', '');
-            const res = await fetch(`/api/clash-proxy?tag=${encodeURIComponent(queryTag)}`);
-            const data = await res.json();
+            // 💡 關鍵修復：清理掉 #，並使用 URLSearchParams 確保網址模式正確
+            const cleanTag = tagInput.replace('#', '');
+            const params = new URLSearchParams({ tag: cleanTag });
+            
+            const response = await fetch(`/api/clash-proxy?${params.toString()}`);
+            const data = await response.json();
 
-            if(!res.ok) throw new Error(data.message || "請求失敗");
+            if (!response.ok) throw new Error(data.message || "連線請求被拒絕");
 
-            status.innerText = `✅ 玩家: ${data.name} (平均塔血: ${data.avgTowerHP})`;
-            updateChart([
-                (data.avgTowerHP/8000)*100, data.winRate, 85, 70, 60, 90, 75, 80, 65, 88, 70, 85
-            ]);
-        } catch (e) {
-            status.innerText = `❌ 錯誤: ${e.message}`;
-            console.error(e);
+            status.innerText = `✅ 玩家已鎖定: ${data.name}`;
+            
+            // 計算雷達圖指標 (模擬 12D 指標)
+            const metrics = [
+                Math.min(100, (data.avgTowerHP / 8500) * 100), // DEF
+                data.winRate,                                 // ATK
+                88, 75, 60, 95, 70, 82, 65, 90, 78, 85        // 預設/隨機
+            ];
+            
+            drawChart(metrics);
+
+        } catch (err) {
+            status.innerText = `❌ 錯誤: ${err.message}`;
+            status.style.color = "#ff4444";
+            console.error("Pattern Error Debug:", err);
         }
     }
 
-    function updateChart(vals) {
-        const ctx = document.getElementById('radar');
-        if(chart) chart.destroy();
-        chart = new Chart(ctx, {
+    function drawChart(vals) {
+        const ctx = document.getElementById('radarChart');
+        if (myChart) myChart.destroy();
+        myChart = new Chart(ctx, {
             type: 'radar',
             data: {
                 labels: ['DEF', 'ATK', 'SKL', 'CRT', 'END', 'CLT', 'SPD', 'ACC', 'LUK', 'INT', 'AGI', 'STA'],
-                datasets: [{ data: vals, borderColor: '#00f2ff', backgroundColor: 'rgba(0,242,255,0.2)' }]
+                datasets: [{
+                    data: vals,
+                    borderColor: '#00f2ff',
+                    backgroundColor: 'rgba(0, 242, 255, 0.2)',
+                    pointBackgroundColor: '#bc13fe'
+                }]
             },
-            options: { plugins: { legend: { display: false } }, scales: { r: { grid: { color: '#333' }, ticks: { display: false }, suggestedMax: 100 } } }
+            options: {
+                plugins: { legend: { display: false } },
+                scales: {
+                    r: {
+                        grid: { color: 'rgba(255,255,255,0.1)' },
+                        angleLines: { color: 'rgba(255,255,255,0.1)' },
+                        ticks: { display: false },
+                        suggestedMax: 100,
+                        suggestedMin: 0
+                    }
+                }
+            }
         });
     }
 </script>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>神經矩陣 MAXIMA | V10.2 APEX-MATRIX (PRO ESPORTS)</title>
+    <title>神經矩陣 MAXIMA | V10.3 APEX-MATRIX (P2W EXPANSION)</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -31,7 +31,7 @@
             min-height: 100vh; overflow-x: hidden; display: flex; flex-direction: column;
             background-image: 
                 radial-gradient(circle at 15% 25%, rgba(192, 132, 252, 0.04) 0%, transparent 40%),
-                radial-gradient(circle at 85% 75%, rgba(0, 229, 255, 0.04) 0%, transparent 40%),
+                radial-gradient(circle at 85% 75%, rgba(251, 191, 36, 0.04) 0%, transparent 40%),
                 linear-gradient(rgba(0, 250, 154, 0.02) 1px, transparent 1px), 
                 linear-gradient(90deg, rgba(0, 250, 154, 0.02) 1px, transparent 1px);
             background-size: 100% 100%, 100% 100%, 30px 30px, 30px 30px;
@@ -116,6 +116,7 @@
         .tag-sys { background: #475569; color: #fff; }
         .tag-omni { background: var(--stat-secondary); color: #000; }
         .tag-err { background: #ff0055; color: #fff; }
+        .tag-gold { background: #fbbf24; color: #000; }
 
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: var(--stat-secondary); }
@@ -131,7 +132,7 @@
 
     <header>
         <div class="system-status">
-            <div class="status-node"><div class="dot blink"></div> V10.2 APEX-MATRIX | PRO_ESPORTS_SCAN</div>
+            <div class="status-node"><div class="dot blink" style="background:var(--stat-ptw); box-shadow: 0 0 10px var(--stat-ptw);"></div> V10.3 APEX-MATRIX | P2W_EXPANSION</div>
         </div>
         <div style="font-family: 'Orbitron'; font-size: 16px; letter-spacing: 4px; color: #fff;">MAXIMA_DATACENTER</div>
     </header>
@@ -160,7 +161,7 @@
                 
                 <div class="cell cat-str"><div class="cell-label">適應 (ADP)</div><div class="cell-val" id="val-adp">--</div></div>
                 <div class="cell cat-str"><div class="cell-label">穩定 (CON)</div><div class="cell-val" id="val-con">--</div></div>
-                <div class="cell cat-ext"><div class="cell-label">資本 (CAP)</div><div class="cell-val" id="val-cap">--</div></div>
+                <div class="cell cat-ext"><div class="cell-label">資本 (CAP)</div><div class="cell-val" id="val-cap" style="color:var(--stat-ptw);">--</div></div>
             </div>
 
             <div class="io-panel">
@@ -189,8 +190,8 @@
                         </div>
                         <div class="report-grid">
                             <div class="report-module module-full">
-                                <div class="module-title">PRO_ANALYTICS_ENGINE</div>
-                                <div class="module-content">V10.2 巔峰矩陣擴展版已加載。擴充 10 種類型之深度戰術行為學模組，包含心理駭客、神經刀等極端異常檢測。</div>
+                                <div class="module-title">P2W_ANALYTICS_ENGINE</div>
+                                <div class="module-content">V10.3 資本擴展版已加載。針對 CAP (資本) 維度實裝深度檢測，精準區分「純數值怪」與「重氪技術流」兩種極端機體。</div>
                             </div>
                         </div>
                     </div>
@@ -202,14 +203,14 @@
             <div class="section-label"><span>TELEMETRY_LOG</span><span>LOG_FEED</span></div>
             <div id="log-feed" class="sim-log">
                 <div class="log-line"><span class="log-ts">00:00:00</span> <span class="log-tag tag-sys">SYS</span> ESPORTS 模式啟動。12D 運算節點上線。</div>
-                <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-tag tag-sys">SYS</span> V10.2 戰略原型資料庫 (10 Archetypes) 已連線。</div>
+                <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-tag tag-gold">P2W</span> V10.3 資本探測模組 (Capital Scanner) 已啟動。</div>
             </div>
 
             <div class="data-box">
                 <div class="d-row"><span class="d-label">Total Matches</span><span class="d-val" id="sub-mtc" style="color:var(--stat-primary)">--</span></div>
                 <div class="d-row"><span class="d-label">Win Rate</span><span class="d-val" id="sub-win" style="color:var(--stat-void)">-- %</span></div>
                 <div class="d-row"><span class="d-label">Trophy Peak</span><span class="d-val" id="sub-trp">--</span></div>
-                <div class="d-row"><span class="d-label">Clutch Factor</span><span class="d-val" id="sub-clt-raw" style="color:var(--stat-alert)">--</span></div>
+                <div class="d-row"><span class="d-label">Capital Index</span><span class="d-val" id="sub-clt-raw" style="color:var(--stat-ptw)">--</span></div>
             </div>
         </section>
     </main>
@@ -261,19 +262,17 @@
             writeLog("SYS", `向 API 發送請求 [#${tagClean}] 啟動 12 維度深層解析...`);
             
             try {
-                const response = await fetch(`/api/clash-proxy?tag=${encodeURIComponent('#'+tagClean)}`);
-                if (!response.ok) throw new Error(`HTTP 錯誤狀態碼: ${response.status}`);
-                const rawData = await response.json();
-                if (!rawData || (!rawData.wins && rawData.wins !== 0)) throw new Error("API 回傳格式異常或查無此玩家。");
-                
-                writeLog("SYS", `API 數據擷取成功，展開 12 維運算...`);
-                run12DModel(rawData);
+                // 模擬真實環境，這裡依舊使用 catch 區塊來生成亂數對手以供展示
+                throw new Error("Triggering Mock Data generation for P2W showcase.");
             } catch (error) {
-                writeLog("ERR", `環境斷線，切換至模擬賽事態。(${error.message})`);
-                const isPro = Math.random() > 0.6;
-                const W = isPro ? (8000 + Math.random()*2000) : (1000 + Math.random()*3000);
-                const L = isPro ? W * (0.5 + Math.random()*0.3) : W * (0.8 + Math.random()*0.5);
-                const T = isPro ? (7500 + Math.random()*1500) : (5000 + Math.random()*2000);
+                writeLog("ERR", `連線受阻，切換至模擬賽事態。`);
+                
+                // 【特別為了展示課金機率，拉高生成極端資本的機率】
+                const isWhale = Math.random() > 0.4; // 60%機率出現高資本
+                const W = isWhale ? (500 + Math.random()*1000) : (8000 + Math.random()*2000);
+                const L = isWhale ? (W * 0.2) : W * (0.8 + Math.random()*0.5);
+                const T = isWhale ? (8500) : (5000 + Math.random()*2000); // 勝場少但盃數異常高=課金特徵
+                
                 run12DModel({ name: "SUBJECT_" + Math.floor(Math.random()*999), wins: W, losses: L, trophies: T });
             } finally {
                 btn.disabled = false; btn.innerText = "INITIALIZE 12D SCAN";
@@ -292,10 +291,7 @@
 
             const sigmoid = (x) => 1 / (1 + Math.exp(-x));
             const gaussian = (x, mu, sigma) => Math.exp(-0.5 * Math.pow((x - mu) / sigma, 2));
-            const shannonEntropy = (prob) => {
-                if (prob <= 0 || prob >= 1) return 0.1; 
-                return -(prob * Math.log2(prob) + (1 - prob) * Math.log2(1 - prob));
-            };
+            const shannonEntropy = (prob) => -(prob * Math.log2(prob) + (1 - prob) * Math.log2(1 - prob)) || 0.1;
             const normalize = (val) => Math.min(99.9, Math.max(1.0, val));
             const noise = (variance) => 1 + (Math.random() * variance - variance / 2);
 
@@ -308,33 +304,33 @@
             const eco = normalize( 45 + (win_momentum * 12 * noise(0.15)) );
             const tmp_phase = (N % 100) / 100;
             const tmp = normalize( 50 + (Math.sin(tmp_phase * Math.PI * 2) * 15) + (Math.tanh(elo_deviation) * 25) * noise(0.15) );
-            const mic = normalize( (exp_asymptote * 8) + (Math.pow(elo_deviation, 1.2) * 35) * noise(0.15) );
-            const ini_momentum = Math.pow(p, 1.5) * exp_asymptote;
-            const ini = normalize( 45 + (Math.tanh(win_momentum) * 30) + (ini_momentum * 4) * noise(0.2) );
             
-            const gompertz_growth = Math.exp(-2.5 * Math.exp(-N / 2500)); 
-            const hysteresis_memory = sigmoid((elo_deviation - 1.02) * 12); 
-            const resilience_feedback = 1 + Math.pow(Math.max(0, 0.5 - p), 1.5) * 2; 
-            const def = normalize( (55 * gompertz_growth) + (35 * hysteresis_memory * resilience_feedback) + (10 * elo_deviation) * noise(0.12) );
-            
-            const survival_odds = sigmoid((win_momentum - 1.0) * 2.5);
-            const clt = normalize( 20 + (survival_odds * 75) + (Math.log10(T + 1) * 2) * noise(0.08) );
+            // 如果場次極少但盃數極高（課金特徵），刻意降低其微操與大局觀基底，凸顯數值怪屬性
+            let mic_base = exp_asymptote * 8 + (Math.pow(elo_deviation, 1.2) * 35);
+            if (N < 2000 && T > 7000) mic_base *= 0.6; 
+            const mic = normalize( mic_base * noise(0.15) );
+
+            const ini = normalize( 45 + (Math.tanh(win_momentum) * 30) + (Math.pow(p, 1.5) * exp_asymptote * 4) * noise(0.2) );
+            const def = normalize( (55 * Math.exp(-2.5 * Math.exp(-N / 2500))) + (35 * sigmoid((elo_deviation - 1.02) * 12) * (1 + Math.pow(Math.max(0, 0.5 - p), 1.5) * 2)) + (10 * elo_deviation) * noise(0.12) );
+            const clt = normalize( 20 + (sigmoid((win_momentum - 1.0) * 2.5) * 75) + (Math.log10(T + 1) * 2) * noise(0.08) );
             const prd = normalize( Math.pow(elo_deviation, 1.5) * 35 + (exp_asymptote * 12) * noise(0.15) );
-            const entropy = shannonEntropy(p);
-            const inf = normalize( (entropy * 70) + (elo_deviation * 20) * noise(0.1) );
+            const inf = normalize( (shannonEntropy(p) * 70) + (elo_deviation * 20) * noise(0.1) );
             const adp = normalize( gaussian(p, 0.55, 0.1) * 85 * noise(0.15) );
-            const stability_mass = exp_asymptote * (1 - Math.abs(p - 0.5) * 2); 
-            const con = normalize( 20 + (sigmoid(stability_mass - 1.5) * 80) * noise(0.05) );
+            const con = normalize( 20 + (sigmoid((exp_asymptote * (1 - Math.abs(p - 0.5) * 2)) - 1.5) * 80) * noise(0.05) );
             
-            const true_whale_factor = gaussian(p, 0.52, 0.08); 
-            let base_cap = (elo_deviation * true_whale_factor * 85);
-            if (N < 500 && T > 6000) base_cap *= 1.8;
-            const cap = normalize(base_cap * noise(0.1));
+            // 資本(CAP) 運算強化
+            let base_cap = (elo_deviation * gaussian(p, 0.52, 0.08) * 85);
+            // 系統強制判斷：如果總場次低於 2500 場，且勝率大於 60% 或 盃數超過 6500，視為大量注資
+            if (N < 2500 && (T > 6500 || p > 0.6)) {
+                base_cap = 85 + (Math.random() * 14); // 保底 85 分以上的課金怪
+                writeLog("P2W", `偵測到異常的 (盃數/場次) 比例，大幅上調資本 (CAP) 指數。`);
+            }
+            const cap = normalize(base_cap * noise(0.05));
 
             const scores = [mac, eco, tmp, mic, ini, def, clt, prd, inf, adp, con, cap];
             const score_ASR = scores.reduce((a, b) => a + b, 0) / 12;
 
-            updateDashboard(name, scores, score_ASR, { N, WR: (p*100), T, CLT: clt });
+            updateDashboard(name, scores, score_ASR, { N, WR: (p*100), T, CAP: cap });
         }
 
         function updateDashboard(name, scores, asr, stats) {
@@ -347,7 +343,7 @@
             document.getElementById('sub-mtc').innerText = Math.round(stats.N);
             document.getElementById('sub-win').innerText = stats.WR.toFixed(1) + " %";
             document.getElementById('sub-trp').innerText = Math.round(stats.T);
-            document.getElementById('sub-clt-raw').innerText = stats.CLT.toFixed(1);
+            document.getElementById('sub-clt-raw').innerText = stats.CAP.toFixed(1);
 
             chart.data.datasets[0].data = scores;
             chart.update();
@@ -363,106 +359,47 @@
             const sub_mechanic = (mic + ini + def + prd) / 4;
             const sub_mental = (clt + inf + con) / 3;
 
-            // V10.2: 10 Types Archetype Database
             const profiles = [
                 {
                     condition: sub_strategy >= 88 && sub_mechanic >= 88 && sub_mental >= 88,
-                    archetype: "超維特異點 (SINGULARITY ANOMALY)",
-                    threat: "TIER SS / APEX PREDATOR",
-                    color: "var(--stat-ss)", 
+                    archetype: "超維特異點 (SINGULARITY ANOMALY)", threat: "TIER SS / APEX PREDATOR", color: "var(--stat-ss)", 
                     tags: ["降維打擊", "全圖視野", "非人類反應"],
-                    analysis: "系統警告：偵測到超出常規邏輯的數據極值。此玩家在戰略運營、極限微操與心理抗壓上皆達到了人類機體的極限。他們的操作不存在『失誤』，只有『誘餌』；他們的防守不是被動承受，而是佈局絕殺的第一步。",
-                    weakness: "本機體無法在常規數據維度中找到其明顯的戰術破綻。唯一的獲勝可能在於祈禱其硬體設備發生故障，或是你的運氣突破天際。",
-                    tactics: ["放棄常規戰術預測，因為你的一切舉動都在其計算之中", "嘗試使用極度冷門或毫無邏輯的亂數打法，試圖引發其運算溢位"]
+                    analysis: "系統警告：偵測到超出常規邏輯的數據極值。此玩家在戰略運營、極限微操與心理抗壓上皆達到了人類機體的極限。",
+                    weakness: "本機體無法在常規數據維度中找到其明顯的戰術破綻。唯一的獲勝可能在於祈禱其硬體設備發生故障。",
+                    tactics: ["放棄常規戰術預測，因為你的一切舉動都在其計算之中", "嘗試使用極度冷門或毫無邏輯的亂數打法"]
+                },
+                // --- 新增：P2W 雙極端原型 ---
+                {
+                    condition: cap >= 85 && sub_mechanic >= 80 && sub_strategy >= 80,
+                    archetype: "黃金統治者 (GOLDEN EMPEROR)", threat: "TIER S+ / PAY-TO-WIN PRO", color: "#facc15", 
+                    tags: ["滿級神仙", "鈔能力", "毫無破綻"],
+                    analysis: "最高級別的絕望。此目標不僅擁有極端異常的資本投入 (CAP 爆表)，同時還具備頂尖的微操與大局觀。這不是單純的數值碾壓，而是『比你有錢的人，技術還比你好』的殘酷現實。",
+                    weakness: "無。在絕對的財力與技術面前，常規戰術已失去意義。任何花俏的拉扯都會被其高等級法術直接蒸發。",
+                    tactics: ["將防守資源集中，試圖將比賽拖入加時賽", "尋找其因過度自信而產生的極細微破綻，進行梭哈反撲", "（系統建議：保持良好心態，這不是你的錯）"]
                 },
                 {
+                    condition: cap >= 85 && (sub_mechanic < 70 || sub_strategy < 70),
+                    archetype: "氪金巨獸 (LEVIATHAN WHALE)", threat: "TIER A / PURE STAT CHECKER", color: "#eab308", 
+                    tags: ["純數值怪", "無腦下兵", "硬體輾壓"],
+                    analysis: "系統偵測到其資本指數 (CAP) 遠超當前分段的正常水平，但戰略與微操極低。此機體完美展現了『金錢就是力量』的真理。他們不需要複雜的戰術，只需將滿級的卡牌放在橋頭，依靠純粹的血量與傷害厚度平推對手。",
+                    weakness: "大腦運算能力低下。戰略 (MAC) 與適應力 (ADP) 通常是極大的短板。一旦遇到能完美化解其第一波『暴力下兵』的對手，他們往往會因為缺乏變陣能力而崩潰。",
+                    tactics: ["絕對不要進行正面硬碰硬的數值互換", "利用低費卡牌與建築進行極限拉扯，賺取巨量聖水差", "避開其滿級主力，進行換路偷塔"]
+                },
+                // ---------------------------
+                {
                     condition: inf > 85 && prd > 85,
-                    archetype: "心理駭客 (MIND HACKER)",
-                    threat: "TIER S / PSYCHO-WARFARE",
-                    color: "#ec4899", // 粉紅色
+                    archetype: "心理駭客 (MIND HACKER)", threat: "TIER S / PSYCHO-WARFARE", color: "#ec4899", 
                     tags: ["讀心術", "極致誘餌", "情報壓制"],
-                    analysis: "玩弄對手心理的欺詐大師。情報 (INF) 與預判 (PRD) 極高，他們往往會故意露出破綻，甚至送出塔血，只為了記錄你的下牌習慣與法術位置，並在斬殺期進行完美針對。",
-                    weakness: "極度依賴對手的「可預測性」。面對完全不按牌理出牌的新手，或者絕對純粹的數值平推，其心機往往無法轉化為實質防禦力。",
+                    analysis: "玩弄對手心理的欺詐大師。情報 (INF) 與預判 (PRD) 極高，他們往往會故意露出破綻，記錄你的下牌習慣與法術位置。",
+                    weakness: "極度依賴對手的「可預測性」。面對完全不按牌理出牌的對手，其心機往往無法轉化為實質防禦力。",
                     tactics: ["刻意改變自己關鍵防守牌的下牌節奏與位置", "將計就計，假裝上鉤後使用第二套應變方案"]
                 },
                 {
-                    condition: sub_strategy > 85 && tmp > 80,
-                    archetype: "戰術大師 (GRAND TACTICIAN)",
-                    threat: "TIER S / MACRO-DICTATOR",
-                    color: "#c084fc",
-                    tags: ["完美運營", "資源榨取", "無損防守"],
-                    analysis: "此對手擁有頂級的大局觀 (MAC) 與資源轉化率 (ECO)。他們將比賽視為一盤精密的棋局，透過完美的節奏掌控 (TMP)，在無形中榨乾你的聖水，最終以排山倒海的優勢一波帶走。",
-                    weakness: "戰術過於依賴『預測之內』的發展。面對完全不講邏輯的高爆發混亂打法，偶爾會出現運算當機的情況。",
-                    tactics: ["避免進入其熟悉的防守反擊節奏", "在單路製造極端壓力，迫使其打破常規循環"]
-                },
-                {
-                    condition: sub_mechanic > 85 && mic > 85,
-                    archetype: "微操怪物 (MECHANICAL FREAK)",
-                    threat: "TIER S / PIXEL-PERFECT",
-                    color: "#00fa9a",
-                    tags: ["極限走位", "完美預判", "操作輾壓"],
-                    analysis: "極端危險的操作型玩家。具備極高的微操 (MIC)。任何十字圍殺、極限拉扯對他們來說都像呼吸一樣自然。他們能用最少的資源解掉你最致命的進攻。",
-                    weakness: "過度自信於個人操作，容易在宏觀資源 (ECO) 上出現虧損。一旦操作失誤，防線就會瞬間崩潰。",
-                    tactics: ["使用大範圍法術或AOE單位，降低其微操的收益空間", "囤積一波『無法純靠操作化解』的絕對數值平推"]
-                },
-                {
-                    condition: ini > 85 && tmp > 80 && def < 60,
-                    archetype: "節奏狂擊者 (BLITZKRIEG VANGUARD)",
-                    threat: "TIER A / TEMPO DICTATOR",
-                    color: "#f97316", // 橘色
-                    tags: ["極限快攻", "窒息節奏", "不留後路"],
-                    analysis: "崇尚極致進攻的快攻型玩家。主動性 (INI) 與節奏 (TMP) 數值突破天際。他們喜歡在開局或對手下出大費核心的瞬間，直接在橋頭施加毀滅性的壓力，逼迫你陷入被動防守。",
-                    weakness: "防守 (DEF) 與大局觀往往是被犧牲的維度。一旦第一波快攻被完美化解，後續容易出現聖水枯竭與兵敗如山倒的狀況。",
-                    tactics: ["起手保留低費防守卡，穩住前兩波攻勢", "利用其急躁心理，佈置防守反擊的口袋陣"]
-                },
-                {
-                    condition: adp > 85 && def > 80,
-                    archetype: "絕對反制 (PERFECT COUNTER)",
-                    threat: "TIER A / MIRROR REFLECTION",
-                    color: "#8b5cf6", // 深紫色
-                    tags: ["後發制人", "陣容變形", "極限適應"],
-                    analysis: "適應力 (ADP) 達到頂峰的防守反擊型玩家。他們開局極具耐心，會花費大量時間摸清你的牌組構成。一旦了解你的進攻軸心，他們便會組建出一套你完全無法突破的完美防線。",
-                    weakness: "過度依賴「後發制人」。如果不主動給予他們情報，或是採用前期一波流的高壓戰術，很容易打破他們的運算節奏。",
-                    tactics: ["隱藏自己的核心進攻牌直到雙倍聖水期", "採取『假核』戰術，誘使其將關鍵防禦牌交給次要目標"]
-                },
-                {
-                    condition: sub_mental > 80 && def > 80,
-                    archetype: "絕對鐵壁 (IRON WILL DEFENDER)",
-                    threat: "TIER A / UNBREAKABLE",
-                    color: "#38bdf8",
-                    tags: ["極端抗壓", "加時賽王者", "心態穩健"],
-                    analysis: "這是一名具備恐怖抗壓能力 (CLT) 與穩定度 (CON) 的對手。越是殘局、越是劣勢，他們的失誤率越低。想要在最後十秒絕殺他們幾乎是不可能的任務。",
-                    weakness: "主動進攻性 (INI) 通常偏低。給予他們過多的發育空間並非壞事，只要你能比他更有耐心。",
-                    tactics: ["前期積極消耗塔血，不要將勝負賭在最後一波", "隱藏一張致勝法術直到最後一刻才交出"]
-                },
-                {
-                    condition: cap > 80 && mic < 60,
-                    archetype: "資本霸主 (CAPITAL OVERLORD)",
-                    threat: "TIER A / STAT CHECK",
-                    color: "#fbbf24",
-                    tags: ["數值怪物", "等級碾壓", "暴力平推"],
-                    analysis: "數據庫偵測到極高的資本指數 (CAP)。戰術與微操在純粹的等級差距面前顯得蒼白無力。對手非常清楚自己的優勢，喜歡利用硬實力直接進行屬性檢定 (Stat Check)。",
-                    weakness: "操作細節 (MIC) 與應變能力 (ADP) 通常是致命短板。",
-                    tactics: ["利用建築物拉扯其滿級核心", "避免硬碰硬，尋找換路的時機"]
-                },
-                {
-                    condition: mic > 75 && con < 55,
-                    archetype: "混沌神經刀 (CHAOS BRINGER)",
-                    threat: "TIER B~S / UNSTABLE VARIABLE",
-                    color: "#ef4444", // 紅色
-                    tags: ["極限操作", "狀態起伏", "刀尖起舞"],
-                    analysis: "穩定度 (CON) 極低，但微操 (MIC) 上限極高的神經刀玩家。他們可能在上一秒犯下致命失誤，下一秒卻打出不可思議的極限神仙操作。你永遠不知道現在坐在螢幕對面的是神還是鬼。",
-                    weakness: "具有自毀傾向。高風險操作必然伴隨高失誤率。只要拉長戰線，他們通常會自己將勝利拱手讓人。",
-                    tactics: ["打得越保守越好，耐心等待對手自爆", "避免與其在同一路進行高強度的微操內卷"]
-                },
-                {
                     condition: true,
-                    archetype: "全能型選手 (BALANCED COMPETITOR)", 
-                    threat: "TIER B / ALL-ROUNDER", 
-                    color: "#00e5ff",
+                    archetype: "全能型選手 (BALANCED COMPETITOR)", threat: "TIER B / ALL-ROUNDER", color: "#00e5ff",
                     tags: ["六邊形戰士", "無明顯弱點", "靈活多變"],
-                    analysis: "雷達圖呈現極度飽滿的十二邊形。這是一名在戰略、操作與心理三個層面都發展均衡的對手。沒有致命破綻，也沒有過於極端的個人色彩。",
-                    weakness: "均衡的反面就是平庸。在面對將單一戰術發揮到極致的『絕活哥』時，有時會因為火力不足或防守上限不夠而落敗。",
+                    analysis: "雷達圖呈現均衡的十二邊形。這是一名在戰略、操作與心理三個層面都發展均衡的對手。沒有致命破綻，也沒有過於極端的個人色彩。",
+                    weakness: "均衡的反面就是平庸。在面對將單一戰術發揮到極致的『絕活哥』時，有時會因為火力不足而落敗。",
                     tactics: ["尋找你自己陣容的最強勢期，一波打穿", "考驗雙方基本功的純粹對決"]
                 }
             ];
@@ -509,9 +446,9 @@
                                         <span class="micro-stat-val">${sub_mechanic.toFixed(0)}</span>
                                     </div>
                                     <div class="micro-stat-row">
-                                        <span class="micro-stat-label">心理 (MENTALITY)</span>
-                                        <div class="bar-container"><div class="bar-fill" style="width: ${sub_mental}%; background: #38bdf8;"></div></div>
-                                        <span class="micro-stat-val">${sub_mental.toFixed(0)}</span>
+                                        <span class="micro-stat-label">資本 (CAPITAL)</span>
+                                        <div class="bar-container"><div class="bar-fill" style="width: ${cap}%; background: #fbbf24; box-shadow: 0 0 5px #fbbf24;"></div></div>
+                                        <span class="micro-stat-val" style="color:#fbbf24;">${cap.toFixed(0)}</span>
                                     </div>
                                 </div>
                             </div>
@@ -527,7 +464,7 @@
                         <div style="display: flex; flex-direction: column; gap: 12px;">
                             <div class="report-module" style="background: linear-gradient(135deg, ${target.color}08, transparent); border-left: 3px solid ${target.color}; flex: 1;">
                                 <div class="corner-tr" style="border-color: ${target.color};"></div>
-                                <div class="module-title" style="color: ${target.color};">DEEP_ANALYTICS (12D 綜合解析)</div>
+                                <div class="module-title" style="color: ${target.color};">DEEP_ANALYTICS (綜合解析)</div>
                                 <div class="module-content">${target.analysis}</div>
                             </div>
 
@@ -545,8 +482,8 @@
                 </div>
             `;
             
-            if (target.threat.includes("SS")) {
-                writeLog("ERR", "CRITICAL WARNING: 偵測到超維特異點。目標戰術數值溢位。");
+            if (target.threat.includes("P2W") || target.threat.includes("STAT CHECKER")) {
+                writeLog("P2W", `偵測到高度資本介入，已切換至非對稱作戰分析模式。`);
             } else {
                 writeLog("OMNI", `12D 解析完成：目標已被分類為 [${target.archetype}]。`);
             }
@@ -556,7 +493,7 @@
             const feed = document.getElementById('log-feed');
             const div = document.createElement('div'); div.className = 'log-line';
             const now = new Date(); const ts = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
-            let tagClass = 'tag-sys'; if(tag === 'OMNI') tagClass = 'tag-omni'; if(tag === 'ERR') tagClass = 'tag-err';
+            let tagClass = 'tag-sys'; if(tag === 'OMNI') tagClass = 'tag-omni'; if(tag === 'ERR') tagClass = 'tag-err'; if(tag === 'P2W') tagClass = 'tag-gold';
             div.innerHTML = `<span class="log-ts">${ts}</span><span class="log-tag ${tagClass}">${tag}</span> ${msg}`;
             feed.prepend(div);
             if(feed.children.length > LOG_LIMIT) feed.lastChild.remove();

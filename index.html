@@ -159,7 +159,7 @@
                 </div>
                 <div class="bar-container">
                     <div class="bar-header">
-                        <div class="bar-label def-label">EVENT HORIZON (DEF)</div>
+                        <div class="bar-label def-label">PHYSICAL ARMOR (DEF)</div>
                         <div class="bar-val" style="color: var(--shield);" id="txt-def">0</div>
                     </div>
                     <div class="bar-bg"><div class="bar-fill def-fill" id="bar-def"></div></div>
@@ -274,29 +274,29 @@
             const hpPercent = (avgTowerHP / 8500); 
 
             // ==========================================
-            // 高階數學優化：漸近攻防引擎 (Optimized Asymptotic Kinematics)
-            // ==========================================
-            
             // 【攻擊】動能殲滅當量 V2 (Hyperbolic Tangent Asymptote)
-            // 透過 tanh() 函數，讓攻擊力擁有完美的漸近極限。二次方放大基礎皇冠數，避免立方函數的過早溢出。
+            // ==========================================
             const atkEnergy = (0.3 * Math.pow(crownsEarned, 2)) + (0.015 * displayThreeCrownR);
             const ATK = clamp(100 * Math.tanh(atkEnergy));
 
             // ==========================================
-            // 【防禦】絕對事件視界 V3 (Quantum Structural Integrity & Entropy Decay)
+            // 【防禦】實體裝甲矩陣 (Physical Armor Matrix) - 客觀具象化算法
             // ==========================================
             
-            // 1. 事件視界衰減 (Event Horizon Decay): 引入 1.2 次方，模擬防線崩潰時的重力塌陷加速。
-            const eventHorizonDecay = Math.exp(-0.65 * Math.pow(crownsLost, 1.2));
+            // 1. 建築完整度 (Fortress Integrity - 40%): 直接反映未掉冠的物理比例
+            const fortressIntegrity = 40 * Math.max(0, 1.0 - (crownsLost / 3.0));
             
-            // 2. 結構張量 (Structural Tensor): 結合基礎裝甲 (HP 0.7次方) 與極限防禦底力 (tanh(殘血反殺率))。
-            const structuralTensor = (0.8 * Math.pow(hpPercent, 0.7)) + (0.2 * Math.tanh(lowHpClutchR * 4.0));
+            // 2. 核心裝甲值 (Core Armor - 40%): 直觀反映主堡平均剩餘血量比例
+            const coreArmor = 40 * hpPercent;
             
-            // 3. 熵減穩定器 (Entropy Stabilizer): 將防守的波動率 (標準差) 視為系統熵值。越穩定，乘數越接近 1。
-            const entropyStabilizer = Math.max(0.4, 1.0 - (hpStdDev / avgTowerHP) * 0.85);
+            // 3. 陣線穩定係數 (Line Stability - 20%): 衡量每場防禦表現的落差 (變異係數)
+            const lineStability = 20 * Math.max(0, 1.0 - (hpStdDev / avgTowerHP));
 
-            // 絕對防禦張量結算
-            const DEF = clamp(100 * eventHorizonDecay * structuralTensor * entropyStabilizer);
+            // 4. 偏導護盾加成 (Deflector Shield): 具象化殘血求生能力，作為額外附加護甲
+            const deflectorShield = Math.min(15, lowHpClutchR * 25);
+
+            // 客觀實體防禦總值結算
+            const DEF = clamp(fortressIntegrity + coreArmor + lineStability + deflectorShield);
 
             setTimeout(() => {
                 document.getElementById('bar-atk').style.width = `${ATK}%`;
@@ -370,7 +370,7 @@
             myChart = new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: ['DEF (絕對事件視界)', 'ATK (動能殲滅當量)', 'SKL (絕對複雜度)', 'CRT (結構躍遷)', 'END (衰變抗性)', 'CLT (臨界生存)', 'SPD (絕對相速度)', 'ACC (納許均衡)', 'LUK (高斯噪聲)', 'STA (變異係數)', 'AGI (空間投影)', 'INT (資訊密度)'],
+                    labels: ['DEF (實體裝甲矩陣)', 'ATK (動能殲滅當量)', 'SKL (絕對複雜度)', 'CRT (結構躍遷)', 'END (衰變抗性)', 'CLT (臨界生存)', 'SPD (絕對相速度)', 'ACC (納許均衡)', 'LUK (高斯噪聲)', 'STA (變異係數)', 'AGI (空間投影)', 'INT (資訊密度)'],
                     datasets: [{
                         label: 'ABSOLUTE STATES',
                         data: dataValues,

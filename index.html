@@ -60,7 +60,6 @@
         .vis-container { flex: 1; display: flex; flex-direction: column; padding: 20px; position: relative; min-height: 450px; }
         #radarWrapper { flex: 1; min-height: 380px; }
 
-        /* 全新升級的報告樣式 */
         .report-overlay { background: rgba(1, 10, 8, 0.95); border: 1px solid var(--stat-primary); padding: 25px; margin-top: 10px; font-size: 13px; border-top: 4px solid var(--stat-primary); box-shadow: inset 0 0 30px rgba(0,0,0,0.8), 0 10px 20px rgba(0,0,0,0.5); backdrop-filter: blur(10px); display: flex; flex-direction: column; gap: 15px; transition: 0.5s; position: relative; }
         .report-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; margin-bottom: 5px; }
         .header-main { display: flex; flex-direction: column; gap: 5px; }
@@ -72,7 +71,6 @@
         .report-module { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); padding: 15px; position: relative; }
         .module-full { grid-column: span 2; }
         
-        /* 科幻邊角裝飾 */
         .corner-tl { position: absolute; top: -1px; left: -1px; width: 8px; height: 8px; border-top: 2px solid; border-left: 2px solid; }
         .corner-br { position: absolute; bottom: -1px; right: -1px; width: 8px; height: 8px; border-bottom: 2px solid; border-right: 2px solid; }
 
@@ -80,11 +78,9 @@
         .module-title::before { content: "■"; font-size: 10px; }
         .module-content { color: #cbd5e1; line-height: 1.6; font-size: 13px; text-align: justify; }
         
-        /* 數據條 */
         .bar-container { width: 100%; background: rgba(255,255,255,0.1); height: 6px; margin-top: 8px; position: relative; overflow: hidden; border-radius: 3px; }
         .bar-fill { height: 100%; transition: width 1s ease-in-out; box-shadow: 0 0 10px currentColor; }
         
-        /* 標籤 */
         .trait-tag { display: inline-block; padding: 3px 8px; border: 1px solid currentColor; font-size: 10px; font-family: 'Orbitron'; margin-right: 5px; margin-bottom: 5px; border-radius: 2px; background: rgba(255,255,255,0.05); }
 
         .io-panel { padding: 15px; border-top: 1px solid var(--border-glow); background: rgba(0,0,0,0.4); }
@@ -140,7 +136,7 @@
                 
                 <div class="cell highlight-alert"><div class="cell-label">PRD (預判)</div><div class="cell-val" id="val-prd">--</div></div>
                 <div class="cell"><div class="cell-label">BCF (自信)</div><div class="cell-val" id="val-bcf">--</div></div>
-                <div class="cell"><div class="cell-label">OEI (課金/基數)</div><div class="cell-val" id="val-oei">--</div></div>
+                <div class="cell"><div class="cell-label">OEI (基數)</div><div class="cell-val" id="val-oei">--</div></div>
             </div>
 
             <div class="io-panel">
@@ -199,7 +195,7 @@
             chart = new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: ['進攻(SOR)', '微操(MCR)', '轉化(RCE)', '拓樸(TPG)', '抗壓(CFI)', '預判(PRD)', '防守(TDR)', '自信(BCF)', '課金(OEI)'],
+                    labels: ['進攻(SOR)', '微操(MCR)', '轉化(RCE)', '拓樸(TPG)', '抗壓(CFI)', '預判(PRD)', '防守(TDR)', '自信(BCF)', '基數(OEI)'],
                     datasets: [{
                         label: 'NEURAL_VECTOR',
                         data: [0,0,0,0,0,0,0,0,0],
@@ -237,6 +233,7 @@
             writeLog("SYS", `向 API 發送請求 [#${tagClean}]...`);
             
             try {
+                // 正式環境下的真實 API 呼叫點
                 const response = await fetch(`/api/clash-proxy?tag=${encodeURIComponent('#'+tagClean)}`);
                 if (!response.ok) throw new Error(`HTTP 錯誤狀態碼: ${response.status}`);
                 const rawData = await response.json();
@@ -246,7 +243,7 @@
                 runNeuralModel(rawData);
             } catch (error) {
                 writeLog("ERR", `連線失敗，啟動離線模擬數據。(${error.message})`);
-                // 離線測試用，若API連不上自動產生假資料展示 UI
+                // 開發/離線測試用防呆機制
                 const W = 3000 + Math.random()*2000;
                 runNeuralModel({ name: "SUBJECT_" + Math.floor(Math.random()*999), wins: W, losses: W*(0.8+Math.random()*0.4), trophies: 6000+Math.random()*3000 });
             } finally {
@@ -255,7 +252,7 @@
         }
 
         function runNeuralModel(rawData) {
-            writeLog("PRED", "基於數據執行多維度雷達權重分析...");
+            writeLog("PRED", "基於無獎盃依賴模型執行權重分析...");
 
             const name = rawData.name || "UNKNOWN";
             const W = rawData.wins || 0; 
@@ -265,7 +262,7 @@
             const p = W / N; 
 
             // 隨機擾動因子 (純前端展示用，若完全正式環境可拔除 * rand())
-            const rand = () => 0.7 + (Math.random() * 0.6);
+            const rand = () => 0.8 + (Math.random() * 0.4);
 
             const entropy_factor = Math.min(1.0, (T / 9500) * (1 + (W-L)/N));
             const real_prd_rate = 0.45 + (entropy_factor * 0.5); 
@@ -275,10 +272,26 @@
             const OEI_raw = (Math.log10(T > 10 ? T : 10) / 4.0) * (1 + (W - L) / N);
             const H1 = Math.min(1.0, ((L * Math.log(N + 1)) / ((T > 0 ? T : 1) + 100)) * 0.1); 
 
+            // ==========================================
+            // [全新升級] 進攻指數 (SOR) 核心運算引擎 V3.0 (無獎盃依賴)
+            // ==========================================
+            // 1. 勝負動能比 (Kinetic Ratio) - 放大勝場對敗場的優勢
+            const kinetic_ratio = Math.pow(W / (L + 1), 1.2);
+            
+            // 2. 量體動能 (Volume Momentum) - 獎勵在大量對局中維持進攻效率
+            const volume_momentum = Math.log10(N + 10);
+            
+            // 3. 進攻激增因子 (Aggression Multiplier) - 基於淨勝率的指數型放大
+            const aggro_multiplier = Math.exp((W - L) / N);
+            
+            // 4. 原始進攻分數聚合 (乘以 12 作為將數值收斂至 100 以內的基準放大係數)
+            const raw_sor = kinetic_ratio * volume_momentum * aggro_multiplier * 12;
+            // ==========================================
+
             const mapScore = (val, max) => Math.min(99.9, Math.max(0.1, (val / max) * 100));
 
             const scores = [
-                mapScore((1 / (1 + Math.exp(-12 * (theta - 0.5)))) * OEI_raw * 1.5 * rand(), 1.2), // SOR
+                mapScore(raw_sor * rand(), 100), // SOR (進攻 - V3.0)
                 mapScore((W / (L + 1)) * Math.log(T + 1) * 1.5 * rand(), 25), // MCR
                 mapScore((T / (N + 1)) * p * 15 * rand(), 12), // RCE
                 mapScore(Math.exp(-4.5 * H1) * rand(), 1.0), // TPG
@@ -318,13 +331,13 @@
             
             const tilt_prob = Math.max(2.0, 100 - cfi - (bcf * 0.15)); 
             const focus_level = Math.min(99.9, (mcr * 0.5) + (prd * 0.5)); 
-            const est_apm = Math.round(60 + (mcr * 1.2) + (prd * 0.5)); // 估算手速
+            const est_apm = Math.round(60 + (mcr * 1.2) + (prd * 0.5));
 
             const profiles = [
                 {
                     type: "P2W",
                     score: (oei * 1.8) + ((100 - mcr) * 0.5),
-                    archetype: "P2W OVERLORD",
+                    archetype: "STAT-CHECK OVERLORD",
                     threat: "STAT-CHECK / HIGH",
                     color: "#ffd700",
                     tags: ["LVL-ADVANTAGE", "BRUTE-FORCE", "ELIXIR-LEAK"],
@@ -381,13 +394,11 @@
             profiles.sort((a, b) => b.score - a.score);
             const target = profiles[0];
 
-            // 渲染心理狀態顏色
             let psy_label = "COGNITIVE STABLE";
             let psy_color = "#00fa9a";
             if (tilt_prob > 65) { psy_label = "TILT WARNING"; psy_color = "#ff0055"; } 
             else if (focus_level > 85) { psy_label = "FLOW STATE"; psy_color = "#00e5ff"; }
 
-            // 更新視覺
             rc.style.borderTopColor = target.color;
             rc.style.boxShadow = `inset 0 0 30px rgba(0,0,0,0.8), 0 10px 20px ${target.color}30`;
             chart.data.datasets[0].borderColor = target.color;
@@ -395,7 +406,6 @@
             chart.data.datasets[0].pointBorderColor = target.color;
             chart.update();
 
-            // 生成 Tags HTML
             const tagsHtml = target.tags.map(t => `<span class="trait-tag" style="color:${target.color}">${t}</span>`).join('');
 
             rc.innerHTML = `

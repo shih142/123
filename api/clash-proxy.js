@@ -1,120 +1,80 @@
-const express = require('express');
 const axios = require('axios');
-const cors = require('cors');
 
-const app = express();
-const port = process.env.PORT || 3000;
+module.exports = async (req, res) => {
+    // CORS 設置
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-// 啟用 CORS，允許前端跨域請求
-app.use(cors());
-app.use(express.json());
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
 
-// 【核心修改】將官方 API 替換為 RoyaleAPI Proxy，完美繞過 IP 白名單限制！
-const CR_API_BASE = 'https://proxy.royaleapi.dev/v1';
+    const { tag } = req.query;
+    if (!tag) {
+        return res.status(400).json({ error: 'Missing player tag' });
+    }
 
-// 直接將您的官方 API Token 填寫在下方的引號內 (RoyaleAPI Proxy 也是吃這把鑰匙)
-const API_KEY = '你的_CLASH_ROYALE_官方_API_TOKEN_貼在這裡';
+    const CR_API_KEY = process.env.CR_API_KEY; 
+    const cleanTag = tag.startsWith('#') ? tag : `#${tag}`;
+    const encodedTag = encodeURIComponent(cleanTag);
 
-// 建立前端呼叫的 API 路由
-app.get('/api/clash-proxy', async (req, res) => {
     try {
-        let { tag } = req.query;
-        if (!tag) {
-            return res.status(400).json({ error: 'System Error: 缺少玩家標籤 (Player Tag)' });
-        }
-
-        // 清理 Tag：確保沒有 # 號，並且全部大寫
-        tag = tag.replace('#', '').toUpperCase();
-
-        const headers = {
-            'Authorization': `Bearer ${API_KEY}`,
-            'Accept': 'application/json'
-        };
-
-        console.log(`[MAXIMA-PROXY] 正在攔截並解析目標數據: #${tag}`);
-
-        // 1. 平行發送請求：同時獲取「玩家個資」與「近期對戰紀錄」
-        const [profileRes, battlelogRes] = await Promise.allSettled([
-            axios.get(`${CR_API_BASE}/players/%23${tag}`, { headers }),
-            axios.get(`${CR_API_BASE}/players/%23${tag}/battlelog`, { headers })
+        // 同時發送兩個請求：基本資料 & 戰鬥日誌
+        const [playerRes, battleRes] = await Promise.all([
+            axios.get(`https://api.clashroyale.com/v1/players/${encodedTag}`, {
+                headers: { 'Authorization': `Bearer ${CR_API_KEY}` }
+            }),
+            axios.get(`https://api.clashroyale.com/v1/players/${encodedTag}/battlelog`, {
+                headers: { 'Authorization': `Bearer ${CR_API_KEY}` }
+            })
         ]);
 
-        if (profileRes.status === 'rejected') {
-            throw new Error(`無法取得玩家資料: ${profileRes.reason.response?.status}`);
-        }
+        const playerData = playerRes.data;
+        const battleLogs = battleRes.data;
 
-        const profileData = profileRes.value.data;
-        let avgTowerHP = null;
+        // --- 核心邏輯：計算近 50 場平均塔血 ---
+        let totalHPAccumulator = 0;
+        let validMatches = 0;
 
-        // 2. 解析對戰紀錄以計算「平均塔剩餘血量」(AEGIS 模組核心)
-        if (battlelogRes.status === 'fulfilled') {
-            const battlelogData = battlelogRes.value.data;
-            let totalHp = 0;
-            let validMatches = 0;
-
-            battlelogData.forEach(battle => {
-                // battle.team[0] 通常是玩家自己的隊伍
-                if (battle.team && battle.team.length > 0) {
-                    const myTeam = battle.team[0];
-                    let matchHp = 0;
-                    let hasHpData = false;
-
-                    // 加總國王塔血量
-                    if (myTeam.kingTowerHitPoints !== undefined) {
-                        matchHp += myTeam.kingTowerHitPoints;
-                        hasHpData = true;
-                    }
-                    // 加總公主塔血量 (陣列形式)
-                    if (myTeam.princessTowersHitPoints) {
-                        myTeam.princessTowersHitPoints.forEach(hp => {
-                            matchHp += hp;
-                        });
-                        hasHpData = true;
-                    }
-
-                    if (hasHpData) {
-                        totalHp += matchHp;
-                        validMatches++;
-                    }
-                }
-            });
-
-            if (validMatches > 0) {
-                avgTowerHP = Math.round(totalHp / validMatches);
+        // 官方 API 預設回傳近 25~50 場
+        battleLogs.forEach(match => {
+            // 確保是 1v1 類型的比賽 (排除 2v2 或特殊模式可能導致的結構差異)
+            if (match.team && match.team[0]) {
+                const mySide = match.team[0];
+                
+                // 國王塔血量
+                const kingHP = mySide.kingTowerHitPoints || 0;
+                
+                // 公主塔血量 (這是一個陣列，可能剩 0, 1, 或 2 座)
+                const princessHP = (mySide.princessTowersHitPoints || []).reduce((a, b) => a + b, 0);
+                
+                totalHPAccumulator += (kingHP + princessHP);
+                validMatches++;
             }
-        }
+        });
 
-        // 3. 防呆機制：如果 API 沒給對戰血量，套用模擬演算法給前端
-        if (avgTowerHP === null) {
-            const winRate = profileData.wins / (profileData.wins + profileData.losses || 1);
-            avgTowerHP = Math.floor(1200 + (winRate * 1800)); // 基礎推演公式
-            console.log(`[MAXIMA-PROXY] 未取得實際塔血，已啟動預測演算法: ${avgTowerHP}`);
-        }
+        const avgTowerHP = validMatches > 0 ? Math.round(totalHPAccumulator / validMatches) : 0;
 
-        // 4. 重組前端需要的輕量化 JSON 格式
-        const payload = {
-            name: profileData.name,
-            wins: profileData.wins,
-            losses: profileData.losses,
-            trophies: profileData.trophies,
-            avgTowerHP: avgTowerHP
+        // 組合前端需要的數據格式
+        const combinedData = {
+            name: playerData.name,
+            wins: playerData.wins,
+            losses: playerData.losses,
+            trophies: playerData.trophies,
+            avgTowerHP: avgTowerHP, // 這是 V10.4 核心指標
+            battleCount: validMatches,
+            // 也可以把最近一場的勝負傳回去做 Log
+            lastMatchChange: battleLogs[0]?.team[0]?.crowns - battleLogs[0]?.opponent[0]?.crowns
         };
 
-        // 回傳給前端
-        res.json(payload);
+        res.status(200).json(combinedData);
 
     } catch (error) {
-        console.error('[MAXIMA-PROXY] API 請求失敗:', error.response ? error.response.data : error.message);
-        res.status(error.response ? error.response.status : 500).json({
-            error: 'Clash Royale API 端點無回應或連線受阻',
-            details: error.response ? error.response.data : error.message
+        console.error("Vercel Backend Error:", error.message);
+        res.status(error.response?.status || 500).json({ 
+            error: 'API Fetch Failed',
+            message: error.response?.data?.message || error.message 
         });
     }
-});
-
-app.listen(port, () => {
-    console.log(`=========================================`);
-    console.log(`[MAXIMA_DATACENTER] 代理伺服器已上線 (RoyaleAPI Proxy 模式)`);
-    console.log(`[SYS] 監聽端口: http://localhost:${port}`);
-    console.log(`=========================================`);
-});
+};

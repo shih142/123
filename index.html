@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MAXIMA 12D - LIFETIME CAREER HUD</title>
+    <title>MAXIMA 12D - ULTIMATE TACTICAL HUD</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        /* 引入科幻風格字體 */
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700;900&display=swap');
 
         :root {
@@ -30,10 +31,12 @@
             display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 40px 20px;
         }
 
+        /* 頂部標題 */
         header { text-align: center; margin-bottom: 30px; text-transform: uppercase; }
         h1 { font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 3rem; color: var(--cyan); letter-spacing: 6px; text-shadow: 0 0 20px rgba(0,242,255,0.4); margin-bottom: 5px; }
         .sys-status { font-size: 1rem; color: var(--gold); letter-spacing: 3px; font-weight: bold; }
 
+        /* 搜尋控制列 */
         .control-hub {
             background: var(--panel-bg); border: 1px solid rgba(0, 242, 255, 0.3); padding: 20px; border-radius: 12px;
             display: flex; gap: 15px; width: 100%; max-width: 600px; margin-bottom: 30px;
@@ -54,8 +57,10 @@
         }
         button:hover { background: #fff; box-shadow: 0 0 20px var(--cyan); transform: scale(1.02); }
 
+        /* 錯誤警告框 */
         #alert-box { display: none; width: 100%; max-width: 600px; padding: 15px; background: rgba(255, 42, 42, 0.1); border-left: 5px solid var(--red); color: var(--red); margin-bottom: 20px; font-weight: bold; border-radius: 4px; text-align: center; }
 
+        /* 主控儀表板佈局 */
         .dashboard {
             display: none; width: 100%; max-width: 1100px; gap: 25px; align-items: stretch; animation: fadeIn 0.8s ease-out forwards;
         }
@@ -70,6 +75,7 @@
         .side-panel { flex: 1; display: flex; flex-direction: column; gap: 20px; }
         .radar-panel { flex: 1.5; display: flex; justify-content: center; align-items: center; position: relative; min-height: 450px; }
 
+        /* 戰力階級專屬區塊 */
         .rating-box {
             background: rgba(0, 0, 0, 0.6); border: 2px solid var(--gold); border-radius: 10px; padding: 20px; text-align: center;
             box-shadow: 0 0 20px rgba(255, 183, 0, 0.2), inset 0 0 15px rgba(255, 183, 0, 0.1);
@@ -89,6 +95,7 @@
         .rating-score { font-size: 1.2rem; color: #fff; font-family: 'Orbitron', sans-serif; position: relative; z-index: 1; }
         .score-num { color: var(--cyan); font-weight: bold; }
 
+        /* 玩家數值面板 */
         .player-header { border-bottom: 2px solid var(--purple); padding-bottom: 10px; margin-bottom: 5px; }
         .player-name { font-size: 2rem; font-family: 'Orbitron', sans-serif; font-weight: bold; color: #fff; text-transform: uppercase; word-break: break-all; }
         .player-tag { color: var(--cyan); font-size: 1.1rem; letter-spacing: 2px; }
@@ -108,7 +115,7 @@
 
     <header>
         <h1>MAXIMA 12D</h1>
-        <div class="sys-status" id="sys-status">/// LIFETIME CAREER ANALYTICS ENGINE ///</div>
+        <div class="sys-status" id="sys-status">/// ULTIMATE ESPORTS COMBAT EVALUATOR ///</div>
     </header>
 
     <div class="control-hub">
@@ -122,7 +129,7 @@
         <div class="panel side-panel">
             
             <div class="rating-box" id="rating-container">
-                <div class="rating-label">CAREER POWER LEVEL</div>
+                <div class="rating-label">COMBAT POWER LEVEL</div>
                 <div class="rating-rank" id="ui-rank">--</div>
                 <div class="rating-score">SCORE: <span class="score-num" id="ui-score">0000</span></div>
             </div>
@@ -133,17 +140,17 @@
             </div>
 
             <div class="stat-group">
-                <div class="stat-label">CAREER WIN RATE (LIFETIME)</div>
+                <div class="stat-label">WIN RATE (AGGRESSION)</div>
                 <div class="stat-value"><span id="ui-win">0</span> <span class="stat-unit">%</span></div>
             </div>
             
             <div class="stat-group">
-                <div class="stat-label">PEAK TROPHIES (ACHIEVEMENT)</div>
-                <div class="stat-value"><span id="ui-trophies">0</span> <span class="stat-unit">TR</span></div>
+                <div class="stat-label">AVG ELIXIR (PACING)</div>
+                <div class="stat-value"><span id="ui-elixir">0.0</span> <span class="stat-unit">DROPS</span></div>
             </div>
 
             <div class="stat-group" style="border-left-color: #555;">
-                <div class="stat-label">LIFETIME BATTLES</div>
+                <div class="stat-label">BATTLES ANALYZED</div>
                 <div class="stat-value"><span id="ui-battles">0</span> <span class="stat-unit">MATCHES</span></div>
             </div>
         </div>
@@ -170,22 +177,35 @@
             return Math.abs(hash);
         }
 
+        // 計算變異數與標準差 (統計離散度)
+        function calculateStandardDeviation(arr, mean) {
+            if (!arr || arr.length === 0) return 0;
+            const variance = arr.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / arr.length;
+            return Math.sqrt(variance);
+        }
+
         // ==========================================
         // 專業數學函數庫 (Advanced Math Library)
         // ==========================================
         
+        // 數值邊界鎖定，確保任何運算結果都不會突破雷達圖框架
         function clamp(val) { return Math.max(15, Math.min(99, val)); }
 
         // 邏輯斯諦 S型曲線 (Sigmoid Curve)
+        // val: 輸入值, x0: 拐點(中位數基準), k: 曲線陡峭度
         function sigmoid(val, x0, k) {
             return 100 / (1 + Math.exp(-k * (val - x0)));
         }
 
-        // 對數增幅 (Logarithmic Scaling) - 用於平滑處理上萬場次的生涯數據
+        // 對數增幅 (Logarithmic Scaling)
+        // 用於處理極端爆發數據，避免溢出並呈現邊際遞減效應
         function logScale(val, modifier) {
-            return Math.log(Math.max(1, val)) * modifier;
+            return Math.log(val + 1) * modifier;
         }
 
+        // ==========================================
+        // 核心 API 掃描流程
+        // ==========================================
         async function runScan() {
             const tagInput = document.getElementById('playerTag').value;
             const btn = document.getElementById('scanBtn');
@@ -196,7 +216,7 @@
 
             hideAlert();
             dashboard.style.display = "none";
-            btn.innerText = "EXTRACTING LIFETIME DATA...";
+            btn.innerText = "COMPUTING TENSORS...";
             btn.style.pointerEvents = "none";
 
             try {
@@ -220,109 +240,102 @@
         }
 
         // ==========================================
-        // 生涯抽象維度運算核心 (Lifetime Dimension Algorithms)
+        // UI 更新與抽象維度運算核心
         // ==========================================
         function updateUI(data) {
             document.getElementById('dashboard').style.display = "flex";
             
-            // 解析生涯原始數據 (Fallback 容錯機制)
-            const wins = data.wins || 0;
-            const losses = data.losses || 0;
-            const battles = data.battleCount || (wins + losses) || 1; 
-            const threeCrownWins = data.threeCrownWins || 0;
-            const trophies = data.trophies || 0;
-            const bestTrophies = data.bestTrophies || 0;
-            const tourneyBattles = data.tournamentBattleCount || 0;
-            const warWins = data.warDayWins || 0;
-            const donations = data.totalDonations || 0;
-
-            const careerWinRate = (wins / battles) * 100;
-            const threeCrownRate = threeCrownWins / Math.max(1, wins);
-
-            // 更新左側 UI 面板
+            // UI 面板數值更新
             document.getElementById('ui-tag').innerText = `#${data.tag}`;
             document.getElementById('ui-name').innerText = data.name;
-            document.getElementById('ui-win').innerText = careerWinRate.toFixed(1);
-            document.getElementById('ui-battles').innerText = battles;
-            document.getElementById('ui-trophies').innerText = bestTrophies;
+            document.getElementById('ui-win').innerText = data.winRate;
+            document.getElementById('ui-battles').innerText = data.battleCount;
+            document.getElementById('ui-elixir').innerText = data.avgDeckElixir || 'N/A';
+
+            // 原始數據提取 (Raw Metrics)
+            const winR = data.winRate || 0;
+            const avgElixir = parseFloat(data.avgDeckElixir) || 3.5; 
+            const avgTowerHP = parseFloat(data.avgTowerHP) || 0;
+            const hpStdDev = calculateStandardDeviation(data.hpHistory, avgTowerHP);
+            const lowHpClutchR = (data.lowHpClutchRate || 0) * 100;
+            const clutchR = (data.clutchRate || 0) * 100;
+            const threeCrownR = (data.threeCrownRate || 0) * 100;
+            const crownsEarned = parseFloat(data.avgCrownsEarned) || 0;
+            const crownsLost = parseFloat(data.avgCrownsLost) || 0;
+            const hpPercent = (avgTowerHP / 8500) * 100;
 
             // ==========================================
-            // 生涯 12D 抽象映射 (Lifetime Metric Mapping)
+            // 抽象維度演算法 (Abstract Dimension Algorithms)
             // ==========================================
             
-            // 1. SKL (技巧 - Mastery)：最高盃數的 S型映射。
-            // 拐點設在 6500 盃，突破 8500 盃曲線將趨近滿分。
-            const SKL = clamp(sigmoid(bestTrophies, 6500, 0.0015));
+            // 1. SKL (Elixir Elasticity / 聖水彈性係數)
+            const elixirEfficiency = (winR * 10) / Math.max(1.5, avgElixir);
+            const SKL = clamp(sigmoid(elixirEfficiency, 140, 0.04));
 
-            // 2. ACC (精準 - Accuracy)：生涯總勝率收斂。
-            // 拐點設在 52% (一般玩家極限)，極少數能在龐大基數維持 60%+ 的玩家將獲得高分。
-            const ACC = clamp(sigmoid(careerWinRate / 100, 0.52, 25));
+            // 2. SPD (Cycle Velocity / 輪轉速率)
+            const cycleSpeed = (5.5 - avgElixir) * 20 + threeCrownR;
+            const SPD = clamp(sigmoid(cycleSpeed, 50, 0.05));
 
-            // 3. CRT (爆發 - Dominance)：生涯三冠勝率。
-            // 三冠勝場佔總勝場的比例，拐點設在 30%。
-            const CRT = clamp(sigmoid(threeCrownRate, 0.3, 10));
+            // 3. STA (Variance Cohesion / 變異數凝聚力)
+            const STA = clamp(sigmoid(-hpStdDev, -1200, 0.003));
 
-            // 4. END (耐力 - Stamina)：總對戰場次的對數增幅。
-            // 場次越多，加分邊際效應越小。10,000 場約可獲得 80+ 分。
-            const END = clamp(15 + logScale(battles, 8.5));
+            // 4. CLT (Brinkmanship / 邊緣生存論)
+            const edgeSurvival = lowHpClutchR * 3 + clutchR;
+            const CLT = clamp(20 + logScale(edgeSurvival, 15));
 
-            // 5. ATK (攻擊 - Lethality)：生涯純勝場數。
-            const ATK = clamp(15 + logScale(wins, 9.5));
+            // 5. INT (Strategic Economy / 戰術經濟學)
+            const tacticalIndex = hpPercent * Math.log(avgElixir + 1) * (winR / 50);
+            const INT = clamp(sigmoid(tacticalIndex, 120, 0.03));
 
-            // 6. DEF (防禦 - Resilience)：敗北迴避率。
-            // 計算 1 - (敗場/總場)，並透過 S曲線放大防守底蘊。
-            const avoidLossRate = 1 - (losses / battles);
-            const DEF = clamp(sigmoid(avoidLossRate, 0.48, 30));
+            // 6. DEF (Entropy Reduction / 熵減防禦力)
+            const defenseEntropy = 3 - crownsLost; 
+            const DEF = clamp(sigmoid(defenseEntropy * hpPercent, 100, 0.02));
 
-            // 7. CLT (抗壓 - Clutch)：當前盃數維持率。
-            // 當前盃數越接近最高盃數，代表在高壓環境下依然能保持水準不掉分。
-            const trophyRetention = trophies / Math.max(1, bestTrophies);
-            const CLT = clamp(sigmoid(trophyRetention, 0.9, 15));
+            // 7. ATK (Kinetic Momentum / 動能攻擊力)
+            const attackMomentum = crownsEarned * winR;
+            const ATK = clamp(sigmoid(attackMomentum, 100, 0.03));
 
-            // 8. AGI (靈活 - Adaptability)：部落戰勝場。
-            // 部落戰需要使用 4 套完全不同的牌組，勝場數極大程度反映了牌池深度與靈活度。
-            const AGI = clamp(15 + logScale(warWins, 12));
+            // 8. CRT (Critical Overload / 臨界爆發力)
+            const CRT = clamp(sigmoid(threeCrownR, 15, 0.15));
 
-            // 9. STA (穩定 - Consistency)：錦標賽/挑戰賽場次。
-            // 錦標賽採用標準化等級(11等)，不受卡等壓制影響，大量參與代表具備高度穩定的競技底板。
-            const STA = clamp(20 + logScale(tourneyBattles, 10));
+            // 9. END (Temporal Resilience / 時間韌性)
+            const resilience = (clutchR * 2) + logScale(data.battleCount, 10);
+            const END = clamp(sigmoid(resilience, 40, 0.04));
 
-            // 10. INT (戰術 - Trophy Efficiency)：衝盃效率。
-            // (最高盃數 / 總場次) 比例。用極少場次衝上高盃的玩家(分身/天才)，戰術效益極高。
-            const efficiency = bestTrophies / Math.max(1, battles);
-            const INT = clamp(sigmoid(efficiency, 1.2, 3));
+            // 10. ACC (Delta Efficiency / 淨值收斂度)
+            const crownDelta = crownsEarned - crownsLost;
+            const ACC = clamp(sigmoid(crownDelta, 0.5, 1.5)); 
 
-            // 11. SPD (節奏 - Progression Speed)：上分動能與活躍度。
-            // 綜合勝率與近期捐贈活躍度。
-            const SPD = clamp((ACC * 0.6) + (sigmoid(donations, 10000, 0.0002) * 40));
+            // 11. AGI (Tactical Fluidity / 戰術流動性)
+            const fluidity = (SPD * 0.4) + (SKL * 0.4) + (CLT * 0.2);
+            const AGI = clamp(fluidity);
 
-            // 12. LUK (運氣 - Karma / Quantum)：
-            // 基於總捐贈數(Karma人品積累) 加上 Tag 的量子波動。
+            // 12. LUK (Quantum Fluctuation / 量子漲落)
             const quantumState = (getTagHash(data.tag) % 15) - 7.5;
-            const karma = sigmoid(donations, 50000, 0.0001) * 30; 
-            const LUK = clamp(50 + karma + quantumState);
+            const baseLuck = sigmoid(clutchR, 20, 0.05); 
+            const LUK = clamp(baseLuck + quantumState);
 
             const metrics = [DEF, ATK, SKL, CRT, END, CLT, SPD, ACC, LUK, STA, AGI, INT];
 
             // ==========================================
-            // 生涯戰力階級系統 (Career Power Matrix)
+            // 戰力階級系統 (Power Scoring Matrix)
             // ==========================================
             
-            // 幾何平均與算術平均的融合
+            // 幾何平均數與算術平均數的融合
             const sumLog = metrics.reduce((acc, val) => acc + Math.log(val), 0);
             const geometricMean = Math.exp(sumLog / 12);
             const arithmeticMean = metrics.reduce((a, b) => a + b, 0) / 12;
             
-            // 轉化為萬分制生涯戰力指數
-            const rawScore = Math.round(((geometricMean * 0.6) + (arithmeticMean * 0.4)) / 100 * 9500 + (careerWinRate * 5)); 
+            // 轉化為萬分制戰力指數
+            const rawScore = Math.round(((geometricMean * 0.6) + (arithmeticMean * 0.4)) / 100 * 9500 + (winR * 5)); 
             
             let rank = 'D'; let rankColor = '#aaa';
-            if (rawScore >= 8500) { rank = 'SSS'; rankColor = '#ffb700'; } // God Tier
-            else if (rawScore >= 7500) { rank = 'SS'; rankColor = '#ff2a2a'; } // Legend
-            else if (rawScore >= 6500) { rank = 'S'; rankColor = '#bc13fe'; }  // Master
-            else if (rawScore >= 5500) { rank = 'A'; rankColor = '#00f2ff'; }  // Elite
-            else if (rawScore >= 4500) { rank = 'B'; rankColor = '#00ff44'; }  // Veteran
-            else if (rawScore >= 3500) { rank = 'C'; rankColor = '#fff'; }     // Challenger
+            if (rawScore >= 8500) { rank = 'SSS'; rankColor = '#ffb700'; } 
+            else if (rawScore >= 7500) { rank = 'SS'; rankColor = '#ff2a2a'; } 
+            else if (rawScore >= 6500) { rank = 'S'; rankColor = '#bc13fe'; }  
+            else if (rawScore >= 5500) { rank = 'A'; rankColor = '#00f2ff'; }  
+            else if (rawScore >= 4500) { rank = 'B'; rankColor = '#00ff44'; }  
+            else if (rawScore >= 3500) { rank = 'C'; rankColor = '#fff'; }     
 
             const uiRank = document.getElementById('ui-rank');
             const ratingContainer = document.getElementById('rating-container');
@@ -335,6 +348,9 @@
             drawChart(metrics, rankColor);
         }
 
+        // ==========================================
+        // 數字滾動動畫與圖表渲染
+        // ==========================================
         function animateValue(id, start, end, duration) {
             const obj = document.getElementById(id);
             let startTimestamp = null;
@@ -359,9 +375,9 @@
                 data: {
                     labels: ['DEF (防禦)', 'ATK (攻擊)', 'SKL (技巧)', 'CRT (爆發)', 'END (耐力)', 'CLT (抗壓)', 'SPD (節奏)', 'ACC (精準)', 'LUK (運氣)', 'STA (穩定)', 'AGI (靈活)', 'INT (戰術)'],
                     datasets: [{
-                        label: 'LIFETIME TENSORS',
+                        label: 'TENSOR METRICS',
                         data: dataValues,
-                        backgroundColor: `${mainColor}25`,
+                        backgroundColor: `${mainColor}25`, // 動態透明背景色
                         borderColor: mainColor,
                         borderWidth: 2,
                         pointBackgroundColor: '#fff',

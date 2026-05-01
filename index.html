@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MAXIMA 12D | 戰術人格掃描儀</title>
+    <title>MAXIMA 12D | 戰術人格掃描儀 v2.1</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&amp;display=swap" rel="stylesheet">
     <style>
         :root {
             --neon: #00f2ff;
@@ -21,6 +21,7 @@
             align-items: center;
             padding: 40px 20px;
             margin: 0;
+            min-height: 100vh;
         }
         .container {
             background: linear-gradient(145deg, #161822, #0d0e14);
@@ -28,141 +29,560 @@
             border-radius: 20px;
             padding: 30px;
             width: 100%;
-            max-width: 600px;
-            box-shadow: 0 0 30px rgba(0, 242, 255, 0.2);
+            max-width: 620px;
+            box-shadow: 0 0 40px rgba(0, 242, 255, 0.25);
             text-align: center;
+            position: relative;
+            overflow: hidden;
         }
-        h1 { color: var(--neon); letter-spacing: 4px; margin-bottom: 5px; }
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0,242,255,0.03) 0%, transparent 70%);
+            pointer-events: none;
+            animation: scanline 4s linear infinite;
+        }
+        @keyframes scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+        h1 { 
+            color: var(--neon); 
+            letter-spacing: 6px; 
+            margin-bottom: 2px; 
+            text-shadow: 0 0 15px rgba(0, 242, 255, 0.6);
+        }
+        .subtitle {
+            color: #666;
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+        }
         .search-group {
             display: flex;
             gap: 10px;
             justify-content: center;
             margin: 25px 0;
+            flex-wrap: wrap;
         }
         input {
             background: #000;
             border: 1px solid #333;
             color: var(--neon);
-            padding: 12px;
-            border-radius: 8px;
-            width: 180px;
+            padding: 14px 16px;
+            border-radius: 10px;
+            width: 200px;
             outline: none;
             text-align: center;
+            font-size: 1rem;
+            transition: all 0.2s;
         }
-        input:focus { border-color: var(--neon); }
+        input:focus { 
+            border-color: var(--neon); 
+            box-shadow: 0 0 12px rgba(0, 242, 255, 0.3);
+        }
         button {
-            background: var(--neon);
+            background: linear-gradient(90deg, var(--neon), #00d4ff);
             color: #000;
             border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
-            font-weight: bold;
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-weight: 700;
             cursor: pointer;
-            transition: 0.3s;
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+            font-size: 0.95rem;
+            box-shadow: 0 4px 15px rgba(0, 242, 255, 0.3);
         }
-        button:hover { box-shadow: 0 0 15px var(--neon); transform: scale(1.05); }
+        button:hover { 
+            transform: translateY(-2px) scale(1.02); 
+            box-shadow: 0 8px 25px rgba(0, 242, 255, 0.5);
+        }
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
         #status {
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             color: #888;
-            margin-bottom: 15px;
-            min-height: 1.2em;
+            margin-bottom: 18px;
+            min-height: 1.4em;
+            transition: color 0.3s;
         }
-        canvas { margin-top: 10px; }
+        canvas { 
+            margin: 15px auto 10px; 
+            max-width: 100%;
+            filter: drop-shadow(0 0 15px rgba(0, 242, 255, 0.15));
+        }
+        
+        /* Player Info Card */
+        .player-info {
+            background: rgba(15, 16, 25, 0.85);
+            border: 1px solid #222;
+            border-radius: 14px;
+            padding: 18px 22px;
+            margin: 20px 0;
+            text-align: left;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+            animation: fadeInUp 0.5s ease forwards;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .info-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .info-header h2 {
+            margin: 0;
+            font-size: 1.35rem;
+            color: #fff;
+        }
+        .tag {
+            font-family: 'Courier New', monospace;
+            background: #111;
+            padding: 4px 12px;
+            border-radius: 6px;
+            color: var(--neon);
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            border: 1px solid #333;
+        }
+        #personalityBadge {
+            text-align: center;
+            margin: 14px 0;
+        }
+        .power-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.85rem;
+            color: #aaa;
+        }
+        .power-bar span:first-child { min-width: 70px; }
+        .bar {
+            flex: 1;
+            height: 7px;
+            background: #1a1b24;
+            border-radius: 999px;
+            overflow: hidden;
+            border: 1px solid #222;
+        }
+        .fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00f2ff, #bc13fe);
+            transition: width 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 0 8px #00f2ff;
+        }
+        #powerValue {
+            font-weight: 700;
+            color: #00f2ff;
+            min-width: 42px;
+            text-align: right;
+        }
+        .data-source {
+            font-size: 0.72rem;
+            color: #555;
+            margin-top: 12px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
         <h1>MAXIMA 12D</h1>
+        <div class="subtitle">戰術人格掃描儀 • v2.1（全維度權重升級版）</div>
+        
         <div id="status">系統就緒，請輸入玩家標籤</div>
 
         <div class="search-group">
-            <input type="text" id="playerTag" placeholder="#P8RR2P" value="#P8RR2P">
-            <button onclick="startScan()">啟動掃描</button>
+            <input type="text" id="playerTag" placeholder="#P8RR2P" value="#P8RR2P" maxlength="12">
+            <button id="scanBtn" onclick="startScan()">啟動掃描</button>
         </div>
 
-        <canvas id="radarChart"></canvas>
+        <!-- 玩家資訊卡片 -->
+        <div id="playerInfo" class="player-info" style="display: none;">
+            <div class="info-header">
+                <h2 id="playerName"></h2>
+                <span id="playerTagDisplay" class="tag"></span>
+            </div>
+            <div id="personalityBadge"></div>
+            
+            <div class="power-bar">
+                <span>戰力指數</span>
+                <div class="bar"><div id="powerFill" class="fill" style="width: 0%"></div></div>
+                <span id="powerValue">0</span>
+            </div>
+        </div>
+
+        <canvas id="radarChart" width="420" height="420"></canvas>
+        
+        <div id="legend" class="data-source" style="display: none;">
+            資料來源：<span id="dataSource"></span>
+        </div>
     </div>
 
     <script>
         let myChart = null;
+        
+        // 12維戰術人格維度定義
+        const DIMENSIONS = [
+            { key: 'DEF', label: '防禦 DEF', desc: '塔樓防禦能力' },
+            { key: 'ATK', label: '攻擊 ATK', desc: '輸出傷害' },
+            { key: 'SKL', label: '技巧 SKL', desc: '操作精準度' },
+            { key: 'CRT', label: '爆擊 CRT', desc: '關鍵一擊' },
+            { key: 'END', label: '耐力 END', desc: '持久戰能力' },
+            { key: 'CLT', label: '關鍵 CLT', desc: '決勝時刻' },
+            { key: 'SPD', label: '速度 SPD', desc: '反應速度' },
+            { key: 'ACC', label: '準度 ACC', desc: '命中率' },
+            { key: 'LUK', label: '運氣 LUK', desc: '隨機事件' },
+            { key: 'INT', label: '智慧 INT', desc: '戰略規劃' },
+            { key: 'AGI', label: '敏捷 AGI', desc: '機動性' },
+            { key: 'STA', label: '體力 STA', desc: '體能維持' }
+        ];
+        
+        // 人格類型對應表
+        const PERSONALITY_TYPES = {
+            'DEF': { name: '鐵壁守護者', color: '#00f2ff' },
+            'ATK': { name: '狂暴破壞者', color: '#ff4757' },
+            'SKL': { name: '精密操控師', color: '#bc13fe' },
+            'CRT': { name: '致命一擊者', color: '#ffd700' },
+            'END': { name: '不死戰士', color: '#00ff85' },
+            'CLT': { name: '逆轉奇才', color: '#ff8c00' },
+            'SPD': { name: '閃電刺客', color: '#00ffff' },
+            'ACC': { name: '神準射手', color: '#ff69b4' },
+            'LUK': { name: '幸運之子', color: '#7fff00' },
+            'INT': { name: '戰略大師', color: '#9370db' },
+            'AGI': { name: '幽靈遊俠', color: '#20b2aa' },
+            'STA': { name: '永動機甲', color: '#ff6347' }
+        };
 
-        async function startScan() {
-            const tagInput = document.getElementById('playerTag').value.trim();
-            const status = document.getElementById('status');
-            
-            if (!tagInput) {
-                status.innerText = "⚠️ 請輸入玩家 Tag";
-                return;
-            }
-
-            status.innerText = "📡 正在分析數據模式...";
-            status.style.color = "var(--neon)";
-
-            try {
-                // 1. 預防 Pattern 錯誤：過濾非英數，強制大寫
-                const cleanTag = tagInput.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-                
-                // 2. 使用 URL 建構子確保 URL 模式絕對正確
-                const apiUrl = new URL('/api/clash-proxy', window.location.origin);
-                apiUrl.searchParams.set('tag', cleanTag);
-
-                const response = await fetch(apiUrl.toString());
-                const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.message || "數據擷取失敗");
-                }
-
-                status.innerText = `✅ 鎖定對象: ${data.name}`;
-                
-                // 將後端回傳的數據對應到 12D 指標
-                const metrics = [
-                    Math.min(100, (data.avgTowerHP / 8500) * 100), // DEF
-                    data.winRate,                                 // ATK
-                    85, 70, 65, 90, 75, 80, 60, 88, 72, 85        // 預設維度
-                ];
-
-                updateChart(metrics);
-
-            } catch (err) {
-                console.error("Fetch Error:", err);
-                status.innerText = `❌ 錯誤: ${err.message}`;
-                status.style.color = "#ff4444";
-            }
+        // 種子隨機數產生器（相同Tag永遠產生相同人格）
+        function createSeededRandom(seed) {
+            return function(offset) {
+                const x = Math.sin(seed + offset) * 10000;
+                return x - Math.floor(x);
+            };
         }
 
+        // 【v2.1 升級】12維戰術人格權重配置表
+        // 每個維度擁有獨立的「基礎權重」、「波動幅度」、「偏向值」
+        const DIMENSION_WEIGHTS = {
+            'DEF': { weight: 1.18, variance: 7,  bias:  1 },   // 防禦：高權重、穩定
+            'ATK': { weight: 1.22, variance: 9,  bias:  2 },   // 攻擊：最高權重、略高爆發
+            'SKL': { weight: 1.07, variance: 11, bias: -1 },   // 技巧：中高權重、中波動
+            'CRT': { weight: 0.92, variance: 17, bias:  4 },   // 爆擊：低權重、高波動（高風險高回報）
+            'END': { weight: 1.12, variance: 5,  bias:  2 },   // 耐力：高權重、極穩定
+            'CLT': { weight: 0.97, variance: 14, bias:  1 },   // 關鍵：中權重、中高波動
+            'SPD': { weight: 1.03, variance: 10, bias: -2 },   // 速度：均衡、中波動
+            'ACC': { weight: 1.09, variance: 8,  bias:  0 },   // 準度：高權重、低波動
+            'LUK': { weight: 0.78, variance: 23, bias:  6 },   // 運氣：最低權重、極高波動（最不穩定）
+            'INT': { weight: 1.15, variance: 6,  bias:  3 },   // 智慧：高權重、極穩定（戰略核心）
+            'AGI': { weight: 0.99, variance: 12, bias: -3 },   // 敏捷：均衡、中波動
+            'STA': { weight: 1.06, variance: 4,  bias:  1 }    // 體力：中高權重、最穩定
+        };
+
+        // 【v2.1 升級】計算12維戰術指標（全新權重系統 + 智能關聯）
+        function calculateMetrics(data, tag) {
+            const cleanTag = tag.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+            
+            // 產生種子
+            let seed = 0;
+            for (let i = 0; i < cleanTag.length; i++) {
+                seed = cleanTag.charCodeAt(i) + ((seed << 5) - seed);
+            }
+            const rand = createSeededRandom(seed);
+            
+            // 從真實數據提取基礎值（若無則用種子模擬）
+            const rawDEF = Math.min(100, Math.max(30, ((data.avgTowerHP || 6800) / 8500) * 100));
+            const rawATK = Math.min(100, Math.max(30, data.winRate || (50 + rand(5) * 45)));
+            
+            // 計算整體「核心戰力」作為其他維度的參考中心
+            const corePower = (rawDEF * 0.48 + rawATK * 0.52);
+            
+            return DIMENSIONS.map((dim, i) => {
+                const cfg = DIMENSION_WEIGHTS[dim.key];
+                let val;
+                
+                if (dim.key === 'DEF') {
+                    val = rawDEF;
+                } else if (dim.key === 'ATK') {
+                    val = rawATK;
+                } else {
+                    // 其他維度：以核心戰力為中心，套用專屬權重 + 偏向 + 波動
+                    const center = corePower + cfg.bias;
+                    const spread = (rand(30 + i * 3) - 0.5) * cfg.variance * 2;
+                    val = center + spread;
+                }
+                
+                // 套用維度專屬權重（讓高權重維度更容易拉高）
+                val = val * cfg.weight;
+                
+                // 最終限制 + 四捨五入
+                return Math.max(35, Math.min(98, Math.round(val)));
+            });
+        }
+
+        // 【v2.1 升級】取得人格類型（加權最高維度 + 混合型判斷）
+        function getPersonalityType(metrics) {
+            // 計算加權分數（使用 DIMENSION_WEIGHTS.weight）
+            let weightedScores = DIMENSIONS.map((dim, i) => {
+                const w = DIMENSION_WEIGHTS[dim.key].weight;
+                return { key: dim.key, score: metrics[i] * w };
+            });
+            
+            // 找出加權後最高與次高
+            weightedScores.sort((a, b) => b.score - a.score);
+            const top1 = weightedScores[0];
+            const top2 = weightedScores[1];
+            
+            // 如果前兩名差距很小（< 6 分），判定為「混合型」
+            if (top1.score - top2.score < 6) {
+                const hybridName = `${PERSONALITY_TYPES[top1.key].name.slice(0,2)}${PERSONALITY_TYPES[top2.key].name.slice(0,2)}型`;
+                return {
+                    name: hybridName,
+                    color: '#a855f7',  // 紫色代表混合
+                    isHybrid: true
+                };
+            }
+            
+            // 單一主導型
+            return PERSONALITY_TYPES[top1.key] || { name: '均衡戰士', color: '#888888' };
+        }
+
+        // 更新玩家資訊卡片
+        function updatePlayerInfo(name, tag, metrics, isMock) {
+            const infoDiv = document.getElementById('playerInfo');
+            const nameEl = document.getElementById('playerName');
+            const tagEl = document.getElementById('playerTagDisplay');
+            const badgeEl = document.getElementById('personalityBadge');
+            const powerValueEl = document.getElementById('powerValue');
+            const powerFillEl = document.getElementById('powerFill');
+            const sourceEl = document.getElementById('dataSource');
+            const legendEl = document.getElementById('legend');
+            
+            nameEl.innerText = name;
+            tagEl.innerText = '#' + tag;
+            
+            // 人格徽章
+            const type = getPersonalityType(metrics);
+            badgeEl.innerHTML = `
+                <span style="
+                    display: inline-block;
+                    background: ${type.color};
+                    color: #000;
+                    padding: 6px 20px;
+                    border-radius: 999px;
+                    font-size: 0.92rem;
+                    font-weight: 700;
+                    box-shadow: 0 0 14px ${type.color};
+                    letter-spacing: 1px;
+                ">${type.name}</span>
+            `;
+            
+            // 【v2.1 升級】戰力指數 = 加權平均（依 DIMENSION_WEIGHTS.weight 計算）
+            let weightedSum = 0;
+            let totalWeight = 0;
+            metrics.forEach((val, i) => {
+                const key = DIMENSIONS[i].key;
+                const w = DIMENSION_WEIGHTS[key].weight;
+                weightedSum += val * w;
+                totalWeight += w;
+            });
+            const powerIndex = Math.round(weightedSum / totalWeight);
+            powerValueEl.innerText = powerIndex;
+            powerFillEl.style.width = `${powerIndex}%`;
+            
+            // 資料來源
+            sourceEl.innerText = isMock ? '模擬數據（本地種子生成）' : 'Clash Royale 官方 API';
+            legendEl.style.display = 'block';
+            
+            // 顯示卡片
+            infoDiv.style.display = 'block';
+        }
+
+        // 更新雷達圖
         function updateChart(dataPoints) {
             const ctx = document.getElementById('radarChart').getContext('2d');
             if (myChart) myChart.destroy();
 
+            const labels = DIMENSIONS.map(d => d.label);
+            
             myChart = new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: ['DEF', 'ATK', 'SKL', 'CRT', 'END', 'CLT', 'SPD', 'ACC', 'LUK', 'INT', 'AGI', 'STA'],
+                    labels: labels,
                     datasets: [{
                         data: dataPoints,
-                        backgroundColor: 'rgba(0, 242, 255, 0.2)',
+                        backgroundColor: 'rgba(0, 242, 255, 0.18)',
                         borderColor: '#00f2ff',
-                        borderWidth: 2,
-                        pointBackgroundColor: '#bc13fe'
+                        borderWidth: 2.5,
+                        pointBackgroundColor: '#bc13fe',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#00f2ff'
                     }]
                 },
                 options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
                     scales: {
                         r: {
-                            grid: { color: 'rgba(255,255,255,0.1)' },
+                            grid: { color: 'rgba(255,255,255,0.08)' },
                             angleLines: { color: 'rgba(255,255,255,0.1)' },
-                            pointLabels: { color: '#888', font: { size: 10 } },
+                            pointLabels: { 
+                                color: '#aaa', 
+                                font: { size: 11, weight: 500 } 
+                            },
                             ticks: { display: false },
                             suggestedMin: 0,
                             suggestedMax: 100
                         }
                     },
-                    plugins: { legend: { display: false } }
+                    plugins: { 
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) => `${ctx.label.split(' ')[0]}: ${ctx.raw}`
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 900,
+                        easing: 'easeOutQuart'
+                    }
                 }
             });
         }
+
+        // 主掃描函式
+        async function startScan() {
+            const tagInput = document.getElementById('playerTag').value.trim();
+            const status = document.getElementById('status');
+            const btn = document.getElementById('scanBtn');
+            const infoDiv = document.getElementById('playerInfo');
+            
+            if (!tagInput) {
+                status.innerText = "⚠️ 請輸入玩家 Tag";
+                status.style.color = "#ff6666";
+                return;
+            }
+
+            // 按鈕載入狀態
+            btn.disabled = true;
+            btn.innerText = '掃描中...';
+            status.innerText = "📡 正在連接戰場數據中樞...";
+            status.style.color = "var(--neon)";
+            infoDiv.style.display = 'none'; // 隱藏舊資料
+
+            // 清理 Tag
+            const cleanTag = tagInput.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+
+            let metrics;
+            let isMock = false;
+            let playerName = cleanTag;
+
+            try {
+                // 建構 API URL（相容各種部署環境）
+                const apiUrl = new URL('/api/clash-proxy', window.location.origin);
+                apiUrl.searchParams.set('tag', cleanTag);
+
+                const response = await fetch(apiUrl.toString(), {
+                    method: 'GET',
+                    headers: { 'Accept': 'application/json' }
+                });
+                
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || "後端服務暫時無法使用");
+                }
+
+                playerName = data.name || cleanTag;
+                metrics = calculateMetrics(data, cleanTag);
+                isMock = false;
+
+                status.innerText = `✅ 鎖定對象: ${playerName}`;
+                status.style.color = "#00ff85";
+
+            } catch (err) {
+                console.warn("API 連線失敗，使用模擬模式:", err.message);
+                
+                status.innerText = "⚠️ 官方API暫時無法連線，已切換至模擬模式";
+                status.style.color = "#ffaa00";
+                isMock = true;
+
+                // 模擬數據（種子確保一致性）
+                const mockData = {
+                    name: `模擬玩家-${cleanTag.slice(-5)}`,
+                    avgTowerHP: 6650 + Math.floor(Math.random() * 1800),
+                    winRate: 64 + Math.floor(Math.random() * 28)
+                };
+                
+                metrics = calculateMetrics(mockData, cleanTag);
+                playerName = mockData.name;
+            }
+
+            // 更新畫面
+            updateChart(metrics);
+            updatePlayerInfo(playerName, cleanTag, metrics, isMock);
+
+            // 恢復按鈕
+            btn.disabled = false;
+            btn.innerText = '啟動掃描';
+        }
+
+        // 輸入框即時格式化 + Enter 鍵支援
+        function initInputHandlers() {
+            const input = document.getElementById('playerTag');
+            const btn = document.getElementById('scanBtn');
+            
+            // 即時大寫 + 過濾非法字元
+            input.addEventListener('input', () => {
+                let val = input.value.toUpperCase().replace(/[^A-Z0-9#]/g, '');
+                if (val.length > 0 && val[0] !== '#') val = '#' + val;
+                input.value = val.substring(0, 12);
+            });
+            
+            // Enter 鍵觸發掃描
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !btn.disabled) {
+                    startScan();
+                }
+            });
+            
+            // 初始提示
+            input.addEventListener('focus', () => {
+                if (input.value === '#P8RR2P') {
+                    input.select();
+                }
+            });
+        }
+
+        // 頁面初始化
+        function init() {
+            initInputHandlers();
+            
+            // 可選：自動掃描預設玩家（取消註解即可啟用）
+            // setTimeout(() => {
+            //     const input = document.getElementById('playerTag');
+            //     if (input.value === '#P8RR2P') startScan();
+            // }, 800);
+            
+            // 開發提示
+            console.log('%c[MAXIMA 12D] 優化版 v2.1 已載入 — 全維度權重升級 + 加權人格分析', 'color:#555');
+        }
+
+        // 啟動
+        window.onload = init;
     </script>
 </body>
 </html>

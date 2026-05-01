@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>神經矩陣 MAXIMA | V7.0 AEGIS-CORE (PROD)</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <title>神經矩陣 MAXIMA | V8.0 OMNI-MATRIX (PROD)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
@@ -14,11 +14,12 @@
             --stat-secondary: #00e5ff; 
             --stat-alert: #ff0055;
             --stat-void: #b388ff; 
-            --stat-aegis: #38bdf8; /* 神盾協議專屬客觀藍 */
+            --stat-aegis: #38bdf8; 
+            --stat-omni: #c084fc; /* V8 全知專屬紫金 */
             --text-main: #f1f5f9;
             --text-dim: #475569;
-            --border-glow: rgba(0, 250, 154, 0.2);
-            --neon-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+            --border-glow: rgba(192, 132, 252, 0.2);
+            --neon-shadow: 0 0 15px rgba(192, 132, 252, 0.3);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; cursor: default; }
@@ -28,28 +29,28 @@
             font-family: 'Share Tech Mono', 'Noto Sans TC', sans-serif;
             min-height: 100vh; overflow-x: hidden; display: flex; flex-direction: column;
             background-image: 
-                radial-gradient(circle at 15% 25%, rgba(179, 136, 255, 0.04) 0%, transparent 40%),
+                radial-gradient(circle at 15% 25%, rgba(192, 132, 252, 0.04) 0%, transparent 40%),
                 radial-gradient(circle at 85% 75%, rgba(56, 189, 248, 0.04) 0%, transparent 40%),
                 linear-gradient(rgba(0, 250, 154, 0.02) 1px, transparent 1px), 
                 linear-gradient(90deg, rgba(0, 250, 154, 0.02) 1px, transparent 1px);
             background-size: 100% 100%, 100% 100%, 30px 30px, 30px 30px;
         }
 
-        header { padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--stat-aegis); background: rgba(1, 10, 8, 0.95); box-shadow: 0 0 15px rgba(56, 189, 248, 0.2); }
-        .system-status { display: flex; gap: 20px; font-size: 12px; color: var(--stat-aegis); font-weight: bold; letter-spacing: 2px; }
+        header { padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--stat-omni); background: rgba(1, 10, 8, 0.95); box-shadow: 0 0 15px rgba(192, 132, 252, 0.2); }
+        .system-status { display: flex; gap: 20px; font-size: 12px; color: var(--stat-omni); font-weight: bold; letter-spacing: 2px; }
         .status-node { display: flex; align-items: center; gap: 6px; }
-        .dot { width: 8px; height: 8px; background: var(--stat-aegis); border-radius: 50%; box-shadow: 0 0 10px var(--stat-aegis); }
+        .dot { width: 8px; height: 8px; background: var(--stat-omni); border-radius: 50%; box-shadow: 0 0 10px var(--stat-omni); }
         .blink { animation: pulse 2s infinite; }
 
         main { display: grid; grid-template-columns: 420px 1fr 400px; flex: 1; gap: 2px; }
-        .column { background: var(--panel-bg); display: flex; flex-direction: column; position: relative; border-right: 1px solid rgba(56, 189, 248, 0.1); }
-        .section-label { padding: 12px 15px; font-family: 'Orbitron'; font-size: 11px; background: linear-gradient(90deg, rgba(56, 189, 248, 0.1), transparent); color: var(--stat-aegis); border-bottom: 1px solid rgba(56, 189, 248, 0.2); display: flex; justify-content: space-between; text-transform: uppercase; letter-spacing: 1.5px; }
+        .column { background: var(--panel-bg); display: flex; flex-direction: column; position: relative; border-right: 1px solid rgba(192, 132, 252, 0.1); }
+        .section-label { padding: 12px 15px; font-family: 'Orbitron'; font-size: 11px; background: linear-gradient(90deg, rgba(192, 132, 252, 0.1), transparent); color: var(--stat-omni); border-bottom: 1px solid rgba(192, 132, 252, 0.2); display: flex; justify-content: space-between; text-transform: uppercase; letter-spacing: 1.5px; }
 
         .hero-stats { padding: 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .hero-value { font-family: 'Orbitron'; font-size: 72px; font-weight: 900; color: #fff; line-height: 0.8; margin-bottom: 10px; text-shadow: 0 0 20px rgba(56, 189, 248, 0.4); }
-        .hero-name { font-family: 'Orbitron'; font-size: 18px; color: var(--stat-aegis); letter-spacing: 4px; font-weight: bold;}
+        .hero-value { font-family: 'Orbitron'; font-size: 72px; font-weight: 900; color: #fff; line-height: 0.8; margin-bottom: 10px; text-shadow: 0 0 20px rgba(192, 132, 252, 0.4); }
+        .hero-name { font-family: 'Orbitron'; font-size: 18px; color: var(--stat-omni); letter-spacing: 4px; font-weight: bold;}
 
-        .data-matrix { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: rgba(56, 189, 248, 0.1); }
+        .data-matrix { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: rgba(192, 132, 252, 0.1); }
         .cell { background: var(--bg-deep); padding: 15px 5px; text-align: center; position: relative; transition: 0.3s; }
         .cell:hover { background: #04120f; }
         .cell-label { font-size: 10px; color: #64748b; margin-bottom: 4px; letter-spacing: 0.5px; font-weight: bold; }
@@ -63,36 +64,51 @@
         .highlight-alert .cell-val { color: var(--stat-alert); text-shadow: 0 0 10px rgba(255, 0, 85, 0.3); }
 
         .vis-container { flex: 1; display: flex; flex-direction: column; padding: 20px; position: relative; min-height: 450px; }
-        #radarWrapper { flex: 1; min-height: 380px; }
+        #radarWrapper { flex: 1; min-height: 340px; }
 
-        .report-overlay { background: rgba(1, 10, 8, 0.95); border: 1px solid var(--stat-aegis); padding: 25px; margin-top: 10px; font-size: 13px; border-top: 4px solid var(--stat-aegis); box-shadow: inset 0 0 30px rgba(0,0,0,0.8), 0 10px 20px rgba(0,0,0,0.5); backdrop-filter: blur(10px); display: flex; flex-direction: column; gap: 15px; transition: 0.5s; position: relative; }
-        .report-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; margin-bottom: 5px; }
-        .header-main { display: flex; flex-direction: column; gap: 5px; }
-        #ui-archetype { font-family: 'Orbitron'; font-size: 22px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; }
+        /* V8.0 Report Overlay 升級樣式 */
+        .report-overlay { background: rgba(1, 10, 8, 0.95); border: 1px solid var(--stat-omni); padding: 20px; margin-top: 5px; font-size: 13px; border-top: 4px solid var(--stat-omni); box-shadow: inset 0 0 30px rgba(0,0,0,0.8), 0 10px 20px rgba(0,0,0,0.5); backdrop-filter: blur(10px); display: flex; flex-direction: column; gap: 15px; transition: 0.5s; position: relative; overflow: hidden;}
+        .report-overlay::before { content: ""; position: absolute; top: 0; right: 0; width: 100%; height: 100%; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(192, 132, 252, 0.02) 2px, rgba(192, 132, 252, 0.02) 4px); pointer-events: none; z-index: 0; }
+        .report-content-wrapper { position: relative; z-index: 1; }
+
+        .report-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px; margin-bottom: 5px; }
+        .header-main { display: flex; flex-direction: column; gap: 4px; }
+        #ui-archetype { font-family: 'Orbitron'; font-size: 24px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; line-height: 1; }
         #ui-apm { font-family: 'Share Tech Mono'; font-size: 11px; color: #94a3b8; letter-spacing: 1px; }
-        .threat-level { font-family: 'Orbitron'; font-size: 14px; padding: 5px 12px; border-radius: 2px; font-weight: bold; letter-spacing: 1px; text-align: right; }
-        
-        .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .report-module { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); padding: 15px; position: relative; }
+        .threat-badge { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+        .threat-level { font-family: 'Orbitron'; font-size: 14px; padding: 5px 12px; border-radius: 2px; font-weight: bold; letter-spacing: 1px; background: rgba(255,255,255,0.05); }
+
+        .report-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 12px; }
+        .report-module { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); padding: 12px; position: relative; }
         .module-full { grid-column: span 2; }
+        .module-flex { display: flex; gap: 15px; }
         
         .corner-tl { position: absolute; top: -1px; left: -1px; width: 8px; height: 8px; border-top: 2px solid; border-left: 2px solid; }
         .corner-br { position: absolute; bottom: -1px; right: -1px; width: 8px; height: 8px; border-bottom: 2px solid; border-right: 2px solid; }
 
-        .module-title { font-family: 'Share Tech Mono'; color: var(--text-main); font-size: 12px; margin-bottom: 10px; letter-spacing: 1px; display: flex; align-items: center; gap: 5px; text-transform: uppercase; font-weight: bold; opacity: 0.9; }
-        .module-title::before { content: "■"; font-size: 10px; }
-        .module-content { color: #cbd5e1; line-height: 1.6; font-size: 13px; text-align: justify; }
-        
-        .bar-container { width: 100%; background: rgba(255,255,255,0.1); height: 6px; margin-top: 8px; position: relative; overflow: hidden; border-radius: 3px; }
-        .bar-fill { height: 100%; transition: width 1s ease-in-out; box-shadow: 0 0 10px currentColor; }
-        
-        .trait-tag { display: inline-block; padding: 3px 8px; border: 1px solid currentColor; font-size: 10px; font-family: 'Orbitron'; margin-right: 5px; margin-bottom: 5px; border-radius: 2px; background: rgba(255,255,255,0.05); }
+        .module-title { font-family: 'Share Tech Mono'; color: var(--text-main); font-size: 11px; margin-bottom: 8px; letter-spacing: 1px; display: flex; align-items: center; gap: 5px; text-transform: uppercase; font-weight: bold; opacity: 0.9; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 4px; }
+        .module-title::before { content: "▶"; font-size: 9px; }
+        .module-content { color: #cbd5e1; line-height: 1.5; font-size: 12px; text-align: justify; }
+
+        /* V8 新增：微觀數據條與戰術列表 */
+        .micro-stat-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; font-size: 10px; font-family: 'Orbitron'; }
+        .micro-stat-label { color: #94a3b8; letter-spacing: 0.5px; width: 40%; }
+        .bar-container { flex: 1; background: rgba(255,255,255,0.1); height: 4px; border-radius: 2px; margin: 0 10px; position: relative; overflow: hidden; }
+        .bar-fill { height: 100%; transition: width 1s ease-in-out; }
+        .micro-stat-val { width: 15%; text-align: right; color: #fff; font-weight: bold; }
+
+        .tactic-list { list-style: none; padding-left: 5px; }
+        .tactic-list li { position: relative; padding-left: 15px; margin-bottom: 6px; font-size: 12px; color: #f1f5f9; }
+        .tactic-list li::before { content: "■"; position: absolute; left: 0; top: 1px; font-size: 8px; color: currentColor; opacity: 0.7; }
+        .highlight-text { font-weight: bold; color: #fff; padding: 0 2px; border-bottom: 1px solid; }
+
+        .trait-tag { display: inline-block; padding: 3px 8px; border: 1px solid currentColor; font-size: 10px; font-family: 'Orbitron'; margin-right: 5px; margin-top: 5px; border-radius: 2px; background: rgba(255,255,255,0.05); text-shadow: none; font-weight: 500;}
 
         .io-panel { padding: 15px; border-top: 1px solid var(--border-glow); background: rgba(0,0,0,0.4); }
         input { width: 100%; background: #010a08; border: 1px solid #1e293b; padding: 12px; color: #fff; font-family: 'Orbitron'; font-size: 14px; outline: none; transition: 0.3s; text-align: center; letter-spacing: 2px; }
-        input:focus { border-color: var(--stat-aegis); box-shadow: 0 0 15px rgba(56, 189, 248, 0.3); }
-        .btn-prime { width: 100%; padding: 15px; margin-top: 10px; background: rgba(56, 189, 248, 0.05); color: var(--stat-aegis); font-family: 'Orbitron'; font-weight: 900; font-size: 14px; border: 1px solid var(--stat-aegis); cursor: pointer; letter-spacing: 2px; transition: 0.2s; }
-        .btn-prime:hover:not(:disabled) { background: var(--stat-aegis); color: #000; box-shadow: 0 0 15px rgba(56, 189, 248, 0.5); }
+        input:focus { border-color: var(--stat-omni); box-shadow: 0 0 15px rgba(192, 132, 252, 0.3); }
+        .btn-prime { width: 100%; padding: 15px; margin-top: 10px; background: rgba(192, 132, 252, 0.05); color: var(--stat-omni); font-family: 'Orbitron'; font-weight: 900; font-size: 14px; border: 1px solid var(--stat-omni); cursor: pointer; letter-spacing: 2px; transition: 0.2s; }
+        .btn-prime:hover:not(:disabled) { background: var(--stat-omni); color: #000; box-shadow: 0 0 15px rgba(192, 132, 252, 0.5); }
 
         .sim-log { flex: 1; font-family: 'Share Tech Mono'; font-size: 11px; padding: 15px; color: #64748b; overflow-y: auto; max-height: 300px; }
         .log-line { margin-bottom: 8px; border-left: 2px solid #1e293b; padding-left: 10px; line-height: 1.4; }
@@ -100,13 +116,13 @@
         .log-tag { padding: 2px 5px; border-radius: 2px; font-size: 9px; margin-right: 8px; text-transform: uppercase; font-weight: bold; color:#000; }
         .tag-sys { background: #475569; color: #fff; }
         .tag-pred { background: var(--stat-alert); color: #fff; }
-        .tag-aegis { background: var(--stat-aegis); color: #000; }
+        .tag-omni { background: var(--stat-omni); color: #000; }
         .tag-err { background: #ff0055; color: #fff; }
 
         ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: var(--stat-aegis); }
+        ::-webkit-scrollbar-thumb { background: var(--stat-omni); }
 
-        .data-box { padding: 15px; background: rgba(56, 189, 248, 0.02); border: 1px solid rgba(56, 189, 248, 0.15); margin-top: auto; font-family: 'Orbitron'; }
+        .data-box { padding: 15px; background: rgba(192, 132, 252, 0.02); border: 1px solid rgba(192, 132, 252, 0.15); margin-top: auto; font-family: 'Orbitron'; }
         .d-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 12px; }
         .d-label { color: var(--text-dim); }
         .d-val { color: #fff; font-weight: bold; }
@@ -117,7 +133,7 @@
 
     <header>
         <div class="system-status">
-            <div class="status-node"><div class="dot blink"></div> V7.0 AEGIS-CORE | OBJECTIVE_MODE</div>
+            <div class="status-node"><div class="dot blink"></div> V8.0 OMNI-MATRIX | COMPREHENSIVE_MODE</div>
         </div>
         <div style="font-family: 'Orbitron'; font-size: 16px; letter-spacing: 4px; color: #fff;">MAXIMA_DATACENTER</div>
     </header>
@@ -147,7 +163,7 @@
 
             <div class="io-panel">
                 <input type="text" id="tagInput" placeholder="PLAYER TAG (#...)" spellcheck="false">
-                <button class="btn-prime" id="btn-engage" onclick="fetchAndAnalyze()">INITIATE AEGIS SCAN</button>
+                <button class="btn-prime" id="btn-engage" onclick="fetchAndAnalyze()">INITIATE OMNI SCAN</button>
             </div>
         </section>
 
@@ -159,17 +175,21 @@
                 </div>
                 
                 <div class="report-overlay" id="report-container">
-                    <div class="report-header">
-                        <div class="header-main">
-                            <div id="ui-archetype" style="color: #475569;">SYSTEM IDLE</div>
-                            <div id="ui-apm">ESTIMATED APM: --</div>
+                    <div class="report-content-wrapper">
+                        <div class="report-header">
+                            <div class="header-main">
+                                <div id="ui-archetype" style="color: #475569;">SYSTEM IDLE</div>
+                                <div id="ui-apm">ESTIMATED APM: --</div>
+                            </div>
+                            <div class="threat-badge">
+                                <div class="threat-level" style="color: #475569; border: 1px solid #475569;">STANDBY</div>
+                            </div>
                         </div>
-                        <div class="threat-level" style="color: #475569; border: 1px solid #475569; background: rgba(71, 85, 105, 0.1);">STANDBY</div>
-                    </div>
-                    <div class="report-grid">
-                        <div class="report-module module-full">
-                            <div class="module-title">NEURAL_ENGINE_STATUS</div>
-                            <div class="module-content">V7.0 神盾協議 (Aegis Core) 已加載。防守模組已切換為純客觀統計加權，移除所有抽象干擾因子。</div>
+                        <div class="report-grid">
+                            <div class="report-module module-full">
+                                <div class="module-title">OMNI_ENGINE_STATUS</div>
+                                <div class="module-content">V8.0 全知矩陣 (Omni-Matrix) 已加載。等待目標數據進行全維度綜合剖析。</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -179,8 +199,8 @@
         <section class="column">
             <div class="section-label"><span>BEHAVIORAL_LOG</span><span>LOG_FEED</span></div>
             <div id="log-feed" class="sim-log">
-                <div class="log-line"><span class="log-ts">00:00:00</span> <span class="log-tag tag-sys">SYS</span> PROD 模式啟動。客觀數據層級已覆寫。</div>
-                <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-tag tag-sys">SYS</span> 等待目標座標數據進行神盾統計解算。</div>
+                <div class="log-line"><span class="log-ts">00:00:00</span> <span class="log-tag tag-sys">SYS</span> PROD 模式啟動。全景分析面板已部署。</div>
+                <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-tag tag-sys">SYS</span> 等待輸入座標啟動高階戰術運算。</div>
             </div>
 
             <div class="data-box">
@@ -205,12 +225,12 @@
                     datasets: [{
                         label: 'NEURAL_VECTOR',
                         data: [0,0,0,0,0,0,0,0,0],
-                        backgroundColor: 'rgba(56, 189, 248, 0.1)',
-                        borderColor: '#38bdf8',
+                        backgroundColor: 'rgba(192, 132, 252, 0.1)',
+                        borderColor: '#c084fc',
                         borderWidth: 2,
                         pointRadius: 4,
                         pointBackgroundColor: '#fff',
-                        pointBorderColor: '#38bdf8'
+                        pointBorderColor: '#c084fc'
                     }]
                 },
                 options: {
@@ -233,10 +253,10 @@
             if(!tagRaw) return writeLog("SYS", "請輸入座標參數。");
 
             const btn = document.getElementById('btn-engage');
-            btn.disabled = true; btn.innerText = "COMPUTING AEGIS VECTORS...";
+            btn.disabled = true; btn.innerText = "COMPILING OMNI DOSSIER...";
 
             let tagClean = tagRaw.replace('#', '');
-            writeLog("SYS", `向 API 發送請求 [#${tagClean}] 進行客觀防守掃描...`);
+            writeLog("SYS", `向 API 發送請求 [#${tagClean}] 啟動全知掃描...`);
             
             try {
                 // 正式環境下的真實 API 呼叫點
@@ -245,19 +265,19 @@
                 const rawData = await response.json();
                 if (!rawData || (!rawData.wins && rawData.wins !== 0)) throw new Error("API 回傳格式異常或查無此玩家。");
                 
-                writeLog("SYS", `API 數據擷取成功，載入神盾核心。`);
+                writeLog("SYS", `API 數據擷取成功，載入全知矩陣。`);
                 runNeuralModel(rawData);
             } catch (error) {
-                writeLog("ERR", `環境斷線，切換至模擬客觀態。(${error.message})`);
+                writeLog("ERR", `環境斷線，切換至模擬實戰態。(${error.message})`);
                 const W = 3000 + Math.random()*2000;
                 runNeuralModel({ name: "SUBJECT_" + Math.floor(Math.random()*999), wins: W, losses: W*(0.8+Math.random()*0.4), trophies: 6000+Math.random()*3000 });
             } finally {
-                btn.disabled = false; btn.innerText = "INITIATE AEGIS SCAN";
+                btn.disabled = false; btn.innerText = "INITIATE OMNI SCAN";
             }
         }
 
         function runNeuralModel(rawData) {
-            writeLog("AEGIS", "啟動 V7.0 Aegis-Core (神盾協議) 客觀數據運算...");
+            writeLog("OMNI", "啟動 V8.0 Omni-Matrix (全知矩陣) 戰術解構...");
 
             const name = rawData.name || "UNKNOWN";
             const W = rawData.wins || 0; 
@@ -273,7 +293,7 @@
             const OEI_raw = (Math.log10(T > 10 ? T : 10) / 4.0) * (1 + (W - L) / N);
             const H1 = Math.min(1.0, ((L * Math.log(N + 1)) / ((T > 0 ? T : 1) + 100)) * 0.1); 
 
-            // 進攻保留波函數特性 (SOR)
+            // 進攻 (SOR)
             const p_win = p === 0 ? 0.001 : (p === 1 ? 0.999 : p);
             const p_loss = 1 - p_win;
             const entropy = -(p_win * Math.log2(p_win) + p_loss * Math.log2(p_loss));
@@ -282,35 +302,21 @@
             const phase_sor = Math.sin(p_win * Math.PI) * Math.cos((W - L) / N * (Math.PI / 2));
             const raw_sor = Math.abs(phase_sor) * Math.exp(2.0 - entropy) * void_volume * 3.5;
 
-            // ==========================================
-            // [V7.0 客觀防守引擎 AEGIS PROTOCOL] 
-            // 拋棄抽象波函數，使用純硬體戰績進行加權平均
-            // ==========================================
-            
-            // 1. 勝負基本盤 (50% 權重): 直接取決於勝率，最直觀的防守指標
-            const tdr_base = p_win * 50; 
-            
-            // 2. 高壓抗性 (25% 權重): 盃數越高，防守壓力越大。使用對數平滑 (約3萬盃達頂點)
-            const tdr_trophy = (Math.log10(T > 0 ? T + 1 : 1) / 4.5) * 25; 
-            
-            // 3. 實戰穩定度 (25% 權重): 場次越多，數據越具參考價值 (約10萬場達頂點)
-            const tdr_exp = (Math.log10(N > 0 ? N + 1 : 1) / 5.0) * 25; 
-            
-            const raw_tdr = tdr_base + tdr_trophy + tdr_exp;
-            // ==========================================
+            // 防守 (TDR) - 沿用 V7 客觀硬核基底
+            const raw_tdr = (p_win * 50) + ((Math.log10(T > 0 ? T + 1 : 1) / 4.5) * 25) + ((Math.log10(N > 0 ? N + 1 : 1) / 5.0) * 25);
 
             const mapScore = (val, max) => Math.min(99.9, Math.max(0.1, (val / max) * 100));
 
             const scores = [
-                mapScore(raw_sor * rand(), 100), // SOR (進攻 - 依然抽象)
-                mapScore((W / (L + 1)) * Math.log(T + 1) * 1.5 * rand(), 25), 
-                mapScore((T / (N + 1)) * p * 15 * rand(), 12), 
-                mapScore(Math.exp(-4.5 * H1) * rand(), 1.0), 
-                mapScore((WLB / (p || 1)) * Math.exp(-4 * H1) * 100 * rand(), 95), 
-                mapScore(entropy * 100 * rand(), 1.0), 
-                mapScore(raw_tdr * rand(), 100), // TDR (防守 - V7.0 純客觀加權)
-                mapScore(Math.max(0.1, 1 - (1.96 * Math.sqrt((theta * (1 - theta)) / (N + 100)))) * rand(), 1.0), 
-                mapScore(OEI_raw * rand(), 1.2) 
+                mapScore(raw_sor * rand(), 100), // SOR
+                mapScore((W / (L + 1)) * Math.log(T + 1) * 1.5 * rand(), 25), // MCR
+                mapScore((T / (N + 1)) * p * 15 * rand(), 12), // RCE
+                mapScore(Math.exp(-4.5 * H1) * rand(), 1.0), // TPG
+                mapScore((WLB / (p || 1)) * Math.exp(-4 * H1) * 100 * rand(), 95), // CFI
+                mapScore(entropy * 100 * rand(), 1.0), // PRD
+                mapScore(raw_tdr * rand(), 100), // TDR
+                mapScore(Math.max(0.1, 1 - (1.96 * Math.sqrt((theta * (1 - theta)) / (N + 100)))) * rand(), 1.0), // BCF
+                mapScore(OEI_raw * rand(), 1.2) // OEI
             ];
 
             const score_ASI = (scores[0]*0.1) + (scores[1]*0.1) + (scores[5]*0.25) + (scores[4]*0.15) + (scores[3]*0.1) + (scores[6]*0.1) + (scores[8]*0.1) + (scores[2]*0.1);
@@ -333,50 +339,66 @@
             chart.data.datasets[0].data = scores;
             chart.update();
 
-            generatePentaReport(scores, stats);
+            generateOmniReport(scores, stats);
         }
 
-        function generatePentaReport(scores, stats) {
+        function generateOmniReport(scores, stats) {
             const rc = document.getElementById('report-container');
             const [sor, mcr, rce, tpg, cfi, prd, tdr, bcf, oei] = scores;
             
+            // 衍生綜合指標
             const tilt_prob = Math.max(2.0, 100 - cfi - (bcf * 0.15)); 
             const focus_level = Math.min(99.9, (mcr * 0.5) + (prd * 0.5)); 
             const est_apm = Math.round(60 + (mcr * 1.2) + (prd * 0.5));
+            
+            // V8 戰術副指標
+            const stat_lethality = Math.min(99.9, (sor * 0.6) + (rce * 0.4)); // 致死率
+            const stat_resilience = Math.min(99.9, (tdr * 0.7) + (cfi * 0.3)); // 韌性
+            const stat_adaptability = Math.min(99.9, (tpg * 0.5) + (prd * 0.5)); // 適應力
 
             const profiles = [
                 {
                     type: "AEGIS_PHALANX",
                     score: (tdr * 1.8) + (cfi * 0.8),
-                    archetype: "IRONCLAD DEFENSE",
-                    threat: "SOLID / HIGH",
+                    archetype: "IRONCLAD SYNTHESIS",
+                    threat: "CLASS-A / FORTIFIED",
                     color: "#38bdf8",
-                    tags: ["STATISTICAL-WALL", "OBJECTIVE-GUARD", "UNBREAKABLE"],
-                    analysis: "對手的防守完全建立在鐵一般的硬核戰績上。他們不靠玄學或直覺防守，而是憑藉著千百場實戰累積下來的肌肉記憶與穩定勝率，築起一道無法輕易逾越的客觀高牆。",
-                    weakness: "過於扎實的防禦體系通常意味著打法偏向保守與公式化。他們很少犯錯，但也因此缺乏應對極度冷門或瘋狂戰術的彈性。",
-                    tactic: "跟他們打常規戰只會慢性死亡。必須在開局就投入非傳統的攻擊兵力，製造混亂，迫使他們離開自己熟悉的『舒適防守公式』。"
+                    tags: ["STATISTICAL-WALL", "LOW-RISK", "ATTRITION-WAR"],
+                    analysis: "目標的戰鬥邏輯高度依賴<span class='highlight-text' style='border-color:#38bdf8'>防守反擊與資源轉換</span>。他們鮮少主動發起具風險的進攻，而是透過極高的抗壓性（CFI）與防守（TDR）吸收傷害，將對手的失誤轉化為勝勢。",
+                    weakness: "過度仰賴後手導致『主動創造機會』的能力薄弱。面對非典型的冷門戰術時，適應力（Adaptability）容易出現空窗。",
+                    tactics: [
+                        "避免在其防守舒適區內進行常規換血",
+                        "利用高機動性單位進行雙線拉扯，破壞其陣型",
+                        "在加時賽前扣留一張『非線性爆發』的王牌底牌"
+                    ]
                 },
                 {
                     type: "QUANTUM_ASSAULT",
                     score: (sor * 1.8) + ((100 - prd) * 0.5),
                     archetype: "ABSTRACT ANOMALY",
-                    threat: "UNPREDICTABLE / EXTREME",
+                    threat: "CLASS-S / VOLATILE",
                     color: "#b388ff",
-                    tags: ["WAVE-COLLAPSE", "NON-LINEAR", "ENTROPY-BURST"],
-                    analysis: "對手的進攻模式完全脫離線性邏輯。他們可能在毫無徵兆的情況下交出致命組合，將戰場拖入高度混亂的波函數坍縮狀態。",
-                    weakness: "高度的不可預測性意味著資源調配極不穩定。只要能撐過他們最混亂的一波『熵爆發』，其防線會自動瓦解。",
-                    tactic: "保持最穩固的具象防守陣型，以靜制動，讓他們在混亂中自行耗盡資源。"
+                    tags: ["ENTROPY-BURST", "HIGH-RISK", "NON-LINEAR"],
+                    analysis: "這是一名具備高度<span class='highlight-text' style='border-color:#b388ff'>不可預測性與爆發力</span>的對手。進攻意識（SOR）遠大於防守，極度擅長在系統資訊熵最高（戰局混亂）時發動致命一擊。",
+                    weakness: "高風險打法伴隨極高的崩盤機率。其心理狀態（CHAOS RISK）極度不穩定，一旦第一波攻勢受挫，後續防守極易出現破綻。",
+                    tactics: [
+                        "開局保持防守姿態，保留費用以吸收首波衝擊",
+                        "在其攻勢間隙進行『精準且致命』的單點反打",
+                        "維持盤面清潔，剝奪其利用殘局製造混亂的空間"
+                    ]
                 }
             ];
 
             profiles.sort((a, b) => b.score - a.score);
             const target = profiles[0];
 
+            // 動態心理狀態標籤
             let psy_label = "COGNITIVE STABLE";
             let psy_color = "#00fa9a";
             if (tilt_prob > 65) { psy_label = "ENTROPY OVERFLOW"; psy_color = "#ff0055"; } 
-            else if (focus_level > 85) { psy_label = "AEGIS LOCK-ON"; psy_color = "#38bdf8"; }
+            else if (focus_level > 85) { psy_label = "HYPER-FOCUS"; psy_color = "#00e5ff"; }
 
+            // 更新 UI 色彩
             rc.style.borderTopColor = target.color;
             rc.style.boxShadow = `inset 0 0 30px rgba(0,0,0,0.8), 0 10px 20px ${target.color}30`;
             chart.data.datasets[0].borderColor = target.color;
@@ -384,61 +406,83 @@
             chart.data.datasets[0].pointBorderColor = target.color;
             chart.update();
 
-            const tagsHtml = target.tags.map(t => `<span class="trait-tag" style="color:${target.color}">${t}</span>`).join('');
+            const tagsHtml = target.tags.map(t => `<span class="trait-tag" style="color:${target.color}; border-color:${target.color}50">${t}</span>`).join('');
+            const tacticsHtml = target.tactics.map(t => `<li style="color:${target.color}">${t}</li>`).join('');
 
             rc.innerHTML = `
-                <div class="report-header">
-                    <div class="header-main">
-                        <div id="ui-archetype" style="text-shadow: 0 0 15px ${target.color}; color: ${target.color};">${target.archetype}</div>
-                        <div id="ui-apm">ESTIMATED APM: <span style="color:#fff; font-weight:bold;">${est_apm}</span> ACTIONS/MIN</div>
-                        <div style="margin-top: 5px;">${tagsHtml}</div>
+                <div class="report-content-wrapper">
+                    <div class="report-header">
+                        <div class="header-main">
+                            <div id="ui-archetype" style="text-shadow: 0 0 15px ${target.color}80; color: ${target.color};">${target.archetype}</div>
+                            <div id="ui-apm">E-APM: <span style="color:#fff; font-weight:bold;">${est_apm}</span> | CHAOS RISK: <span style="color:${psy_color}; font-weight:bold;">${tilt_prob.toFixed(0)}%</span></div>
+                            <div>${tagsHtml}</div>
+                        </div>
+                        <div class="threat-badge">
+                            <div class="threat-level" style="color: ${target.color}; border-color: ${target.color}; box-shadow: 0 0 10px ${target.color}40;">${target.threat}</div>
+                        </div>
                     </div>
-                    <div class="threat-level" style="color: ${target.color}; border-color: ${target.color}; background: ${target.color}15;">${target.threat}</div>
-                </div>
-                
-                <div class="report-grid">
-                    <div class="report-module">
-                        <div class="corner-tl" style="border-color: ${psy_color};"></div>
-                        <div class="module-title" style="color: ${psy_color};::before{color:${psy_color}}">PSYCH_PROFILING (心理狀態)</div>
-                        <div class="module-content">
-                            <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:2px;">
-                                <span style="color:${psy_color}; font-weight:bold;">${psy_label}</span>
-                                <span>CHAOS RISK: ${tilt_prob.toFixed(0)}%</span>
+                    
+                    <div class="report-grid">
+                        <div style="display: flex; flex-direction: column; gap: 12px;">
+                            <div class="report-module">
+                                <div class="corner-tl" style="border-color: #cbd5e1;"></div>
+                                <div class="module-title" style="color: #cbd5e1;">TACTICAL_METRICS (微觀指標)</div>
+                                <div class="module-content">
+                                    <div class="micro-stat-row">
+                                        <span class="micro-stat-label">LETHALITY (致死率)</span>
+                                        <div class="bar-container"><div class="bar-fill" style="width: ${stat_lethality}%; background: #ff0055;"></div></div>
+                                        <span class="micro-stat-val">${stat_lethality.toFixed(0)}</span>
+                                    </div>
+                                    <div class="micro-stat-row">
+                                        <span class="micro-stat-label">RESILIENCE (韌性)</span>
+                                        <div class="bar-container"><div class="bar-fill" style="width: ${stat_resilience}%; background: #38bdf8;"></div></div>
+                                        <span class="micro-stat-val">${stat_resilience.toFixed(0)}</span>
+                                    </div>
+                                    <div class="micro-stat-row">
+                                        <span class="micro-stat-label">ADAPTABILITY (適應力)</span>
+                                        <div class="bar-container"><div class="bar-fill" style="width: ${stat_adaptability}%; background: #fbbf24;"></div></div>
+                                        <span class="micro-stat-val">${stat_adaptability.toFixed(0)}</span>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="bar-container"><div class="bar-fill" style="width: ${tilt_prob}%; background: ${psy_color};"></div></div>
+                            
+                            <div class="report-module" style="flex: 1; border-color: ${psy_color}40; background: ${psy_color}05;">
+                                <div class="module-title" style="color: ${psy_color};">PSYCH_PROFILING</div>
+                                <div class="module-content" style="font-size: 11px;">
+                                    系統判定當前心理模組為 <strong style="color:${psy_color}">${psy_label}</strong>。<br>
+                                    ${target.weakness}
+                                </div>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="report-module">
-                        <div class="corner-tr" style="border-color: ${target.color};"></div>
-                        <div class="module-title" style="color: ${target.color};">CRITICAL_WEAKNESS (致命弱點)</div>
-                        <div class="module-content" style="font-size: 11px;">
-                            ${target.weakness}
-                        </div>
-                    </div>
+                        <div style="display: flex; flex-direction: column; gap: 12px;">
+                            <div class="report-module" style="background: linear-gradient(135deg, ${target.color}08, transparent); border-left: 3px solid ${target.color}; flex: 1;">
+                                <div class="corner-tr" style="border-color: ${target.color};"></div>
+                                <div class="module-title" style="color: ${target.color};">BEHAVIORAL_PROFILE (深度剖析)</div>
+                                <div class="module-content">${target.analysis}</div>
+                            </div>
 
-                    <div class="report-module module-full" style="background: linear-gradient(90deg, ${target.color}05, transparent); border-left: 3px solid ${target.color};">
-                        <div class="corner-br" style="border-color: ${target.color};"></div>
-                        <div class="module-title" style="color: ${target.color};">BEHAVIORAL_PROFILE (行為深度剖析)</div>
-                        <div class="module-content">${target.analysis}</div>
-                    </div>
-
-                    <div class="report-module module-full" style="border: 1px solid rgba(56, 189, 248, 0.3); background: rgba(56, 189, 248, 0.03);">
-                        <div class="module-title" style="color: var(--stat-aegis);">DYNAMIC_COUNTER (動態反制策略)</div>
-                        <div class="module-content" style="color: #f1f5f9; font-weight: 500;">
-                            ${target.tactic}
+                            <div class="report-module" style="border: 1px solid rgba(255, 255, 255, 0.1);">
+                                <div class="corner-br" style="border-color: #fff;"></div>
+                                <div class="module-title" style="color: #fff;">ACTIONABLE_COUNTER (執行綱領)</div>
+                                <div class="module-content">
+                                    <ul class="tactic-list">
+                                        ${tacticsHtml}
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             `;
-            writeLog("CORE", `客觀分析完成：防守維度回歸實證數據。目標鎖定為 [${target.type}]。`);
+            writeLog("OMNI", `全知矩陣部署完成：綜合情報與行動綱領已生成。`);
         }
 
         function writeLog(tag, msg) {
             const feed = document.getElementById('log-feed');
             const div = document.createElement('div'); div.className = 'log-line';
             const now = new Date(); const ts = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
-            let tagClass = 'tag-sys'; if(tag === 'PRED') tagClass = 'tag-pred'; if(tag === 'ERR') tagClass = 'tag-err'; if(tag === 'AEGIS') tagClass = 'tag-aegis';
+            let tagClass = 'tag-sys'; if(tag === 'PRED') tagClass = 'tag-pred'; if(tag === 'ERR') tagClass = 'tag-err'; if(tag === 'OMNI') tagClass = 'tag-omni';
             div.innerHTML = `<span class="log-ts">${ts}</span><span class="log-tag ${tagClass}">${tag}</span> ${msg}`;
             feed.prepend(div);
             if(feed.children.length > LOG_LIMIT) feed.lastChild.remove();

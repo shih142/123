@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MAXIMA 12D - PRO ESPORTS HUD</title>
+    <title>MAXIMA 12D - ULTIMATE TACTICAL HUD</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* 引入科幻風格字體 */
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700;900&display=swap');
 
         :root {
             --cyan: #00f2ff;
             --purple: #bc13fe;
             --red: #ff2a2a;
+            --gold: #ffb700;
             --bg-dark: #05070f;
             --panel-bg: rgba(12, 15, 26, 0.85);
         }
@@ -30,12 +30,10 @@
             display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 40px 20px;
         }
 
-        /* 頂部標題 */
         header { text-align: center; margin-bottom: 30px; text-transform: uppercase; }
         h1 { font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 3rem; color: var(--cyan); letter-spacing: 6px; text-shadow: 0 0 20px rgba(0,242,255,0.4); margin-bottom: 5px; }
-        .sys-status { font-size: 1rem; color: var(--purple); letter-spacing: 3px; }
+        .sys-status { font-size: 1rem; color: var(--gold); letter-spacing: 3px; font-weight: bold; }
 
-        /* 搜尋控制列 */
         .control-hub {
             background: var(--panel-bg); border: 1px solid rgba(0, 242, 255, 0.3); padding: 20px; border-radius: 12px;
             display: flex; gap: 15px; width: 100%; max-width: 600px; margin-bottom: 30px;
@@ -48,7 +46,6 @@
             padding: 15px; border-radius: 6px; font-family: 'Orbitron', sans-serif; font-size: 1.1rem; outline: none; transition: 0.3s;
         }
         input:focus { box-shadow: 0 0 15px rgba(0, 242, 255, 0.4); }
-        input::placeholder { color: rgba(0, 242, 255, 0.3); }
 
         button {
             background: var(--cyan); color: #000; border: none; padding: 0 30px; border-radius: 6px;
@@ -56,12 +53,10 @@
         }
         button:hover { background: #fff; box-shadow: 0 0 20px var(--cyan); transform: scale(1.02); }
 
-        /* 錯誤警告框 */
-        #alert-box { display: none; width: 100%; max-width: 600px; padding: 15px; background: rgba(255, 42, 42, 0.1); border-left: 5px solid var(--red); color: var(--red); margin-bottom: 20px; font-weight: bold; border-radius: 4px; }
+        #alert-box { display: none; width: 100%; max-width: 600px; padding: 15px; background: rgba(255, 42, 42, 0.1); border-left: 5px solid var(--red); color: var(--red); margin-bottom: 20px; font-weight: bold; border-radius: 4px; text-align: center; }
 
-        /* 主控儀表板佈局 */
         .dashboard {
-            display: none; width: 100%; max-width: 1000px; gap: 25px; align-items: stretch; animation: fadeIn 0.8s ease-out forwards;
+            display: none; width: 100%; max-width: 1100px; gap: 25px; align-items: stretch; animation: fadeIn 0.8s ease-out forwards;
         }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
@@ -72,22 +67,38 @@
         }
 
         .side-panel { flex: 1; display: flex; flex-direction: column; gap: 20px; }
-        .radar-panel { flex: 1.5; display: flex; justify-content: center; align-items: center; position: relative; min-height: 400px; }
+        .radar-panel { flex: 1.5; display: flex; justify-content: center; align-items: center; position: relative; min-height: 450px; }
 
-        /* 玩家數值面板 */
-        .player-header { border-bottom: 2px solid var(--purple); padding-bottom: 15px; margin-bottom: 10px; }
-        .player-name { font-size: 2.2rem; font-family: 'Orbitron', sans-serif; font-weight: bold; color: #fff; text-transform: uppercase; word-break: break-all; }
-        .player-tag { color: var(--cyan); font-size: 1.2rem; letter-spacing: 2px; }
+        /* 戰力階級專屬區塊 */
+        .rating-box {
+            background: rgba(0, 0, 0, 0.6); border: 2px solid var(--gold); border-radius: 10px; padding: 20px; text-align: center;
+            box-shadow: 0 0 20px rgba(255, 183, 0, 0.2), inset 0 0 15px rgba(255, 183, 0, 0.1);
+            position: relative; overflow: hidden;
+        }
+        .rating-box::before {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: conic-gradient(transparent, transparent, transparent, var(--gold));
+            animation: rotate 4s linear infinite; opacity: 0.1; z-index: 0;
+        }
+        @keyframes rotate { 100% { transform: rotate(360deg); } }
+        .rating-label { font-size: 1rem; color: #aaa; font-weight: bold; letter-spacing: 2px; position: relative; z-index: 1; }
+        .rating-rank { 
+            font-family: 'Orbitron', sans-serif; font-size: 4rem; font-weight: 900; line-height: 1.1; margin: 5px 0;
+            text-shadow: 0 0 20px currentColor; position: relative; z-index: 1;
+        }
+        .rating-score { font-size: 1.2rem; color: #fff; font-family: 'Orbitron', sans-serif; position: relative; z-index: 1; }
+        .score-num { color: var(--cyan); font-weight: bold; }
 
-        .stat-group { background: rgba(255,255,255,0.02); padding: 15px; border-radius: 8px; border-left: 3px solid var(--cyan); }
-        .stat-label { font-size: 0.9rem; color: #888; text-transform: uppercase; margin-bottom: 5px; }
-        .stat-value { font-size: 2rem; font-weight: bold; color: #fff; display: flex; align-items: baseline; gap: 5px; }
-        .stat-unit { font-size: 1rem; color: var(--cyan); }
+        .player-header { border-bottom: 2px solid var(--purple); padding-bottom: 10px; margin-bottom: 5px; }
+        .player-name { font-size: 2rem; font-family: 'Orbitron', sans-serif; font-weight: bold; color: #fff; text-transform: uppercase; word-break: break-all; }
+        .player-tag { color: var(--cyan); font-size: 1.1rem; letter-spacing: 2px; }
 
-        .progress-bar { width: 100%; height: 6px; background: rgba(255,255,255,0.1); margin-top: 10px; border-radius: 3px; overflow: hidden; }
-        .progress-fill { height: 100%; background: var(--cyan); box-shadow: 0 0 10px var(--cyan); transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); }
+        .stat-group { background: rgba(255,255,255,0.02); padding: 12px; border-radius: 8px; border-left: 3px solid var(--cyan); }
+        .stat-label { font-size: 0.85rem; color: #888; text-transform: uppercase; margin-bottom: 3px; }
+        .stat-value { font-size: 1.8rem; font-weight: bold; color: #fff; display: flex; align-items: baseline; gap: 5px; }
+        .stat-unit { font-size: 0.9rem; color: var(--cyan); }
 
-        @media (max-width: 800px) {
+        @media (max-width: 900px) {
             .dashboard { flex-direction: column; }
             .radar-panel { min-height: 350px; }
         }
@@ -97,7 +108,7 @@
 
     <header>
         <h1>MAXIMA 12D</h1>
-        <div class="sys-status" id="sys-status">// PRO ESPORTS ANALYTICS ENGINE //</div>
+        <div class="sys-status" id="sys-status">/// ULTIMATE ESPORTS COMBAT EVALUATOR ///</div>
     </header>
 
     <div class="control-hub">
@@ -109,21 +120,26 @@
 
     <div class="dashboard" id="dashboard">
         <div class="panel side-panel">
+            
+            <div class="rating-box" id="rating-container">
+                <div class="rating-label">COMBAT POWER LEVEL</div>
+                <div class="rating-rank" id="ui-rank">--</div>
+                <div class="rating-score">SCORE: <span class="score-num" id="ui-score">0000</span></div>
+            </div>
+
             <div class="player-header">
                 <div class="player-tag" id="ui-tag">#TAG</div>
                 <div class="player-name" id="ui-name">PLAYER NAME</div>
             </div>
 
             <div class="stat-group">
-                <div class="stat-label">DEFENSIVE CAPACITY (AVG TOWER HP)</div>
-                <div class="stat-value"><span id="ui-hp">0</span> <span class="stat-unit">HP</span></div>
-                <div class="progress-bar"><div class="progress-fill" id="bar-hp" style="width: 0%;"></div></div>
-            </div>
-
-            <div class="stat-group">
-                <div class="stat-label">AGGRESSION INDEX (WIN RATE)</div>
+                <div class="stat-label">WIN RATE (AGGRESSION)</div>
                 <div class="stat-value"><span id="ui-win">0</span> <span class="stat-unit">%</span></div>
-                <div class="progress-bar"><div class="progress-fill" id="bar-win" style="width: 0%; background: var(--purple); box-shadow: 0 0 10px var(--purple);"></div></div>
+            </div>
+            
+            <div class="stat-group">
+                <div class="stat-label">AVG ELIXIR (PACING)</div>
+                <div class="stat-value"><span id="ui-elixir">0.0</span> <span class="stat-unit">DROPS</span></div>
             </div>
 
             <div class="stat-group" style="border-left-color: #555;">
@@ -140,72 +156,48 @@
     <script>
         let myChart = null;
 
-        // UI 錯誤顯示控制
         function showAlert(msg) {
             const box = document.getElementById('alert-box');
             box.style.display = 'block';
             box.innerText = `[SYSTEM ERROR] ${msg}`;
         }
-        function hideAlert() { 
-            document.getElementById('alert-box').style.display = 'none'; 
-        }
+        function hideAlert() { document.getElementById('alert-box').style.display = 'none'; }
 
-        // ==========================================
-        // 工具函數群
-        // ==========================================
-
-        // 1. Tag Hash 用於微調同分數據 (產生穩定的偽隨機數)
         function getTagHash(tag) {
             let hash = 0;
-            for (let i = 0; i < tag.length; i++) {
-                hash = tag.charCodeAt(i) + ((hash << 5) - hash);
-            }
+            for (let i = 0; i < tag.length; i++) hash = tag.charCodeAt(i) + ((hash << 5) - hash);
             return Math.abs(hash);
         }
 
-        // 2. 計算標準差 (用於評估玩家表現的穩定度 STA)
         function calculateStandardDeviation(arr, mean) {
             if (!arr || arr.length === 0) return 0;
             const variance = arr.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / arr.length;
             return Math.sqrt(variance);
         }
 
-        // 3. 限制數值邊界 (15 ~ 98 之間，確保雷達圖形狀具備鑑別度且不會穿模)
-        function clamp(val) { 
-            return Math.max(15, Math.min(98, Math.round(val))); 
-        }
+        function clamp(val) { return Math.max(15, Math.min(100, val)); }
 
-        // ==========================================
-        // 核心掃描流程
-        // ==========================================
         async function runScan() {
             const tagInput = document.getElementById('playerTag').value;
             const btn = document.getElementById('scanBtn');
             const dashboard = document.getElementById('dashboard');
             
-            // 嚴格過濾特殊字元
             const cleanTag = tagInput.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-            if (!cleanTag) return showAlert("INVALID TAG FORMAT. PLEASE CHECK YOUR INPUT.");
+            if (!cleanTag) return showAlert("INVALID TAG FORMAT.");
 
             hideAlert();
             dashboard.style.display = "none";
-            btn.innerText = "RUNNING PRO-METRICS...";
+            btn.innerText = "CALCULATING...";
             btn.style.pointerEvents = "none";
 
             try {
                 const targetUrl = new URL('/api/clash-proxy', window.location.origin);
                 targetUrl.searchParams.append('tag', cleanTag);
 
-                const response = await fetch(targetUrl.toString(), { 
-                    method: 'GET', 
-                    headers: { 'Accept': 'application/json' } 
-                });
-                
+                const response = await fetch(targetUrl.toString(), { method: 'GET', headers: { 'Accept': 'application/json' } });
                 const data = await response.json();
                 
-                if (!response.ok) {
-                    throw new Error(data.details || data.error || "Connection Failed.");
-                }
+                if (!response.ok) throw new Error(data.details || data.error || "Connection Failed.");
 
                 updateUI(data);
                 
@@ -218,24 +210,17 @@
             }
         }
 
-        // ==========================================
-        // 介面更新與職業級權重矩陣演算法
-        // ==========================================
         function updateUI(data) {
             document.getElementById('dashboard').style.display = "flex";
             
-            // 1. 更新左側基礎面板
+            // 基礎資料寫入
             document.getElementById('ui-tag').innerText = `#${data.tag}`;
             document.getElementById('ui-name').innerText = data.name;
-            document.getElementById('ui-hp').innerText = data.avgTowerHP;
             document.getElementById('ui-win').innerText = data.winRate;
             document.getElementById('ui-battles').innerText = data.battleCount;
+            document.getElementById('ui-elixir').innerText = data.avgDeckElixir || 'N/A';
 
-            const hpPercent = (data.avgTowerHP / 8500) * 100;
-            document.getElementById('bar-hp').style.width = `${Math.min(100, hpPercent)}%`;
-            document.getElementById('bar-win').style.width = `${data.winRate}%`;
-
-            // 2. 解析進階數據
+            // 進階數據準備
             const winR = data.winRate || 0;
             const avgElixir = parseFloat(data.avgDeckElixir) || 3.5; 
             const hpStdDev = calculateStandardDeviation(data.hpHistory, data.avgTowerHP);
@@ -244,62 +229,101 @@
             const threeCrownR = (data.threeCrownRate || 0) * 100;
             const crownsEarned = parseFloat(data.avgCrownsEarned) || 0;
             const crownsLost = parseFloat(data.avgCrownsLost) || 0;
+            const hpPercent = (data.avgTowerHP / 8500) * 100;
 
-            // 3. 職業級 12D 演算法 (Esports Weight Matrix)
+            // ==========================================
+            // 終極非線性演算法 (Non-linear Formula)
+            // ==========================================
             
-            // SKL (技巧): 勝率加權牌組均費。費用越低容錯越小，技巧加乘越高。
-            const elixirMultiplier = (3.5 / avgElixir); 
-            const SKL = winR * elixirMultiplier * 1.1;
+            // SKL (技巧): 極限指數化。低費高勝率玩家會獲得爆炸性加成
+            const elixirFactor = Math.pow(3.5 / Math.max(1.5, avgElixir), 1.5);
+            const SKL = clamp(winR * elixirFactor * 1.2);
 
-            // SPD (節奏): 依賴卡組均費與三冠率。均費越低，輪轉越快(APM越高)。
-            const SPD = ((5.0 - avgElixir) / 2.0) * 80 + (threeCrownR * 0.3);
+            // SPD (節奏): 均費越低加上三冠率高，節奏分數越頂尖
+            const SPD = clamp(((5.0 - avgElixir) * 20) + Math.pow(threeCrownR, 1.1) * 1.5);
 
-            // STA (穩定): 反向映射塔血標準差。每場血量波動越小，代表發揮越穩定。
-            const STA = Math.max(0, 100 - ((hpStdDev / 3000) * 100)) * 0.7 + (winR * 0.3);
+            // STA (穩定): 標準差的對數遞減，血量越穩分數越高
+            const STA = clamp(100 - (hpStdDev / 40) + (winR * 0.2));
 
-            // CLT (抗壓): 極限鎖血勝率 + 一冠險勝率。
-            const CLT = (lowHpClutchR * 4.0) + (clutchR * 1.5);
+            // CLT (抗壓): 殘血反殺率的極限放大
+            const CLT = clamp((lowHpClutchR * 5.0) + (clutchR * 2.0));
 
-            // INT (戰術): 聖水控制力與防守效益。高均費若能保持高塔血，代表防守賺費能力極強。
-            const INT = (avgElixir / 4.0) * Math.min(100, hpPercent) * 1.2 + (winR * 0.4);
+            // INT (戰術): 依賴勝率與控制掉冠的綜合表現
+            const crownDefenseFactor = Math.max(0, 3 - crownsLost) / 3;
+            const INT = clamp((winR * 0.6) + (crownDefenseFactor * 100 * 0.6));
 
-            // DEF (防禦): 平均掉冠數與塔血留存的綜合評估。
-            const DEF = ((3 - crownsLost) / 3) * 60 + (hpPercent * 0.4);
+            // DEF (防禦): 血量與不掉塔指數
+            const DEF = clamp((crownDefenseFactor * 100 * 0.7) + (hpPercent * 0.4));
 
-            // ATK (攻擊): 拿冠能力。
-            const ATK = (crownsEarned / 3) * 70 + (winR * 0.3);
+            // ATK (攻擊): 拿冠效率
+            const ATK = clamp((crownsEarned / 3) * 100 * 0.6 + (winR * 0.5));
 
-            // CRT (爆發): 純粹的三冠輾壓能力。
-            const CRT = threeCrownR * 2.5;
+            // CRT (爆發): 三冠率的指數爆發
+            const CRT = clamp(Math.pow(threeCrownR, 1.2) * 2.5);
 
-            // END (耐力): 險勝率(經常打進 overtime) + 場次活躍度。
-            const END = (clutchR * 1.5) + Math.min(30, data.battleCount * 1.5);
+            // END (耐力): 險勝次數極多代表極強的持久戰能力
+            const END = clamp((clutchR * 2.5) + (data.battleCount * 1.2));
 
-            // ACC (精準): 淨勝冠數差 (賺到的皇冠減去失去的)。
-            const ACC = 50 + ((crownsEarned - crownsLost) * 25); 
+            // ACC (精準): 每場淨勝皇冠差距
+            const ACC = clamp(50 + ((crownsEarned - crownsLost) * 30)); 
 
-            // AGI (靈活): 綜合節奏與抗壓，應對不同牌組的能力。
-            const AGI = (SPD * 0.4) + (CLT * 0.3) + (SKL * 0.3);
+            // AGI (靈活): 結合技巧與節奏的複合數值
+            const AGI = clamp((SPD * 0.4) + (SKL * 0.4) + (CLT * 0.2));
 
-            // LUK (運氣): 透過 Tag 產生微小的基礎波動，加上險勝加成。
-            const LUK = (getTagHash(data.tag) % 30) + 40 + (clutchR * 0.5);
+            // LUK (運氣): 雜湊加上殘血生存係數
+            const LUK = clamp((getTagHash(data.tag) % 25) + 50 + lowHpClutchR);
 
-            // 4. 陣列封裝與繪圖
-            const metrics = [
-                clamp(DEF), clamp(ATK), clamp(SKL), clamp(CRT), 
-                clamp(END), clamp(CLT), clamp(SPD), clamp(ACC), 
-                clamp(LUK), clamp(STA), clamp(AGI), clamp(INT)
-            ];
+            const metrics = [DEF, ATK, SKL, CRT, END, CLT, SPD, ACC, LUK, STA, AGI, INT];
 
-            drawChart(metrics);
+            // ==========================================
+            // 戰力階級系統 (Combat Power & Tier Ranking)
+            // ==========================================
+            
+            // 計算總分 (滿分理論上接近 12000，我們將其標準化為 0~9999 的戰力指數)
+            const averageStat = metrics.reduce((a, b) => a + b, 0) / 12;
+            const rawScore = Math.round((averageStat / 100) * 8000 + (winR * 20)); 
+            
+            // 決定階級與顏色
+            let rank = 'D';
+            let rankColor = '#aaa';
+
+            if (rawScore >= 9000) { rank = 'SSS'; rankColor = '#ffb700'; }      // God Tier (金)
+            else if (rawScore >= 8000) { rank = 'SS'; rankColor = '#ff2a2a'; } // Pro Tier (紅)
+            else if (rawScore >= 7000) { rank = 'S'; rankColor = '#bc13fe'; }  // Elite Tier (紫)
+            else if (rawScore >= 6000) { rank = 'A'; rankColor = '#00f2ff'; }  // Diamond Tier (青)
+            else if (rawScore >= 5000) { rank = 'B'; rankColor = '#00ff44'; }  // Gold Tier (綠)
+            else if (rawScore >= 4000) { rank = 'C'; rankColor = '#fff'; }     // Silver Tier (白)
+
+            // 更新 UI 戰力評級
+            const uiRank = document.getElementById('ui-rank');
+            const ratingContainer = document.getElementById('rating-container');
+            
+            uiRank.innerText = rank;
+            uiRank.style.color = rankColor;
+            ratingContainer.style.borderColor = rankColor;
+            
+            // 數字動畫滾動效果
+            animateValue("ui-score", 0, rawScore, 1000);
+
+            drawChart(metrics, rankColor);
         }
 
-        // ==========================================
-        // Chart.js 雷達圖繪製
-        // ==========================================
-        function drawChart(dataValues) {
+        // 數字滾動動畫函數
+        function animateValue(id, start, end, duration) {
+            const obj = document.getElementById(id);
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                obj.innerHTML = Math.floor(progress * (end - start) + start);
+                if (progress < 1) { window.requestAnimationFrame(step); }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        function drawChart(dataValues, mainColor) {
             const ctx = document.getElementById('radarChart').getContext('2d');
-            if (myChart) myChart.destroy(); // 避免圖表重疊
+            if (myChart) myChart.destroy(); 
             
             Chart.defaults.color = '#888';
             Chart.defaults.font.family = 'Orbitron';
@@ -309,41 +333,30 @@
                 data: {
                     labels: ['DEF (防禦)', 'ATK (攻擊)', 'SKL (技巧)', 'CRT (爆發)', 'END (耐力)', 'CLT (抗壓)', 'SPD (節奏)', 'ACC (精準)', 'LUK (運氣)', 'STA (穩定)', 'AGI (靈活)', 'INT (戰術)'],
                     datasets: [{
-                        label: 'PRO METRICS',
+                        label: 'POWER METRICS',
                         data: dataValues,
-                        backgroundColor: 'rgba(0, 242, 255, 0.15)',
-                        borderColor: '#00f2ff',
+                        backgroundColor: `${mainColor}25`, // 動態根據階級改變透明背景色 (Hex + 25 alpha)
+                        borderColor: mainColor, // 動態邊框色
                         borderWidth: 2,
-                        pointBackgroundColor: '#bc13fe',
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: '#00f2ff',
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: mainColor,
+                        pointHoverBackgroundColor: mainColor,
+                        pointHoverBorderColor: '#fff',
                         pointRadius: 3,
                         pointHoverRadius: 6
                     }]
                 },
                 options: {
-                    responsive: true, 
-                    maintainAspectRatio: false,
+                    responsive: true, maintainAspectRatio: false,
                     scales: {
                         r: {
-                            angleLines: { color: 'rgba(0, 242, 255, 0.2)', lineWidth: 1 },
-                            grid: { color: 'rgba(0, 242, 255, 0.1)', circular: true },
-                            pointLabels: { color: '#00f2ff', font: { size: 10, weight: 'bold' } },
+                            angleLines: { color: 'rgba(255, 255, 255, 0.1)', lineWidth: 1 },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)', circular: true },
+                            pointLabels: { color: mainColor, font: { size: 11, weight: 'bold' } },
                             ticks: { display: false, min: 0, max: 100 }
                         }
                     },
-                    plugins: { 
-                        legend: { display: false }, 
-                        tooltip: { 
-                            backgroundColor: 'rgba(0,0,0,0.8)', 
-                            titleColor: '#00f2ff', 
-                            bodyFont: { size: 14, family: 'Rajdhani' },
-                            padding: 10,
-                            borderColor: '#bc13fe',
-                            borderWidth: 1
-                        } 
-                    }
+                    plugins: { legend: { display: false }, tooltip: { backgroundColor: 'rgba(0,0,0,0.9)', titleColor: mainColor, bodyFont: {size: 14} } }
                 }
             });
         }

@@ -2,162 +2,66 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MAXIMA 12D - 戰術人格掃描儀</title>
+    <title>MAXIMA 12D SCANNER</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root {
-            --neon-blue: #00f2ff;
-            --cyber-purple: #bc13fe;
-            --dark-bg: #0d0e14;
-        }
-        body {
-            background-color: var(--dark-bg);
-            color: #e0e0e0;
-            font-family: 'Orbitron', sans-serif, "Microsoft JhengHei";
-            display: flex; flex-direction: column; align-items: center; padding: 40px 20px;
-        }
-        .panel {
-            background: linear-gradient(145deg, #161822, #0d0e14);
-            border: 1px solid var(--neon-blue);
-            border-radius: 20px; padding: 30px; width: 100%; max-width: 700px;
-            box-shadow: 0 0 30px rgba(0, 242, 255, 0.15); text-align: center;
-        }
-        h1 { font-size: 2rem; letter-spacing: 5px; color: var(--neon-blue); margin-bottom: 5px; }
-        .subtitle { font-size: 0.8rem; color: var(--cyber-purple); margin-bottom: 30px; text-transform: uppercase; }
-        
-        .search-box { display: flex; gap: 10px; justify-content: center; margin-bottom: 25px; }
-        input {
-            background: #1a1c2a; border: 1px solid #333; color: white;
-            padding: 12px 20px; border-radius: 8px; outline: none; width: 200px;
-        }
-        input:focus { border-color: var(--neon-blue); }
-        button {
-            background: var(--neon-blue); color: black; border: none;
-            padding: 12px 25px; border-radius: 8px; font-weight: bold;
-            cursor: pointer; transition: 0.3s;
-        }
-        button:hover { box-shadow: 0 0 20px var(--neon-blue); transform: translateY(-2px); }
-
-        #status { font-size: 0.9rem; margin-bottom: 20px; color: #888; min-height: 1.2em; }
-        canvas { margin: 20px 0; }
-        
-        .result-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px;
-        }
-        .card {
-            background: rgba(255,255,255,0.03); padding: 15px; border-radius: 10px;
-            border-bottom: 2px solid var(--cyber-purple);
-        }
-        .card-label { font-size: 0.75rem; color: #aaa; margin-bottom: 5px; }
-        .card-value { font-size: 1.5rem; font-weight: bold; color: white; }
+        body { background: #0a0b10; color: #00f2ff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; padding: 50px; }
+        .box { background: #161822; padding: 30px; border-radius: 15px; border: 1px solid #00f2ff; width: 400px; text-align: center; }
+        input { background: #000; border: 1px solid #00f2ff; color: #fff; padding: 10px; width: 60%; border-radius: 5px; }
+        button { background: #00f2ff; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold; margin-left: 5px; border-radius: 5px; }
+        #status { margin: 15px 0; font-size: 0.8rem; color: #888; }
+        canvas { margin-top: 20px; }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <div class="panel">
-        <h1>MAXIMA 12D</h1>
-        <div class="subtitle">Tactical Intelligence Interface</div>
+<div class="box">
+    <h2>MAXIMA 12D</h2>
+    <input type="text" id="tag" placeholder="#P8RR2P">
+    <button onclick="scan()">SCAN</button>
+    <div id="status">系統就緒</div>
+    <canvas id="radar"></canvas>
+</div>
 
-        <div class="search-box">
-            <input type="text" id="playerTag" placeholder="PLAYER TAG (e.g. #P8RR2P)">
-            <button onclick="startAnalysis()">START SCAN</button>
-        </div>
+<script>
+    let chart;
+    async function scan() {
+        const tag = document.getElementById('tag').value.trim();
+        const status = document.getElementById('status');
+        if(!tag) return;
 
-        <div id="status">等待輸入系統指令...</div>
+        status.innerText = "📡 正在連線數據中心...";
+        
+        try {
+            // 重要：使用 URLSearchParams 或手動確保參數不含特殊字元造成的 Pattern 錯誤
+            const queryTag = tag.replace('#', '');
+            const res = await fetch(`/api/clash-proxy?tag=${encodeURIComponent(queryTag)}`);
+            const data = await res.json();
 
-        <canvas id="radarChart"></canvas>
+            if(!res.ok) throw new Error(data.message || "請求失敗");
 
-        <div class="result-grid" id="resultGrid" style="display: none;">
-            <div class="card">
-                <div class="card-label">平均塔血 (守備力)</div>
-                <div id="resTower" class="card-value">-</div>
-            </div>
-            <div class="card">
-                <div class="card-label">近期勝率 (侵略性)</div>
-                <div id="resWin" class="card-value">-</div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        let chart = null;
-
-        async function startAnalysis() {
-            const tag = document.getElementById('playerTag').value.trim();
-            const status = document.getElementById('status');
-            if (!tag) return alert("請輸入 Tag");
-
-            status.innerText = "📡 正在透過 RoyaleAPI Proxy 擷取數據...";
-            status.style.color = "var(--neon-blue)";
-
-            try {
-                // Vercel 自動識別 /api/clash-proxy
-                const response = await fetch(`/api/clash-proxy?tag=${encodeURIComponent(tag)}`);
-                const data = await response.json();
-
-                if (data.error) throw new Error(data.details || data.error);
-
-                displayData(data);
-                status.innerText = `✅ 掃描完成: ${data.name}`;
-                status.style.color = "#00ff88";
-            } catch (err) {
-                console.error(err);
-                status.innerText = `❌ 錯誤: ${err.message}`;
-                status.style.color = "#ff4444";
-            }
+            status.innerText = `✅ 玩家: ${data.name} (平均塔血: ${data.avgTowerHP})`;
+            updateChart([
+                (data.avgTowerHP/8000)*100, data.winRate, 85, 70, 60, 90, 75, 80, 65, 88, 70, 85
+            ]);
+        } catch (e) {
+            status.innerText = `❌ 錯誤: ${e.message}`;
+            console.error(e);
         }
+    }
 
-        function displayData(data) {
-            document.getElementById('resultGrid').style.display = 'grid';
-            document.getElementById('resTower').innerText = `${data.avgTowerHP} HP`;
-            document.getElementById('resWin').innerText = `${data.winRate}%`;
-
-            // 將數據映射至 12D 座標 (指標算法範例)
-            const metrics = [
-                Math.min(100, (data.avgTowerHP / 8500) * 100), // DEF
-                data.winRate,                                 // ATK
-                Math.random() * 20 + 70,                      // SKL (範例)
-                Math.random() * 50 + 40,                      // CRT
-                data.battleCount * 2,                         // END
-                (data.avgTowerHP > 4000) ? 90 : 40,           // CLT (抗壓)
-                75, 80, 65, 88, 72, 85                        // 預設其他維度
-            ];
-
-            updateChart(metrics);
-        }
-
-        function updateChart(dataPoints) {
-            const ctx = document.getElementById('radarChart').getContext('2d');
-            if (chart) chart.destroy();
-
-            chart = new Chart(ctx, {
-                type: 'radar',
-                data: {
-                    labels: ['DEF', 'ATK', 'SKL', 'CRT', 'END', 'CLT', 'SPD', 'ACC', 'LUK', 'INT', 'AGI', 'STA'],
-                    datasets: [{
-                        label: '12D PROFILE',
-                        data: dataPoints,
-                        backgroundColor: 'rgba(0, 242, 255, 0.15)',
-                        borderColor: '#00f2ff',
-                        pointBackgroundColor: '#bc13fe',
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    scales: {
-                        r: {
-                            grid: { color: 'rgba(255,255,255,0.05)' },
-                            angleLines: { color: 'rgba(255,255,255,0.1)' },
-                            pointLabels: { color: '#888', font: { size: 10 } },
-                            ticks: { display: false, max: 100, min: 0 }
-                        }
-                    },
-                    plugins: { legend: { display: false } }
-                }
-            });
-        }
-    </script>
+    function updateChart(vals) {
+        const ctx = document.getElementById('radar');
+        if(chart) chart.destroy();
+        chart = new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: ['DEF', 'ATK', 'SKL', 'CRT', 'END', 'CLT', 'SPD', 'ACC', 'LUK', 'INT', 'AGI', 'STA'],
+                datasets: [{ data: vals, borderColor: '#00f2ff', backgroundColor: 'rgba(0,242,255,0.2)' }]
+            },
+            options: { plugins: { legend: { display: false } }, scales: { r: { grid: { color: '#333' }, ticks: { display: false }, suggestedMax: 100 } } }
+        });
+    }
+</script>
 </body>
 </html>

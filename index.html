@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>神經矩陣 MAXIMA | V9.0 APEX-MATRIX (PRO ESPORTS)</title>
+    <title>神經矩陣 MAXIMA | V9.5 APEX-MATRIX (PRO ESPORTS)</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -131,7 +131,7 @@
 
     <header>
         <div class="system-status">
-            <div class="status-node"><div class="dot blink"></div> V9.0 APEX-MATRIX | PRO_ESPORTS_SCAN</div>
+            <div class="status-node"><div class="dot blink"></div> V9.5 APEX-MATRIX | PRO_ESPORTS_SCAN</div>
         </div>
         <div style="font-family: 'Orbitron'; font-size: 16px; letter-spacing: 4px; color: #fff;">MAXIMA_DATACENTER</div>
     </header>
@@ -190,7 +190,7 @@
                         <div class="report-grid">
                             <div class="report-module module-full">
                                 <div class="module-title">PRO_ANALYTICS_ENGINE</div>
-                                <div class="module-content">V9.0 巔峰矩陣 (Apex-Matrix) 已加載。支援 12 維度電競級深層數據解析，並搭載高階抽象數學模型進行特徵擷取。</div>
+                                <div class="module-content">V9.5 巔峰矩陣 (Apex-Matrix) 已加載。全面升級攻守雙端動力學矩陣，支援 12 維度電競級深層數據解析。</div>
                             </div>
                         </div>
                     </div>
@@ -202,7 +202,7 @@
             <div class="section-label"><span>TELEMETRY_LOG</span><span>LOG_FEED</span></div>
             <div id="log-feed" class="sim-log">
                 <div class="log-line"><span class="log-ts">00:00:00</span> <span class="log-tag tag-sys">SYS</span> ESPORTS 模式啟動。12D 運算節點上線。</div>
-                <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-tag tag-sys">SYS</span> 等待注入玩家座標進行高維解構。</div>
+                <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-tag tag-sys">SYS</span> 攻守雙端非線性動力學核心準備就緒。</div>
             </div>
 
             <div class="data-box">
@@ -282,7 +282,7 @@
 
         function run12DModel(rawData) {
             writeLog("OMNI", "12D Apex-Matrix: 抽象非線性張量運算 (Abstract Tensor Calculus) 已啟動...");
-            writeLog("SYS", "INI, DEF, CON 模組已升級為進階統計動力學模型。");
+            writeLog("SYS", "攻守雙端動力學矩陣 (Offensive/Defensive Dynamics Matrix) 升級實裝完畢。");
 
             const name = rawData.name || "UNKNOWN";
             const W = rawData.wins || 0; 
@@ -321,20 +321,24 @@
             // 2. ECO (資源)
             const eco = normalize( 45 + (win_momentum * 12 * noise(0.15)) );
             
-            // 3. TMP (節奏)
-            const tmp = normalize( 50 + (Math.sin(N * p) * 15) + (sigmoid(win_momentum) * 30) * noise(0.1) );
+            // 3. TMP (節奏): [V9.5 升級] 傅立葉高頻震盪
+            const tmp_phase = (N % 100) / 100;
+            const tmp = normalize( 50 + (Math.sin(tmp_phase * Math.PI * 2) * 15) + (Math.tanh(elo_deviation) * 25) * noise(0.15) );
             
             // 4. MIC (微操)
             const mic = normalize( (exp_asymptote * 8) + (Math.pow(elo_deviation, 1.2) * 35) * noise(0.15) );
             
-            // 5. INI (主動): [升級] 導入雙曲正切函數 (Hyperbolic Tangent)
-            const ini = normalize( 40 + (Math.tanh(win_momentum / 2) * 35) + (p * elo_deviation * 25) * noise(0.2) );
+            // 5. INI (主動): [V9.5 升級] 洛特卡-沃爾泰拉掠食者模型
+            const ini_momentum = Math.pow(p, 1.5) * exp_asymptote;
+            const ini = normalize( 45 + (Math.tanh(win_momentum) * 30) + (ini_momentum * 4) * noise(0.2) );
             
-            // 6. DEF (防守): [升級] 採用反向指數衰減模型 (Inverse Exponential Decay)
-            const def = normalize( (1 - Math.exp(-N / 5000)) * 70 + (gaussian(elo_deviation, 1.0, 0.2) * 30) * noise(0.1) );
+            // 6. DEF (防守): [V9.5 升級] 臨界阻尼與應激反應
+            const stress_factor = p < 0.5 ? Math.exp(0.5 - p) : 1.0; 
+            const def = normalize( (1 - Math.exp(-N / 4000)) * 65 * stress_factor + (gaussian(elo_deviation, 1.05, 0.15) * 35) * noise(0.1) );
             
-            // 7. CLT (抗壓)
-            const clt = normalize( sigmoid((win_momentum - 1.5) * 2) * 85 * noise(0.1) + 10 );
+            // 7. CLT (抗壓): [V9.5 升級] 貝氏生存機率
+            const survival_odds = sigmoid((win_momentum - 1.0) * 2.5);
+            const clt = normalize( 20 + (survival_odds * 75) + (Math.log10(T + 1) * 2) * noise(0.08) );
             
             // 8. PRD (預判)
             const prd = normalize( Math.pow(elo_deviation, 1.5) * 35 + (exp_asymptote * 12) * noise(0.15) );
@@ -346,7 +350,7 @@
             // 10. ADP (適應)
             const adp = normalize( gaussian(p, 0.55, 0.1) * 85 * noise(0.15) );
             
-            // 11. CON (穩定): [升級] 統計顯著性與信賴區間收斂模型
+            // 11. CON (穩定)
             const stability_mass = exp_asymptote * (1 - Math.abs(p - 0.5) * 2); 
             const con = normalize( 20 + (sigmoid(stability_mass - 1.5) * 80) * noise(0.05) );
             

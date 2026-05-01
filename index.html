@@ -108,7 +108,7 @@
 
     <header>
         <h1>MAXIMA 12D</h1>
-        <div class="sys-status" id="sys-status">/// QUANTUM ENTANGLEMENT ANALYTICS ENGINE ///</div>
+        <div class="sys-status" id="sys-status">/// BAYESIAN TENSOR ANALYTICS ENGINE ///</div>
     </header>
 
     <div class="control-hub">
@@ -122,7 +122,7 @@
         <div class="panel side-panel">
             
             <div class="rating-box" id="rating-container">
-                <div class="rating-label">QUANTUM COHERENCE LEVEL</div>
+                <div class="rating-label">BAYESIAN TENSOR LEVEL</div>
                 <div class="rating-rank" id="ui-rank">--</div>
                 <div class="rating-score">EIGENVALUE: <span class="score-num" id="ui-score">0000</span></div>
             </div>
@@ -133,7 +133,7 @@
             </div>
 
             <div class="stat-group">
-                <div class="stat-label">WAVE COLLAPSE PROBABILITY</div>
+                <div class="stat-label">BAYESIAN WIN PROBABILITY</div>
                 <div class="stat-value"><span id="ui-win">0</span> <span class="stat-unit">%</span></div>
             </div>
             
@@ -163,14 +163,12 @@
         }
         function hideAlert() { document.getElementById('alert-box').style.display = 'none'; }
 
-        // Tag Hash (用於引發量子隨機擾動)
         function getTagHash(tag) {
             let hash = 0;
             for (let i = 0; i < tag.length; i++) hash = tag.charCodeAt(i) + ((hash << 5) - hash);
             return Math.abs(hash);
         }
 
-        // 變異數與標準差
         function calculateStandardDeviation(arr, mean) {
             if (!arr || arr.length === 0) return 0;
             const variance = arr.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / arr.length;
@@ -178,19 +176,37 @@
         }
 
         // ==========================================
-        // 量子數學函數庫 (Quantum Math Library)
+        // 高階統計與機器學習函數庫 (Advanced Stats & ML Math)
         // ==========================================
         
         function clamp(val) { return Math.max(15, Math.min(99, val)); }
 
-        // 邏輯斯諦 S型曲線 (模擬機率分佈的非線性收斂)
+        // S型收斂函數 (Sigmoid) - 用於將無限延伸的特徵值壓縮至 0-100 的機率分佈空間
         function sigmoid(val, x0, k) {
             return 100 / (1 + Math.exp(-k * (val - x0)));
         }
 
-        // 對數增幅 (平滑處理天文級觀測次數)
-        function logScale(val, modifier) {
-            return Math.log(val + 1) * modifier;
+        // 貝氏平滑推論 (Bayesian Inference) - 解決小樣本極端值偏差
+        // 假設伺服器平均勝率為 50%，權重設為 40 場。如果只打 1 場贏 1 場，不會判定為 100% 神手。
+        function bayesianEstimate(observedRate, totalMatches, priorRate = 50, priorWeight = 40) {
+            if (totalMatches === 0) return priorRate;
+            const observedSuccesses = (observedRate / 100) * totalMatches;
+            const priorSuccesses = (priorRate / 100) * priorWeight;
+            return ((observedSuccesses + priorSuccesses) / (totalMatches + priorWeight)) * 100;
+        }
+
+        // Box-Muller 轉換 (標準常態分佈隨機生成) - 用於模擬真實物理環境的白噪聲與量子退相干
+        function boxMullerTransform() {
+            let u = 0, v = 0;
+            while(u === 0) u = Math.random();
+            while(v === 0) v = Math.random();
+            return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+        }
+
+        // L2 範數 (Euclidean Norm) - 計算高維度空間中的向量長度
+        function calculateL2Norm(vector) {
+            const sumOfSquares = vector.reduce((acc, val) => acc + Math.pow(val, 2), 0);
+            return Math.sqrt(sumOfSquares);
         }
 
         async function runScan() {
@@ -203,7 +219,7 @@
 
             hideAlert();
             dashboard.style.display = "none";
-            btn.innerText = "COLLAPSING WAVEFUNCTIONS...";
+            btn.innerText = "COMPUTING TENSORS...";
             btn.style.pointerEvents = "none";
 
             try {
@@ -227,100 +243,115 @@
         }
 
         // ==========================================
-        // 量子抽象維度核心算法 (Quantum Dimension Algorithms)
+        // 貝氏張量分析引擎核心 (Bayesian Tensor Analytics Engine)
         // ==========================================
         function updateUI(data) {
             document.getElementById('dashboard').style.display = "flex";
             
+            const rawWinR = data.winRate || 0;
+            const battleCount = Math.max(1, data.battleCount || 1);
+            
+            // 經貝氏平滑處理的客觀數據
+            const bWinR = bayesianEstimate(rawWinR, battleCount, 50, 40);
+            const bThreeCrownR = bayesianEstimate((data.threeCrownRate || 0) * 100, battleCount, 15, 30);
+            
             document.getElementById('ui-tag').innerText = `#${data.tag}`;
             document.getElementById('ui-name').innerText = data.name;
-            document.getElementById('ui-win').innerText = data.winRate;
-            document.getElementById('ui-battles').innerText = data.battleCount;
+            document.getElementById('ui-win').innerText = bWinR.toFixed(1);
+            document.getElementById('ui-battles').innerText = battleCount;
             document.getElementById('ui-elixir').innerText = data.avgDeckElixir || 'N/A';
 
-            // 提取觀測態原始數據
-            const winR = data.winRate || 0;
+            // 提取基礎觀測態數據
             const avgElixir = parseFloat(data.avgDeckElixir) || 3.5; 
-            const avgTowerHP = parseFloat(data.avgTowerHP) || 0;
+            const avgTowerHP = Math.max(1, parseFloat(data.avgTowerHP) || 3000); // 避免除以零
             const hpStdDev = calculateStandardDeviation(data.hpHistory, avgTowerHP);
-            const lowHpClutchR = (data.lowHpClutchRate || 0) * 100;
-            const clutchR = (data.clutchRate || 0) * 100;
-            const threeCrownR = (data.threeCrownRate || 0) * 100;
+            const lowHpClutchR = (data.lowHpClutchRate || 0);
+            const clutchR = (data.clutchRate || 0);
             const crownsEarned = parseFloat(data.avgCrownsEarned) || 0;
             const crownsLost = parseFloat(data.avgCrownsLost) || 0;
-            const hpPercent = (avgTowerHP / 8500) * 100;
+            const hpPercent = (avgTowerHP / 8500); // 假設塔滿血約為 8500 (雙塔+主塔)
 
-            // 1. SKL (Heisenberg Uncertainty / 測不準極限) - [量子諧振子模型]
+            // 1. SKL (Bayesian Complexity / 貝氏複雜度極限)
+            // 結合貝氏勝率、諧振子聖水偏離模型與極限操作係數
             const baseEnergyLevel = 3.3; 
             const elixirDeviation = Math.pow(avgElixir - baseEnergyLevel, 2); 
-            const uncertaintyOperator = winR * (1 + elixirDeviation * 0.45) * (1 + lowHpClutchR * 0.5);
-            const SKL = clamp(sigmoid(uncertaintyOperator, 75, 0.04));
+            const complexityTensor = bWinR * (1 + elixirDeviation * 0.5) * (1 + lowHpClutchR * 2.0);
+            const SKL = clamp(sigmoid(complexityTensor, 75, 0.035));
 
-            // 2. SPD (Phase Velocity / 物質波相速度)
-            const phaseVelocity = (winR / 50) * (6.0 - avgElixir) * 20;
-            const SPD = clamp(sigmoid(phaseVelocity, 80, 0.04));
+            // 2. SPD (Kinetic Cycle Velocity / 聖水動能流速)
+            const phaseVelocity = (bWinR / 50) * Math.max(0.1, (6.0 - avgElixir)) * 20;
+            const SPD = clamp(sigmoid(phaseVelocity, 75, 0.04));
 
-            // 3. STA (Zero-Point Fluctuation / 基態零點漲落)
-            const zeroPoint = 1000 - hpStdDev;
-            const STA = clamp(sigmoid(zeroPoint, 300, 0.005));
+            // 3. STA (Coefficient of Variation / 變異係數熵減)
+            // 捨棄絕對標準差，採用統計學 CV 值 (標準差/平均值)。CV 越低代表表現越像機器人般穩定。
+            const coefficientOfVariation = hpStdDev / avgTowerHP;
+            const stabilityMatrix = 100 - (coefficientOfVariation * 150);
+            const STA = clamp(stabilityMatrix);
 
-            // 4. CLT (Schrödinger's Survival / 薛丁格的貓)
-            const superpositionSurvival = lowHpClutchR * 4 + clutchR * 1.5;
-            const CLT = clamp(20 + logScale(superpositionSurvival, 18));
+            // 4. CLT (Critical Bayesian Survival / 臨界貝氏生存)
+            // 賦予低血量極限逆轉更高的統計權重
+            const survivalProbability = (lowHpClutchR * 5 + clutchR * 2) * 100;
+            const CLT = clamp(20 + (Math.log(survivalProbability + 1) * 15));
 
-            // 5. INT (Entanglement Entropy / 量子糾纏熵)
-            const entanglement = hpPercent * (winR / 100) * Math.log(avgElixir + 2);
-            const INT = clamp(sigmoid(entanglement, 40, 0.08));
+            // 5. INT (Information Cross-Entropy / 攻防交叉熵)
+            // 結合防禦血量佔比、貝氏勝率與牌組深度的綜合資訊密度
+            const informationDensity = hpPercent * bWinR * Math.log(avgElixir + 2);
+            const INT = clamp(sigmoid(informationDensity, 35, 0.08));
 
-            // 6. DEF (Quantum Tunneling Impedance / 穿隧阻抗)
-            const tunnelingProb = crownsLost / 3; 
-            const impedance = (1 - tunnelingProb) * hpPercent;
-            const DEF = clamp(sigmoid(impedance, 60, 0.05));
+            // 6. DEF (L2 Defense Impedance / L2 護盾阻抗)
+            // 利用非線性函數懲罰掉冠率
+            const tunnelingProb = crownsLost / 3.0; 
+            const impedance = (1 - Math.pow(tunnelingProb, 1.5)) * hpPercent * 100;
+            const DEF = clamp(impedance * 1.2);
 
-            // 7. ATK (Probability Amplitude / 機率幅)
-            const amplitude = Math.pow(crownsEarned, 2) * (winR / 50);
-            const ATK = clamp(sigmoid(amplitude, 4, 0.5));
+            // 7. ATK (Momentum Tensor / 皇冠動量張量)
+            const momentum = Math.pow(crownsEarned, 2) * (bWinR / 50);
+            const ATK = clamp(sigmoid(momentum, 3.5, 0.6));
 
-            // 8. CRT (Excitation State / 能階躍遷)
-            const excitation = threeCrownR * (5.0 / Math.max(2.0, avgElixir));
-            const CRT = clamp(sigmoid(excitation, 10, 0.2));
+            // 8. CRT (Excitation State / 系統躍遷能階)
+            // 使用平滑化後的三冠率，避免新手場打機器人帶來的數據污染
+            const CRT = clamp(sigmoid(bThreeCrownR * (5.0 / Math.max(2.0, avgElixir)), 12, 0.15));
 
-            // 9. END (Decay Half-Life / 衰變半衰期)
-            const halfLife = (clutchR * 2.5) + logScale(data.battleCount, 12);
-            const END = clamp(sigmoid(halfLife, 45, 0.05));
+            // 9. END (Asymptotic Decay Resistance / 漸進衰變抗性)
+            // 場次越多，維持高質量對局的抗壓能力分數越高
+            const asymptote = Math.log10(battleCount + 1) * 12;
+            const END = clamp(20 + asymptote + (clutchR * 100 * 0.5));
 
-            // 10. ACC (Wave Function Collapse / 波函數塌縮)
-            const collapseDelta = crownsEarned - crownsLost;
-            const ACC = clamp(sigmoid(collapseDelta, 0.5, 1.8));
+            // 10. ACC (Nash Equilibrium Delta / 納許均衡淨值)
+            const nashDelta = (crownsEarned - crownsLost) * (bWinR / 50);
+            const ACC = clamp(sigmoid(nashDelta, 0.2, 1.5));
 
-            // 11. AGI (Hamiltonian Operator / 哈密頓演化)
-            const hamiltonian = (SPD * 0.4) + (SKL * 0.3) + (CLT * 0.3);
-            const AGI = clamp(hamiltonian);
+            // 11. AGI (Hilbert Projection / 希爾伯特空間投影)
+            // 向量內積概念，綜合敏捷性
+            const projection = (SPD * 0.35) + (SKL * 0.35) + (CLT * 0.3);
+            const AGI = clamp(projection);
 
-            // 12. LUK (Quantum Decoherence / 量子去相干)
-            const decoherence = (getTagHash(data.tag) % 21) - 10.5; 
-            const baseProbability = sigmoid(clutchR, 15, 0.08); 
-            const LUK = clamp(baseProbability * 50 + 50 + decoherence);
+            // 12. LUK (Gaussian Quantum Decoherence / 高斯退相干噪聲)
+            // 使用 Box-Muller 轉換生成真正的常態分佈環境隨機數
+            const gaussianNoise = boxMullerTransform() * 8; // 標準差為 8 的常態分佈噪聲
+            const LUK = clamp(50 + gaussianNoise + (clutchR * 100 * 0.2));
 
             const metrics = [DEF, ATK, SKL, CRT, END, CLT, SPD, ACC, LUK, STA, AGI, INT];
 
             // ==========================================
-            // 本徵值融合系統 (Eigenvalue Power Matrix)
+            // L2 範數張量特徵值系統 (L2 Norm Tensor Score)
             // ==========================================
             
-            const sumLog = metrics.reduce((acc, val) => acc + Math.log(val), 0);
-            const geometricMean = Math.exp(sumLog / 12);
-            const arithmeticMean = metrics.reduce((a, b) => a + b, 0) / 12;
+            // 傳統平均算法會埋沒「極度偏科」的天才玩家。
+            // 使用高維向量長度 (L2 Norm) 計算：一個 12 維空間的向量，若其中幾何分量極高，將獲得張量長度上的優勢。
+            // 12 個維度最高 100，理論最大 L2 Norm 為 sqrt(12 * 10000) ≈ 346.41
+            const tensorMagnitude = calculateL2Norm(metrics);
             
-            const rawScore = Math.round(((geometricMean * 0.6) + (arithmeticMean * 0.4)) / 100 * 9500 + (winR * 5)); 
+            // 將特徵值投射到萬分制絕對刻度 (346.41 對應約 9800 分，保留一點緩衝)
+            const rawScore = Math.round((tensorMagnitude / 346.41) * 9800 + (bWinR * 2.5)); 
             
             let rank = 'D-'; let rankColor = '#aaa';
-            if (rawScore >= 8500) { rank = 'Ω (OMEGA)'; rankColor = '#ffb700'; } 
-            else if (rawScore >= 7500) { rank = 'Δ (DELTA)'; rankColor = '#ff2a2a'; } 
-            else if (rawScore >= 6500) { rank = 'Σ (SIGMA)'; rankColor = '#bc13fe'; }  
-            else if (rawScore >= 5500) { rank = 'α (ALPHA)'; rankColor = '#00f2ff'; }  
-            else if (rawScore >= 4500) { rank = 'β (BETA)'; rankColor = '#00ff44'; }  
-            else if (rawScore >= 3500) { rank = 'γ (GAMMA)'; rankColor = '#fff'; }     
+            if (rawScore >= 8800) { rank = 'Ω (OMEGA)'; rankColor = '#ffb700'; } 
+            else if (rawScore >= 7800) { rank = 'Δ (DELTA)'; rankColor = '#ff2a2a'; } 
+            else if (rawScore >= 6800) { rank = 'Σ (SIGMA)'; rankColor = '#bc13fe'; }  
+            else if (rawScore >= 5800) { rank = 'α (ALPHA)'; rankColor = '#00f2ff'; }  
+            else if (rawScore >= 4800) { rank = 'β (BETA)'; rankColor = '#00ff44'; }  
+            else if (rawScore >= 3800) { rank = 'γ (GAMMA)'; rankColor = '#fff'; }     
 
             const uiRank = document.getElementById('ui-rank');
             const ratingContainer = document.getElementById('rating-container');
@@ -355,9 +386,9 @@
             myChart = new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: ['DEF (穿隧阻抗)', 'ATK (機率幅)', 'SKL (測不準極限)', 'CRT (能階躍遷)', 'END (衰變半衰期)', 'CLT (薛丁格生存)', 'SPD (相速度)', 'ACC (波函數塌縮)', 'LUK (量子去相干)', 'STA (基態零點漲落)', 'AGI (哈密頓演化)', 'INT (糾纏熵)'],
+                    labels: ['DEF (L2 護盾阻抗)', 'ATK (皇冠動量張量)', 'SKL (貝氏複雜度)', 'CRT (系統躍遷能階)', 'END (衰變半衰期)', 'CLT (臨界貝氏生存)', 'SPD (聖水動能流速)', 'ACC (納許均衡淨值)', 'LUK (高斯隨機擾動)', 'STA (變異係數熵減)', 'AGI (希爾伯特投影)', 'INT (攻防交叉熵)'],
                     datasets: [{
-                        label: 'QUANTUM STATES',
+                        label: 'TENSOR STATES',
                         data: dataValues,
                         backgroundColor: `${mainColor}25`,
                         borderColor: mainColor,

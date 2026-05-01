@@ -1,123 +1,87 @@
-/**
- * Vercel Serverless Function
- * MAXIMA 12D - RoyaleAPI Proxy (使用 proxy.royaleapi.dev)
- */
-
 const axios = require('axios');
 
-const BASE_URL = 'https://proxy.royaleapi.dev/v1';
-const HEADERS = {
-    'Accept': 'application/json'
-};
+module.exports = async (req, res) => {
+    // --- 1. CORS 與基礎設定 ---
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
-function calculateAvgTowerHP(battlelog) {
-    if (!battlelog || battlelog.length === 0) return 6500;
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
 
-    let totalHP = 0;
-    let count = 0;
-    const recentBattles = battlelog.slice(0, 15);
+    // --- 2. 參數驗證與清理 ---
+    const { tag } = req.query;
+    if (!tag) {
+        return res.status(400).json({ error: 'Missing player tag' });
+    }
 
-    for (const battle of recentBattles) {
-        const team = battle.team?.[0];
-        if (!team || !team.towers) continue;
+    // 將參數中的非英數字元全部剔除，並轉為大寫，確保格式絕對安全
+    const cleanTag = tag.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+    const CR_API_KEY = process.env.CR_API_KEY;
 
-        const towers = team.towers;
-        let battleHP = 0;
-        let towerCount = 0;
+    if (!CR_API_KEY) {
+        return res.status(500).json({ error: '伺服器未設定 API Key' });
+    }
 
-        towers.forEach(tower => {
-            if (tower.remainingHitpoints != null && tower.remainingHitpoints > 0) {
-                battleHP += tower.remainingHitpoints;
-                towerCount++;
+    try {
+        // --- 3. 發送請求至 RoyaleAPI Proxy ---
+        // 注意：RoyaleAPI 規定網址裡的 # 必須編碼為 %23
+        const proxyUrl = `https://proxy.royaleapi.dev/v1/players/%23${cleanTag}/battlelog`;
+
+        const response = await axios.get(proxyUrl, {
+            headers: {
+                'Authorization': `Bearer ${CR_API_KEY}`,
+                'Accept': 'application/json'
             }
         });
 
-        if (towerCount > 0) {
-            totalHP += battleHP / towerCount;
-            count++;
-        }
-    }
-
-    return count === 0 ? 6500 : Math.round(totalHP / count);
-}
-
-function calculateRecentWinRate(battlelog) {
-    if (!battlelog || battlelog.length === 0) return 50;
-
-    const recent = battlelog.slice(0, 15);
-    let wins = 0;
-
-    for (const battle of recent) {
-        const teamCrowns = battle.team?.[0]?.crowns || 0;
-        const opponentCrowns = battle.opponent?.[0]?.crowns || 0;
-        if (teamCrowns > opponentCrowns) wins++;
-    }
-
-    return Math.round((wins / recent.length) * 100);
-}
-
-module.exports = async (req, res) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET');
-    
-    const rawTag = req.query.tag;
-    if (!rawTag) {
-        return res.status(400).json({ error: '缺少 tag 參數' });
-    }
-
-    const cleanTag = rawTag.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-    const encodedTag = `%23${cleanTag}`;
-
-    try {
-        const playerRes = await axios.get(`${BASE_URL}/players/${encodedTag}`, { headers: HEADERS });
-        const player = playerRes.data;
-
-        let battlelog = [];
-        try {
-            const logRes = await axios.get(`${BASE_URL}/players/${encodedTag}/battles`, { headers: HEADERS });
-            battlelog = logRes.data || [];
-        } catch (logErr) {
-            console.warn('無法取得 battles:', logErr.message);
+        const logs = response.data;
+        if (!logs || !Array.isArray(logs) || logs.length === 0) {
+            return res.status(404).json({ error: '找不到該玩家的近期對戰紀錄' });
         }
 
-        const avgTowerHP = calculateAvgTowerHP(battlelog);
-        const recentWinRate = calculateRecentWinRate(battlelog);
-        const overallWinRate = player.wins && player.losses 
-            ? Math.round((player.wins / (player.wins + player.losses)) * 100)
-            : recentWinRate;
+        // --- 4. 戰鬥數據萃取 ---
+        let totalHP = 0;
+        let wins = 0;
+        let validMatches = 0;
 
-        const result = {
-            name: player.name,
-            tag: player.tag,
-            level: player.level,
-            trophies: player.trophies,
-            bestTrophies: player.bestTrophies,
-            wins: player.wins,
-            losses: player.losses,
-            winRate: overallWinRate,
-            recentWinRate: recentWinRate,
-            avgTowerHP: avgTowerHP,
-            clan: player.clan ? {
-                name: player.clan.name,
-                tag: player.clan.tag,
-                badgeId: player.clan.badgeId
-            } : null,
-            battleCount: battlelog.length,
-            lastUpdated: new Date().toISOString()
-        };
+        logs.forEach(match => {
+            // 確保資料結構完整 (排除特殊模式可能造成的結構異常)
+            if (match.team && match.team[0] && match.opponent && match.opponent[0]) {
+                const me = match.team[0];
+                const opponent = match.opponent[0];
 
-        res.json(result);
+                // 計算塔血：國王塔 + 所有公主塔
+                const kingHP = me.kingTowerHitPoints || 0;
+                const princessHP = (me.princessTowersHitPoints || []).reduce((a, b) => a + b, 0);
+                totalHP += (kingHP + princessHP);
+
+                // 計算勝率
+                if (me.crowns > opponent.crowns) wins++;
+                
+                validMatches++;
+            }
+        });
+
+        if (validMatches === 0) {
+            return res.status(404).json({ error: '沒有符合格式的對戰紀錄' });
+        }
+
+        // --- 5. 回傳精煉數據 ---
+        res.status(200).json({
+            name: logs[0].team[0].name,
+            avgTowerHP: Math.round(totalHP / validMatches),
+            winRate: Math.round((wins / validMatches) * 100),
+            battleCount: validMatches,
+            tag: cleanTag
+        });
 
     } catch (error) {
-        console.error('API 錯誤:', error.response?.data || error.message);
-
-        if (error.response?.status === 404) {
-            return res.status(404).json({ error: '找不到該玩家' });
-        }
-
-        res.status(500).json({ 
-            error: '後端服務異常', 
-            message: error.message 
+        console.error("Backend Proxy Error:", error.message);
+        res.status(error.response?.status || 500).json({
+            error: '無法從數據中心取得資料',
+            details: error.response?.data?.message || error.message
         });
     }
 };

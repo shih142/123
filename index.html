@@ -282,9 +282,21 @@
             const atkEnergy = (0.3 * Math.pow(crownsEarned, 2)) + (0.015 * displayThreeCrownR);
             const ATK = clamp(100 * Math.tanh(atkEnergy));
 
-            // 【防禦】絕對事件視界 V2 (Exponential Decay & Structural Tensor)
-            // 採用自然指數衰退 (e) 取代算術相減。每掉一冠，防禦力依循熱力學原理衰退；塔血量保留率開根號作為緩衝支撐。
-            const DEF = clamp(100 * Math.exp(-0.6 * crownsLost) * Math.sqrt(hpPercent));
+            // ==========================================
+            // 【防禦】絕對事件視界 V3 (Quantum Structural Integrity & Entropy Decay)
+            // ==========================================
+            
+            // 1. 事件視界衰減 (Event Horizon Decay): 引入 1.2 次方，模擬防線崩潰時的重力塌陷加速。
+            const eventHorizonDecay = Math.exp(-0.65 * Math.pow(crownsLost, 1.2));
+            
+            // 2. 結構張量 (Structural Tensor): 結合基礎裝甲 (HP 0.7次方) 與極限防禦底力 (tanh(殘血反殺率))。
+            const structuralTensor = (0.8 * Math.pow(hpPercent, 0.7)) + (0.2 * Math.tanh(lowHpClutchR * 4.0));
+            
+            // 3. 熵減穩定器 (Entropy Stabilizer): 將防守的波動率 (標準差) 視為系統熵值。越穩定，乘數越接近 1。
+            const entropyStabilizer = Math.max(0.4, 1.0 - (hpStdDev / avgTowerHP) * 0.85);
+
+            // 絕對防禦張量結算
+            const DEF = clamp(100 * eventHorizonDecay * structuralTensor * entropyStabilizer);
 
             setTimeout(() => {
                 document.getElementById('bar-atk').style.width = `${ATK}%`;

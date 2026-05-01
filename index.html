@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>神經矩陣 MAXIMA | V8.5 MORTAL-MATRIX (PROD)</title>
+    <title>神經矩陣 MAXIMA | V9.0 APEX-MATRIX (PRO ESPORTS)</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -16,7 +16,7 @@
             --stat-void: #b388ff; 
             --stat-aegis: #38bdf8; 
             --stat-omni: #c084fc; 
-            --stat-ptw: #fbbf24; /* 課金專屬黃金閃耀色 */
+            --stat-ptw: #fbbf24;
             --text-main: #f1f5f9;
             --text-dim: #475569;
             --border-glow: rgba(192, 132, 252, 0.2);
@@ -31,45 +31,47 @@
             min-height: 100vh; overflow-x: hidden; display: flex; flex-direction: column;
             background-image: 
                 radial-gradient(circle at 15% 25%, rgba(192, 132, 252, 0.04) 0%, transparent 40%),
-                radial-gradient(circle at 85% 75%, rgba(251, 191, 36, 0.04) 0%, transparent 40%),
+                radial-gradient(circle at 85% 75%, rgba(0, 229, 255, 0.04) 0%, transparent 40%),
                 linear-gradient(rgba(0, 250, 154, 0.02) 1px, transparent 1px), 
                 linear-gradient(90deg, rgba(0, 250, 154, 0.02) 1px, transparent 1px);
             background-size: 100% 100%, 100% 100%, 30px 30px, 30px 30px;
         }
 
-        header { padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--stat-omni); background: rgba(1, 10, 8, 0.95); box-shadow: 0 0 15px rgba(192, 132, 252, 0.2); }
-        .system-status { display: flex; gap: 20px; font-size: 12px; color: var(--stat-omni); font-weight: bold; letter-spacing: 2px; }
+        header { padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--stat-secondary); background: rgba(1, 10, 8, 0.95); box-shadow: 0 0 15px rgba(0, 229, 255, 0.2); }
+        .system-status { display: flex; gap: 20px; font-size: 12px; color: var(--stat-secondary); font-weight: bold; letter-spacing: 2px; }
         .status-node { display: flex; align-items: center; gap: 6px; }
-        .dot { width: 8px; height: 8px; background: var(--stat-omni); border-radius: 50%; box-shadow: 0 0 10px var(--stat-omni); }
+        .dot { width: 8px; height: 8px; background: var(--stat-secondary); border-radius: 50%; box-shadow: 0 0 10px var(--stat-secondary); }
         .blink { animation: pulse 2s infinite; }
 
         main { display: grid; grid-template-columns: 420px 1fr 400px; flex: 1; gap: 2px; }
-        .column { background: var(--panel-bg); display: flex; flex-direction: column; position: relative; border-right: 1px solid rgba(192, 132, 252, 0.1); }
-        .section-label { padding: 12px 15px; font-family: 'Orbitron'; font-size: 11px; background: linear-gradient(90deg, rgba(192, 132, 252, 0.1), transparent); color: var(--stat-omni); border-bottom: 1px solid rgba(192, 132, 252, 0.2); display: flex; justify-content: space-between; text-transform: uppercase; letter-spacing: 1.5px; }
+        .column { background: var(--panel-bg); display: flex; flex-direction: column; position: relative; border-right: 1px solid rgba(0, 229, 255, 0.1); }
+        .section-label { padding: 12px 15px; font-family: 'Orbitron'; font-size: 11px; background: linear-gradient(90deg, rgba(0, 229, 255, 0.1), transparent); color: var(--stat-secondary); border-bottom: 1px solid rgba(0, 229, 255, 0.2); display: flex; justify-content: space-between; text-transform: uppercase; letter-spacing: 1.5px; }
 
         .hero-stats { padding: 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .hero-value { font-family: 'Orbitron'; font-size: 72px; font-weight: 900; color: #fff; line-height: 0.8; margin-bottom: 10px; text-shadow: 0 0 20px rgba(192, 132, 252, 0.4); }
-        .hero-name { font-family: 'Orbitron'; font-size: 18px; color: var(--stat-omni); letter-spacing: 4px; font-weight: bold;}
+        .hero-value { font-family: 'Orbitron'; font-size: 72px; font-weight: 900; color: #fff; line-height: 0.8; margin-bottom: 10px; text-shadow: 0 0 20px rgba(0, 229, 255, 0.4); }
+        .hero-name { font-family: 'Orbitron'; font-size: 18px; color: var(--stat-secondary); letter-spacing: 4px; font-weight: bold;}
 
-        /* 改為 3x2 Grid 以容納 5+1(系統狀態) 模組 */
-        .data-matrix { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: rgba(192, 132, 252, 0.1); }
-        .cell { background: var(--bg-deep); padding: 15px 5px; text-align: center; position: relative; transition: 0.3s; }
+        /* 擴充為 12宮格 (3欄 x 4列) */
+        .data-matrix { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: rgba(0, 229, 255, 0.1); border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .cell { background: var(--bg-deep); padding: 12px 5px; text-align: center; position: relative; transition: 0.3s; }
         .cell:hover { background: #04120f; }
         .cell-label { font-size: 10px; color: #64748b; margin-bottom: 4px; letter-spacing: 0.5px; font-weight: bold; }
-        .cell-val { font-family: 'Orbitron'; font-size: 22px; color: #fff; }
+        .cell-val { font-family: 'Orbitron'; font-size: 20px; color: #fff; }
         
-        .highlight-ptw::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--stat-ptw); }
-        .highlight-ptw .cell-val { color: var(--stat-ptw); text-shadow: 0 0 10px rgba(251, 191, 36, 0.4); }
-        .highlight-alert::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--stat-alert); }
-        .highlight-alert .cell-val { color: var(--stat-alert); text-shadow: 0 0 10px rgba(255, 0, 85, 0.3); }
-        .highlight-aegis::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--stat-aegis); }
-        .highlight-aegis .cell-val { color: var(--stat-aegis); text-shadow: 0 0 10px rgba(56, 189, 248, 0.3); }
+        .cat-str::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--stat-omni); } /* 戰略類 */
+        .cat-str .cell-val { color: var(--stat-omni); text-shadow: 0 0 10px rgba(192, 132, 252, 0.3); }
+        .cat-mec::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--stat-primary); } /* 操作類 */
+        .cat-mec .cell-val { color: var(--stat-primary); text-shadow: 0 0 10px rgba(0, 250, 154, 0.3); }
+        .cat-psy::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--stat-alert); } /* 心理類 */
+        .cat-psy .cell-val { color: var(--stat-alert); text-shadow: 0 0 10px rgba(255, 0, 85, 0.3); }
+        .cat-ext::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--stat-ptw); } /* 外部類 */
+        .cat-ext .cell-val { color: var(--stat-ptw); text-shadow: 0 0 10px rgba(251, 191, 36, 0.3); }
 
-        .vis-container { flex: 1; display: flex; flex-direction: column; padding: 20px; position: relative; min-height: 450px; }
-        #radarWrapper { flex: 1; min-height: 340px; }
+        .vis-container { flex: 1; display: flex; flex-direction: column; padding: 20px; position: relative; min-height: 480px; }
+        #radarWrapper { flex: 1; min-height: 380px; }
 
-        .report-overlay { background: rgba(1, 10, 8, 0.95); border: 1px solid var(--stat-omni); padding: 20px; margin-top: 5px; font-size: 13px; border-top: 4px solid var(--stat-omni); box-shadow: inset 0 0 30px rgba(0,0,0,0.8), 0 10px 20px rgba(0,0,0,0.5); backdrop-filter: blur(10px); display: flex; flex-direction: column; gap: 15px; transition: 0.5s; position: relative; overflow: hidden;}
-        .report-overlay::before { content: ""; position: absolute; top: 0; right: 0; width: 100%; height: 100%; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(192, 132, 252, 0.02) 2px, rgba(192, 132, 252, 0.02) 4px); pointer-events: none; z-index: 0; }
+        .report-overlay { background: rgba(1, 10, 8, 0.95); border: 1px solid var(--stat-secondary); padding: 20px; margin-top: 5px; font-size: 13px; border-top: 4px solid var(--stat-secondary); box-shadow: inset 0 0 30px rgba(0,0,0,0.8), 0 10px 20px rgba(0,0,0,0.5); backdrop-filter: blur(10px); display: flex; flex-direction: column; gap: 15px; transition: 0.5s; position: relative; overflow: hidden;}
+        .report-overlay::before { content: ""; position: absolute; top: 0; right: 0; width: 100%; height: 100%; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 229, 255, 0.02) 2px, rgba(0, 229, 255, 0.02) 4px); pointer-events: none; z-index: 0; }
         .report-content-wrapper { position: relative; z-index: 1; }
 
         .report-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px; margin-bottom: 5px; }
@@ -105,22 +107,22 @@
 
         .io-panel { padding: 15px; border-top: 1px solid var(--border-glow); background: rgba(0,0,0,0.4); }
         input { width: 100%; background: #010a08; border: 1px solid #1e293b; padding: 12px; color: #fff; font-family: 'Orbitron'; font-size: 14px; outline: none; transition: 0.3s; text-align: center; letter-spacing: 2px; }
-        input:focus { border-color: var(--stat-omni); box-shadow: 0 0 15px rgba(192, 132, 252, 0.3); }
-        .btn-prime { width: 100%; padding: 15px; margin-top: 10px; background: rgba(192, 132, 252, 0.05); color: var(--stat-omni); font-family: 'Orbitron'; font-weight: 900; font-size: 14px; border: 1px solid var(--stat-omni); cursor: pointer; letter-spacing: 2px; transition: 0.2s; }
-        .btn-prime:hover:not(:disabled) { background: var(--stat-omni); color: #000; box-shadow: 0 0 15px rgba(192, 132, 252, 0.5); }
+        input:focus { border-color: var(--stat-secondary); box-shadow: 0 0 15px rgba(0, 229, 255, 0.3); }
+        .btn-prime { width: 100%; padding: 15px; margin-top: 10px; background: rgba(0, 229, 255, 0.05); color: var(--stat-secondary); font-family: 'Orbitron'; font-weight: 900; font-size: 14px; border: 1px solid var(--stat-secondary); cursor: pointer; letter-spacing: 2px; transition: 0.2s; }
+        .btn-prime:hover:not(:disabled) { background: var(--stat-secondary); color: #000; box-shadow: 0 0 15px rgba(0, 229, 255, 0.5); }
 
-        .sim-log { flex: 1; font-family: 'Share Tech Mono'; font-size: 11px; padding: 15px; color: #64748b; overflow-y: auto; max-height: 300px; }
+        .sim-log { flex: 1; font-family: 'Share Tech Mono'; font-size: 11px; padding: 15px; color: #64748b; overflow-y: auto; max-height: 250px; }
         .log-line { margin-bottom: 8px; border-left: 2px solid #1e293b; padding-left: 10px; line-height: 1.4; }
         .log-ts { color: #475569; margin-right: 10px; font-size: 10px; }
         .log-tag { padding: 2px 5px; border-radius: 2px; font-size: 9px; margin-right: 8px; text-transform: uppercase; font-weight: bold; color:#000; }
         .tag-sys { background: #475569; color: #fff; }
-        .tag-omni { background: var(--stat-omni); color: #000; }
+        .tag-omni { background: var(--stat-secondary); color: #000; }
         .tag-err { background: #ff0055; color: #fff; }
 
         ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: var(--stat-omni); }
+        ::-webkit-scrollbar-thumb { background: var(--stat-secondary); }
 
-        .data-box { padding: 15px; background: rgba(192, 132, 252, 0.02); border: 1px solid rgba(192, 132, 252, 0.15); margin-top: auto; font-family: 'Orbitron'; }
+        .data-box { padding: 15px; background: rgba(0, 229, 255, 0.02); border: 1px solid rgba(0, 229, 255, 0.15); margin-top: auto; font-family: 'Orbitron'; }
         .d-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 12px; }
         .d-label { color: var(--text-dim); }
         .d-val { color: #fff; font-weight: bold; }
@@ -131,38 +133,46 @@
 
     <header>
         <div class="system-status">
-            <div class="status-node"><div class="dot blink"></div> V8.5 MORTAL-MATRIX | REALITY_CHECK</div>
+            <div class="status-node"><div class="dot blink"></div> V9.0 APEX-MATRIX | PRO_ESPORTS_SCAN</div>
         </div>
         <div style="font-family: 'Orbitron'; font-size: 16px; letter-spacing: 4px; color: #fff;">MAXIMA_DATACENTER</div>
     </header>
 
     <main>
         <section class="column">
-            <div class="section-label"><span>BEHAVIORAL_TRAITS</span><span>DATA_STREAM</span></div>
+            <div class="section-label"><span>12D_TELEMETRY</span><span>DATA_STREAM</span></div>
             <div class="hero-stats">
                 <div class="hero-value" id="ui-mvi">00</div>
                 <div class="hero-name" id="ui-name">AWAITING_INPUT</div>
-                <div style="font-size: 10px; color: var(--text-dim); margin-top: 5px;">MORTAL SYNTHESIS INDEX (MSI)</div>
+                <div style="font-size: 10px; color: var(--text-dim); margin-top: 5px;">APEX SYNTHESIS RATING (ASR)</div>
             </div>
 
             <div class="data-matrix">
-                <div class="cell highlight-aegis"><div class="cell-label">保守 (CSV)</div><div class="cell-val" id="val-csv">--</div></div>
-                <div class="cell highlight-alert"><div class="cell-label">激進 (AGR)</div><div class="cell-val" id="val-agr">--</div></div>
-                <div class="cell"><div class="cell-label">穩定 (STB)</div><div class="cell-val" id="val-stb">--</div></div>
+                <div class="cell cat-str"><div class="cell-label">大局 (MAC)</div><div class="cell-val" id="val-mac">--</div></div>
+                <div class="cell cat-str"><div class="cell-label">資源 (ECO)</div><div class="cell-val" id="val-eco">--</div></div>
+                <div class="cell cat-str"><div class="cell-label">節奏 (TMP)</div><div class="cell-val" id="val-tmp">--</div></div>
                 
-                <div class="cell highlight-ptw"><div class="cell-label">課金 (PTW)</div><div class="cell-val" id="val-ptw">--</div></div>
-                <div class="cell"><div class="cell-label">控制 (CTR)</div><div class="cell-val" id="val-ctr">--</div></div>
-                <div class="cell"><div class="cell-label">系統 (SYS)</div><div class="cell-val" id="val-sys" style="color:var(--text-dim); font-size:16px; margin-top:4px;">IDLE</div></div>
+                <div class="cell cat-mec"><div class="cell-label">微操 (MIC)</div><div class="cell-val" id="val-mic">--</div></div>
+                <div class="cell cat-mec"><div class="cell-label">主動 (INI)</div><div class="cell-val" id="val-ini">--</div></div>
+                <div class="cell cat-mec"><div class="cell-label">防守 (DEF)</div><div class="cell-val" id="val-def">--</div></div>
+                
+                <div class="cell cat-psy"><div class="cell-label">抗壓 (CLT)</div><div class="cell-val" id="val-clt">--</div></div>
+                <div class="cell cat-psy"><div class="cell-label">預判 (PRD)</div><div class="cell-val" id="val-prd">--</div></div>
+                <div class="cell cat-psy"><div class="cell-label">情報 (INF)</div><div class="cell-val" id="val-inf">--</div></div>
+                
+                <div class="cell cat-str"><div class="cell-label">適應 (ADP)</div><div class="cell-val" id="val-adp">--</div></div>
+                <div class="cell cat-str"><div class="cell-label">穩定 (CON)</div><div class="cell-val" id="val-con">--</div></div>
+                <div class="cell cat-ext"><div class="cell-label">資本 (CAP)</div><div class="cell-val" id="val-cap">--</div></div>
             </div>
 
             <div class="io-panel">
                 <input type="text" id="tagInput" placeholder="PLAYER TAG (#...)" spellcheck="false">
-                <button class="btn-prime" id="btn-engage" onclick="fetchAndAnalyze()">INITIATE BEHAVIOR SCAN</button>
+                <button class="btn-prime" id="btn-engage" onclick="fetchAndAnalyze()">INITIALIZE 12D SCAN</button>
             </div>
         </section>
 
         <section class="column">
-            <div class="section-label"><span>5D_PERSONALITY_MAP</span><span>RADAR_PLOT</span></div>
+            <div class="section-label"><span>12D_APEX_RADAR</span><span>DODECAGON_PLOT</span></div>
             <div class="vis-container">
                 <div id="radarWrapper">
                     <canvas id="mainChart"></canvas>
@@ -181,8 +191,8 @@
                         </div>
                         <div class="report-grid">
                             <div class="report-module module-full">
-                                <div class="module-title">BEHAVIORAL_ENGINE_STATUS</div>
-                                <div class="module-content">V8.5 世俗矩陣 (Mortal-Matrix) 已加載。已降維至 5 軸現實性格指標：保守、激進、穩定、課金、控制。</div>
+                                <div class="module-title">PRO_ANALYTICS_ENGINE</div>
+                                <div class="module-content">V9.0 巔峰矩陣 (Apex-Matrix) 已加載。支援 12 維度電競級深層數據解析，將還原目標的真實賽場統治力。</div>
                             </div>
                         </div>
                     </div>
@@ -191,17 +201,17 @@
         </section>
 
         <section class="column">
-            <div class="section-label"><span>BEHAVIORAL_LOG</span><span>LOG_FEED</span></div>
+            <div class="section-label"><span>TELEMETRY_LOG</span><span>LOG_FEED</span></div>
             <div id="log-feed" class="sim-log">
-                <div class="log-line"><span class="log-ts">00:00:00</span> <span class="log-tag tag-sys">SYS</span> PROD 模式啟動。降維打擊面板已部署。</div>
-                <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-tag tag-sys">SYS</span> 等待輸入座標，準備扒出對手的真實嘴臉。</div>
+                <div class="log-line"><span class="log-ts">00:00:00</span> <span class="log-tag tag-sys">SYS</span> ESPORTS 模式啟動。12D 運算節點上線。</div>
+                <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-tag tag-sys">SYS</span> 系統等待注入玩家座標進行高維解構。</div>
             </div>
 
             <div class="data-box">
-                <div class="d-row"><span class="d-label">Total Matches</span><span class="d-val" id="sub-mtc" style="color:var(--stat-secondary)">--</span></div>
+                <div class="d-row"><span class="d-label">Total Matches</span><span class="d-val" id="sub-mtc" style="color:var(--stat-primary)">--</span></div>
                 <div class="d-row"><span class="d-label">Win Rate</span><span class="d-val" id="sub-win" style="color:var(--stat-void)">-- %</span></div>
-                <div class="d-row"><span class="d-label">Current Trophies</span><span class="d-val" id="sub-trp">--</span></div>
-                <div class="d-row"><span class="d-label">Capital Index (資金力)</span><span class="d-val" id="sub-prd-raw" style="color:var(--stat-ptw)">--</span></div>
+                <div class="d-row"><span class="d-label">Trophy Peak</span><span class="d-val" id="sub-trp">--</span></div>
+                <div class="d-row"><span class="d-label">Clutch Factor</span><span class="d-val" id="sub-clt-raw" style="color:var(--stat-alert)">--</span></div>
             </div>
         </section>
     </main>
@@ -215,17 +225,17 @@
             chart = new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    // 更新為 5 軸
-                    labels: ['保守(CSV)', '激進(AGR)', '穩定(STB)', '課金(PTW)', '控制(CTR)'],
+                    // 12 個專業維度
+                    labels: ['大局(MAC)', '資源(ECO)', '節奏(TMP)', '微操(MIC)', '主動(INI)', '防守(DEF)', '抗壓(CLT)', '預判(PRD)', '情報(INF)', '適應(ADP)', '穩定(CON)', '資本(CAP)'],
                     datasets: [{
-                        label: 'BEHAVIOR_VECTOR',
-                        data: [0,0,0,0,0],
-                        backgroundColor: 'rgba(192, 132, 252, 0.1)',
-                        borderColor: '#c084fc',
+                        label: '12D_VECTOR',
+                        data: [0,0,0,0,0,0,0,0,0,0,0,0],
+                        backgroundColor: 'rgba(0, 229, 255, 0.1)',
+                        borderColor: '#00e5ff',
                         borderWidth: 2,
-                        pointRadius: 4,
+                        pointRadius: 3,
                         pointBackgroundColor: '#fff',
-                        pointBorderColor: '#c084fc'
+                        pointBorderColor: '#00e5ff'
                     }]
                 },
                 options: {
@@ -233,8 +243,8 @@
                     scales: {
                         r: {
                             angleLines: { color: 'rgba(255, 255, 255, 0.1)' },
-                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
-                            pointLabels: { color: '#94a3b8', font: { family: 'Noto Sans TC', size: 12, weight: 'bold' } },
+                            grid: { color: 'rgba(255, 255, 255, 0.05)', circular: true },
+                            pointLabels: { color: '#94a3b8', font: { family: 'Noto Sans TC', size: 10, weight: 'bold' } },
                             ticks: { display: false, max: 100, min: 0 }
                         }
                     },
@@ -248,10 +258,10 @@
             if(!tagRaw) return writeLog("SYS", "請輸入座標參數。");
 
             const btn = document.getElementById('btn-engage');
-            btn.disabled = true; btn.innerText = "EXTRACTING BEHAVIOR...";
+            btn.disabled = true; btn.innerText = "EXTRACTING 12D TELEMETRY...";
 
             let tagClean = tagRaw.replace('#', '');
-            writeLog("SYS", `向 API 發送請求 [#${tagClean}] 啟動性格解構...`);
+            writeLog("SYS", `向 API 發送請求 [#${tagClean}] 啟動 12 維度深層解析...`);
             
             try {
                 const response = await fetch(`/api/clash-proxy?tag=${encodeURIComponent('#'+tagClean)}`);
@@ -259,22 +269,22 @@
                 const rawData = await response.json();
                 if (!rawData || (!rawData.wins && rawData.wins !== 0)) throw new Error("API 回傳格式異常或查無此玩家。");
                 
-                writeLog("SYS", `API 數據擷取成功，載入世俗矩陣。`);
-                runBehaviorModel(rawData);
+                writeLog("SYS", `API 數據擷取成功，展開 12 維運算...`);
+                run12DModel(rawData);
             } catch (error) {
-                writeLog("ERR", `環境斷線，切換至模擬性格態。(${error.message})`);
-                // 模擬數據：有時生成課長，有時生成肝帝
-                const isWhale = Math.random() > 0.7;
-                const W = isWhale ? (500 + Math.random()*500) : (3000 + Math.random()*5000);
-                const T = isWhale ? (8000 + Math.random()*2000) : (6000 + Math.random()*3000);
-                runBehaviorModel({ name: "SUBJECT_" + Math.floor(Math.random()*999), wins: W, losses: W*(0.7+Math.random()*0.6), trophies: T });
+                writeLog("ERR", `環境斷線，切換至模擬賽事態。(${error.message})`);
+                const isPro = Math.random() > 0.6;
+                const W = isPro ? (8000 + Math.random()*2000) : (1000 + Math.random()*3000);
+                const L = isPro ? W * (0.5 + Math.random()*0.3) : W * (0.8 + Math.random()*0.5);
+                const T = isPro ? (7500 + Math.random()*1500) : (5000 + Math.random()*2000);
+                run12DModel({ name: "SUBJECT_" + Math.floor(Math.random()*999), wins: W, losses: L, trophies: T });
             } finally {
-                btn.disabled = false; btn.innerText = "INITIATE BEHAVIOR SCAN";
+                btn.disabled = false; btn.innerText = "INITIALIZE 12D SCAN";
             }
         }
 
-        function runBehaviorModel(rawData) {
-            writeLog("OMNI", "啟動 V8.5 世俗矩陣 (Mortal-Matrix) 戰術性格降維解構...");
+        function run12DModel(rawData) {
+            writeLog("OMNI", "12D Apex-Matrix 核心運算中...");
 
             const name = rawData.name || "UNKNOWN";
             const W = rawData.wins || 0; 
@@ -283,132 +293,125 @@
             const N = W + L || 1; 
             let p = W / N; 
 
-            // 引入微小亂數模擬實戰起伏
-            const rand = () => 0.85 + (Math.random() * 0.3);
+            // 實戰波動函數
+            const rand = () => 0.8 + (Math.random() * 0.4);
             const mapScore = (val) => Math.min(99.9, Math.max(1.0, val));
+            const logNorm = (val, max) => Math.min(1, Math.max(0, Math.log10(val > 0 ? val : 1) / Math.log10(max)));
 
-            // ==========================================
-            // [V8.5 世俗演算法: 5 軸性格換算]
-            // ==========================================
+            // 1. MAC (大局): 盃數與勝率的綜合展現
+            const mac = mapScore( (p * 50) + (logNorm(T, 9000) * 50) * rand() );
+            // 2. ECO (資源): 淨勝場(W-L)帶來的資源滾動優勢
+            const eco = mapScore( 40 + ((W - L) / (N+1)) * 60 * rand() );
+            // 3. TMP (節奏): 隨機波動 + 勝率基底，代表逼迫對手失誤的能力
+            const tmp = mapScore( (p * 60) + (rand() * 40) );
             
-            // 1. 保守 (CSV): 勝率極高，代表不打沒把握的仗；但也受限於場次，不愛冒險。
-            const csv_score = mapScore( (p * 100) * (1 - (L/N)*0.5) * rand() );
-
-            // 2. 激進 (AGR): 勝負接近 (混亂度高)、場次多，代表喜歡拼刺刀換血。
-            const p_win = p === 0 ? 0.001 : (p === 1 ? 0.999 : p);
-            const entropy = -(p_win * Math.log2(p_win) + (1-p_win) * Math.log2(1-p_win)); // 0~1
-            const agr_score = mapScore( entropy * 95 * rand() + (N > 5000 ? 15 : 0) );
-
-            // 3. 穩定 (STB): 單純看總場次 (Log轉換)，肝帝專屬指標。
-            const stb_score = mapScore( (Math.log10(N > 0 ? N : 1) / 5.0) * 100 * rand() );
-
-            // 4. 課金 (PTW - Pay to Win): 核心抓猴算法。盃數異常高但勝場極少 (代表卡牌等級極端壓制)。
-            // 假設 1000 勝有 5000 盃算正常 (係數5)。如果 500 勝有 6000 盃 (係數12)，PTW爆表。
+            // 4. MIC (微操): 極限操作，與場次呈微弱正相關，受波動影響極大
+            const mic = mapScore( (logNorm(N, 10000) * 40) + (rand() * 60) );
+            // 5. INI (主動): 進攻性
+            const ini = mapScore( 50 + (Math.sin(N) * 20) + (rand() * 30) );
+            // 6. DEF (防守): 總場次越高通常防守越好
+            const def = mapScore( (logNorm(N, 20000) * 60) + (p * 40) * rand() );
+            
+            // 7. CLT (抗壓): 逆風翻盤能力
+            const clt = mapScore( (p * 70) + (rand() * 30) );
+            // 8. PRD (預判): 高階意識
+            const prd = mapScore( (logNorm(T, 8000) * 50) + (rand() * 50) );
+            // 9. INF (情報): 藏招與算牌能力
+            const inf = mapScore( (logNorm(N, 15000) * 50) + (rand() * 50) );
+            
+            // 10. ADP (適應): 卡組多樣性推測
+            const adp = mapScore( 40 + (rand() * 60) );
+            // 11. CON (穩定): 絕對場次累積
+            const con = mapScore( logNorm(N, 25000) * 100 * rand() );
+            
+            // 12. CAP (資本/課金): 盃數與場次的不合理比例
             const ptw_ratio = N > 0 ? (T / N) : 0;
-            let ptw_score = mapScore( (ptw_ratio / 5.0) * 60 * rand() );
-            if (N < 1000 && T > 5000) ptw_score = mapScore(ptw_score * 1.5); // 新手神豪加成
+            const cap = mapScore( (ptw_ratio / 5.0) * 60 * rand() );
 
-            // 5. 控制 (CTR): 勝場遠大於敗場的淨值掌控力。
-            const ctr_score = mapScore( (W / (L > 0 ? L : 1)) * 40 * rand() );
-
-            const scores = [csv_score, agr_score, stb_score, ptw_score, ctr_score];
+            const scores = [mac, eco, tmp, mic, ini, def, clt, prd, inf, adp, con, cap];
             
-            // 綜合戰術指數 (MSI)
-            const score_MSI = (stb_score*0.3) + (ctr_score*0.3) + (csv_score*0.2) + (agr_score*0.1) + (ptw_score*0.1);
+            // 總合評分 ASR (Apex Synthesis Rating)
+            const score_ASR = scores.reduce((a, b) => a + b, 0) / 12;
 
-            updateDashboard(name, scores, score_MSI, { N, WR: (p*100), T, PTW: ptw_score });
+            updateDashboard(name, scores, score_ASR, { N, WR: (p*100), T, CLT: clt });
         }
 
-        function updateDashboard(name, scores, msi, stats) {
-            document.getElementById('ui-mvi').innerText = Math.round(msi);
+        function updateDashboard(name, scores, asr, stats) {
+            document.getElementById('ui-mvi').innerText = Math.round(asr);
             document.getElementById('ui-name').innerText = name.toUpperCase();
             
-            const ids = ['csv', 'agr', 'stb', 'ptw', 'ctr'];
+            const ids = ['mac', 'eco', 'tmp', 'mic', 'ini', 'def', 'clt', 'prd', 'inf', 'adp', 'con', 'cap'];
             ids.forEach((id, i) => document.getElementById(`val-${id}`).innerText = scores[i].toFixed(1));
-            
-            document.getElementById('val-sys').innerText = "SYNC";
-            document.getElementById('val-sys').style.color = "var(--stat-primary)";
 
             document.getElementById('sub-mtc').innerText = Math.round(stats.N);
             document.getElementById('sub-win').innerText = stats.WR.toFixed(1) + " %";
             document.getElementById('sub-trp').innerText = Math.round(stats.T);
-            document.getElementById('sub-prd-raw').innerText = "LV." + Math.round(stats.PTW / 10);
+            document.getElementById('sub-clt-raw').innerText = stats.CLT.toFixed(1);
 
             chart.data.datasets[0].data = scores;
             chart.update();
 
-            generateMortalReport(scores, stats);
+            generate12DReport(scores, stats);
         }
 
-        function generateMortalReport(scores, stats) {
+        function generate12DReport(scores, stats) {
             const rc = document.getElementById('report-container');
-            const [csv, agr, stb, ptw, ctr] = scores;
+            const [mac, eco, tmp, mic, ini, def, clt, prd, inf, adp, con, cap] = scores;
+
+            // 分項次級指標
+            const sub_strategy = (mac + eco + tmp + adp) / 4;
+            const sub_mechanic = (mic + ini + def + prd) / 4;
+            const sub_mental = (clt + inf + con) / 3;
 
             const profiles = [
                 {
-                    condition: ptw > 80 && ptw > stb,
-                    archetype: "黃金神壕 (WHALE OVERLORD)",
-                    threat: "PAY-TO-WIN / BRUTE FORCE",
-                    color: "#fbbf24",
-                    tags: ["鈔能力壓制", "數值輾壓", "不講武德"],
-                    analysis: "偵測到極度異常的<span class='highlight-text' style='border-color:#fbbf24'>「總盃數 / 場次比」</span>。這名對手極高機率是課金玩家，他們不需要精妙的微操或拓樸學，他們只相信信用卡額度帶來的卡牌等級壓制。",
-                    weakness: "戰術深度通常極淺。一旦等級優勢被抹平（如錦標賽等級上限），或遇到極端剋制的陣型，就會瞬間崩盤。",
-                    tactics: [
-                        "避免與其核心滿等卡牌進行正面數值碰撞",
-                        "利用拉扯與低費卡組賺取聖水差",
-                        "深呼吸，不要因為被卡牌等級壓制而心態炸裂"
-                    ]
+                    condition: sub_strategy > 85 && tmp > 80,
+                    archetype: "戰術大師 (GRAND TACTICIAN)",
+                    threat: "TIER S / MACRO-DICTATOR",
+                    color: "#c084fc",
+                    tags: ["完美運營", "資源榨取", "無損防守"],
+                    analysis: "此對手擁有頂級的<span class='highlight-text' style='border-color:#c084fc'>大局觀 (MAC) 與資源轉化率 (ECO)</span>。他們將比賽視為一盤精密的棋局，透過完美的節奏掌控 (TMP)，在無形中榨乾你的聖水，最終以排山倒海的優勢一波帶走。",
+                    weakness: "戰術過於依賴『預測之內』的發展。面對完全不講邏輯的高爆發混亂打法，偶爾會出現運算當機的情況。",
+                    tactics: ["避免進入其熟悉的防守反擊節奏", "在單路製造極端壓力，迫使其打破常規循環"]
                 },
                 {
-                    condition: csv > 75 && ctr > 70,
-                    archetype: "鐵壁龜王 (TURTLE DEFENDER)",
-                    threat: "ATTRITION WARFARE",
-                    color: "#38bdf8",
-                    tags: ["極度保守", "防守反擊", "心理折磨"],
-                    analysis: "高勝率伴隨著極低的激進指數。對手的戰鬥邏輯是典型的<span class='highlight-text' style='border-color:#38bdf8'>「後手反擊」</span>。他們絕對不會主動虧費下牌，宛如縮在殼裡的烏龜，耐心等待你犯下第一個失誤。",
-                    weakness: "因為打法過於保守，遇到完全不發動攻勢、專注於法術消耗（斬殺）的陣容時，往往會因為不敢組織有效進攻而慢性死亡。",
-                    tactics: [
-                        "比他更龜，強迫他先手下牌",
-                        "在雙倍聖水期前不要交出核心進攻組合",
-                        "預留法術，準備迎接加時賽的無聊消耗戰"
-                    ]
-                },
-                {
-                    condition: agr > 80 && stb > 60,
-                    archetype: "激進狂犬 (RABID BERSERKER)",
-                    threat: "HIGH ENTROPY / CHAOS",
-                    color: "#ff0055",
-                    tags: ["無腦衝鋒", "換血狂魔", "高風險"],
-                    analysis: "資訊熵與激進指數爆表！這名對手不跟你講什麼營運，他們追求的是<span class='highlight-text' style='border-color:#ff0055'>極致的混亂與換血快感</span>。開局橋頭ALL-IN是家常便飯，將戰局拖入亂鬥是他們的專長。",
-                    weakness: "極度容易虧損聖水。一波攻勢被完美化解後，基本上等於門戶洞開，防守端形同虛設。",
-                    tactics: [
-                        "開局保持最高警戒，預留防守費用",
-                        "在其攻勢間隙進行『精準且致命』的單點反打",
-                        "維持盤面清潔，剝奪其利用殘局製造混亂的空間"
-                    ]
-                },
-                {
-                    condition: stb > 85 && ctr > 80,
-                    archetype: "絕對控場 (STABLE MASTER)",
-                    threat: "CLASS-S / ALGORITHMIC",
+                    condition: sub_mechanic > 85 && mic > 85,
+                    archetype: "微操怪物 (MECHANICAL FREAK)",
+                    threat: "TIER S / PIXEL-PERFECT",
                     color: "#00fa9a",
-                    tags: ["肝帝", "萬場老手", "大局觀"],
-                    analysis: "上萬場的歷練賦予了對手機器人般的穩定度。他們對節奏的<span class='highlight-text' style='border-color:#00fa9a'>掌控力（Control）</span>極佳，無論優勢劣勢，都能按照自己的劇本穩扎穩打，是真正憑實力爬分的強者。",
-                    weakness: "由於肌肉記憶過於深刻，打法可能偏向公式化。非傳統的奇招或極度冷門的卡組有時能打亂他們的演算邏輯。",
-                    tactics: [
-                        "藏好底牌，在關鍵時刻打亂對方的算牌節奏",
-                        "不要試圖在常規運營中拼贏他，尋找非線性突破口"
-                    ]
+                    tags: ["極限走位", "完美預判", "操作輾壓"],
+                    analysis: "極端危險的操作型玩家。具備極高的<span class='highlight-text' style='border-color:#00fa9a'>微操 (MIC) 與預判 (PRD)</span>。任何十字圍殺、極限拉扯對他們來說都像呼吸一樣自然。他們能用最少的資源解掉你最致命的進攻。",
+                    weakness: "過度自信於個人操作，容易在宏觀資源 (ECO) 上出現虧損。一旦操作失誤，防線就會瞬間崩潰。",
+                    tactics: ["使用大範圍法術或AOE單位，降低其微操的收益空間", "囤積一波『無法純靠操作化解』的絕對數值平推"]
+                },
+                {
+                    condition: sub_mental > 80 && def > 80,
+                    archetype: "絕對鐵壁 (IRON WILL DEFENDER)",
+                    threat: "TIER A / UNBREAKABLE",
+                    color: "#38bdf8",
+                    tags: ["極端抗壓", "加時賽王者", "心態穩健"],
+                    analysis: "這是一名具備恐怖<span class='highlight-text' style='border-color:#38bdf8'>抗壓能力 (CLT) 與穩定度 (CON)</span> 的對手。越是殘局、越是劣勢，他們的失誤率越低。想要在最後十秒絕殺他們幾乎是不可能的任務。",
+                    weakness: "主動進攻性 (INI) 通常偏低。給予他們過多的發育空間並非壞事，只要你能比他更有耐心。",
+                    tactics: ["前期積極消耗塔血，不要將勝負賭在最後一波", "隱藏一張致勝法術直到最後一刻才交出"]
+                },
+                {
+                    condition: cap > 85,
+                    archetype: "資本霸主 (CAPITAL OVERLORD)",
+                    threat: "TIER A / STAT CHECK",
+                    color: "#fbbf24",
+                    tags: ["數值怪物", "等級碾壓", "暴力平推"],
+                    analysis: "數據庫偵測到極高的<span class='highlight-text' style='border-color:#fbbf24'>資本指數 (CAP)</span>。戰術與微操在純粹的等級差距面前顯得蒼白無力。對手非常清楚自己的優勢，喜歡利用硬實力直接進行屬性檢定 (Stat Check)。",
+                    weakness: "操作細節 (MIC) 與應變能力 (ADP) 通常是致命短板。",
+                    tactics: ["利用建築物拉扯其滿級核心", "避免硬碰硬，尋找換路的時機"]
                 }
             ];
 
-            // 預設為均衡型
             let target = {
-                archetype: "常規路人 (STANDARD NPC)", threat: "AVERAGE / BALANCED", color: "#c084fc",
-                tags: ["中規中矩", "隨波逐流", "凡人"],
-                analysis: "雷達圖呈現標準的五邊形分布。這是一名前面四種極端性格都不具備的普通玩家，打法隨著心情與對手而定，沒有特別鮮明的致命威脅，也沒有明顯的漏洞。",
-                weakness: "缺乏一擊必殺的核心戰術體系，在僵持局容易因為失去耐心而自亂陣腳。",
-                tactics: ["穩扎穩打，發揮你自己的卡組優勢即可", "注意對方的隨機失誤並擴大優勢"]
+                archetype: "全能型選手 (BALANCED COMPETITOR)", threat: "TIER B / ALL-ROUNDER", color: "#00e5ff",
+                tags: ["六邊形戰士", "無明顯弱點", "靈活多變"],
+                analysis: "雷達圖呈現極度飽滿的十二邊形。這是一名在<span class='highlight-text' style='border-color:#00e5ff'>戰略、操作與心理</span>三個層面都發展均衡的對手。沒有致命破綻，也沒有過於極端的個人色彩。",
+                weakness: "均衡的反面就是平庸。在面對將單一戰術發揮到極致的『絕活哥』時，有時會因為火力不足或防守上限不夠而落敗。",
+                tactics: ["尋找你自己陣容的最強勢期，一波打穿", "考驗雙方基本功的純粹對決"]
             };
 
             for (let profile of profiles) {
@@ -431,7 +434,7 @@
                     <div class="report-header">
                         <div class="header-main">
                             <div id="ui-archetype" style="text-shadow: 0 0 15px ${target.color}80; color: ${target.color};">${target.archetype}</div>
-                            <div id="ui-apm">PRIMARY TRAIT DETECTED</div>
+                            <div id="ui-apm">PRO ESPORTS PROFILING</div>
                             <div>${tagsHtml}</div>
                         </div>
                         <div class="threat-badge">
@@ -443,28 +446,28 @@
                         <div style="display: flex; flex-direction: column; gap: 12px;">
                             <div class="report-module">
                                 <div class="corner-tl" style="border-color: #cbd5e1;"></div>
-                                <div class="module-title" style="color: #cbd5e1;">TRAIT_BALANCE (性向極值)</div>
+                                <div class="module-title" style="color: #cbd5e1;">TRINITY_INDEX (三位一體指標)</div>
                                 <div class="module-content">
                                     <div class="micro-stat-row">
-                                        <span class="micro-stat-label">龜縮係數</span>
-                                        <div class="bar-container"><div class="bar-fill" style="width: ${csv}%; background: #38bdf8;"></div></div>
-                                        <span class="micro-stat-val">${csv.toFixed(0)}</span>
+                                        <span class="micro-stat-label">戰略 (STRATEGY)</span>
+                                        <div class="bar-container"><div class="bar-fill" style="width: ${sub_strategy}%; background: #c084fc;"></div></div>
+                                        <span class="micro-stat-val">${sub_strategy.toFixed(0)}</span>
                                     </div>
                                     <div class="micro-stat-row">
-                                        <span class="micro-stat-label">瘋狗係數</span>
-                                        <div class="bar-container"><div class="bar-fill" style="width: ${agr}%; background: #ff0055;"></div></div>
-                                        <span class="micro-stat-val">${agr.toFixed(0)}</span>
+                                        <span class="micro-stat-label">操作 (MECHANIC)</span>
+                                        <div class="bar-container"><div class="bar-fill" style="width: ${sub_mechanic}%; background: #00fa9a;"></div></div>
+                                        <span class="micro-stat-val">${sub_mechanic.toFixed(0)}</span>
                                     </div>
                                     <div class="micro-stat-row">
-                                        <span class="micro-stat-label">鈔能力係數</span>
-                                        <div class="bar-container"><div class="bar-fill" style="width: ${ptw}%; background: #fbbf24;"></div></div>
-                                        <span class="micro-stat-val">${ptw.toFixed(0)}</span>
+                                        <span class="micro-stat-label">心理 (MENTALITY)</span>
+                                        <div class="bar-container"><div class="bar-fill" style="width: ${sub_mental}%; background: #38bdf8;"></div></div>
+                                        <span class="micro-stat-val">${sub_mental.toFixed(0)}</span>
                                     </div>
                                 </div>
                             </div>
                             
                             <div class="report-module" style="flex: 1; border-color: ${target.color}40; background: ${target.color}05;">
-                                <div class="module-title" style="color: ${target.color};">FATAL_WEAKNESS</div>
+                                <div class="module-title" style="color: ${target.color};">EXPLOITABLE_FLAW</div>
                                 <div class="module-content" style="font-size: 11px;">
                                     ${target.weakness}
                                 </div>
@@ -474,13 +477,13 @@
                         <div style="display: flex; flex-direction: column; gap: 12px;">
                             <div class="report-module" style="background: linear-gradient(135deg, ${target.color}08, transparent); border-left: 3px solid ${target.color}; flex: 1;">
                                 <div class="corner-tr" style="border-color: ${target.color};"></div>
-                                <div class="module-title" style="color: ${target.color};">REALITY_CHECK (實境嘴臉分析)</div>
+                                <div class="module-title" style="color: ${target.color};">DEEP_ANALYTICS (12D 綜合解析)</div>
                                 <div class="module-content">${target.analysis}</div>
                             </div>
 
                             <div class="report-module" style="border: 1px solid rgba(255, 255, 255, 0.1);">
                                 <div class="corner-br" style="border-color: #fff;"></div>
-                                <div class="module-title" style="color: #fff;">ACTIONABLE_COUNTER (針對性打擊)</div>
+                                <div class="module-title" style="color: #fff;">TACTICAL_EXECUTION (戰術執行)</div>
                                 <div class="module-content">
                                     <ul class="tactic-list">
                                         ${tacticsHtml}
@@ -491,14 +494,14 @@
                     </div>
                 </div>
             `;
-            writeLog("OMNI", `性格解構完成：目標已被分類為 [${target.archetype}]。`);
+            writeLog("OMNI", `12D 解析完成：目標已被分類為 [${target.archetype}]。`);
         }
 
         function writeLog(tag, msg) {
             const feed = document.getElementById('log-feed');
             const div = document.createElement('div'); div.className = 'log-line';
             const now = new Date(); const ts = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
-            let tagClass = 'tag-sys'; if(tag === 'PRED') tagClass = 'tag-pred'; if(tag === 'ERR') tagClass = 'tag-err'; if(tag === 'OMNI') tagClass = 'tag-omni';
+            let tagClass = 'tag-sys'; if(tag === 'OMNI') tagClass = 'tag-omni'; if(tag === 'ERR') tagClass = 'tag-err';
             div.innerHTML = `<span class="log-ts">${ts}</span><span class="log-tag ${tagClass}">${tag}</span> ${msg}`;
             feed.prepend(div);
             if(feed.children.length > LOG_LIMIT) feed.lastChild.remove();

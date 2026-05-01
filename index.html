@@ -15,6 +15,7 @@
             --gold: #ffb700;
             --bg-dark: #05070f;
             --panel-bg: rgba(12, 15, 26, 0.85);
+            --disabled: #555555;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -97,6 +98,10 @@
         .stat-label { font-size: 0.85rem; color: #888; text-transform: uppercase; margin-bottom: 3px; }
         .stat-value { font-size: 1.8rem; font-weight: bold; color: #fff; display: flex; align-items: baseline; gap: 5px; }
         .stat-unit { font-size: 0.9rem; color: var(--cyan); }
+        
+        /* 勝率脫鉤專用樣式 */
+        .decoupled-stat { border-left-color: var(--disabled); opacity: 0.7; }
+        .decoupled-tag { font-size: 0.65rem; color: var(--red); background: rgba(255,0,0,0.1); padding: 2px 6px; border-radius: 4px; margin-left: 8px; vertical-align: middle; }
 
         @media (max-width: 900px) {
             .dashboard { flex-direction: column; }
@@ -108,7 +113,7 @@
 
     <header>
         <h1>MAXIMA 12D</h1>
-        <div class="sys-status" id="sys-status">/// TENSOR KINEMATICS ENGINE ///</div>
+        <div class="sys-status" id="sys-status">/// ABSOLUTE TENSOR INVARIANT ENGINE ///</div>
     </header>
 
     <div class="control-hub">
@@ -122,7 +127,7 @@
         <div class="panel side-panel">
             
             <div class="rating-box" id="rating-container">
-                <div class="rating-label">PURE TENSOR LEVEL</div>
+                <div class="rating-label">ABSOLUTE EIGENSTATE</div>
                 <div class="rating-rank" id="ui-rank">--</div>
                 <div class="rating-score">EIGENVALUE: <span class="score-num" id="ui-score">0000</span></div>
             </div>
@@ -132,8 +137,8 @@
                 <div class="player-name" id="ui-name">PLAYER NAME</div>
             </div>
 
-            <div class="stat-group">
-                <div class="stat-label">BAYESIAN WIN PROBABILITY</div>
+            <div class="stat-group decoupled-stat">
+                <div class="stat-label">OBSERVED WIN RATE <span class="decoupled-tag">0% WEIGHT</span></div>
                 <div class="stat-value"><span id="ui-win">0</span> <span class="stat-unit">%</span></div>
             </div>
             
@@ -175,26 +180,12 @@
             return Math.sqrt(variance);
         }
 
-        // ==========================================
-        // 高階統計與機器學習函數庫 (Advanced Stats & ML Math)
-        // ==========================================
-        
         function clamp(val) { return Math.max(15, Math.min(99, val)); }
 
-        // S型收斂函數 (Sigmoid)
         function sigmoid(val, x0, k) {
             return 100 / (1 + Math.exp(-k * (val - x0)));
         }
 
-        // 貝氏平滑推論 (Bayesian Inference)
-        function bayesianEstimate(observedRate, totalMatches, priorRate = 50, priorWeight = 40) {
-            if (totalMatches === 0) return priorRate;
-            const observedSuccesses = (observedRate / 100) * totalMatches;
-            const priorSuccesses = (priorRate / 100) * priorWeight;
-            return ((observedSuccesses + priorSuccesses) / (totalMatches + priorWeight)) * 100;
-        }
-
-        // Box-Muller 轉換 (標準常態分佈隨機生成)
         function boxMullerTransform() {
             let u = 0, v = 0;
             while(u === 0) u = Math.random();
@@ -202,7 +193,6 @@
             return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
         }
 
-        // L2 範數 (Euclidean Norm)
         function calculateL2Norm(vector) {
             const sumOfSquares = vector.reduce((acc, val) => acc + Math.pow(val, 2), 0);
             return Math.sqrt(sumOfSquares);
@@ -242,25 +232,24 @@
         }
 
         // ==========================================
-        // 無勝率中心化分析引擎 (Decoupled Analytics Engine)
+        // 絕對張量不變量引擎 (Absolute Tensor Invariant Engine)
+        // 核心理念：徹底捨棄結果論(勝率)，100%專注於物理操作維度
         // ==========================================
         function updateUI(data) {
             document.getElementById('dashboard').style.display = "flex";
             
+            // 勝率僅保留作為 UI 面板的觀測展示，【嚴禁】參與任何維度的計算
             const rawWinR = data.winRate || 0;
             const battleCount = Math.max(1, data.battleCount || 1);
-            
-            // 經貝氏平滑處理的客觀數據
-            const bWinR = bayesianEstimate(rawWinR, battleCount, 50, 40);
-            const bThreeCrownR = bayesianEstimate((data.threeCrownRate || 0) * 100, battleCount, 15, 30);
+            const displayThreeCrownR = (data.threeCrownRate || 0) * 100;
             
             document.getElementById('ui-tag').innerText = `#${data.tag}`;
             document.getElementById('ui-name').innerText = data.name;
-            document.getElementById('ui-win').innerText = bWinR.toFixed(1);
+            document.getElementById('ui-win').innerText = rawWinR.toFixed(1);
             document.getElementById('ui-battles').innerText = battleCount;
             document.getElementById('ui-elixir').innerText = data.avgDeckElixir || 'N/A';
 
-            // 提取基礎觀測態數據
+            // 提取純粹物理觀測數據
             const avgElixir = parseFloat(data.avgDeckElixir) || 3.5; 
             const avgTowerHP = Math.max(1, parseFloat(data.avgTowerHP) || 3000); 
             const hpStdDev = calculateStandardDeviation(data.hpHistory, avgTowerHP);
@@ -270,81 +259,80 @@
             const crownsLost = parseFloat(data.avgCrownsLost) || 0;
             const hpPercent = (avgTowerHP / 8500); 
 
-            // 【核心改動】：非線性勝率阻尼器 (Non-linear Dampener)
-            // 將勝率的影響力開根號壓縮。50% 基準線為 1。就算勝率達到 100%，也只會提供 1.41 倍的輕微加成，不再主導評分。
-            const winDampener = Math.sqrt(bWinR / 50);
-
-            // 1. SKL (Pure Complexity / 純粹複雜度)
-            // 不再依賴勝率，而是直接以 50 分為基準，結合聖水偏離模型與極限操作係數
+            // 1. SKL (Absolute Complexity / 絕對複雜度)
+            // 完全由聖水偏離度與殘血操作頻率決定。就算你輸了，只要你能在逆境中瘋狂極限操作，SKL 依然破表。
             const baseEnergyLevel = 3.3; 
             const elixirDeviation = Math.pow(avgElixir - baseEnergyLevel, 2); 
-            const complexityTensor = 50 * winDampener * (1 + elixirDeviation * 0.5) * (1 + lowHpClutchR * 2.5);
+            const complexityTensor = 50 * (1 + elixirDeviation * 0.6) * (1 + lowHpClutchR * 3.0);
             const SKL = clamp(sigmoid(complexityTensor, 75, 0.035));
 
-            // 2. SPD (Relativistic Elixir Flux / 相對論聖水通量)
+            // 2. SPD (Absolute Velocity / 絕對相速度)
+            // 純粹測量手速與反應力。輪轉頻率與極限反應的完美結合。
             const baseCycleFreq = 3.8 / Math.max(1.8, avgElixir); 
             const reactionKinematics = 1 + (clutchR * 2.5) + (lowHpClutchR * 4.0); 
-            // 改用阻尼器，真正反映「手速與反應力」而非「勝率高 = 速度快」
-            const relativisticVelocity = baseCycleFreq * reactionKinematics * winDampener * 30; 
-            const SPD = clamp(sigmoid(relativisticVelocity, 75, 0.04));
+            const absoluteVelocity = baseCycleFreq * reactionKinematics * 40; 
+            const SPD = clamp(sigmoid(absoluteVelocity, 75, 0.04));
 
             // 3. STA (Coefficient of Variation / 變異係數熵減)
-            // 變異數本身與勝率無關，完美保留
+            // 純粹的統計學穩定度
             const coefficientOfVariation = hpStdDev / avgTowerHP;
             const stabilityMatrix = 100 - (coefficientOfVariation * 150);
             const STA = clamp(stabilityMatrix);
 
             // 4. CLT (Critical Survival / 臨界生存力)
-            // 完全由逆轉率主導
+            // 純看逆轉與殘血求生操作次數
             const survivalProbability = (lowHpClutchR * 6 + clutchR * 2) * 100;
             const CLT = clamp(20 + (Math.log(survivalProbability + 1) * 15));
 
             // 5. INT (Information Density / 戰場資訊密度)
-            // 大幅降低勝率權重，提升防禦血量佔比的價值
-            const informationDensity = hpPercent * (30 + bWinR * 0.4) * Math.log(avgElixir + 2);
+            // 塔血量保留百分比與牌組深度的純物理相乘
+            const informationDensity = hpPercent * 50 * Math.log(avgElixir + 2.5);
             const INT = clamp(sigmoid(informationDensity, 35, 0.08));
 
             // 6. DEF (L2 Defense Impedance / L2 護盾阻抗)
-            // 與勝率無關，看掉冠率與塔血保護
+            // 由掉冠率與總塔血防護力構成
             const tunnelingProb = crownsLost / 3.0; 
             const impedance = (1 - Math.pow(tunnelingProb, 1.5)) * hpPercent * 100;
             const DEF = clamp(impedance * 1.2);
 
-            // 7. ATK (Momentum Tensor / 皇冠動量張量)
-            // 改用阻尼器削弱高勝率對攻擊力的線性放大
-            const momentum = Math.pow(crownsEarned, 2.2) * (0.5 + winDampener * 0.5);
-            const ATK = clamp(sigmoid(momentum, 4.0, 0.6));
+            // 7. ATK (Structural Momentum / 結構破壞動量)
+            // 純粹衡量拿塔的破壞力，不受遊戲勝負結算影響
+            const momentum = Math.pow(crownsEarned, 2.5) * 10;
+            const ATK = clamp(sigmoid(momentum, 45, 0.1));
 
-            // 8. CRT (Excitation State / 系統躍遷能階)
-            // 純看三冠率與均費，與整體勝率無關
-            const CRT = clamp(sigmoid(bThreeCrownR * (5.0 / Math.max(2.0, avgElixir)), 12, 0.15));
+            // 8. CRT (Structural Excitation / 結構躍遷能階)
+            // 衡量三冠摧毀力與牌組均費的關係
+            const CRT = clamp(sigmoid(displayThreeCrownR * (5.0 / Math.max(2.0, avgElixir)), 12, 0.15));
 
             // 9. END (Asymptotic Decay Resistance / 漸進衰變抗性)
+            // 純看戰鬥場次帶來的經驗值與極限操作抗壓性
             const asymptote = Math.log10(battleCount + 1) * 12;
             const END = clamp(20 + asymptote + (clutchR * 100 * 0.5));
 
             // 10. ACC (Nash Equilibrium Delta / 納許均衡淨值)
-            // 直接計算皇冠淨勝差，再乘上輕微的勝率阻尼
-            const nashDelta = (crownsEarned - crownsLost) * winDampener;
-            const ACC = clamp(sigmoid(nashDelta, 0.2, 1.5));
+            // 純看皇冠淨勝差，不管最終輸贏
+            const nashDelta = crownsEarned - crownsLost;
+            const ACC = clamp(sigmoid(nashDelta, 0.0, 1.2));
 
             // 11. AGI (Hilbert Projection / 希爾伯特空間投影)
+            // 綜合物理動能投影
             const projection = (SPD * 0.4) + (SKL * 0.3) + (CLT * 0.3);
             const AGI = clamp(projection);
 
             // 12. LUK (Gaussian Quantum Decoherence / 高斯退相干噪聲)
+            // 真實物理環境的白噪聲
             const gaussianNoise = boxMullerTransform() * 8; 
             const LUK = clamp(50 + gaussianNoise + (clutchR * 100 * 0.2));
 
+            // 將所有維度寫入張量矩陣，這裡已經沒有任何勝率的影子了
             const metrics = [DEF, ATK, SKL, CRT, END, CLT, SPD, ACC, LUK, STA, AGI, INT];
 
             // ==========================================
-            // L2 範數純淨特徵值 (Pure Tensor Score)
+            // 絕對 L2 範數結算 (Absolute Tensor Score)
             // ==========================================
-            // 移除原本 "+ (bWinR * 2.5)" 的強制加分，現在 100% 取決於玩家在 12 個純粹技術維度中的表現總和 (向量長度)
             const tensorMagnitude = calculateL2Norm(metrics);
             
-            // 10000 為理論滿分極限校正基準
+            // 理論極限滿分萬分制
             const rawScore = Math.round((tensorMagnitude / 346.41) * 10000); 
             
             let rank = 'D-'; let rankColor = '#aaa';
@@ -388,9 +376,9 @@
             myChart = new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: ['DEF (L2 護盾阻抗)', 'ATK (皇冠動量張量)', 'SKL (純粹複雜度)', 'CRT (系統躍遷能階)', 'END (衰變半衰期)', 'CLT (臨界生存力)', 'SPD (相對論聖水通量)', 'ACC (納許均衡淨值)', 'LUK (高斯隨機擾動)', 'STA (變異係數熵減)', 'AGI (希爾伯特投影)', 'INT (戰場資訊密度)'],
+                    labels: ['DEF (護盾阻抗)', 'ATK (結構動量)', 'SKL (絕對複雜度)', 'CRT (結構躍遷)', 'END (衰變抗性)', 'CLT (臨界生存)', 'SPD (絕對相速度)', 'ACC (納許均衡)', 'LUK (高斯噪聲)', 'STA (變異係數)', 'AGI (空間投影)', 'INT (資訊密度)'],
                     datasets: [{
-                        label: 'TENSOR STATES',
+                        label: 'ABSOLUTE STATES',
                         data: dataValues,
                         backgroundColor: `${mainColor}25`,
                         borderColor: mainColor,

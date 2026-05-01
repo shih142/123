@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>神經矩陣 MAXIMA | V10.1 APEX-MATRIX (PRO ESPORTS)</title>
+    <title>神經矩陣 MAXIMA | V10.2 APEX-MATRIX (PRO ESPORTS)</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -17,11 +17,10 @@
             --stat-aegis: #38bdf8; 
             --stat-omni: #c084fc; 
             --stat-ptw: #fbbf24;
-            --stat-ss: #ff0055; /* SS級專屬霓虹紅 */
+            --stat-ss: #ff0055;
             --text-main: #f1f5f9;
             --text-dim: #475569;
             --border-glow: rgba(192, 132, 252, 0.2);
-            --neon-shadow: 0 0 15px rgba(192, 132, 252, 0.3);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; cursor: default; }
@@ -132,7 +131,7 @@
 
     <header>
         <div class="system-status">
-            <div class="status-node"><div class="dot blink"></div> V10.1 APEX-MATRIX | PRO_ESPORTS_SCAN</div>
+            <div class="status-node"><div class="dot blink"></div> V10.2 APEX-MATRIX | PRO_ESPORTS_SCAN</div>
         </div>
         <div style="font-family: 'Orbitron'; font-size: 16px; letter-spacing: 4px; color: #fff;">MAXIMA_DATACENTER</div>
     </header>
@@ -191,7 +190,7 @@
                         <div class="report-grid">
                             <div class="report-module module-full">
                                 <div class="module-title">PRO_ANALYTICS_ENGINE</div>
-                                <div class="module-content">V10.1 巔峰矩陣已加載。成功匯入 Tier SS [超維特異點] 戰術評分模組，支援 12 維度電競級深層數據解析。</div>
+                                <div class="module-content">V10.2 巔峰矩陣擴展版已加載。擴充 10 種類型之深度戰術行為學模組，包含心理駭客、神經刀等極端異常檢測。</div>
                             </div>
                         </div>
                     </div>
@@ -203,7 +202,7 @@
             <div class="section-label"><span>TELEMETRY_LOG</span><span>LOG_FEED</span></div>
             <div id="log-feed" class="sim-log">
                 <div class="log-line"><span class="log-ts">00:00:00</span> <span class="log-tag tag-sys">SYS</span> ESPORTS 模式啟動。12D 運算節點上線。</div>
-                <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-tag tag-sys">SYS</span> V10.1 SS-Tier 戰術評級系統解鎖。</div>
+                <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-tag tag-sys">SYS</span> V10.2 戰略原型資料庫 (10 Archetypes) 已連線。</div>
             </div>
 
             <div class="data-box">
@@ -282,7 +281,7 @@
         }
 
         function run12DModel(rawData) {
-            writeLog("OMNI", "12D Apex-Matrix: 抽象非線性張量運算 (Abstract Tensor Calculus) 已啟動...");
+            writeLog("OMNI", "12D Apex-Matrix: 抽象非線性張量運算已啟動...");
 
             const name = rawData.name || "UNKNOWN";
             const W = rawData.wins || 0; 
@@ -291,9 +290,6 @@
             const N = W + L || 1; 
             let p = W / N; 
 
-            // ==========================================
-            // [高階數學函數庫 (Advanced Math Core)]
-            // ==========================================
             const sigmoid = (x) => 1 / (1 + Math.exp(-x));
             const gaussian = (x, mu, sigma) => Math.exp(-0.5 * Math.pow((x - mu) / sigma, 2));
             const shannonEntropy = (prob) => {
@@ -303,17 +299,11 @@
             const normalize = (val) => Math.min(99.9, Math.max(1.0, val));
             const noise = (variance) => 1 + (Math.random() * variance - variance / 2);
 
-            // ==========================================
-            // [潛在變數特徵擷取 (Latent Feature Extraction)]
-            // ==========================================
-            const exp_asymptote = Math.log10(N + 1); // 經驗值對數漸近線
-            const win_momentum = (W - L) / Math.sqrt(N + 1); // Z-Score 勝場動能
-            const expected_trophies = 1500 * Math.log10((N / 100) + 1.1); // 理論 Elo 預期值
-            const elo_deviation = T / expected_trophies; // Elo 通膨/偏離指數
+            const exp_asymptote = Math.log10(N + 1); 
+            const win_momentum = (W - L) / Math.sqrt(N + 1); 
+            const expected_trophies = 1500 * Math.log10((N / 100) + 1.1); 
+            const elo_deviation = T / expected_trophies; 
 
-            // ==========================================
-            // [12D 抽象張量映射 (12-Dimensional Mapping)]
-            // ==========================================
             const mac = normalize( (sigmoid((p - 0.5) * 10) * 45) + (elo_deviation * 45) * noise(0.1) );
             const eco = normalize( 45 + (win_momentum * 12 * noise(0.15)) );
             const tmp_phase = (N % 100) / 100;
@@ -322,7 +312,6 @@
             const ini_momentum = Math.pow(p, 1.5) * exp_asymptote;
             const ini = normalize( 45 + (Math.tanh(win_momentum) * 30) + (ini_momentum * 4) * noise(0.2) );
             
-            // DEF: 龔珀茲生存極限與適應性遲滯
             const gompertz_growth = Math.exp(-2.5 * Math.exp(-N / 2500)); 
             const hysteresis_memory = sigmoid((elo_deviation - 1.02) * 12); 
             const resilience_feedback = 1 + Math.pow(Math.max(0, 0.5 - p), 1.5) * 2; 
@@ -374,17 +363,27 @@
             const sub_mechanic = (mic + ini + def + prd) / 4;
             const sub_mental = (clt + inf + con) / 3;
 
-            // V10.1: 加入 SS-Tier 特異點評級
+            // V10.2: 10 Types Archetype Database
             const profiles = [
                 {
                     condition: sub_strategy >= 88 && sub_mechanic >= 88 && sub_mental >= 88,
                     archetype: "超維特異點 (SINGULARITY ANOMALY)",
                     threat: "TIER SS / APEX PREDATOR",
-                    color: "var(--stat-ss)", // #ff0055
+                    color: "var(--stat-ss)", 
                     tags: ["降維打擊", "全圖視野", "非人類反應"],
                     analysis: "系統警告：偵測到超出常規邏輯的數據極值。此玩家在戰略運營、極限微操與心理抗壓上皆達到了人類機體的極限。他們的操作不存在『失誤』，只有『誘餌』；他們的防守不是被動承受，而是佈局絕殺的第一步。",
                     weakness: "本機體無法在常規數據維度中找到其明顯的戰術破綻。唯一的獲勝可能在於祈禱其硬體設備發生故障，或是你的運氣突破天際。",
                     tactics: ["放棄常規戰術預測，因為你的一切舉動都在其計算之中", "嘗試使用極度冷門或毫無邏輯的亂數打法，試圖引發其運算溢位"]
+                },
+                {
+                    condition: inf > 85 && prd > 85,
+                    archetype: "心理駭客 (MIND HACKER)",
+                    threat: "TIER S / PSYCHO-WARFARE",
+                    color: "#ec4899", // 粉紅色
+                    tags: ["讀心術", "極致誘餌", "情報壓制"],
+                    analysis: "玩弄對手心理的欺詐大師。情報 (INF) 與預判 (PRD) 極高，他們往往會故意露出破綻，甚至送出塔血，只為了記錄你的下牌習慣與法術位置，並在斬殺期進行完美針對。",
+                    weakness: "極度依賴對手的「可預測性」。面對完全不按牌理出牌的新手，或者絕對純粹的數值平推，其心機往往無法轉化為實質防禦力。",
+                    tactics: ["刻意改變自己關鍵防守牌的下牌節奏與位置", "將計就計，假裝上鉤後使用第二套應變方案"]
                 },
                 {
                     condition: sub_strategy > 85 && tmp > 80,
@@ -402,9 +401,29 @@
                     threat: "TIER S / PIXEL-PERFECT",
                     color: "#00fa9a",
                     tags: ["極限走位", "完美預判", "操作輾壓"],
-                    analysis: "極端危險的操作型玩家。具備極高的微操 (MIC) 與預判 (PRD)。任何十字圍殺、極限拉扯對他們來說都像呼吸一樣自然。他們能用最少的資源解掉你最致命的進攻。",
+                    analysis: "極端危險的操作型玩家。具備極高的微操 (MIC)。任何十字圍殺、極限拉扯對他們來說都像呼吸一樣自然。他們能用最少的資源解掉你最致命的進攻。",
                     weakness: "過度自信於個人操作，容易在宏觀資源 (ECO) 上出現虧損。一旦操作失誤，防線就會瞬間崩潰。",
                     tactics: ["使用大範圍法術或AOE單位，降低其微操的收益空間", "囤積一波『無法純靠操作化解』的絕對數值平推"]
+                },
+                {
+                    condition: ini > 85 && tmp > 80 && def < 60,
+                    archetype: "節奏狂擊者 (BLITZKRIEG VANGUARD)",
+                    threat: "TIER A / TEMPO DICTATOR",
+                    color: "#f97316", // 橘色
+                    tags: ["極限快攻", "窒息節奏", "不留後路"],
+                    analysis: "崇尚極致進攻的快攻型玩家。主動性 (INI) 與節奏 (TMP) 數值突破天際。他們喜歡在開局或對手下出大費核心的瞬間，直接在橋頭施加毀滅性的壓力，逼迫你陷入被動防守。",
+                    weakness: "防守 (DEF) 與大局觀往往是被犧牲的維度。一旦第一波快攻被完美化解，後續容易出現聖水枯竭與兵敗如山倒的狀況。",
+                    tactics: ["起手保留低費防守卡，穩住前兩波攻勢", "利用其急躁心理，佈置防守反擊的口袋陣"]
+                },
+                {
+                    condition: adp > 85 && def > 80,
+                    archetype: "絕對反制 (PERFECT COUNTER)",
+                    threat: "TIER A / MIRROR REFLECTION",
+                    color: "#8b5cf6", // 深紫色
+                    tags: ["後發制人", "陣容變形", "極限適應"],
+                    analysis: "適應力 (ADP) 達到頂峰的防守反擊型玩家。他們開局極具耐心，會花費大量時間摸清你的牌組構成。一旦了解你的進攻軸心，他們便會組建出一套你完全無法突破的完美防線。",
+                    weakness: "過度依賴「後發制人」。如果不主動給予他們情報，或是採用前期一波流的高壓戰術，很容易打破他們的運算節奏。",
+                    tactics: ["隱藏自己的核心進攻牌直到雙倍聖水期", "採取『假核』戰術，誘使其將關鍵防禦牌交給次要目標"]
                 },
                 {
                     condition: sub_mental > 80 && def > 80,
@@ -417,7 +436,7 @@
                     tactics: ["前期積極消耗塔血，不要將勝負賭在最後一波", "隱藏一張致勝法術直到最後一刻才交出"]
                 },
                 {
-                    condition: cap > 80,
+                    condition: cap > 80 && mic < 60,
                     archetype: "資本霸主 (CAPITAL OVERLORD)",
                     threat: "TIER A / STAT CHECK",
                     color: "#fbbf24",
@@ -425,20 +444,30 @@
                     analysis: "數據庫偵測到極高的資本指數 (CAP)。戰術與微操在純粹的等級差距面前顯得蒼白無力。對手非常清楚自己的優勢，喜歡利用硬實力直接進行屬性檢定 (Stat Check)。",
                     weakness: "操作細節 (MIC) 與應變能力 (ADP) 通常是致命短板。",
                     tactics: ["利用建築物拉扯其滿級核心", "避免硬碰硬，尋找換路的時機"]
+                },
+                {
+                    condition: mic > 75 && con < 55,
+                    archetype: "混沌神經刀 (CHAOS BRINGER)",
+                    threat: "TIER B~S / UNSTABLE VARIABLE",
+                    color: "#ef4444", // 紅色
+                    tags: ["極限操作", "狀態起伏", "刀尖起舞"],
+                    analysis: "穩定度 (CON) 極低，但微操 (MIC) 上限極高的神經刀玩家。他們可能在上一秒犯下致命失誤，下一秒卻打出不可思議的極限神仙操作。你永遠不知道現在坐在螢幕對面的是神還是鬼。",
+                    weakness: "具有自毀傾向。高風險操作必然伴隨高失誤率。只要拉長戰線，他們通常會自己將勝利拱手讓人。",
+                    tactics: ["打得越保守越好，耐心等待對手自爆", "避免與其在同一路進行高強度的微操內卷"]
+                },
+                {
+                    condition: true,
+                    archetype: "全能型選手 (BALANCED COMPETITOR)", 
+                    threat: "TIER B / ALL-ROUNDER", 
+                    color: "#00e5ff",
+                    tags: ["六邊形戰士", "無明顯弱點", "靈活多變"],
+                    analysis: "雷達圖呈現極度飽滿的十二邊形。這是一名在戰略、操作與心理三個層面都發展均衡的對手。沒有致命破綻，也沒有過於極端的個人色彩。",
+                    weakness: "均衡的反面就是平庸。在面對將單一戰術發揮到極致的『絕活哥』時，有時會因為火力不足或防守上限不夠而落敗。",
+                    tactics: ["尋找你自己陣容的最強勢期，一波打穿", "考驗雙方基本功的純粹對決"]
                 }
             ];
 
-            let target = {
-                archetype: "全能型選手 (BALANCED COMPETITOR)", threat: "TIER B / ALL-ROUNDER", color: "#00e5ff",
-                tags: ["六邊形戰士", "無明顯弱點", "靈活多變"],
-                analysis: "雷達圖呈現極度飽滿的十二邊形。這是一名在戰略、操作與心理三個層面都發展均衡的對手。沒有致命破綻，也沒有過於極端的個人色彩。",
-                weakness: "均衡的反面就是平庸。在面對將單一戰術發揮到極致的『絕活哥』時，有時會因為火力不足或防守上限不夠而落敗。",
-                tactics: ["尋找你自己陣容的最強勢期，一波打穿", "考驗雙方基本功的純粹對決"]
-            };
-
-            for (let profile of profiles) {
-                if (profile.condition) { target = profile; break; }
-            }
+            let target = profiles.find(p => p.condition);
 
             rc.style.borderTopColor = target.color;
             rc.style.boxShadow = `inset 0 0 30px rgba(0,0,0,0.8), 0 10px 20px ${target.color}30`;
@@ -516,7 +545,6 @@
                 </div>
             `;
             
-            // 若觸發SS級，印出特殊系統警告日誌
             if (target.threat.includes("SS")) {
                 writeLog("ERR", "CRITICAL WARNING: 偵測到超維特異點。目標戰術數值溢位。");
             } else {

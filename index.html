@@ -267,8 +267,7 @@
             writeLog("SYS", `向 API 發送請求 [#${tagClean}] 啟動 12 維度深層解析...`);
             
             try {
-                // 【核心修改】將這裡的路徑補上 http://localhost:3000
-                const response = await fetch(`http://localhost:3000/api/clash-proxy?tag=${encodeURIComponent('#' + tagClean)}`);
+                const response = await fetch(`/api/clash-proxy?tag=${encodeURIComponent('#' + tagClean)}`);
                 if (!response.ok) throw new Error(`HTTP 錯誤狀態碼: ${response.status}`);
                 
                 const rawData = await response.json();

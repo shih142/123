@@ -2,101 +2,167 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <title>MAXIMA 12D - 核心掃描</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAXIMA 12D | 戰術人格掃描儀</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --neon: #00f2ff; --bg: #0a0b10; }
-        body { background: var(--bg); color: var(--neon); font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; padding-top: 50px; }
-        .box { background: #161822; padding: 40px; border-radius: 20px; border: 1px solid var(--neon); width: 450px; text-align: center; box-shadow: 0 0 20px rgba(0,242,255,0.2); }
-        input { background: #000; border: 1px solid var(--neon); color: #fff; padding: 12px; width: 60%; border-radius: 8px; outline: none; }
-        button { background: var(--neon); color: #000; border: none; padding: 12px 25px; cursor: pointer; font-weight: bold; border-radius: 8px; margin-left: 5px; }
-        #status { margin: 20px 0; font-size: 0.85rem; color: #888; min-height: 1.5em; }
-        canvas { margin-top: 20px; }
+        :root {
+            --neon: #00f2ff;
+            --purple: #bc13fe;
+            --bg: #0a0b10;
+        }
+        body {
+            background-color: var(--bg);
+            color: white;
+            font-family: 'Orbitron', sans-serif, "Microsoft JhengHei";
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            margin: 0;
+        }
+        .container {
+            background: linear-gradient(145deg, #161822, #0d0e14);
+            border: 1px solid var(--neon);
+            border-radius: 20px;
+            padding: 30px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.2);
+            text-align: center;
+        }
+        h1 { color: var(--neon); letter-spacing: 4px; margin-bottom: 5px; }
+        .search-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 25px 0;
+        }
+        input {
+            background: #000;
+            border: 1px solid #333;
+            color: var(--neon);
+            padding: 12px;
+            border-radius: 8px;
+            width: 180px;
+            outline: none;
+            text-align: center;
+        }
+        input:focus { border-color: var(--neon); }
+        button {
+            background: var(--neon);
+            color: #000;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover { box-shadow: 0 0 15px var(--neon); transform: scale(1.05); }
+        #status {
+            font-size: 0.85rem;
+            color: #888;
+            margin-bottom: 15px;
+            min-height: 1.2em;
+        }
+        canvas { margin-top: 10px; }
     </style>
 </head>
 <body>
 
-<div class="box">
-    <h1 style="letter-spacing: 5px;">MAXIMA 12D</h1>
-    <p style="font-size: 0.7rem; color: #bc13fe; margin-bottom: 30px;">REAL-TIME DATA ANALYSIS</p>
-    
-    <div style="display:flex; justify-content:center;">
-        <input type="text" id="playerTag" placeholder="例如 #P8RR2P" value="#P8RR2P">
-        <button onclick="runScan()">SCAN</button>
+    <div class="container">
+        <h1>MAXIMA 12D</h1>
+        <div id="status">系統就緒，請輸入玩家標籤</div>
+
+        <div class="search-group">
+            <input type="text" id="playerTag" placeholder="#P8RR2P" value="#P8RR2P">
+            <button onclick="startScan()">啟動掃描</button>
+        </div>
+
+        <canvas id="radarChart"></canvas>
     </div>
 
-    <div id="status">系統等待指令...</div>
-    <canvas id="radarChart"></canvas>
-</div>
+    <script>
+        let myChart = null;
 
-<script>
-    let myChart = null;
-
-    async function runScan() {
-        const tagInput = document.getElementById('playerTag').value.trim();
-        const status = document.getElementById('status');
-        
-        if (!tagInput) return alert("請輸入 Tag");
-
-        status.innerText = "📡 正在解析數據模式...";
-        status.style.color = "var(--neon)";
-
-        try {
-            // 💡 關鍵修復：清理掉 #，並使用 URLSearchParams 確保網址模式正確
-            const cleanTag = tagInput.replace('#', '');
-            const params = new URLSearchParams({ tag: cleanTag });
+        async function startScan() {
+            const tagInput = document.getElementById('playerTag').value.trim();
+            const status = document.getElementById('status');
             
-            const response = await fetch(`/api/clash-proxy?${params.toString()}`);
-            const data = await response.json();
-
-            if (!response.ok) throw new Error(data.message || "連線請求被拒絕");
-
-            status.innerText = `✅ 玩家已鎖定: ${data.name}`;
-            
-            // 計算雷達圖指標 (模擬 12D 指標)
-            const metrics = [
-                Math.min(100, (data.avgTowerHP / 8500) * 100), // DEF
-                data.winRate,                                 // ATK
-                88, 75, 60, 95, 70, 82, 65, 90, 78, 85        // 預設/隨機
-            ];
-            
-            drawChart(metrics);
-
-        } catch (err) {
-            status.innerText = `❌ 錯誤: ${err.message}`;
-            status.style.color = "#ff4444";
-            console.error("Pattern Error Debug:", err);
-        }
-    }
-
-    function drawChart(vals) {
-        const ctx = document.getElementById('radarChart');
-        if (myChart) myChart.destroy();
-        myChart = new Chart(ctx, {
-            type: 'radar',
-            data: {
-                labels: ['DEF', 'ATK', 'SKL', 'CRT', 'END', 'CLT', 'SPD', 'ACC', 'LUK', 'INT', 'AGI', 'STA'],
-                datasets: [{
-                    data: vals,
-                    borderColor: '#00f2ff',
-                    backgroundColor: 'rgba(0, 242, 255, 0.2)',
-                    pointBackgroundColor: '#bc13fe'
-                }]
-            },
-            options: {
-                plugins: { legend: { display: false } },
-                scales: {
-                    r: {
-                        grid: { color: 'rgba(255,255,255,0.1)' },
-                        angleLines: { color: 'rgba(255,255,255,0.1)' },
-                        ticks: { display: false },
-                        suggestedMax: 100,
-                        suggestedMin: 0
-                    }
-                }
+            if (!tagInput) {
+                status.innerText = "⚠️ 請輸入玩家 Tag";
+                return;
             }
-        });
-    }
-</script>
+
+            status.innerText = "📡 正在分析數據模式...";
+            status.style.color = "var(--neon)";
+
+            try {
+                // 1. 預防 Pattern 錯誤：過濾非英數，強制大寫
+                const cleanTag = tagInput.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+                
+                // 2. 使用 URL 建構子確保 URL 模式絕對正確
+                const apiUrl = new URL('/api/clash-proxy', window.location.origin);
+                apiUrl.searchParams.set('tag', cleanTag);
+
+                const response = await fetch(apiUrl.toString());
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || "數據擷取失敗");
+                }
+
+                status.innerText = `✅ 鎖定對象: ${data.name}`;
+                
+                // 將後端回傳的數據對應到 12D 指標
+                const metrics = [
+                    Math.min(100, (data.avgTowerHP / 8500) * 100), // DEF
+                    data.winRate,                                 // ATK
+                    85, 70, 65, 90, 75, 80, 60, 88, 72, 85        // 預設維度
+                ];
+
+                updateChart(metrics);
+
+            } catch (err) {
+                console.error("Fetch Error:", err);
+                status.innerText = `❌ 錯誤: ${err.message}`;
+                status.style.color = "#ff4444";
+            }
+        }
+
+        function updateChart(dataPoints) {
+            const ctx = document.getElementById('radarChart').getContext('2d');
+            if (myChart) myChart.destroy();
+
+            myChart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['DEF', 'ATK', 'SKL', 'CRT', 'END', 'CLT', 'SPD', 'ACC', 'LUK', 'INT', 'AGI', 'STA'],
+                    datasets: [{
+                        data: dataPoints,
+                        backgroundColor: 'rgba(0, 242, 255, 0.2)',
+                        borderColor: '#00f2ff',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#bc13fe'
+                    }]
+                },
+                options: {
+                    scales: {
+                        r: {
+                            grid: { color: 'rgba(255,255,255,0.1)' },
+                            angleLines: { color: 'rgba(255,255,255,0.1)' },
+                            pointLabels: { color: '#888', font: { size: 10 } },
+                            ticks: { display: false },
+                            suggestedMin: 0,
+                            suggestedMax: 100
+                        }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+    </script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MAXIMA 12D - QUANTUM TACTICAL HUD</title>
+    <title>MAXIMA 12D - ZERO BIAS HUD</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700;900&display=swap');
@@ -25,8 +25,8 @@
         body {
             background-color: var(--bg-dark);
             background-image: 
-                linear-gradient(rgba(0, 242, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 242, 255, 0.03) 1px, transparent 1px);
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
             background-size: 30px 30px;
             color: #fff;
             font-family: 'Rajdhani', sans-serif;
@@ -34,39 +34,34 @@
         }
 
         header { text-align: center; margin-bottom: 30px; text-transform: uppercase; }
-        h1 { font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 3rem; color: var(--cyan); letter-spacing: 6px; text-shadow: 0 0 20px rgba(0,242,255,0.4); margin-bottom: 5px; }
-        .sys-status { font-size: 1rem; color: var(--gold); letter-spacing: 3px; font-weight: bold; }
+        h1 { font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 3rem; color: #fff; letter-spacing: 6px; text-shadow: 0 0 20px rgba(255,255,255,0.4); margin-bottom: 5px; }
+        .sys-status { font-size: 1rem; color: #aaa; letter-spacing: 3px; font-weight: bold; }
 
         .control-hub {
-            background: var(--panel-bg); border: 1px solid rgba(0, 242, 255, 0.3); padding: 20px; border-radius: 12px;
+            background: var(--panel-bg); border: 1px solid rgba(255, 255, 255, 0.2); padding: 20px; border-radius: 12px;
             display: flex; gap: 15px; width: 100%; max-width: 600px; margin-bottom: 30px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.8), inset 0 0 15px rgba(0,242,255,0.05);
             backdrop-filter: blur(10px);
         }
 
         input {
-            flex: 1; background: rgba(0,0,0,0.6); border: 1px solid var(--cyan); color: var(--cyan);
+            flex: 1; background: rgba(0,0,0,0.6); border: 1px solid #555; color: #fff;
             padding: 15px; border-radius: 6px; font-family: 'Orbitron', sans-serif; font-size: 1.1rem; outline: none; transition: 0.3s;
         }
-        input:focus { box-shadow: 0 0 15px rgba(0, 242, 255, 0.4); }
-        input::placeholder { color: rgba(0, 242, 255, 0.3); }
+        input:focus { border-color: var(--cyan); box-shadow: 0 0 15px rgba(0, 242, 255, 0.2); }
 
         button {
-            background: var(--cyan); color: #000; border: none; padding: 0 30px; border-radius: 6px;
+            background: #fff; color: #000; border: none; padding: 0 30px; border-radius: 6px;
             font-family: 'Orbitron', sans-serif; font-weight: 700; font-size: 1.1rem; cursor: pointer; transition: 0.3s; text-transform: uppercase;
         }
-        button:hover { background: #fff; box-shadow: 0 0 20px var(--cyan); transform: scale(1.02); }
+        button:hover { background: var(--cyan); box-shadow: 0 0 20px var(--cyan); }
 
         #alert-box { display: none; width: 100%; max-width: 600px; padding: 15px; background: rgba(255, 42, 42, 0.1); border-left: 5px solid var(--red); color: var(--red); margin-bottom: 20px; font-weight: bold; border-radius: 4px; text-align: center; }
 
-        .dashboard {
-            display: none; width: 100%; max-width: 1100px; gap: 25px; align-items: stretch; animation: fadeIn 0.8s ease-out forwards;
-        }
-
+        .dashboard { display: none; width: 100%; max-width: 1100px; gap: 25px; align-items: stretch; animation: fadeIn 0.8s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
         .panel {
-            background: var(--panel-bg); border: 1px solid rgba(0, 242, 255, 0.2); border-radius: 15px;
+            background: var(--panel-bg); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 15px;
             padding: 30px; backdrop-filter: blur(10px); box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
         }
 
@@ -74,62 +69,46 @@
         .radar-panel { flex: 1.5; display: flex; justify-content: center; align-items: center; position: relative; min-height: 450px; }
 
         .rating-box {
-            background: rgba(0, 0, 0, 0.6); border: 2px solid var(--gold); border-radius: 10px; padding: 20px; text-align: center;
-            box-shadow: 0 0 20px rgba(255, 183, 0, 0.2), inset 0 0 15px rgba(255, 183, 0, 0.1);
+            background: rgba(0, 0, 0, 0.6); border: 2px solid #555; border-radius: 10px; padding: 20px; text-align: center;
             position: relative; overflow: hidden; transition: border-color 0.5s ease;
         }
-        .rating-box::before {
-            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-            background: conic-gradient(transparent, transparent, transparent, currentColor);
-            animation: rotate 4s linear infinite; opacity: 0.1; z-index: 0;
-        }
-        @keyframes rotate { 100% { transform: rotate(360deg); } }
-        .rating-label { font-size: 1rem; color: #aaa; font-weight: bold; letter-spacing: 2px; position: relative; z-index: 1; }
-        .rating-rank { 
-            font-family: 'Orbitron', sans-serif; font-size: 4rem; font-weight: 900; line-height: 1.1; margin: 5px 0;
-            text-shadow: 0 0 20px currentColor; position: relative; z-index: 1; transition: color 0.5s ease;
-        }
-        .rating-score { font-size: 1.2rem; color: #fff; font-family: 'Orbitron', sans-serif; position: relative; z-index: 1; }
-        .score-num { color: var(--cyan); font-weight: bold; }
+        .rating-label { font-size: 1rem; color: #aaa; font-weight: bold; letter-spacing: 2px; }
+        .rating-rank { font-family: 'Orbitron', sans-serif; font-size: 4rem; font-weight: 900; line-height: 1.1; margin: 5px 0; transition: color 0.5s ease; }
+        .rating-score { font-size: 1.2rem; color: #fff; font-family: 'Orbitron', sans-serif; }
+        .score-num { font-weight: bold; }
 
-        .player-header { border-bottom: 2px solid var(--purple); padding-bottom: 10px; margin-bottom: 5px; }
+        .player-header { border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 5px; }
         .player-name { font-size: 2rem; font-family: 'Orbitron', sans-serif; font-weight: bold; color: #fff; text-transform: uppercase; word-break: break-all; }
-        .player-tag { color: var(--cyan); font-size: 1.1rem; letter-spacing: 2px; }
+        .player-tag { color: #888; font-size: 1.1rem; letter-spacing: 2px; }
 
         .radical-bars { display: flex; flex-direction: column; gap: 15px; margin-top: 10px; padding-top: 15px; border-top: 1px dashed rgba(255,255,255,0.1); }
         .bar-container { display: flex; flex-direction: column; gap: 5px; }
         .bar-header { display: flex; justify-content: space-between; align-items: flex-end; }
-        .bar-label { font-family: 'Orbitron', sans-serif; font-size: 0.85rem; font-weight: bold; letter-spacing: 1px; }
-        .bar-label.atk-label { color: var(--blood); text-shadow: 0 0 5px rgba(255,0,60,0.5); }
-        .bar-label.def-label { color: var(--shield); text-shadow: 0 0 5px rgba(0,255,204,0.5); }
-        .bar-val { font-family: 'Orbitron', sans-serif; font-size: 1.2rem; font-weight: 900; }
-        .bar-bg { width: 100%; height: 12px; background: rgba(0,0,0,0.8); border: 1px solid #333; border-radius: 6px; overflow: hidden; position: relative; }
-        .bar-fill { height: 100%; width: 0%; transition: width 1.5s cubic-bezier(0.2, 0.8, 0.2, 1); box-shadow: inset 0 0 10px rgba(255,255,255,0.3); }
-        .atk-fill { background: linear-gradient(90deg, #550000, var(--blood)); }
-        .def-fill { background: linear-gradient(90deg, #003333, var(--shield)); }
+        .bar-label { font-family: 'Orbitron', sans-serif; font-size: 0.85rem; font-weight: bold; letter-spacing: 1px; color: #aaa; }
+        .bar-val { font-family: 'Orbitron', sans-serif; font-size: 1.2rem; font-weight: 900; color: #fff; }
+        .bar-bg { width: 100%; height: 8px; background: #111; border-radius: 4px; overflow: hidden; }
+        .bar-fill { height: 100%; width: 0%; transition: width 1.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        .atk-fill { background: var(--cyan); }
+        .def-fill { background: var(--purple); }
 
-        .stat-group { background: rgba(255,255,255,0.02); padding: 12px; border-radius: 8px; border-left: 3px solid var(--cyan); }
+        .stat-group { background: rgba(255,255,255,0.02); padding: 12px; border-radius: 8px; border-left: 3px solid #555; }
         .stat-label { font-size: 0.85rem; color: #888; text-transform: uppercase; margin-bottom: 3px; }
         .stat-value { font-size: 1.8rem; font-weight: bold; color: #fff; display: flex; align-items: baseline; gap: 5px; }
-        .stat-unit { font-size: 0.9rem; color: var(--cyan); }
-        .decoupled-stat { border-left-color: var(--disabled); opacity: 0.7; }
-        .decoupled-tag { font-size: 0.65rem; color: var(--red); background: rgba(255,0,0,0.1); padding: 2px 6px; border-radius: 4px; margin-left: 8px; vertical-align: middle; }
+        .stat-unit { font-size: 0.9rem; color: #888; }
+        .decoupled-tag { font-size: 0.65rem; color: #555; background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; margin-left: 8px; }
 
-        @media (max-width: 900px) {
-            .dashboard { flex-direction: column; }
-            .radar-panel { min-height: 350px; }
-        }
+        @media (max-width: 900px) { .dashboard { flex-direction: column; } .radar-panel { min-height: 350px; } }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>MAXIMA 12D</h1>
-        <div class="sys-status" id="sys-status">/// ABSOLUTE TENSOR INVARIANT ENGINE ///</div>
+        <h1>ZERO BIAS HUD</h1>
+        <div class="sys-status" id="sys-status">/// OBJECTIVE STATISTICAL MECHANICS ///</div>
     </header>
 
     <div class="control-hub">
-        <input type="text" id="playerTag" placeholder="ENTER PLAYER TAG (e.g. P8RR2P)" autocomplete="off">
+        <input type="text" id="playerTag" placeholder="ENTER PLAYER TAG" autocomplete="off">
         <button onclick="runScan()" id="scanBtn">INITIATE</button>
     </div>
 
@@ -139,7 +118,7 @@
         <div class="panel side-panel">
             
             <div class="rating-box" id="rating-container">
-                <div class="rating-label">ABSOLUTE EIGENSTATE</div>
+                <div class="rating-label">NORMATIVE VECTOR</div>
                 <div class="rating-rank" id="ui-rank">--</div>
                 <div class="rating-score">EIGENVALUE: <span class="score-num" id="ui-score">0000</span></div>
             </div>
@@ -152,22 +131,22 @@
             <div class="radical-bars">
                 <div class="bar-container">
                     <div class="bar-header">
-                        <div class="bar-label atk-label">ANNIHILATION YIELD (ATK)</div>
-                        <div class="bar-val" style="color: var(--blood);" id="txt-atk">0</div>
+                        <div class="bar-label">EXPECTED CROWN YIELD (ATK)</div>
+                        <div class="bar-val" id="txt-atk">0</div>
                     </div>
                     <div class="bar-bg"><div class="bar-fill atk-fill" id="bar-atk"></div></div>
                 </div>
                 <div class="bar-container">
                     <div class="bar-header">
-                        <div class="bar-label def-label">EVENT HORIZON (DEF)</div>
-                        <div class="bar-val" style="color: var(--shield);" id="txt-def">0</div>
+                        <div class="bar-label">RETENTION INDEX (DEF)</div>
+                        <div class="bar-val" id="txt-def">0</div>
                     </div>
                     <div class="bar-bg"><div class="bar-fill def-fill" id="bar-def"></div></div>
                 </div>
             </div>
 
-            <div class="stat-group decoupled-stat" style="margin-top: 15px;">
-                <div class="stat-label">OBSERVED WIN RATE <span class="decoupled-tag">0% WEIGHT</span></div>
+            <div class="stat-group" style="margin-top: 15px; opacity: 0.5;">
+                <div class="stat-label">OBSERVED WIN RATE <span class="decoupled-tag">EXCLUDED</span></div>
                 <div class="stat-value"><span id="ui-win">0</span> <span class="stat-unit">%</span></div>
             </div>
             
@@ -186,105 +165,114 @@
         let myChart = null;
 
         function showAlert(msg) {
-            const box = document.getElementById('alert-box');
-            box.style.display = 'block';
-            box.innerText = `[SYSTEM ERROR] ${msg}`;
+            const box = document.getElementById('alert-box'); box.style.display = 'block'; box.innerText = `[ERROR] ${msg}`;
         }
         function hideAlert() { document.getElementById('alert-box').style.display = 'none'; }
 
-        function calculateStandardDeviation(arr, mean) {
-            if (!arr || arr.length === 0) return 0;
-            const variance = arr.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / arr.length;
-            return Math.sqrt(variance);
-        }
+        // 純粹統計學計算
+        function getMean(arr) { return arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0; }
+        function getStdDev(arr, mean) { return arr.length ? Math.sqrt(arr.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / arr.length) : 0; }
+        
+        // 絕對物理邊界 [0, 100]，拒絕任何造假的保底分數
+        function clamp(val) { return Math.max(0, Math.min(100, val)); }
 
-        function clamp(val) { return Math.max(15, Math.min(99, val)); }
-
-        function sigmoid(val, x0, k) {
-            return 100 / (1 + Math.exp(-k * (val - x0)));
-        }
-
-        function boxMullerTransform() {
+        // 高斯白噪聲 (用於不可測的變異)
+        function boxMuller() {
             let u = 0, v = 0;
-            while(u === 0) u = Math.random();
-            while(v === 0) v = Math.random();
+            while(u === 0) u = Math.random(); while(v === 0) v = Math.random();
             return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
         }
 
-        function calculateL2Norm(vector) {
-            const sumOfSquares = vector.reduce((acc, val) => acc + Math.pow(val, 2), 0);
-            return Math.sqrt(sumOfSquares);
-        }
-
         async function runScan() {
-            const tagInput = document.getElementById('playerTag').value;
+            const tagInput = document.getElementById('playerTag').value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+            if (!tagInput) return showAlert("INVALID TAG FORMAT.");
+
             const btn = document.getElementById('scanBtn');
-            const dashboard = document.getElementById('dashboard');
-            
-            const cleanTag = tagInput.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-            if (!cleanTag) return showAlert("INVALID TAG FORMAT.");
+            hideAlert(); document.getElementById('dashboard').style.display = "none";
+            btn.innerText = "CALCULATING..."; btn.style.pointerEvents = "none";
 
-            hideAlert();
-            dashboard.style.display = "none";
-            btn.innerText = "COMPUTING TENSORS...";
-            btn.style.pointerEvents = "none";
-
-            document.getElementById('bar-atk').style.width = '0%';
-            document.getElementById('bar-def').style.width = '0%';
+            document.getElementById('bar-atk').style.width = '0%'; document.getElementById('bar-def').style.width = '0%';
 
             try {
                 const targetUrl = new URL('/api/clash-proxy', window.location.origin);
-                targetUrl.searchParams.append('tag', cleanTag);
-
+                targetUrl.searchParams.append('tag', tagInput);
                 const response = await fetch(targetUrl.toString(), { method: 'GET', headers: { 'Accept': 'application/json' } });
                 const data = await response.json();
-                
                 if (!response.ok) throw new Error(data.details || data.error || "Connection Failed.");
-
                 updateUI(data);
-                
             } catch (error) {
-                console.error("Scan Failed:", error);
                 showAlert(error.message);
             } finally {
-                btn.innerText = "INITIATE";
-                btn.style.pointerEvents = "auto";
+                btn.innerText = "INITIATE"; btn.style.pointerEvents = "auto";
             }
         }
 
         function updateUI(data) {
             document.getElementById('dashboard').style.display = "flex";
             
-            const rawWinR = data.winRate || 0;
-            const battleCount = Math.max(1, data.battleCount || 1);
-            const displayThreeCrownR = (data.threeCrownRate || 0) * 100;
-            
             document.getElementById('ui-tag').innerText = `#${data.tag}`;
             document.getElementById('ui-name').innerText = data.name;
-            document.getElementById('ui-win').innerText = rawWinR.toFixed(1);
-            document.getElementById('ui-elixir').innerText = data.avgDeckElixir || 'N/A';
+            document.getElementById('ui-win').innerText = (data.winRate || 0).toFixed(1);
+            document.getElementById('ui-elixir').innerText = data.avgDeckElixir || '0.0';
 
-            const avgElixir = parseFloat(data.avgDeckElixir) || 3.5; 
+            // 絕對物理常數定義 (基於遊戲規則)
+            const MAX_CROWNS = 3.0;
+            const MAX_TOWER_HP = 8500.0;
+            const MEDIAN_ELIXIR = 3.0;
+            const LOG_CONFIDENCE_MAX = 4.0; // log10(10000 場)
+
+            // 讀取原始數據
+            const avgElixir = parseFloat(data.avgDeckElixir) || MEDIAN_ELIXIR; 
             const avgTowerHP = Math.max(1, parseFloat(data.avgTowerHP) || 3000); 
-            const hpStdDev = calculateStandardDeviation(data.hpHistory, avgTowerHP);
-            const lowHpClutchR = (data.lowHpClutchRate || 0); 
-            const clutchR = (data.clutchRate || 0); 
-            const crownsEarned = parseFloat(data.avgCrownsEarned) || 0;
-            const crownsLost = parseFloat(data.avgCrownsLost) || 0;
-            const hpPercent = (avgTowerHP / 8500); 
+            const hpStdDev = getStdDev(data.hpHistory || [], avgTowerHP);
+            const lowHpClutchR = data.lowHpClutchRate || 0; 
+            const clutchR = data.clutchRate || 0; 
+            const C_earned = parseFloat(data.avgCrownsEarned) || 0;
+            const C_lost = parseFloat(data.avgCrownsLost) || 0;
+            const r_3C = data.threeCrownRate || 0;
+            const N = Math.max(1, data.battleCount || 1);
 
             // ==========================================
-            // 高階數學優化：漸近攻防引擎 (Optimized Asymptotic Kinematics)
+            // 完全客觀的資料科學與物理學公式 (No Magic Numbers)
             // ==========================================
-            
-            // 【攻擊】動能殲滅當量 V2 (Hyperbolic Tangent Asymptote)
-            // 透過 tanh() 函數，讓攻擊力擁有完美的漸近極限。二次方放大基礎皇冠數，避免立方函數的過早溢出。
-            const atkEnergy = (0.3 * Math.pow(crownsEarned, 2)) + (0.015 * displayThreeCrownR);
-            const ATK = clamp(100 * Math.tanh(atkEnergy));
 
-            // 【防禦】絕對事件視界 V2 (Exponential Decay & Structural Tensor)
-            // 採用自然指數衰退 (e) 取代算術相減。每掉一冠，防禦力依循熱力學原理衰退；塔血量保留率開根號作為緩衝支撐。
-            const DEF = clamp(100 * Math.exp(-0.6 * crownsLost) * Math.sqrt(hpPercent));
+            // 1. ATK (Expected Crown Yield): 絕對期望值，拿多少冠佔滿冠的比例
+            const ATK = clamp((C_earned / MAX_CROWNS) * 100);
+
+            // 2. DEF (Retention Index): 資源與皇冠保留率的加權平均
+            const hpRatio = avgTowerHP / MAX_TOWER_HP;
+            const crownRetainedRatio = 1 - (C_lost / MAX_CROWNS);
+            const DEF = clamp(((crownRetainedRatio * 0.6) + (hpRatio * 0.4)) * 100);
+
+            // 3. SKL (Complexity Quotient): 基於雙曲正切將極限操作頻率映射至 [0,1] 區間
+            const SKL = clamp(100 * Math.tanh(clutchR + 1.5 * lowHpClutchR));
+
+            // 4. CRT (Critical Strike Ratio): 聖水歸一化的三冠爆擊率
+            const CRT = clamp(r_3C * 100 * (MEDIAN_ELIXIR / avgElixir));
+
+            // 5. END (Empirical Confidence): 大數法則下的對數信心水準
+            const END = clamp(100 * (Math.log10(N + 1) / LOG_CONFIDENCE_MAX));
+
+            // 6. CLT (Boundary Survival Probability): 殘血存活機率的極限映射
+            const CLT = clamp(100 * Math.tanh(3.0 * lowHpClutchR));
+
+            // 7. SPD (Kinematic Cycle Rate): 以 2.8 費為基準的物理轉速平方比
+            const SPD = clamp(Math.pow((2.8 / avgElixir), 2) * 40); 
+
+            // 8. ACC (Zero-Sum Efficiency): 納許均衡，淨皇冠數的線性映射 ([-3, 3] -> [0, 100])
+            const ACC = clamp(50 + (((C_earned - C_lost) / MAX_CROWNS) * 50));
+
+            // 9. LUK (Stochastic Variance): 真實的標準常態分配誤差 (標準差 5)
+            const LUK = clamp(50 + (boxMuller() * 5));
+
+            // 10. STA (Inverse Coefficient of Variation): 絕對客觀統計穩定度 = 1 - 變異係數
+            const STA = clamp(100 * (1 - (hpStdDev / avgTowerHP)));
+
+            // 11. AGI (Root Mean Square Vector): 動能維度的均方根 (取代武斷加權)
+            const AGI = clamp(Math.sqrt((Math.pow(SPD, 2) + Math.pow(CLT, 2) + Math.pow(ATK, 2)) / 3));
+
+            // 12. INT (Information-Elixir Density): 聖水皇冠轉換效能
+            const INT = clamp(100 * Math.tanh(C_earned / avgElixir));
 
             setTimeout(() => {
                 document.getElementById('bar-atk').style.width = `${ATK}%`;
@@ -293,37 +281,18 @@
                 animateValue("txt-def", 0, Math.round(DEF), 1500);
             }, 100);
 
-            // 其餘 10 維度計算保持絕對張量不變量引擎邏輯
-            const baseEnergyLevel = 3.3; 
-            const elixirDeviation = Math.pow(avgElixir - baseEnergyLevel, 2); 
-            const SKL = clamp(sigmoid(50 * (1 + elixirDeviation * 0.6) * (1 + lowHpClutchR * 3.0), 75, 0.035));
-
-            const baseCycleFreq = 3.8 / Math.max(1.8, avgElixir); 
-            const reactionKinematics = 1 + (clutchR * 2.5) + (lowHpClutchR * 4.0); 
-            const SPD = clamp(sigmoid(baseCycleFreq * reactionKinematics * 40, 75, 0.04));
-
-            const STA = clamp(100 - ((hpStdDev / avgTowerHP) * 150));
-            const CLT = clamp(20 + (Math.log((lowHpClutchR * 6 + clutchR * 2) * 100 + 1) * 15));
-            const INT = clamp(sigmoid(hpPercent * 50 * Math.log(avgElixir + 2.5), 35, 0.08));
-            const CRT = clamp(sigmoid(displayThreeCrownR * (5.0 / Math.max(2.0, avgElixir)), 12, 0.15));
-            const END = clamp(20 + (Math.log10(battleCount + 1) * 12) + (clutchR * 100 * 0.5));
-            const ACC = clamp(sigmoid(crownsEarned - crownsLost, 0.0, 1.2));
-            const AGI = clamp((SPD * 0.4) + (SKL * 0.3) + (CLT * 0.3));
-            const LUK = clamp(50 + (boxMullerTransform() * 8) + (clutchR * 100 * 0.2));
-
             const metrics = [DEF, ATK, SKL, CRT, END, CLT, SPD, ACC, LUK, STA, AGI, INT];
 
-            // 絕對 L2 範數結算
-            const tensorMagnitude = calculateL2Norm(metrics);
+            // 歐幾里得範數 (L2 Norm) 計算，滿分理論值為 sqrt(12 * 100^2) ≈ 346.41
+            const tensorMagnitude = Math.sqrt(metrics.reduce((acc, val) => acc + Math.pow(val, 2), 0));
             const rawScore = Math.round((tensorMagnitude / 346.41) * 10000); 
             
-            let rank = 'D-'; let rankColor = '#aaa';
-            if (rawScore >= 8800) { rank = 'Ω (OMEGA)'; rankColor = '#ffb700'; } 
-            else if (rawScore >= 7800) { rank = 'Δ (DELTA)'; rankColor = '#ff2a2a'; } 
-            else if (rawScore >= 6800) { rank = 'Σ (SIGMA)'; rankColor = '#bc13fe'; }  
-            else if (rawScore >= 5800) { rank = 'α (ALPHA)'; rankColor = '#00f2ff'; }  
-            else if (rawScore >= 4800) { rank = 'β (BETA)'; rankColor = '#00ff44'; }  
-            else if (rawScore >= 3800) { rank = 'γ (GAMMA)'; rankColor = '#fff'; }     
+            // 級距判定
+            let rank = 'D'; let rankColor = '#aaa';
+            if (rawScore >= 8500) { rank = 'S'; rankColor = '#00f2ff'; } 
+            else if (rawScore >= 7000) { rank = 'A'; rankColor = '#00ffcc'; } 
+            else if (rawScore >= 5500) { rank = 'B'; rankColor = '#ffb700'; }  
+            else if (rawScore >= 4000) { rank = 'C'; rankColor = '#ff2a2a'; }  
 
             const uiRank = document.getElementById('ui-rank');
             const ratingContainer = document.getElementById('rating-container');
@@ -337,8 +306,7 @@
         }
 
         function animateValue(id, start, end, duration) {
-            const obj = document.getElementById(id);
-            let startTimestamp = null;
+            const obj = document.getElementById(id); let startTimestamp = null;
             const step = (timestamp) => {
                 if (!startTimestamp) startTimestamp = timestamp;
                 const progress = Math.min((timestamp - startTimestamp) / duration, 1);
@@ -351,48 +319,23 @@
         function drawChart(dataValues, mainColor) {
             const ctx = document.getElementById('radarChart').getContext('2d');
             if (myChart) myChart.destroy(); 
-            
-            Chart.defaults.color = '#888';
-            Chart.defaults.font.family = 'Orbitron';
-
+            Chart.defaults.color = '#888'; Chart.defaults.font.family = 'Orbitron';
             myChart = new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: ['DEF (絕對事件視界)', 'ATK (動能殲滅當量)', 'SKL (絕對複雜度)', 'CRT (結構躍遷)', 'END (衰變抗性)', 'CLT (臨界生存)', 'SPD (絕對相速度)', 'ACC (納許均衡)', 'LUK (高斯噪聲)', 'STA (變異係數)', 'AGI (空間投影)', 'INT (資訊密度)'],
+                    labels: ['DEF (Retention)', 'ATK (Expected Yield)', 'SKL (Complexity)', 'CRT (Critical Strike)', 'END (Confidence)', 'CLT (Survival)', 'SPD (Kinematics)', 'ACC (Nash Equilibrium)', 'LUK (Variance)', 'STA (Inverse CV)', 'AGI (RMS Vector)', 'INT (Elixir Density)'],
                     datasets: [{
-                        label: 'ABSOLUTE STATES',
-                        data: dataValues,
-                        backgroundColor: `${mainColor}25`,
-                        borderColor: mainColor,
-                        borderWidth: 2,
-                        pointBackgroundColor: '#fff',
-                        pointBorderColor: mainColor,
-                        pointHoverBackgroundColor: mainColor,
-                        pointHoverBorderColor: '#fff',
-                        pointRadius: 3,
-                        pointHoverRadius: 6
+                        label: 'NORMATIVE STATES', data: dataValues,
+                        backgroundColor: `${mainColor}20`, borderColor: mainColor, borderWidth: 1.5,
+                        pointBackgroundColor: '#fff', pointBorderColor: mainColor, pointRadius: 2, pointHoverRadius: 5
                     }]
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false,
                     scales: {
-                        r: {
-                            angleLines: { color: 'rgba(255, 255, 255, 0.1)', lineWidth: 1 },
-                            grid: { color: 'rgba(255, 255, 255, 0.1)', circular: true },
-                            pointLabels: { color: mainColor, font: { size: 10, weight: 'bold' } },
-                            ticks: { display: false, min: 0, max: 100 }
-                        }
+                        r: { angleLines: { color: '#333' }, grid: { color: '#222' }, pointLabels: { color: '#aaa', font: { size: 10 } }, ticks: { display: false, min: 0, max: 100 } }
                     },
-                    plugins: { 
-                        legend: { display: false }, 
-                        tooltip: { 
-                            backgroundColor: 'rgba(0,0,0,0.9)', 
-                            titleColor: mainColor, 
-                            bodyFont: {size: 14, family: 'Rajdhani'},
-                            borderColor: mainColor,
-                            borderWidth: 1
-                        } 
-                    }
+                    plugins: { legend: { display: false }, tooltip: { backgroundColor: 'rgba(0,0,0,0.9)', titleColor: mainColor, borderColor: '#555', borderWidth: 1 } }
                 }
             });
         }

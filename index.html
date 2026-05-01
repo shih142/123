@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>神經矩陣 MAXIMA | V9.5 APEX-MATRIX (PRO ESPORTS)</title>
+    <title>神經矩陣 MAXIMA | V10.0 APEX-MATRIX (PRO ESPORTS)</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -131,7 +131,7 @@
 
     <header>
         <div class="system-status">
-            <div class="status-node"><div class="dot blink"></div> V9.5 APEX-MATRIX | PRO_ESPORTS_SCAN</div>
+            <div class="status-node"><div class="dot blink"></div> V10.0 APEX-MATRIX | PRO_ESPORTS_SCAN</div>
         </div>
         <div style="font-family: 'Orbitron'; font-size: 16px; letter-spacing: 4px; color: #fff;">MAXIMA_DATACENTER</div>
     </header>
@@ -190,7 +190,7 @@
                         <div class="report-grid">
                             <div class="report-module module-full">
                                 <div class="module-title">PRO_ANALYTICS_ENGINE</div>
-                                <div class="module-content">V9.5 巔峰矩陣 (Apex-Matrix) 已加載。全面升級攻守雙端動力學矩陣，支援 12 維度電競級深層數據解析。</div>
+                                <div class="module-content">V10.0 巔峰矩陣 (Apex-Matrix) 已加載。全面升級攻守雙端動力學，並導入龔珀茲防禦生存極限模型，支援 12 維度電競級深層數據解析。</div>
                             </div>
                         </div>
                     </div>
@@ -202,7 +202,7 @@
             <div class="section-label"><span>TELEMETRY_LOG</span><span>LOG_FEED</span></div>
             <div id="log-feed" class="sim-log">
                 <div class="log-line"><span class="log-ts">00:00:00</span> <span class="log-tag tag-sys">SYS</span> ESPORTS 模式啟動。12D 運算節點上線。</div>
-                <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-tag tag-sys">SYS</span> 攻守雙端非線性動力學核心準備就緒。</div>
+                <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-tag tag-sys">SYS</span> V10.0 防禦遲滯與適應性模型準備就緒。</div>
             </div>
 
             <div class="data-box">
@@ -282,7 +282,7 @@
 
         function run12DModel(rawData) {
             writeLog("OMNI", "12D Apex-Matrix: 抽象非線性張量運算 (Abstract Tensor Calculus) 已啟動...");
-            writeLog("SYS", "攻守雙端動力學矩陣 (Offensive/Defensive Dynamics Matrix) 升級實裝完畢。");
+            writeLog("SYS", "V10.0 防禦矩陣 (Gompertz Survival Limit) 升級實裝完畢。");
 
             const name = rawData.name || "UNKNOWN";
             const W = rawData.wins || 0; 
@@ -332,9 +332,12 @@
             const ini_momentum = Math.pow(p, 1.5) * exp_asymptote;
             const ini = normalize( 45 + (Math.tanh(win_momentum) * 30) + (ini_momentum * 4) * noise(0.2) );
             
-            // 6. DEF (防守): [V9.5 升級] 臨界阻尼與應激反應
-            const stress_factor = p < 0.5 ? Math.exp(0.5 - p) : 1.0; 
-            const def = normalize( (1 - Math.exp(-N / 4000)) * 65 * stress_factor + (gaussian(elo_deviation, 1.05, 0.15) * 35) * noise(0.1) );
+            // 6. DEF (防守): [V10.0 核心升級] 龔珀茲生存極限與適應性遲滯 (Gompertz Survival & Adaptive Hysteresis)
+            const gompertz_growth = Math.exp(-2.5 * Math.exp(-N / 2500)); 
+            const hysteresis_memory = sigmoid((elo_deviation - 1.02) * 12); 
+            const resilience_feedback = 1 + Math.pow(Math.max(0, 0.5 - p), 1.5) * 2; 
+
+            const def = normalize( (55 * gompertz_growth) + (35 * hysteresis_memory * resilience_feedback) + (10 * elo_deviation) * noise(0.12) );
             
             // 7. CLT (抗壓): [V9.5 升級] 貝氏生存機率
             const survival_odds = sigmoid((win_momentum - 1.0) * 2.5);

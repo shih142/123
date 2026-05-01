@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>神經矩陣 MAXIMA | V52.5 PSYCH-PROFILING</title>
+    <title>神經矩陣 MAXIMA | V53.0 PENTA-CORE (PROD)</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -83,6 +83,7 @@
         .log-tag { padding: 2px 5px; border-radius: 2px; font-size: 9px; margin-right: 8px; text-transform: uppercase; font-weight: bold; color:#000; }
         .tag-sys { background: #475569; color: #fff; }
         .tag-pred { background: var(--stat-alert); color: #fff; }
+        .tag-err { background: #ff0055; color: #fff; }
 
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: var(--stat-primary); }
@@ -98,7 +99,7 @@
 
     <header>
         <div class="system-status">
-            <div class="status-node"><div class="dot blink"></div> V52.5 PSYCH-PROFILING | DEEP ANALYSIS ACTIVE</div>
+            <div class="status-node"><div class="dot blink"></div> V53.0 PENTA-CORE | PROD_API_LINKED</div>
         </div>
         <div style="font-family: 'Orbitron'; font-size: 16px; letter-spacing: 4px; color: #fff;">MAXIMA_DATACENTER</div>
     </header>
@@ -113,22 +114,22 @@
             </div>
 
             <div class="data-matrix">
-                <div class="cell highlight-synth"><div class="cell-label">SYNTH-OFFENSE</div><div class="cell-val" id="val-sor">--</div></div>
-                <div class="cell highlight-synth"><div class="cell-label">TACTICAL-DEF</div><div class="cell-val" id="val-tdr">--</div></div>
-                <div class="cell highlight-synth"><div class="cell-label">MICRO-CTRL</div><div class="cell-val" id="val-mcr">--</div></div>
+                <div class="cell highlight-synth"><div class="cell-label">SOR (進攻)</div><div class="cell-val" id="val-sor">--</div></div>
+                <div class="cell highlight-synth"><div class="cell-label">TDR (防守)</div><div class="cell-val" id="val-tdr">--</div></div>
+                <div class="cell highlight-synth"><div class="cell-label">MCR (微操)</div><div class="cell-val" id="val-mcr">--</div></div>
                 
-                <div class="cell"><div class="cell-label">RES-CONV</div><div class="cell-val" id="val-rce">--</div></div>
-                <div class="cell"><div class="cell-label">TOPO-GEOMET</div><div class="cell-val" id="val-tpg">--</div></div>
-                <div class="cell"><div class="cell-label">CLUTCH-FAC</div><div class="cell-val" id="val-cfi">--</div></div>
+                <div class="cell"><div class="cell-label">RCE (轉化)</div><div class="cell-val" id="val-rce">--</div></div>
+                <div class="cell"><div class="cell-label">TPG (拓樸)</div><div class="cell-val" id="val-tpg">--</div></div>
+                <div class="cell"><div class="cell-label">CFI (抗壓)</div><div class="cell-val" id="val-cfi">--</div></div>
                 
-                <div class="cell highlight-alert"><div class="cell-label">PRED-RATE (PRD)</div><div class="cell-val" id="val-prd">--</div></div>
-                <div class="cell"><div class="cell-label">BAYES-CONF</div><div class="cell-val" id="val-bcf">--</div></div>
-                <div class="cell"><div class="cell-label">OBJ-BASE</div><div class="cell-val" id="val-oei">--</div></div>
+                <div class="cell highlight-alert"><div class="cell-label">PRD (預判)</div><div class="cell-val" id="val-prd">--</div></div>
+                <div class="cell"><div class="cell-label">BCF (自信)</div><div class="cell-val" id="val-bcf">--</div></div>
+                <div class="cell"><div class="cell-label">OEI (課金/基數)</div><div class="cell-val" id="val-oei">--</div></div>
             </div>
 
             <div class="io-panel">
                 <input type="text" id="tagInput" placeholder="PLAYER TAG (#...)" spellcheck="false">
-                <button class="btn-prime" id="btn-engage" onclick="fetchAndAnalyze()">INITIATE PSYCH SCAN</button>
+                <button class="btn-prime" id="btn-engage" onclick="fetchAndAnalyze()">INITIATE PENTA SCAN</button>
             </div>
         </section>
 
@@ -147,7 +148,7 @@
                     <div class="report-grid">
                         <div class="report-module module-full">
                             <div class="module-title">NEURAL_ENGINE_STATUS (引擎狀態)</div>
-                            <div class="module-content">V52.5 心理側寫引擎已就緒。正在等待目標座標以模擬行為與情緒狀態...</div>
+                            <div class="module-content">V53.0 權重評估引擎已就緒。等待真實 API 串接與目標數據注入...</div>
                         </div>
                     </div>
                 </div>
@@ -157,14 +158,14 @@
         <section class="column">
             <div class="section-label"><span>BEHAVIORAL_LOG</span><span>LOG_FEED</span></div>
             <div id="log-feed" class="sim-log">
-                <div class="log-line"><span class="log-ts">00:00:00</span> <span class="log-tag tag-sys">SYS</span> 神經架構擴充完成。</div>
-                <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-tag tag-pred">PRED</span> 心理狀態側寫 (Tilt & Flow) 模組已掛載。</div>
+                <div class="log-line"><span class="log-ts">00:00:00</span> <span class="log-tag tag-sys">SYS</span> PROD 模式啟動。隨機擾動機制已關閉。</div>
+                <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-tag tag-sys">SYS</span> 等待 API 端點回應真實數據。</div>
             </div>
 
             <div class="data-box">
-                <div class="d-row"><span class="d-label">Neural Variance</span><span class="d-val" id="sub-mtc" style="color:var(--stat-secondary)">--</span></div>
-                <div class="d-row"><span class="d-label">Success Prob.</span><span class="d-val" id="sub-win" style="color:var(--stat-primary)">-- %</span></div>
-                <div class="d-row"><span class="d-label">Peak Sync Index</span><span class="d-val" id="sub-trp">--</span></div>
+                <div class="d-row"><span class="d-label">Total Matches</span><span class="d-val" id="sub-mtc" style="color:var(--stat-secondary)">--</span></div>
+                <div class="d-row"><span class="d-label">Win Rate</span><span class="d-val" id="sub-win" style="color:var(--stat-primary)">-- %</span></div>
+                <div class="d-row"><span class="d-label">Current Trophies</span><span class="d-val" id="sub-trp">--</span></div>
                 <div class="d-row"><span class="d-label">Entropy Score</span><span class="d-val" id="sub-prd-raw" style="color:var(--stat-alert)">-- %</span></div>
             </div>
         </section>
@@ -179,7 +180,7 @@
             chart = new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: ['SOR(進攻)', 'MCR(微操)', 'RCE(轉化)', 'TPG(拓樸)', 'CFI(抗壓)', 'PRD(預判)', 'TDR(防守)', 'B-CF(貝氏)', 'OEI(客觀)'],
+                    labels: ['進攻(SOR)', '微操(MCR)', '轉化(RCE)', '拓樸(TPG)', '抗壓(CFI)', '預判(PRD)', '防守(TDR)', '自信(BCF)', '課金(OEI)'],
                     datasets: [{
                         label: 'NEURAL_VECTOR',
                         data: [0,0,0,0,0,0,0,0,0],
@@ -211,35 +212,48 @@
             if(!tagRaw) return writeLog("SYS", "請輸入座標參數。");
 
             const btn = document.getElementById('btn-engage');
-            btn.disabled = true; btn.innerText = "MAPPING NEURAL NETWORK...";
+            btn.disabled = true; btn.innerText = "FETCHING PROD DATA...";
 
             let tagClean = tagRaw.replace('#', '');
-            writeLog("SYS", `擷取 [#${tagClean}] 行為特徵...`);
+            writeLog("SYS", `向 API 發送請求 [#${tagClean}]...`);
             
             try {
+                // 真實 API 呼叫點
                 const response = await fetch(`/api/clash-proxy?tag=${encodeURIComponent('#'+tagClean)}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP 錯誤狀態碼: ${response.status}`);
+                }
+                
                 const rawData = await response.json();
+                
+                if (!rawData || (!rawData.wins && rawData.wins !== 0)) {
+                    throw new Error("API 回傳格式異常或查無此玩家。");
+                }
+
+                writeLog("SYS", `API 數據擷取成功，準備注入神經網絡。`);
                 runNeuralModel(rawData);
+
             } catch (error) {
-                writeLog("ERR", `數據流中斷。切換至神經模擬集。`);
-                // 使用帶有玻璃心特徵的測試資料
-                const fallbackData = { name: "NEURAL_GHOST_88", wins: 7100, losses: 2900, trophies: 9200 };
-                runNeuralModel(fallbackData);
+                writeLog("ERR", `API 連線失敗：${error.message}`);
+                // 發生錯誤時重置 UI
+                document.getElementById('ui-name').innerText = "API_ERROR";
             } finally {
-                btn.disabled = false; btn.innerText = "INITIATE PSYCH SCAN";
+                btn.disabled = false; btn.innerText = "INITIATE PENTA SCAN";
             }
         }
 
         function runNeuralModel(rawData) {
-            writeLog("PRED", "運算卡序熵增與抗壓耦合特徵...");
+            writeLog("PRED", "基於真實數據執行多維度雷達權重分析...");
 
-            const name = rawData.name || "UNKNOWN_TARGET";
+            const name = rawData.name || "UNKNOWN";
             const W = rawData.wins || 0; 
             const L = rawData.losses || 0; 
             const T = rawData.trophies || 0;
             const N = W + L || 1; 
             const p = W / N; 
 
+            // 拔除亂數擾動，進行純淨數學推演
             const entropy_factor = Math.min(1.0, (T / 9500) * (1 + (W-L)/N));
             const real_prd_rate = 0.45 + (entropy_factor * 0.5); 
 
@@ -250,16 +264,17 @@
 
             const mapScore = (val, max) => Math.min(99.9, Math.max(0.1, (val / max) * 100));
 
+            // 無亂數干擾的絕對權重數值
             const scores = [
-                mapScore((1 / (1 + Math.exp(-12 * (theta - 0.5)))) * OEI_raw * 1.5, 1.2), // SOR
-                mapScore((W / (L + 1)) * Math.log(T + 1) * 1.5, 25), // MCR
-                mapScore((T / (N + 1)) * p * 15, 12), // RCE
-                mapScore(Math.exp(-4.5 * H1), 1.0), // TPG
-                mapScore((WLB / (p || 1)) * Math.exp(-4 * H1) * 100, 95), // CFI
-                mapScore(real_prd_rate * 100, 92), // PRD
-                mapScore(Math.sqrt(WLB * (1 - L/N)) * OEI_raw * 1.2, 0.8), // TDR
-                mapScore(Math.max(0.1, 1 - (1.96 * Math.sqrt((theta * (1 - theta)) / (N + 100)))), 1.0), // BCF
-                mapScore(OEI_raw, 1.2) // OEI
+                mapScore((1 / (1 + Math.exp(-12 * (theta - 0.5)))) * OEI_raw * 1.5, 1.2), // SOR 進攻
+                mapScore((W / (L + 1)) * Math.log(T + 1) * 1.5, 25), // MCR 微操
+                mapScore((T / (N + 1)) * p * 15, 12), // RCE 轉化
+                mapScore(Math.exp(-4.5 * H1), 1.0), // TPG 拓樸
+                mapScore((WLB / (p || 1)) * Math.exp(-4 * H1) * 100, 95), // CFI 抗壓
+                mapScore(real_prd_rate * 100, 92), // PRD 預判
+                mapScore(Math.sqrt(WLB * (1 - L/N)) * OEI_raw * 1.2, 0.8), // TDR 防守
+                mapScore(Math.max(0.1, 1 - (1.96 * Math.sqrt((theta * (1 - theta)) / (N + 100)))), 1.0), // BCF 自信
+                mapScore(OEI_raw, 1.2) // OEI 課金/基數
             ];
 
             const score_ASI = (scores[0]*0.1) + (scores[1]*0.1) + (scores[5]*0.25) + (scores[4]*0.15) + (scores[3]*0.1) + (scores[6]*0.1) + (scores[8]*0.1) + (scores[2]*0.1);
@@ -282,20 +297,73 @@
             chart.data.datasets[0].data = scores;
             chart.update();
 
-            generateNeuralReport(scores, stats);
+            generatePentaReport(scores, stats);
         }
 
-        function generateNeuralReport(scores, stats) {
+        function generatePentaReport(scores, stats) {
             const rc = document.getElementById('report-container');
             const [sor, mcr, rce, tpg, cfi, prd, tdr, bcf, oei] = scores;
-
-            let archetype, threat, color, analysis, tactic, neural_logic;
-
-            // --- 心理狀態側寫 (Psychological Profiling) ---
-            const tilt_prob = Math.max(2.0, 100 - cfi - (bcf * 0.15)); // 抗壓越低，崩盤率越高
-            const focus_level = Math.min(99.9, (mcr * 0.5) + (prd * 0.5)); // 微操與預判的綜合專注度
             
-            let psy_label = "COGNITIVE STABLE (認知穩定)";
+            const tilt_prob = Math.max(2.0, 100 - cfi - (bcf * 0.15)); 
+            const focus_level = Math.min(99.9, (mcr * 0.5) + (prd * 0.5)); 
+
+            const profiles = [
+                {
+                    type: "P2W",
+                    score: (oei * 1.8) + ((100 - mcr) * 0.5),
+                    archetype: "P2W OVERLORD (數值課金)",
+                    threat: "OVERPOWERED / STAT-CHECK",
+                    color: "#ffd700",
+                    analysis: "高度依賴卡牌等級與數值壓制的『鈔能力』玩家。微操與精細計算可能並非頂尖，但能靠著絕對的血量與傷害優勢硬吃對手。",
+                    tactic: "避免正面數值硬碰硬。利用拉扯、風箏等極致防守技巧，抓準對手仗著等級優勢而虧費的瞬間進行反打。",
+                    neural_logic: "數值碾壓演算法 (Stat-Check Override)"
+                },
+                {
+                    type: "CONTROL",
+                    score: (mcr * 1.2) + (tpg * 1.0) + (prd * 0.8),
+                    archetype: "CONTROL TACTICIAN (絕對控制)",
+                    threat: "HIGH / STRATEGIC",
+                    color: "#b388ff",
+                    analysis: "精算師級別的對手。極度擅長空間拉扯、記牌與算費，會透過不斷的微操與兵線掌控全場節奏，將你逼入死角。",
+                    tactic: "打破其完美運算。準備大範圍法術或具有不可預測性的卡牌組合，在其完美陣型成型前強行突破防線。",
+                    neural_logic: "全圖拓樸控制 (Global Topology Sync)"
+                },
+                {
+                    type: "AGGRESSIVE",
+                    score: (sor * 1.5) + (rce * 1.0) + (bcf * 0.5),
+                    archetype: "AGGRESSIVE ASSAULTER (狂熱激進)",
+                    threat: "HIGH / RELENTLESS",
+                    color: "#ff0055",
+                    analysis: "攻擊慾望極強。擅長在開局或對手下出高費牌的瞬間，在另一路發動毀滅性的突襲，給予極大的防守壓力。",
+                    tactic: "保持『防守反擊』姿態。切勿輕易將費用打空，永遠預留應對突襲的解牌，擋下其猛攻後對方通常會陷入嚴重的聖水劣勢。",
+                    neural_logic: "弱點突穿演算法 (Vulnerability Breach)"
+                },
+                {
+                    type: "CONSERVATIVE",
+                    score: (tdr * 1.5) + (cfi * 1.0) + ((100 - sor) * 0.5),
+                    archetype: "CONSERVATIVE WARDEN (鐵幕保守)",
+                    threat: "MEDIUM / TURTLE",
+                    color: "#00aaff",
+                    analysis: "防守反擊的極致信徒。極少主動發起進攻，總是等待你先出牌，然後利用完美的防守賺取費用差，步步為營。",
+                    tactic: "進入『消耗戰』節奏。不要投入過多費用進行無效進攻，利用法術消耗塔血，或使用能跨半場輸出的小型單位慢慢磨血。",
+                    neural_logic: "零風險防禦機制 (Zero-Risk Defense)"
+                },
+                {
+                    type: "STABLE",
+                    score: ((100 - tilt_prob) * 1.5) + (cfi * 1.0) + (tdr * 0.5),
+                    archetype: "STABLE ANCHOR (磐石穩定)",
+                    threat: "STABLE / BALANCED",
+                    color: "#00fa9a",
+                    analysis: "心態與操作皆無懈可擊的均衡型玩家。不輕易犯錯，能冷靜應對各種突發狀況，勝率與表現極其穩定。",
+                    tactic: "比拼『基本功』。這是一場沒有捷徑的對局，勝負取決於誰能在常規的卡牌交換與對位中累積出微小的優勢。",
+                    neural_logic: "動態均衡尋優 (Dynamic Equilibrium)"
+                }
+            ];
+
+            profiles.sort((a, b) => b.score - a.score);
+            const target = profiles[0];
+
+            let psy_label = "COGNITIVE STABLE (心智穩定)";
             let psy_color = "#00fa9a";
             
             if (tilt_prob > 65) {
@@ -306,81 +374,51 @@
                 psy_color = "#00e5ff";
             }
 
-            // --- 特徵映射引擎 (Feature Mapping) ---
-            if (prd > 88 && mcr > 85) {
-                archetype = "NEURAL PHANTOM (神經幽靈)";
-                threat = "CRITICAL / S-RANK";
-                color = "#ff0055";
-                analysis = "極致的混沌序列與毫秒級微操。目標具備神經元自適應能力，能根據對手風格即時切換博弈維度。";
-                tactic = "採取『數據過載』策略。利用重裝甲部隊強制進行聖水交換，不與其進行任何單點微操博弈。";
-                neural_logic = "多線並行處理 (Multi-threading)";
-            } else if (cfi > 85 && tdr > 80) {
-                archetype = "IRON CURTAIN (鐵幕防線)";
-                threat = "HIGH / TIER-1";
-                color = "#b388ff";
-                analysis = "高壓環境下穩定性極強。目標在塔血量低於 30% 時，其防守密度與容錯率會呈幾何倍數提升。";
-                tactic = "利用『斬殺閾值』。保留核心法術直到加時賽瞬發，打破其堅不可摧的防禦循環。";
-                neural_logic = "冷靜過濾機制 (Hyper-calm Filtering)";
-            } else if (sor > 85 && rce > 80) {
-                archetype = "APEX PREDATOR (頂端掠食者)";
-                threat = "HIGH / AGGRESSIVE";
-                color = "#ff8f00";
-                analysis = "極高的轉化效率。目標擅長捕捉對手每一點聖水浪費，並將其轉化為致命的防守反擊。";
-                tactic = "嚴控聖水溢出。寧可少下一張牌，也絕對不能在進攻節奏中斷後讓對手留有過多餘費。";
-                neural_logic = "資源掠奪演算法 (Resource Seizure)";
-            } else if (tilt_prob > 70) {
-                // 新增：玻璃心玩家專屬特徵
-                archetype = "FRAGILE EGO (情緒化操縱者)";
-                threat = "UNSTABLE / TIER-3";
-                color = "#ff0055";
-                analysis = "情緒極易受到戰局波動影響。一旦開局處於劣勢或核心進攻被完美化解，其出牌邏輯將會迅速崩壞。";
-                tactic = "使用『心理戰擊潰』。在成功防守後發送特定表情符號施壓，迫使其在焦躁下交出錯誤的法術或強行虧費進攻。";
-                neural_logic = "情緒干擾溢出 (Emotional Overflow)";
-            } else {
-                archetype = "STANDARD OPERATIVE (標準特工)";
-                threat = "STABLE / TIER-2";
-                color = "#00fa9a";
-                analysis = "數據表現平穩，遵循傳統博弈邏輯。具備良好基礎意識，但缺乏打破局面的隨機爆發力。";
-                tactic = "使用『常規反制』。確保卡牌對位與費用計算正確，即可憑藉硬實力平推。";
-                neural_logic = "線性邏輯執行 (Linear Logic)";
-            }
+            rc.style.borderTopColor = target.color;
+            chart.data.datasets[0].borderColor = target.color;
+            chart.data.datasets[0].backgroundColor = target.color + '20';
+            chart.data.datasets[0].pointBorderColor = target.color;
+            chart.update();
 
-            rc.style.borderTopColor = color;
             rc.innerHTML = `
                 <div class="report-header">
-                    <div id="ui-archetype" style="text-shadow: 0 0 15px ${color}; color: ${color};">${archetype}</div>
-                    <div class="threat-level" style="color: ${color}; border: 1px solid ${color}; background: ${color}20;">${threat}</div>
+                    <div id="ui-archetype" style="text-shadow: 0 0 15px ${target.color}; color: ${target.color};">${target.archetype}</div>
+                    <div class="threat-level" style="color: ${target.color}; border: 1px solid ${target.color}; background: ${target.color}20;">${target.threat}</div>
                 </div>
                 <div class="report-grid">
                     <div class="report-module">
                         <div class="module-title">AI NEURAL LOGIC (神經邏輯)</div>
-                        <div class="module-content" style="color: ${color}; font-weight: bold;">${neural_logic}</div>
+                        <div class="module-content" style="color: ${target.color}; font-weight: bold;">${target.neural_logic}</div>
                     </div>
                     <div class="report-module" style="border-bottom: 2px solid ${psy_color}; background: linear-gradient(180deg, transparent, ${psy_color}10);">
                         <div class="module-title" style="color: ${psy_color};">PSYCH_PROFILING (心理狀態)</div>
                         <div class="module-content">
                             <strong style="color:${psy_color}; letter-spacing: 1px;">[ ${psy_label} ]</strong><br>
-                            <span style="font-size: 10px; color: var(--text-dim);">TILT_PROB: ${tilt_prob.toFixed(1)}% | FOCUS: ${focus_level.toFixed(1)}%</span>
+                            <span style="font-size: 10px; color: var(--text-dim);">TILT_PROB: ${tilt_prob.toFixed(1)}% | MATCH SCORE: ${target.score.toFixed(0)}</span>
                         </div>
                     </div>
                     <div class="report-module module-full">
                         <div class="module-title">BEHAVIORAL_PROFILE (行為特徵描述)</div>
-                        <div class="module-content">${analysis}</div>
+                        <div class="module-content">${target.analysis}</div>
                     </div>
-                    <div class="report-module module-full" style="border-left: 4px solid ${color};">
+                    <div class="report-module module-full" style="border-left: 4px solid ${target.color};">
                         <div class="module-title">DYNAMIC_COUNTER (動態反制建議)</div>
-                        <div class="module-content">${tactic}</div>
+                        <div class="module-content">${target.tactic}</div>
                     </div>
                 </div>
             `;
-            writeLog("CORE", `心理側寫完成：崩盤率 ${tilt_prob.toFixed(1)}%，特徵映射 [${archetype}]。`);
+            writeLog("CORE", `判定完成：真實數據歸類為 [${target.type}]。`);
         }
 
         function writeLog(tag, msg) {
             const feed = document.getElementById('log-feed');
             const div = document.createElement('div'); div.className = 'log-line';
             const now = new Date(); const ts = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
-            let tagClass = 'tag-sys'; if(tag === 'PRED') tagClass = 'tag-pred'; if(tag === 'CORE') tagClass = 'tag-sys';
+            
+            let tagClass = 'tag-sys'; 
+            if(tag === 'PRED') tagClass = 'tag-pred'; 
+            if(tag === 'ERR') tagClass = 'tag-err';
+
             div.innerHTML = `<span class="log-ts">${ts}</span><span class="log-tag ${tagClass}">${tag}</span> ${msg}`;
             feed.prepend(div);
             if(feed.children.length > LOG_LIMIT) feed.lastChild.remove();

@@ -96,7 +96,6 @@
         .player-name { font-size: 2rem; font-family: 'Orbitron', sans-serif; font-weight: bold; color: #fff; text-transform: uppercase; word-break: break-all; }
         .player-tag { color: var(--cyan); font-size: 1.1rem; letter-spacing: 2px; }
 
-        /* 激進具象化能量槽 */
         .radical-bars { display: flex; flex-direction: column; gap: 15px; margin-top: 10px; padding-top: 15px; border-top: 1px dashed rgba(255,255,255,0.1); }
         .bar-container { display: flex; flex-direction: column; gap: 5px; }
         .bar-header { display: flex; justify-content: space-between; align-items: flex-end; }
@@ -230,7 +229,6 @@
             btn.innerText = "COMPUTING TENSORS...";
             btn.style.pointerEvents = "none";
 
-            // Reset bars
             document.getElementById('bar-atk').style.width = '0%';
             document.getElementById('bar-def').style.width = '0%';
 
@@ -266,7 +264,6 @@
             document.getElementById('ui-win').innerText = rawWinR.toFixed(1);
             document.getElementById('ui-elixir').innerText = data.avgDeckElixir || 'N/A';
 
-            // 提取純粹物理觀測數據
             const avgElixir = parseFloat(data.avgDeckElixir) || 3.5; 
             const avgTowerHP = Math.max(1, parseFloat(data.avgTowerHP) || 3000); 
             const hpStdDev = calculateStandardDeviation(data.hpHistory, avgTowerHP);
@@ -277,21 +274,18 @@
             const hpPercent = (avgTowerHP / 8500); 
 
             // ==========================================
-            // 激進攻防引擎 (Radical Combat Kinematics)
+            // 高階數學優化：漸近攻防引擎 (Optimized Asymptotic Kinematics)
             // ==========================================
             
-            // 【攻擊】動能殲滅當量 (ATK)
-            // 皇冠獲取數三次方放大，徹底粉碎軟弱打法的分數。搭配三冠率直接加成。
-            const annihilationYield = (Math.pow(crownsEarned, 3.0) * 6) + (displayThreeCrownR * 0.8);
-            const ATK = clamp(annihilationYield);
+            // 【攻擊】動能殲滅當量 V2 (Hyperbolic Tangent Asymptote)
+            // 透過 tanh() 函數，讓攻擊力擁有完美的漸近極限。二次方放大基礎皇冠數，避免立方函數的過早溢出。
+            const atkEnergy = (0.3 * Math.pow(crownsEarned, 2)) + (0.015 * displayThreeCrownR);
+            const ATK = clamp(100 * Math.tanh(atkEnergy));
 
-            // 【防禦】絕對事件視界 (DEF)
-            // 塔血平方極化，掉冠數啟動自然指數懲罰，非完美防禦者將被無情制裁。
-            const breachSeverity = Math.exp(crownsLost * 1.2) * 3; 
-            const eventHorizon = (Math.pow(hpPercent, 2) * 120) - breachSeverity;
-            const DEF = clamp(eventHorizon);
+            // 【防禦】絕對事件視界 V2 (Exponential Decay & Structural Tensor)
+            // 採用自然指數衰退 (e) 取代算術相減。每掉一冠，防禦力依循熱力學原理衰退；塔血量保留率開根號作為緩衝支撐。
+            const DEF = clamp(100 * Math.exp(-0.6 * crownsLost) * Math.sqrt(hpPercent));
 
-            // 更新具象化能量槽動畫
             setTimeout(() => {
                 document.getElementById('bar-atk').style.width = `${ATK}%`;
                 document.getElementById('bar-def').style.width = `${DEF}%`;
@@ -299,42 +293,22 @@
                 animateValue("txt-def", 0, Math.round(DEF), 1500);
             }, 100);
 
-            // 1. SKL (Absolute Complexity / 絕對複雜度)
+            // 其餘 10 維度計算保持絕對張量不變量引擎邏輯
             const baseEnergyLevel = 3.3; 
             const elixirDeviation = Math.pow(avgElixir - baseEnergyLevel, 2); 
-            const complexityTensor = 50 * (1 + elixirDeviation * 0.6) * (1 + lowHpClutchR * 3.0);
-            const SKL = clamp(sigmoid(complexityTensor, 75, 0.035));
+            const SKL = clamp(sigmoid(50 * (1 + elixirDeviation * 0.6) * (1 + lowHpClutchR * 3.0), 75, 0.035));
 
-            // 2. SPD (Absolute Velocity / 絕對相速度)
             const baseCycleFreq = 3.8 / Math.max(1.8, avgElixir); 
             const reactionKinematics = 1 + (clutchR * 2.5) + (lowHpClutchR * 4.0); 
-            const absoluteVelocity = baseCycleFreq * reactionKinematics * 40; 
-            const SPD = clamp(sigmoid(absoluteVelocity, 75, 0.04));
+            const SPD = clamp(sigmoid(baseCycleFreq * reactionKinematics * 40, 75, 0.04));
 
-            // 3. STA (Coefficient of Variation / 變異係數熵減)
-            const coefficientOfVariation = hpStdDev / avgTowerHP;
-            const STA = clamp(100 - (coefficientOfVariation * 150));
-
-            // 4. CLT (Critical Survival / 臨界生存力)
-            const survivalProbability = (lowHpClutchR * 6 + clutchR * 2) * 100;
-            const CLT = clamp(20 + (Math.log(survivalProbability + 1) * 15));
-
-            // 5. INT (Information Density / 戰場資訊密度)
+            const STA = clamp(100 - ((hpStdDev / avgTowerHP) * 150));
+            const CLT = clamp(20 + (Math.log((lowHpClutchR * 6 + clutchR * 2) * 100 + 1) * 15));
             const INT = clamp(sigmoid(hpPercent * 50 * Math.log(avgElixir + 2.5), 35, 0.08));
-
-            // 8. CRT (Structural Excitation / 結構躍遷能階)
             const CRT = clamp(sigmoid(displayThreeCrownR * (5.0 / Math.max(2.0, avgElixir)), 12, 0.15));
-
-            // 9. END (Asymptotic Decay Resistance / 漸進衰變抗性)
             const END = clamp(20 + (Math.log10(battleCount + 1) * 12) + (clutchR * 100 * 0.5));
-
-            // 10. ACC (Nash Equilibrium Delta / 納許均衡淨值)
             const ACC = clamp(sigmoid(crownsEarned - crownsLost, 0.0, 1.2));
-
-            // 11. AGI (Hilbert Projection / 希爾伯特空間投影)
             const AGI = clamp((SPD * 0.4) + (SKL * 0.3) + (CLT * 0.3));
-
-            // 12. LUK (Gaussian Quantum Decoherence / 高斯退相干噪聲)
             const LUK = clamp(50 + (boxMullerTransform() * 8) + (clutchR * 100 * 0.2));
 
             const metrics = [DEF, ATK, SKL, CRT, END, CLT, SPD, ACC, LUK, STA, AGI, INT];

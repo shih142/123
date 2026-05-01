@@ -51,20 +51,19 @@
         .hero-value { font-family: 'Orbitron'; font-size: 72px; font-weight: 900; color: #fff; line-height: 0.8; margin-bottom: 10px; text-shadow: 0 0 20px rgba(0, 229, 255, 0.4); }
         .hero-name { font-family: 'Orbitron'; font-size: 18px; color: var(--stat-secondary); letter-spacing: 4px; font-weight: bold;}
 
-        /* 擴充為 12宮格 (3欄 x 4列) */
         .data-matrix { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: rgba(0, 229, 255, 0.1); border-bottom: 1px solid rgba(255,255,255,0.05); }
         .cell { background: var(--bg-deep); padding: 12px 5px; text-align: center; position: relative; transition: 0.3s; }
         .cell:hover { background: #04120f; }
         .cell-label { font-size: 10px; color: #64748b; margin-bottom: 4px; letter-spacing: 0.5px; font-weight: bold; }
         .cell-val { font-family: 'Orbitron'; font-size: 20px; color: #fff; }
         
-        .cat-str::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--stat-omni); } /* 戰略類 */
+        .cat-str::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--stat-omni); }
         .cat-str .cell-val { color: var(--stat-omni); text-shadow: 0 0 10px rgba(192, 132, 252, 0.3); }
-        .cat-mec::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--stat-primary); } /* 操作類 */
+        .cat-mec::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--stat-primary); }
         .cat-mec .cell-val { color: var(--stat-primary); text-shadow: 0 0 10px rgba(0, 250, 154, 0.3); }
-        .cat-psy::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--stat-alert); } /* 心理類 */
+        .cat-psy::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--stat-alert); }
         .cat-psy .cell-val { color: var(--stat-alert); text-shadow: 0 0 10px rgba(255, 0, 85, 0.3); }
-        .cat-ext::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--stat-ptw); } /* 外部類 */
+        .cat-ext::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--stat-ptw); }
         .cat-ext .cell-val { color: var(--stat-ptw); text-shadow: 0 0 10px rgba(251, 191, 36, 0.3); }
 
         .vis-container { flex: 1; display: flex; flex-direction: column; padding: 20px; position: relative; min-height: 480px; }
@@ -192,7 +191,7 @@
                         <div class="report-grid">
                             <div class="report-module module-full">
                                 <div class="module-title">PRO_ANALYTICS_ENGINE</div>
-                                <div class="module-content">V9.0 巔峰矩陣 (Apex-Matrix) 已加載。支援 12 維度電競級深層數據解析，將還原目標的真實賽場統治力。</div>
+                                <div class="module-content">V9.0 巔峰矩陣 (Apex-Matrix) 已加載。支援 12 維度電競級深層數據解析，並搭載 CEIM 資本模型還原真實戰力。</div>
                             </div>
                         </div>
                     </div>
@@ -204,7 +203,7 @@
             <div class="section-label"><span>TELEMETRY_LOG</span><span>LOG_FEED</span></div>
             <div id="log-feed" class="sim-log">
                 <div class="log-line"><span class="log-ts">00:00:00</span> <span class="log-tag tag-sys">SYS</span> ESPORTS 模式啟動。12D 運算節點上線。</div>
-                <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-tag tag-sys">SYS</span> 系統等待注入玩家座標進行高維解構。</div>
+                <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-tag tag-sys">SYS</span> 等待注入玩家座標進行高維解構。</div>
             </div>
 
             <div class="data-box">
@@ -225,7 +224,6 @@
             chart = new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    // 12 個專業維度
                     labels: ['大局(MAC)', '資源(ECO)', '節奏(TMP)', '微操(MIC)', '主動(INI)', '防守(DEF)', '抗壓(CLT)', '預判(PRD)', '情報(INF)', '適應(ADP)', '穩定(CON)', '資本(CAP)'],
                     datasets: [{
                         label: '12D_VECTOR',
@@ -284,7 +282,7 @@
         }
 
         function run12DModel(rawData) {
-            writeLog("OMNI", "12D Apex-Matrix 核心運算中...");
+            writeLog("OMNI", "12D Apex-Matrix 核心運算中 (CEIM 資本模型已加載)...");
 
             const name = rawData.name || "UNKNOWN";
             const W = rawData.wins || 0; 
@@ -293,44 +291,38 @@
             const N = W + L || 1; 
             let p = W / N; 
 
-            // 實戰波動函數
             const rand = () => 0.8 + (Math.random() * 0.4);
             const mapScore = (val) => Math.min(99.9, Math.max(1.0, val));
             const logNorm = (val, max) => Math.min(1, Math.max(0, Math.log10(val > 0 ? val : 1) / Math.log10(max)));
 
-            // 1. MAC (大局): 盃數與勝率的綜合展現
             const mac = mapScore( (p * 50) + (logNorm(T, 9000) * 50) * rand() );
-            // 2. ECO (資源): 淨勝場(W-L)帶來的資源滾動優勢
             const eco = mapScore( 40 + ((W - L) / (N+1)) * 60 * rand() );
-            // 3. TMP (節奏): 隨機波動 + 勝率基底，代表逼迫對手失誤的能力
             const tmp = mapScore( (p * 60) + (rand() * 40) );
-            
-            // 4. MIC (微操): 極限操作，與場次呈微弱正相關，受波動影響極大
             const mic = mapScore( (logNorm(N, 10000) * 40) + (rand() * 60) );
-            // 5. INI (主動): 進攻性
             const ini = mapScore( 50 + (Math.sin(N) * 20) + (rand() * 30) );
-            // 6. DEF (防守): 總場次越高通常防守越好
             const def = mapScore( (logNorm(N, 20000) * 60) + (p * 40) * rand() );
-            
-            // 7. CLT (抗壓): 逆風翻盤能力
             const clt = mapScore( (p * 70) + (rand() * 30) );
-            // 8. PRD (預判): 高階意識
             const prd = mapScore( (logNorm(T, 8000) * 50) + (rand() * 50) );
-            // 9. INF (情報): 藏招與算牌能力
             const inf = mapScore( (logNorm(N, 15000) * 50) + (rand() * 50) );
-            
-            // 10. ADP (適應): 卡組多樣性推測
             const adp = mapScore( 40 + (rand() * 60) );
-            // 11. CON (穩定): 絕對場次累積
             const con = mapScore( logNorm(N, 25000) * 100 * rand() );
             
-            // 12. CAP (資本/課金): 盃數與場次的不合理比例
-            const ptw_ratio = N > 0 ? (T / N) : 0;
-            const cap = mapScore( (ptw_ratio / 5.0) * 60 * rand() );
+            // CEIM 資本效率與通膨模型
+            const expected_trophies = 1500 * Math.log10((N / 100) + 1.1); 
+            const trophy_inflation = T / expected_trophies;
+            const win_rate_variance = Math.abs(p - 0.52);
+            const whale_factor = 1 / (1 + (win_rate_variance * 15)); 
+
+            let base_cap = (trophy_inflation * whale_factor * 45);
+
+            if (N < 500 && T > 6000) {
+                base_cap *= 1.8;
+            }
+
+            const cap = mapScore(base_cap * rand());
 
             const scores = [mac, eco, tmp, mic, ini, def, clt, prd, inf, adp, con, cap];
             
-            // 總合評分 ASR (Apex Synthesis Rating)
             const score_ASR = scores.reduce((a, b) => a + b, 0) / 12;
 
             updateDashboard(name, scores, score_ASR, { N, WR: (p*100), T, CLT: clt });
@@ -358,7 +350,6 @@
             const rc = document.getElementById('report-container');
             const [mac, eco, tmp, mic, ini, def, clt, prd, inf, adp, con, cap] = scores;
 
-            // 分項次級指標
             const sub_strategy = (mac + eco + tmp + adp) / 4;
             const sub_mechanic = (mic + ini + def + prd) / 4;
             const sub_mental = (clt + inf + con) / 3;
@@ -370,7 +361,7 @@
                     threat: "TIER S / MACRO-DICTATOR",
                     color: "#c084fc",
                     tags: ["完美運營", "資源榨取", "無損防守"],
-                    analysis: "此對手擁有頂級的<span class='highlight-text' style='border-color:#c084fc'>大局觀 (MAC) 與資源轉化率 (ECO)</span>。他們將比賽視為一盤精密的棋局，透過完美的節奏掌控 (TMP)，在無形中榨乾你的聖水，最終以排山倒海的優勢一波帶走。",
+                    analysis: "此對手擁有頂級的大局觀 (MAC) 與資源轉化率 (ECO)。他們將比賽視為一盤精密的棋局，透過完美的節奏掌控 (TMP)，在無形中榨乾你的聖水，最終以排山倒海的優勢一波帶走。",
                     weakness: "戰術過於依賴『預測之內』的發展。面對完全不講邏輯的高爆發混亂打法，偶爾會出現運算當機的情況。",
                     tactics: ["避免進入其熟悉的防守反擊節奏", "在單路製造極端壓力，迫使其打破常規循環"]
                 },
@@ -380,7 +371,7 @@
                     threat: "TIER S / PIXEL-PERFECT",
                     color: "#00fa9a",
                     tags: ["極限走位", "完美預判", "操作輾壓"],
-                    analysis: "極端危險的操作型玩家。具備極高的<span class='highlight-text' style='border-color:#00fa9a'>微操 (MIC) 與預判 (PRD)</span>。任何十字圍殺、極限拉扯對他們來說都像呼吸一樣自然。他們能用最少的資源解掉你最致命的進攻。",
+                    analysis: "極端危險的操作型玩家。具備極高的微操 (MIC) 與預判 (PRD)。任何十字圍殺、極限拉扯對他們來說都像呼吸一樣自然。他們能用最少的資源解掉你最致命的進攻。",
                     weakness: "過度自信於個人操作，容易在宏觀資源 (ECO) 上出現虧損。一旦操作失誤，防線就會瞬間崩潰。",
                     tactics: ["使用大範圍法術或AOE單位，降低其微操的收益空間", "囤積一波『無法純靠操作化解』的絕對數值平推"]
                 },
@@ -390,17 +381,17 @@
                     threat: "TIER A / UNBREAKABLE",
                     color: "#38bdf8",
                     tags: ["極端抗壓", "加時賽王者", "心態穩健"],
-                    analysis: "這是一名具備恐怖<span class='highlight-text' style='border-color:#38bdf8'>抗壓能力 (CLT) 與穩定度 (CON)</span> 的對手。越是殘局、越是劣勢，他們的失誤率越低。想要在最後十秒絕殺他們幾乎是不可能的任務。",
+                    analysis: "這是一名具備恐怖抗壓能力 (CLT) 與穩定度 (CON) 的對手。越是殘局、越是劣勢，他們的失誤率越低。想要在最後十秒絕殺他們幾乎是不可能的任務。",
                     weakness: "主動進攻性 (INI) 通常偏低。給予他們過多的發育空間並非壞事，只要你能比他更有耐心。",
                     tactics: ["前期積極消耗塔血，不要將勝負賭在最後一波", "隱藏一張致勝法術直到最後一刻才交出"]
                 },
                 {
-                    condition: cap > 85,
+                    condition: cap > 80,
                     archetype: "資本霸主 (CAPITAL OVERLORD)",
                     threat: "TIER A / STAT CHECK",
                     color: "#fbbf24",
                     tags: ["數值怪物", "等級碾壓", "暴力平推"],
-                    analysis: "數據庫偵測到極高的<span class='highlight-text' style='border-color:#fbbf24'>資本指數 (CAP)</span>。戰術與微操在純粹的等級差距面前顯得蒼白無力。對手非常清楚自己的優勢，喜歡利用硬實力直接進行屬性檢定 (Stat Check)。",
+                    analysis: "數據庫偵測到極高的資本指數 (CAP)。戰術與微操在純粹的等級差距面前顯得蒼白無力。對手非常清楚自己的優勢，喜歡利用硬實力直接進行屬性檢定 (Stat Check)。",
                     weakness: "操作細節 (MIC) 與應變能力 (ADP) 通常是致命短板。",
                     tactics: ["利用建築物拉扯其滿級核心", "避免硬碰硬，尋找換路的時機"]
                 }
@@ -409,7 +400,7 @@
             let target = {
                 archetype: "全能型選手 (BALANCED COMPETITOR)", threat: "TIER B / ALL-ROUNDER", color: "#00e5ff",
                 tags: ["六邊形戰士", "無明顯弱點", "靈活多變"],
-                analysis: "雷達圖呈現極度飽滿的十二邊形。這是一名在<span class='highlight-text' style='border-color:#00e5ff'>戰略、操作與心理</span>三個層面都發展均衡的對手。沒有致命破綻，也沒有過於極端的個人色彩。",
+                analysis: "雷達圖呈現極度飽滿的十二邊形。這是一名在戰略、操作與心理三個層面都發展均衡的對手。沒有致命破綻，也沒有過於極端的個人色彩。",
                 weakness: "均衡的反面就是平庸。在面對將單一戰術發揮到極致的『絕活哥』時，有時會因為火力不足或防守上限不夠而落敗。",
                 tactics: ["尋找你自己陣容的最強勢期，一波打穿", "考驗雙方基本功的純粹對決"]
             };
@@ -418,7 +409,6 @@
                 if (profile.condition) { target = profile; break; }
             }
 
-            // 更新 UI 色彩
             rc.style.borderTopColor = target.color;
             rc.style.boxShadow = `inset 0 0 30px rgba(0,0,0,0.8), 0 10px 20px ${target.color}30`;
             chart.data.datasets[0].borderColor = target.color;

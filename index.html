@@ -3,140 +3,313 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MAXIMA 12D - 戰術雷達掃描</title>
+    <title>MAXIMA 12D - PRO ESPORTS HUD</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root { --neon: #00f2ff; --bg: #0a0b10; --purple: #bc13fe; }
+        /* 引入科幻風格字體 */
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap');
+
+        :root {
+            --cyan: #00f2ff;
+            --purple: #bc13fe;
+            --red: #ff2a2a;
+            --bg-dark: #05070f;
+            --panel-bg: rgba(12, 15, 26, 0.85);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
-            background: var(--bg); color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex; flex-direction: column; align-items: center; padding: 50px 20px; margin: 0;
+            background-color: var(--bg-dark);
+            background-image: 
+                linear-gradient(rgba(0, 242, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 242, 255, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+            color: #fff;
+            font-family: 'Rajdhani', sans-serif;
+            display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 40px 20px;
         }
-        .container {
-            background: linear-gradient(145deg, #161822, #0d0e14);
-            padding: 40px; border-radius: 20px; border: 1px solid var(--neon);
-            box-shadow: 0 0 30px rgba(0, 242, 255, 0.15); text-align: center; max-width: 550px; width: 100%;
+
+        /* 頂部標題 */
+        header { text-align: center; margin-bottom: 30px; text-transform: uppercase; }
+        h1 { font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 3rem; color: var(--cyan); letter-spacing: 6px; text-shadow: 0 0 20px rgba(0,242,255,0.4); margin-bottom: 5px; }
+        .sys-status { font-size: 1rem; color: var(--purple); letter-spacing: 3px; }
+
+        /* 搜尋控制列 */
+        .control-hub {
+            background: var(--panel-bg); border: 1px solid rgba(0, 242, 255, 0.3); padding: 20px; border-radius: 12px;
+            display: flex; gap: 15px; width: 100%; max-width: 600px; margin-bottom: 30px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8), inset 0 0 15px rgba(0,242,255,0.05);
+            backdrop-filter: blur(10px);
         }
-        h1 { color: var(--neon); letter-spacing: 4px; margin: 0 0 5px 0; font-size: 2.2rem; }
-        .subtitle { color: var(--purple); font-size: 0.85rem; margin-bottom: 30px; letter-spacing: 2px; }
-        
-        .search-box { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
+
         input {
-            background: rgba(0, 0, 0, 0.5); border: 1px solid var(--neon); color: #fff;
-            padding: 12px 15px; border-radius: 8px; width: 60%; outline: none; font-size: 1rem;
-            transition: box-shadow 0.3s;
+            flex: 1; background: rgba(0,0,0,0.6); border: 1px solid var(--cyan); color: var(--cyan);
+            padding: 15px; border-radius: 6px; font-family: 'Orbitron', sans-serif; font-size: 1.1rem; outline: none; transition: 0.3s;
         }
-        input:focus { box-shadow: 0 0 10px rgba(0, 242, 255, 0.3); }
+        input:focus { box-shadow: 0 0 15px rgba(0, 242, 255, 0.4); }
+        input::placeholder { color: rgba(0, 242, 255, 0.3); }
+
         button {
-            background: var(--neon); color: #000; border: none; padding: 12px 25px;
-            border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; transition: 0.3s;
+            background: var(--cyan); color: #000; border: none; padding: 0 30px; border-radius: 6px;
+            font-family: 'Orbitron', sans-serif; font-weight: 700; font-size: 1.1rem; cursor: pointer; transition: 0.3s; text-transform: uppercase;
         }
-        button:hover { box-shadow: 0 0 20px var(--neon); transform: translateY(-2px); }
-        
-        #status { font-size: 0.9rem; color: #888; min-height: 20px; margin-bottom: 20px; }
-        
-        .data-cards { display: none; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .card { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 10px; border-bottom: 3px solid var(--purple); }
-        .card-label { font-size: 0.75rem; color: #aaa; margin-bottom: 5px; text-transform: uppercase; }
-        .card-value { font-size: 1.8rem; font-weight: bold; color: var(--neon); }
-        
-        canvas { max-width: 100%; height: auto; }
+        button:hover { background: #fff; box-shadow: 0 0 20px var(--cyan); transform: scale(1.02); }
+
+        /* 錯誤警告框 */
+        #alert-box { display: none; width: 100%; max-width: 600px; padding: 15px; background: rgba(255, 42, 42, 0.1); border-left: 5px solid var(--red); color: var(--red); margin-bottom: 20px; font-weight: bold; border-radius: 4px; }
+
+        /* 主控儀表板佈局 */
+        .dashboard {
+            display: none; width: 100%; max-width: 1000px; gap: 25px; align-items: stretch; animation: fadeIn 0.8s ease-out forwards;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .panel {
+            background: var(--panel-bg); border: 1px solid rgba(0, 242, 255, 0.2); border-radius: 15px;
+            padding: 30px; backdrop-filter: blur(10px); box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        .side-panel { flex: 1; display: flex; flex-direction: column; gap: 20px; }
+        .radar-panel { flex: 1.5; display: flex; justify-content: center; align-items: center; position: relative; min-height: 400px; }
+
+        /* 玩家數值面板 */
+        .player-header { border-bottom: 2px solid var(--purple); padding-bottom: 15px; margin-bottom: 10px; }
+        .player-name { font-size: 2.2rem; font-family: 'Orbitron', sans-serif; font-weight: bold; color: #fff; text-transform: uppercase; word-break: break-all; }
+        .player-tag { color: var(--cyan); font-size: 1.2rem; letter-spacing: 2px; }
+
+        .stat-group { background: rgba(255,255,255,0.02); padding: 15px; border-radius: 8px; border-left: 3px solid var(--cyan); }
+        .stat-label { font-size: 0.9rem; color: #888; text-transform: uppercase; margin-bottom: 5px; }
+        .stat-value { font-size: 2rem; font-weight: bold; color: #fff; display: flex; align-items: baseline; gap: 5px; }
+        .stat-unit { font-size: 1rem; color: var(--cyan); }
+
+        .progress-bar { width: 100%; height: 6px; background: rgba(255,255,255,0.1); margin-top: 10px; border-radius: 3px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--cyan); box-shadow: 0 0 10px var(--cyan); transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        @media (max-width: 800px) {
+            .dashboard { flex-direction: column; }
+            .radar-panel { min-height: 350px; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="container">
+    <header>
         <h1>MAXIMA 12D</h1>
-        <div class="subtitle">TACTICAL INTELLIGENCE SCANNER</div>
+        <div class="sys-status" id="sys-status">// PRO ESPORTS ANALYTICS ENGINE //</div>
+    </header>
 
-        <div class="search-box">
-            <input type="text" id="playerTag" placeholder="輸入玩家 Tag (如 P8RR2P)">
-            <button onclick="runScan()">SCAN</button>
-        </div>
-        
-        <div id="status">系統就緒，等待指令輸入...</div>
+    <div class="control-hub">
+        <input type="text" id="playerTag" placeholder="ENTER PLAYER TAG (e.g. P8RR2P)" autocomplete="off">
+        <button onclick="runScan()" id="scanBtn">INITIATE</button>
+    </div>
 
-        <div class="data-cards" id="dataCards">
-            <div class="card">
-                <div class="card-label">Avg Tower HP</div>
-                <div class="card-value" id="avgHpVal">-</div>
+    <div id="alert-box"></div>
+
+    <div class="dashboard" id="dashboard">
+        <div class="panel side-panel">
+            <div class="player-header">
+                <div class="player-tag" id="ui-tag">#TAG</div>
+                <div class="player-name" id="ui-name">PLAYER NAME</div>
             </div>
-            <div class="card">
-                <div class="card-label">Recent Win Rate</div>
-                <div class="card-value" id="winRateVal">-</div>
+
+            <div class="stat-group">
+                <div class="stat-label">DEFENSIVE CAPACITY (AVG TOWER HP)</div>
+                <div class="stat-value"><span id="ui-hp">0</span> <span class="stat-unit">HP</span></div>
+                <div class="progress-bar"><div class="progress-fill" id="bar-hp" style="width: 0%;"></div></div>
+            </div>
+
+            <div class="stat-group">
+                <div class="stat-label">AGGRESSION INDEX (WIN RATE)</div>
+                <div class="stat-value"><span id="ui-win">0</span> <span class="stat-unit">%</span></div>
+                <div class="progress-bar"><div class="progress-fill" id="bar-win" style="width: 0%; background: var(--purple); box-shadow: 0 0 10px var(--purple);"></div></div>
+            </div>
+
+            <div class="stat-group" style="border-left-color: #555;">
+                <div class="stat-label">BATTLES ANALYZED</div>
+                <div class="stat-value"><span id="ui-battles">0</span> <span class="stat-unit">MATCHES</span></div>
             </div>
         </div>
 
-        <canvas id="radarChart"></canvas>
+        <div class="panel radar-panel">
+            <canvas id="radarChart"></canvas>
+        </div>
     </div>
 
     <script>
-        let radarChart = null;
+        let myChart = null;
 
+        // UI 錯誤顯示控制
+        function showAlert(msg) {
+            const box = document.getElementById('alert-box');
+            box.style.display = 'block';
+            box.innerText = `[SYSTEM ERROR] ${msg}`;
+        }
+        function hideAlert() { 
+            document.getElementById('alert-box').style.display = 'none'; 
+        }
+
+        // ==========================================
+        // 工具函數群
+        // ==========================================
+
+        // 1. Tag Hash 用於微調同分數據 (產生穩定的偽隨機數)
+        function getTagHash(tag) {
+            let hash = 0;
+            for (let i = 0; i < tag.length; i++) {
+                hash = tag.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            return Math.abs(hash);
+        }
+
+        // 2. 計算標準差 (用於評估玩家表現的穩定度 STA)
+        function calculateStandardDeviation(arr, mean) {
+            if (!arr || arr.length === 0) return 0;
+            const variance = arr.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / arr.length;
+            return Math.sqrt(variance);
+        }
+
+        // 3. 限制數值邊界 (15 ~ 98 之間，確保雷達圖形狀具備鑑別度且不會穿模)
+        function clamp(val) { 
+            return Math.max(15, Math.min(98, Math.round(val))); 
+        }
+
+        // ==========================================
+        // 核心掃描流程
+        // ==========================================
         async function runScan() {
             const tagInput = document.getElementById('playerTag').value;
-            const status = document.getElementById('status');
-            const dataCards = document.getElementById('dataCards');
+            const btn = document.getElementById('scanBtn');
+            const dashboard = document.getElementById('dashboard');
             
-            // 1. 徹底過濾：只保留英數字，防止各種 Pattern Error
+            // 嚴格過濾特殊字元
             const cleanTag = tagInput.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-            if (!cleanTag) {
-                status.innerText = "❌ 請輸入有效的玩家 Tag";
-                status.style.color = "#ff4444";
-                return;
-            }
+            if (!cleanTag) return showAlert("INVALID TAG FORMAT. PLEASE CHECK YOUR INPUT.");
 
-            status.innerText = "📡 正在與 API 節點同步數據...";
-            status.style.color = "var(--neon)";
-            dataCards.style.display = "none";
+            hideAlert();
+            dashboard.style.display = "none";
+            btn.innerText = "RUNNING PRO-METRICS...";
+            btn.style.pointerEvents = "none";
 
             try {
-                // 2. 嚴格構造 URL：這能 100% 避免瀏覽器拋出字串不符的錯誤
                 const targetUrl = new URL('/api/clash-proxy', window.location.origin);
                 targetUrl.searchParams.append('tag', cleanTag);
 
-                const response = await fetch(targetUrl.toString(), {
-                    method: 'GET',
-                    headers: { 'Accept': 'application/json' }
+                const response = await fetch(targetUrl.toString(), { 
+                    method: 'GET', 
+                    headers: { 'Accept': 'application/json' } 
                 });
-
+                
                 const data = await response.json();
-
+                
                 if (!response.ok) {
-                    throw new Error(data.details || data.error || "伺服器無回應");
+                    throw new Error(data.details || data.error || "Connection Failed.");
                 }
 
-                // 3. UI 數據更新
-                status.innerText = `✅ 玩家已鎖定：${data.name}`;
-                status.style.color = "#00ff88";
+                updateUI(data);
                 
-                document.getElementById('avgHpVal').innerText = data.avgTowerHP;
-                document.getElementById('winRateVal').innerText = data.winRate + '%';
-                dataCards.style.display = "grid";
-
-                // 4. 動態計算 12D 雷達數值
-                const defScore = Math.min(100, (data.avgTowerHP / 8500) * 100);
-                const atkScore = data.winRate;
-                const baseData = [defScore, atkScore, 85, 75, 60, 90, 70, 82, 65, 88, 72, 85];
-                
-                drawChart(baseData);
-
             } catch (error) {
-                console.error("Fetch Exception:", error);
-                status.innerText = `❌ 掃描失敗: ${error.message}`;
-                status.style.color = "#ff4444";
+                console.error("Scan Failed:", error);
+                showAlert(error.message);
+            } finally {
+                btn.innerText = "INITIATE";
+                btn.style.pointerEvents = "auto";
             }
         }
 
+        // ==========================================
+        // 介面更新與職業級權重矩陣演算法
+        // ==========================================
+        function updateUI(data) {
+            document.getElementById('dashboard').style.display = "flex";
+            
+            // 1. 更新左側基礎面板
+            document.getElementById('ui-tag').innerText = `#${data.tag}`;
+            document.getElementById('ui-name').innerText = data.name;
+            document.getElementById('ui-hp').innerText = data.avgTowerHP;
+            document.getElementById('ui-win').innerText = data.winRate;
+            document.getElementById('ui-battles').innerText = data.battleCount;
+
+            const hpPercent = (data.avgTowerHP / 8500) * 100;
+            document.getElementById('bar-hp').style.width = `${Math.min(100, hpPercent)}%`;
+            document.getElementById('bar-win').style.width = `${data.winRate}%`;
+
+            // 2. 解析進階數據
+            const winR = data.winRate || 0;
+            const avgElixir = parseFloat(data.avgDeckElixir) || 3.5; 
+            const hpStdDev = calculateStandardDeviation(data.hpHistory, data.avgTowerHP);
+            const lowHpClutchR = (data.lowHpClutchRate || 0) * 100;
+            const clutchR = (data.clutchRate || 0) * 100;
+            const threeCrownR = (data.threeCrownRate || 0) * 100;
+            const crownsEarned = parseFloat(data.avgCrownsEarned) || 0;
+            const crownsLost = parseFloat(data.avgCrownsLost) || 0;
+
+            // 3. 職業級 12D 演算法 (Esports Weight Matrix)
+            
+            // SKL (技巧): 勝率加權牌組均費。費用越低容錯越小，技巧加乘越高。
+            const elixirMultiplier = (3.5 / avgElixir); 
+            const SKL = winR * elixirMultiplier * 1.1;
+
+            // SPD (節奏): 依賴卡組均費與三冠率。均費越低，輪轉越快(APM越高)。
+            const SPD = ((5.0 - avgElixir) / 2.0) * 80 + (threeCrownR * 0.3);
+
+            // STA (穩定): 反向映射塔血標準差。每場血量波動越小，代表發揮越穩定。
+            const STA = Math.max(0, 100 - ((hpStdDev / 3000) * 100)) * 0.7 + (winR * 0.3);
+
+            // CLT (抗壓): 極限鎖血勝率 + 一冠險勝率。
+            const CLT = (lowHpClutchR * 4.0) + (clutchR * 1.5);
+
+            // INT (戰術): 聖水控制力與防守效益。高均費若能保持高塔血，代表防守賺費能力極強。
+            const INT = (avgElixir / 4.0) * Math.min(100, hpPercent) * 1.2 + (winR * 0.4);
+
+            // DEF (防禦): 平均掉冠數與塔血留存的綜合評估。
+            const DEF = ((3 - crownsLost) / 3) * 60 + (hpPercent * 0.4);
+
+            // ATK (攻擊): 拿冠能力。
+            const ATK = (crownsEarned / 3) * 70 + (winR * 0.3);
+
+            // CRT (爆發): 純粹的三冠輾壓能力。
+            const CRT = threeCrownR * 2.5;
+
+            // END (耐力): 險勝率(經常打進 overtime) + 場次活躍度。
+            const END = (clutchR * 1.5) + Math.min(30, data.battleCount * 1.5);
+
+            // ACC (精準): 淨勝冠數差 (賺到的皇冠減去失去的)。
+            const ACC = 50 + ((crownsEarned - crownsLost) * 25); 
+
+            // AGI (靈活): 綜合節奏與抗壓，應對不同牌組的能力。
+            const AGI = (SPD * 0.4) + (CLT * 0.3) + (SKL * 0.3);
+
+            // LUK (運氣): 透過 Tag 產生微小的基礎波動，加上險勝加成。
+            const LUK = (getTagHash(data.tag) % 30) + 40 + (clutchR * 0.5);
+
+            // 4. 陣列封裝與繪圖
+            const metrics = [
+                clamp(DEF), clamp(ATK), clamp(SKL), clamp(CRT), 
+                clamp(END), clamp(CLT), clamp(SPD), clamp(ACC), 
+                clamp(LUK), clamp(STA), clamp(AGI), clamp(INT)
+            ];
+
+            drawChart(metrics);
+        }
+
+        // ==========================================
+        // Chart.js 雷達圖繪製
+        // ==========================================
         function drawChart(dataValues) {
             const ctx = document.getElementById('radarChart').getContext('2d');
-            if (radarChart) radarChart.destroy();
+            if (myChart) myChart.destroy(); // 避免圖表重疊
             
-            radarChart = new Chart(ctx, {
+            Chart.defaults.color = '#888';
+            Chart.defaults.font.family = 'Orbitron';
+
+            myChart = new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: ['DEF', 'ATK', 'SKL', 'CRT', 'END', 'CLT', 'SPD', 'ACC', 'LUK', 'INT', 'AGI', 'STA'],
+                    labels: ['DEF (防禦)', 'ATK (攻擊)', 'SKL (技巧)', 'CRT (爆發)', 'END (耐力)', 'CLT (抗壓)', 'SPD (節奏)', 'ACC (精準)', 'LUK (運氣)', 'STA (穩定)', 'AGI (靈活)', 'INT (戰術)'],
                     datasets: [{
-                        label: 'PROFILE DATA',
+                        label: 'PRO METRICS',
                         data: dataValues,
                         backgroundColor: 'rgba(0, 242, 255, 0.15)',
                         borderColor: '#00f2ff',
@@ -144,20 +317,33 @@
                         pointBackgroundColor: '#bc13fe',
                         pointBorderColor: '#fff',
                         pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: '#bc13fe',
-                        pointRadius: 4
+                        pointHoverBorderColor: '#00f2ff',
+                        pointRadius: 3,
+                        pointHoverRadius: 6
                     }]
                 },
                 options: {
+                    responsive: true, 
+                    maintainAspectRatio: false,
                     scales: {
                         r: {
-                            angleLines: { color: 'rgba(255, 255, 255, 0.15)' },
-                            grid: { color: 'rgba(255, 255, 255, 0.15)' },
-                            pointLabels: { color: '#ccc', font: { size: 11, family: 'sans-serif' } },
+                            angleLines: { color: 'rgba(0, 242, 255, 0.2)', lineWidth: 1 },
+                            grid: { color: 'rgba(0, 242, 255, 0.1)', circular: true },
+                            pointLabels: { color: '#00f2ff', font: { size: 10, weight: 'bold' } },
                             ticks: { display: false, min: 0, max: 100 }
                         }
                     },
-                    plugins: { legend: { display: false } }
+                    plugins: { 
+                        legend: { display: false }, 
+                        tooltip: { 
+                            backgroundColor: 'rgba(0,0,0,0.8)', 
+                            titleColor: '#00f2ff', 
+                            bodyFont: { size: 14, family: 'Rajdhani' },
+                            padding: 10,
+                            borderColor: '#bc13fe',
+                            borderWidth: 1
+                        } 
+                    }
                 }
             });
         }

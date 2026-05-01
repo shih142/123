@@ -282,6 +282,7 @@
 
         function run12DModel(rawData) {
             writeLog("OMNI", "12D Apex-Matrix: 抽象非線性張量運算 (Abstract Tensor Calculus) 已啟動...");
+            writeLog("SYS", "INI, DEF, CON 模組已升級為進階統計動力學模型。");
 
             const name = rawData.name || "UNKNOWN";
             const W = rawData.wins || 0; 
@@ -290,47 +291,72 @@
             const N = W + L || 1; 
             let p = W / N; 
 
-            // 高階數學函數庫 (Advanced Math Core)
+            // ==========================================
+            // [高階數學函數庫 (Advanced Math Core)]
+            // ==========================================
             const sigmoid = (x) => 1 / (1 + Math.exp(-x));
             const gaussian = (x, mu, sigma) => Math.exp(-0.5 * Math.pow((x - mu) / sigma, 2));
             const shannonEntropy = (prob) => {
-                if (prob <= 0 || prob >= 1) return 0.1; // 避免極端值導致 NaN
+                if (prob <= 0 || prob >= 1) return 0.1; 
                 return -(prob * Math.log2(prob) + (1 - prob) * Math.log2(1 - prob));
             };
             const normalize = (val) => Math.min(99.9, Math.max(1.0, val));
-            
-            // 隨機噪音發生器 (Stochastic Noise)，模擬實戰中的不可控變異數
             const noise = (variance) => 1 + (Math.random() * variance - variance / 2);
 
-            // 潛在變數特徵擷取 (Latent Feature Extraction)
+            // ==========================================
+            // [潛在變數特徵擷取 (Latent Feature Extraction)]
+            // ==========================================
             const exp_asymptote = Math.log10(N + 1); // 經驗值對數漸近線
             const win_momentum = (W - L) / Math.sqrt(N + 1); // Z-Score 勝場動能
             const expected_trophies = 1500 * Math.log10((N / 100) + 1.1); // 理論 Elo 預期值
             const elo_deviation = T / expected_trophies; // Elo 通膨/偏離指數
 
-            // 12D 抽象張量映射 (12-Dimensional Mapping)
+            // ==========================================
+            // [12D 抽象張量映射 (12-Dimensional Mapping)]
+            // ==========================================
+            
+            // 1. MAC (大局)
             const mac = normalize( (sigmoid((p - 0.5) * 10) * 45) + (elo_deviation * 45) * noise(0.1) );
+            
+            // 2. ECO (資源)
             const eco = normalize( 45 + (win_momentum * 12 * noise(0.15)) );
+            
+            // 3. TMP (節奏)
             const tmp = normalize( 50 + (Math.sin(N * p) * 15) + (sigmoid(win_momentum) * 30) * noise(0.1) );
+            
+            // 4. MIC (微操)
             const mic = normalize( (exp_asymptote * 8) + (Math.pow(elo_deviation, 1.2) * 35) * noise(0.15) );
-            const ini = normalize( 55 + (Math.cos(W - L) * 15) + (p * 25 * noise(0.2)) );
-            const def = normalize( (Math.log10(N + 100) / 5 * 65) + (p * 25) * noise(0.1) );
+            
+            // 5. INI (主動): [升級] 導入雙曲正切函數 (Hyperbolic Tangent)
+            const ini = normalize( 40 + (Math.tanh(win_momentum / 2) * 35) + (p * elo_deviation * 25) * noise(0.2) );
+            
+            // 6. DEF (防守): [升級] 採用反向指數衰減模型 (Inverse Exponential Decay)
+            const def = normalize( (1 - Math.exp(-N / 5000)) * 70 + (gaussian(elo_deviation, 1.0, 0.2) * 30) * noise(0.1) );
+            
+            // 7. CLT (抗壓)
             const clt = normalize( sigmoid((win_momentum - 1.5) * 2) * 85 * noise(0.1) + 10 );
+            
+            // 8. PRD (預判)
             const prd = normalize( Math.pow(elo_deviation, 1.5) * 35 + (exp_asymptote * 12) * noise(0.15) );
             
+            // 9. INF (情報)
             const entropy = shannonEntropy(p);
             const inf = normalize( (entropy * 70) + (elo_deviation * 20) * noise(0.1) );
-            const adp = normalize( gaussian(p, 0.55, 0.1) * 85 * noise(0.15) );
-            const con = normalize( sigmoid((N - 3000) / 1500) * 80 + 15 * noise(0.05) );
             
+            // 10. ADP (適應)
+            const adp = normalize( gaussian(p, 0.55, 0.1) * 85 * noise(0.15) );
+            
+            // 11. CON (穩定): [升級] 統計顯著性與信賴區間收斂模型
+            const stability_mass = exp_asymptote * (1 - Math.abs(p - 0.5) * 2); 
+            const con = normalize( 20 + (sigmoid(stability_mass - 1.5) * 80) * noise(0.05) );
+            
+            // 12. CAP (資本)
             const true_whale_factor = gaussian(p, 0.52, 0.08); 
             let base_cap = (elo_deviation * true_whale_factor * 85);
-            
             if (N < 500 && T > 6000) base_cap *= 1.8;
             const cap = normalize(base_cap * noise(0.1));
 
             const scores = [mac, eco, tmp, mic, ini, def, clt, prd, inf, adp, con, cap];
-            
             const score_ASR = scores.reduce((a, b) => a + b, 0) / 12;
 
             updateDashboard(name, scores, score_ASR, { N, WR: (p*100), T, CLT: clt });

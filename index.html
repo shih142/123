@@ -134,7 +134,7 @@
 
             try {
                 // Vercel 部署後直接請求相對路徑 /api/clash-proxy
-                const response = await fetch(`/api/clash-proxy?tag=${encodeURIComponent(cleanTag)}`);
+                const response = await fetch(`/api?tag=${encodeURIComponent(cleanTag)}`);
                 
                 if (!response.ok) throw new Error('API 請求失敗');
                 

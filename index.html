@@ -13,6 +13,7 @@
             --stat-primary: #00fa9a; 
             --stat-secondary: #00e5ff; 
             --stat-alert: #ff0055;
+            --stat-void: #b388ff; /* 抽象概念專屬色 */
             --text-main: #f1f5f9;
             --text-dim: #475569;
             --border-glow: rgba(0, 250, 154, 0.2);
@@ -26,41 +27,41 @@
             font-family: 'Share Tech Mono', 'Noto Sans TC', sans-serif;
             min-height: 100vh; overflow-x: hidden; display: flex; flex-direction: column;
             background-image: 
-                radial-gradient(circle at 10% 20%, rgba(0, 250, 154, 0.03) 0%, transparent 40%),
+                radial-gradient(circle at 10% 20%, rgba(179, 136, 255, 0.03) 0%, transparent 40%),
                 linear-gradient(rgba(0, 250, 154, 0.02) 1px, transparent 1px), 
                 linear-gradient(90deg, rgba(0, 250, 154, 0.02) 1px, transparent 1px);
             background-size: 100% 100%, 30px 30px, 30px 30px;
         }
 
-        header { padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--stat-primary); background: rgba(1, 10, 8, 0.95); box-shadow: var(--neon-shadow); }
-        .system-status { display: flex; gap: 20px; font-size: 12px; color: var(--stat-primary); font-weight: bold; letter-spacing: 2px; }
+        header { padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--stat-void); background: rgba(1, 10, 8, 0.95); box-shadow: 0 0 15px rgba(179, 136, 255, 0.3); }
+        .system-status { display: flex; gap: 20px; font-size: 12px; color: var(--stat-void); font-weight: bold; letter-spacing: 2px; }
         .status-node { display: flex; align-items: center; gap: 6px; }
-        .dot { width: 8px; height: 8px; background: var(--stat-primary); border-radius: 50%; box-shadow: 0 0 8px var(--stat-primary); }
+        .dot { width: 8px; height: 8px; background: var(--stat-void); border-radius: 50%; box-shadow: 0 0 8px var(--stat-void); }
         .blink { animation: pulse 2s infinite; }
 
         main { display: grid; grid-template-columns: 420px 1fr 400px; flex: 1; gap: 2px; }
-        .column { background: var(--panel-bg); display: flex; flex-direction: column; position: relative; border-right: 1px solid rgba(0, 250, 154, 0.1); }
-        .section-label { padding: 12px 15px; font-family: 'Orbitron'; font-size: 11px; background: linear-gradient(90deg, rgba(0, 250, 154, 0.1), transparent); color: var(--stat-primary); border-bottom: 1px solid rgba(0, 250, 154, 0.2); display: flex; justify-content: space-between; text-transform: uppercase; letter-spacing: 1.5px; }
+        .column { background: var(--panel-bg); display: flex; flex-direction: column; position: relative; border-right: 1px solid rgba(179, 136, 255, 0.1); }
+        .section-label { padding: 12px 15px; font-family: 'Orbitron'; font-size: 11px; background: linear-gradient(90deg, rgba(179, 136, 255, 0.1), transparent); color: var(--stat-void); border-bottom: 1px solid rgba(179, 136, 255, 0.2); display: flex; justify-content: space-between; text-transform: uppercase; letter-spacing: 1.5px; }
 
         .hero-stats { padding: 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .hero-value { font-family: 'Orbitron'; font-size: 72px; font-weight: 900; color: #fff; line-height: 0.8; margin-bottom: 10px; text-shadow: 0 0 20px rgba(0, 250, 154, 0.4); }
+        .hero-value { font-family: 'Orbitron'; font-size: 72px; font-weight: 900; color: #fff; line-height: 0.8; margin-bottom: 10px; text-shadow: 0 0 20px rgba(179, 136, 255, 0.4); }
         .hero-name { font-family: 'Orbitron'; font-size: 18px; color: var(--stat-secondary); letter-spacing: 4px; font-weight: bold;}
 
-        .data-matrix { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: rgba(0, 250, 154, 0.1); }
+        .data-matrix { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: rgba(179, 136, 255, 0.1); }
         .cell { background: var(--bg-deep); padding: 15px 5px; text-align: center; position: relative; transition: 0.3s; }
         .cell:hover { background: #04120f; }
         .cell-label { font-size: 10px; color: #64748b; margin-bottom: 4px; letter-spacing: 0.5px; font-weight: bold; }
         .cell-val { font-family: 'Orbitron'; font-size: 22px; color: #fff; }
         
-        .highlight-synth::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--stat-primary); }
-        .highlight-synth .cell-val { color: var(--stat-primary); text-shadow: 0 0 10px rgba(0, 250, 154, 0.3); }
+        .highlight-synth::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--stat-void); }
+        .highlight-synth .cell-val { color: var(--stat-void); text-shadow: 0 0 10px rgba(179, 136, 255, 0.3); }
         .highlight-alert::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--stat-alert); }
         .highlight-alert .cell-val { color: var(--stat-alert); text-shadow: 0 0 10px rgba(255, 0, 85, 0.3); }
 
         .vis-container { flex: 1; display: flex; flex-direction: column; padding: 20px; position: relative; min-height: 450px; }
         #radarWrapper { flex: 1; min-height: 380px; }
 
-        .report-overlay { background: rgba(1, 10, 8, 0.95); border: 1px solid var(--stat-primary); padding: 25px; margin-top: 10px; font-size: 13px; border-top: 4px solid var(--stat-primary); box-shadow: inset 0 0 30px rgba(0,0,0,0.8), 0 10px 20px rgba(0,0,0,0.5); backdrop-filter: blur(10px); display: flex; flex-direction: column; gap: 15px; transition: 0.5s; position: relative; }
+        .report-overlay { background: rgba(1, 10, 8, 0.95); border: 1px solid var(--stat-void); padding: 25px; margin-top: 10px; font-size: 13px; border-top: 4px solid var(--stat-void); box-shadow: inset 0 0 30px rgba(0,0,0,0.8), 0 10px 20px rgba(0,0,0,0.5); backdrop-filter: blur(10px); display: flex; flex-direction: column; gap: 15px; transition: 0.5s; position: relative; }
         .report-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; margin-bottom: 5px; }
         .header-main { display: flex; flex-direction: column; gap: 5px; }
         #ui-archetype { font-family: 'Orbitron'; font-size: 22px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; }
@@ -85,9 +86,9 @@
 
         .io-panel { padding: 15px; border-top: 1px solid var(--border-glow); background: rgba(0,0,0,0.4); }
         input { width: 100%; background: #010a08; border: 1px solid #1e293b; padding: 12px; color: #fff; font-family: 'Orbitron'; font-size: 14px; outline: none; transition: 0.3s; text-align: center; letter-spacing: 2px; }
-        input:focus { border-color: var(--stat-primary); box-shadow: var(--neon-shadow); }
-        .btn-prime { width: 100%; padding: 15px; margin-top: 10px; background: rgba(0, 250, 154, 0.05); color: var(--stat-primary); font-family: 'Orbitron'; font-weight: 900; font-size: 14px; border: 1px solid var(--stat-primary); cursor: pointer; letter-spacing: 2px; transition: 0.2s; }
-        .btn-prime:hover:not(:disabled) { background: var(--stat-primary); color: #000; box-shadow: var(--neon-shadow); }
+        input:focus { border-color: var(--stat-void); box-shadow: 0 0 15px rgba(179, 136, 255, 0.3); }
+        .btn-prime { width: 100%; padding: 15px; margin-top: 10px; background: rgba(179, 136, 255, 0.05); color: var(--stat-void); font-family: 'Orbitron'; font-weight: 900; font-size: 14px; border: 1px solid var(--stat-void); cursor: pointer; letter-spacing: 2px; transition: 0.2s; }
+        .btn-prime:hover:not(:disabled) { background: var(--stat-void); color: #000; box-shadow: 0 0 15px rgba(179, 136, 255, 0.5); }
 
         .sim-log { flex: 1; font-family: 'Share Tech Mono'; font-size: 11px; padding: 15px; color: #64748b; overflow-y: auto; max-height: 300px; }
         .log-line { margin-bottom: 8px; border-left: 2px solid #1e293b; padding-left: 10px; line-height: 1.4; }
@@ -95,12 +96,13 @@
         .log-tag { padding: 2px 5px; border-radius: 2px; font-size: 9px; margin-right: 8px; text-transform: uppercase; font-weight: bold; color:#000; }
         .tag-sys { background: #475569; color: #fff; }
         .tag-pred { background: var(--stat-alert); color: #fff; }
+        .tag-void { background: var(--stat-void); color: #fff; }
         .tag-err { background: #ff0055; color: #fff; }
 
         ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: var(--stat-primary); }
+        ::-webkit-scrollbar-thumb { background: var(--stat-void); }
 
-        .data-box { padding: 15px; background: rgba(0,229,255,0.02); border: 1px solid rgba(0,229,255,0.15); margin-top: auto; font-family: 'Orbitron'; }
+        .data-box { padding: 15px; background: rgba(179, 136, 255, 0.02); border: 1px solid rgba(179, 136, 255, 0.15); margin-top: auto; font-family: 'Orbitron'; }
         .d-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 12px; }
         .d-label { color: var(--text-dim); }
         .d-val { color: #fff; font-weight: bold; }
@@ -111,7 +113,7 @@
 
     <header>
         <div class="system-status">
-            <div class="status-node"><div class="dot blink"></div> V53.5 PENTA-CORE | PROD_API_LINKED</div>
+            <div class="status-node"><div class="dot blink"></div> V53.5 PENTA-CORE | ABSTRACT_MODE</div>
         </div>
         <div style="font-family: 'Orbitron'; font-size: 16px; letter-spacing: 4px; color: #fff;">MAXIMA_DATACENTER</div>
     </header>
@@ -141,7 +143,7 @@
 
             <div class="io-panel">
                 <input type="text" id="tagInput" placeholder="PLAYER TAG (#...)" spellcheck="false">
-                <button class="btn-prime" id="btn-engage" onclick="fetchAndAnalyze()">INITIATE PENTA SCAN</button>
+                <button class="btn-prime" id="btn-engage" onclick="fetchAndAnalyze()">INITIATE ABSTRACT SCAN</button>
             </div>
         </section>
 
@@ -163,7 +165,7 @@
                     <div class="report-grid">
                         <div class="report-module module-full">
                             <div class="module-title">NEURAL_ENGINE_STATUS</div>
-                            <div class="module-content">V53.5 全面評估引擎已就緒。等待真實 API 串接與目標數據注入...</div>
+                            <div class="module-content">V5.0 抽象奇異點 (Abstract Singularity) 運算模式已加載。等待波函數注入...</div>
                         </div>
                     </div>
                 </div>
@@ -173,15 +175,15 @@
         <section class="column">
             <div class="section-label"><span>BEHAVIORAL_LOG</span><span>LOG_FEED</span></div>
             <div id="log-feed" class="sim-log">
-                <div class="log-line"><span class="log-ts">00:00:00</span> <span class="log-tag tag-sys">SYS</span> PROD 模式啟動。高級報告介面載入完畢。</div>
-                <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-tag tag-sys">SYS</span> 等待目標座標數據。</div>
+                <div class="log-line"><span class="log-ts">00:00:00</span> <span class="log-tag tag-sys">SYS</span> PROD 模式啟動。抽象層級已覆寫。</div>
+                <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-tag tag-sys">SYS</span> 等待目標座標數據進入熵空間。</div>
             </div>
 
             <div class="data-box">
                 <div class="d-row"><span class="d-label">Total Matches</span><span class="d-val" id="sub-mtc" style="color:var(--stat-secondary)">--</span></div>
-                <div class="d-row"><span class="d-label">Win Rate</span><span class="d-val" id="sub-win" style="color:var(--stat-primary)">-- %</span></div>
+                <div class="d-row"><span class="d-label">Win Rate</span><span class="d-val" id="sub-win" style="color:var(--stat-void)">-- %</span></div>
                 <div class="d-row"><span class="d-label">Current Trophies</span><span class="d-val" id="sub-trp">--</span></div>
-                <div class="d-row"><span class="d-label">Entropy Score</span><span class="d-val" id="sub-prd-raw" style="color:var(--stat-alert)">-- %</span></div>
+                <div class="d-row"><span class="d-label">Entropy Chaos</span><span class="d-val" id="sub-prd-raw" style="color:var(--stat-alert)">-- %</span></div>
             </div>
         </section>
     </main>
@@ -199,12 +201,12 @@
                     datasets: [{
                         label: 'NEURAL_VECTOR',
                         data: [0,0,0,0,0,0,0,0,0],
-                        backgroundColor: 'rgba(0, 250, 154, 0.1)',
-                        borderColor: '#00fa9a',
+                        backgroundColor: 'rgba(179, 136, 255, 0.1)',
+                        borderColor: '#b388ff',
                         borderWidth: 2,
                         pointRadius: 4,
                         pointBackgroundColor: '#fff',
-                        pointBorderColor: '#00fa9a'
+                        pointBorderColor: '#b388ff'
                     }]
                 },
                 options: {
@@ -227,10 +229,10 @@
             if(!tagRaw) return writeLog("SYS", "請輸入座標參數。");
 
             const btn = document.getElementById('btn-engage');
-            btn.disabled = true; btn.innerText = "FETCHING PROD DATA...";
+            btn.disabled = true; btn.innerText = "COMPUTING ABSTRACT VECTOR...";
 
             let tagClean = tagRaw.replace('#', '');
-            writeLog("SYS", `向 API 發送請求 [#${tagClean}]...`);
+            writeLog("SYS", `向 API 發送請求 [#${tagClean}] 進入虛空運算...`);
             
             try {
                 // 正式環境下的真實 API 呼叫點
@@ -239,33 +241,29 @@
                 const rawData = await response.json();
                 if (!rawData || (!rawData.wins && rawData.wins !== 0)) throw new Error("API 回傳格式異常或查無此玩家。");
                 
-                writeLog("SYS", `API 數據擷取成功，準備注入神經網絡。`);
+                writeLog("SYS", `API 數據擷取成功，注入奇異點引擎。`);
                 runNeuralModel(rawData);
             } catch (error) {
-                writeLog("ERR", `連線失敗，啟動離線模擬數據。(${error.message})`);
-                // 開發/離線測試用防呆機制
+                writeLog("ERR", `空間坍縮，切換至模擬糾纏態。(${error.message})`);
                 const W = 3000 + Math.random()*2000;
                 runNeuralModel({ name: "SUBJECT_" + Math.floor(Math.random()*999), wins: W, losses: W*(0.8+Math.random()*0.4), trophies: 6000+Math.random()*3000 });
             } finally {
-                btn.disabled = false; btn.innerText = "INITIATE PENTA SCAN";
+                btn.disabled = false; btn.innerText = "INITIATE ABSTRACT SCAN";
             }
         }
 
         function runNeuralModel(rawData) {
-            writeLog("PRED", "基於無獎盃依賴模型執行權重分析...");
+            writeLog("VOID", "啟動 V5.0 Abstract Singularity (抽象奇異點) 運算...");
 
             const name = rawData.name || "UNKNOWN";
             const W = rawData.wins || 0; 
             const L = rawData.losses || 0; 
             const T = rawData.trophies || 0;
             const N = W + L || 1; 
-            const p = W / N; 
+            let p = W / N; 
 
             // 隨機擾動因子 (純前端展示用，若完全正式環境可拔除 * rand())
             const rand = () => 0.8 + (Math.random() * 0.4);
-
-            const entropy_factor = Math.min(1.0, (T / 9500) * (1 + (W-L)/N));
-            const real_prd_rate = 0.45 + (entropy_factor * 0.5); 
 
             const theta = (W + 50) / (N + 100);
             const WLB = Math.max(0, (p + 1.92/N - 1.96*Math.sqrt((p*(1-p))/N + 0.96/(N*N))) / (1 + 3.84/N));
@@ -273,30 +271,35 @@
             const H1 = Math.min(1.0, ((L * Math.log(N + 1)) / ((T > 0 ? T : 1) + 100)) * 0.1); 
 
             // ==========================================
-            // [全新升級] 進攻指數 (SOR) 核心運算引擎 V3.0 (無獎盃依賴)
+            // [極致抽象升級] 進攻指數 (SOR) 核心引擎 V5.0
             // ==========================================
-            // 1. 勝負動能比 (Kinetic Ratio) - 放大勝場對敗場的優勢
-            const kinetic_ratio = Math.pow(W / (L + 1), 1.2);
-            
-            // 2. 量體動能 (Volume Momentum) - 獎勵在大量對局中維持進攻效率
-            const volume_momentum = Math.log10(N + 10);
-            
-            // 3. 進攻激增因子 (Aggression Multiplier) - 基於淨勝率的指數型放大
-            const aggro_multiplier = Math.exp((W - L) / N);
-            
-            // 4. 原始進攻分數聚合 (乘以 12 作為將數值收斂至 100 以內的基準放大係數)
-            const raw_sor = kinetic_ratio * volume_momentum * aggro_multiplier * 12;
+            // 避免機率為 0 或 1 導致的數學無意義錯誤 (NaN)
+            const p_win = p === 0 ? 0.001 : (p === 1 ? 0.999 : p);
+
+            // 1. 資訊熵 (Shannon Entropy)：評估勝負分佈的混沌態
+            const entropy = -(p_win * Math.log2(p_win) + (1 - p_win) * Math.log2(1 - p_win));
+
+            // 2. 幾何相位共振 (Phase Resonance)：將勝率轉為波函數
+            const phase_resonance = Math.sin(p_win * Math.PI) * Math.cos((W - L) / N * (Math.PI / 2));
+
+            // 3. 虛空黃金分割 (Void Golden Ratio)：以 1.618 為底數的對數空間映射
+            const phi = 1.6180339887;
+            const void_volume = Math.log(N + phi) / Math.log(phi);
+
+            // 4. 奇異點聚合：捨棄常規算式，透過自然指數 e 讓數值躍遷
+            // 為了讓分數落在人類可讀的範圍，我們加入常數 3.5 進行收斂
+            const raw_sor = Math.abs(phase_resonance) * Math.exp(2.0 - entropy) * void_volume * 3.5;
             // ==========================================
 
             const mapScore = (val, max) => Math.min(99.9, Math.max(0.1, (val / max) * 100));
 
             const scores = [
-                mapScore(raw_sor * rand(), 100), // SOR (進攻 - V3.0)
+                mapScore(raw_sor * rand(), 100), // SOR (進攻 - V5.0 抽象版)
                 mapScore((W / (L + 1)) * Math.log(T + 1) * 1.5 * rand(), 25), // MCR
                 mapScore((T / (N + 1)) * p * 15 * rand(), 12), // RCE
                 mapScore(Math.exp(-4.5 * H1) * rand(), 1.0), // TPG
                 mapScore((WLB / (p || 1)) * Math.exp(-4 * H1) * 100 * rand(), 95), // CFI
-                mapScore(real_prd_rate * 100 * rand(), 92), // PRD
+                mapScore(entropy * 100 * rand(), 1.0), // PRD 改以熵值展示
                 mapScore(Math.sqrt(WLB * (1 - L/N)) * OEI_raw * 1.2 * rand(), 0.8), // TDR
                 mapScore(Math.max(0.1, 1 - (1.96 * Math.sqrt((theta * (1 - theta)) / (N + 100)))) * rand(), 1.0), // BCF
                 mapScore(OEI_raw * rand(), 1.2) // OEI
@@ -304,7 +307,7 @@
 
             const score_ASI = (scores[0]*0.1) + (scores[1]*0.1) + (scores[5]*0.25) + (scores[4]*0.15) + (scores[3]*0.1) + (scores[6]*0.1) + (scores[8]*0.1) + (scores[2]*0.1);
 
-            updateDashboard(name, scores, score_ASI, { N, WR: (p*100), T, PRD: (real_prd_rate * 100) });
+            updateDashboard(name, scores, score_ASI, { N, WR: (p*100), T, ENTROPY: (entropy * 100) });
         }
 
         function updateDashboard(name, scores, asi, stats) {
@@ -317,7 +320,7 @@
             document.getElementById('sub-mtc').innerText = Math.round(stats.N);
             document.getElementById('sub-win').innerText = stats.WR.toFixed(1) + " %";
             document.getElementById('sub-trp').innerText = Math.round(stats.T);
-            document.getElementById('sub-prd-raw').innerText = stats.PRD.toFixed(1) + " %";
+            document.getElementById('sub-prd-raw').innerText = stats.ENTROPY.toFixed(1) + " %";
 
             chart.data.datasets[0].data = scores;
             chart.update();
@@ -335,57 +338,24 @@
 
             const profiles = [
                 {
-                    type: "P2W",
-                    score: (oei * 1.8) + ((100 - mcr) * 0.5),
-                    archetype: "STAT-CHECK OVERLORD",
-                    threat: "STAT-CHECK / HIGH",
-                    color: "#ffd700",
-                    tags: ["LVL-ADVANTAGE", "BRUTE-FORCE", "ELIXIR-LEAK"],
-                    analysis: "高度依賴卡牌等級與數值壓制的玩家。微操與精細計算可能並非頂尖，但能靠著絕對的血量與傷害優勢硬吃對手。",
-                    weakness: "細節處理粗糙，容易在防守端交出過多費用導致虧費。面對極致的拉扯與風箏戰術時容易陷入混亂。",
-                    tactic: "避免正面數值硬碰硬。利用建築拉扯、風箏等防守技巧，抓準對手仗著等級優勢而虧費的瞬間進行另一路反打。"
-                },
-                {
-                    type: "CONTROL",
-                    score: (mcr * 1.2) + (tpg * 1.0) + (prd * 0.8),
-                    archetype: "CONTROL TACTICIAN",
-                    threat: "STRATEGIC / EXTREME",
+                    type: "QUANTUM_ASSAULT",
+                    score: (sor * 1.8) + ((100 - prd) * 0.5),
+                    archetype: "ABSTRACT ANOMALY",
+                    threat: "UNPREDICTABLE / EXTREME",
                     color: "#b388ff",
-                    tags: ["MACRO", "TRACKING", "KITING", "CALCULATED"],
-                    analysis: "精算師級別的對手。極度擅長空間拉扯、記牌與算費，會透過不斷的微操與兵線掌控全場節奏，將你逼入死角。",
-                    weakness: "極度依賴完美防守的運算，一旦防線被意料之外的法術或不可預測的爆發傷害撕裂，容易因為手牌輪轉卡死而崩盤。",
-                    tactic: "打破其完美運算。準備大範圍法術（如毒藥、火球）預判其防守位置，或在雙倍聖水期發動其無法單靠微操化解的平推攻勢。"
-                },
-                {
-                    type: "AGGRESSIVE",
-                    score: (sor * 1.5) + (rce * 1.0) + (bcf * 0.5),
-                    archetype: "AGGRESSIVE ASSAULTER",
-                    threat: "RELENTLESS / SEVERE",
-                    color: "#ff0055",
-                    tags: ["RUSH", "PUNISH", "HIGH-RISK", "BRIDGE-SPAM"],
-                    analysis: "攻擊慾望極強。擅長在開局或對手下出高費牌的瞬間，在另一路發動毀滅性的突襲，給予極大的防守壓力。",
-                    weakness: "進攻時常孤注一擲，導致自身處於聖水真空期。防守端相對薄弱，容易被大型反擊直接帶走一塔。",
-                    tactic: "保持『防守反擊』姿態。切勿輕易將費用打空，永遠預留應對突襲的解牌。成功擋下其猛攻後，帶著殘餘部隊配合法術反打。"
-                },
-                {
-                    type: "CONSERVATIVE",
-                    score: (tdr * 1.5) + (cfi * 1.0) + ((100 - sor) * 0.5),
-                    archetype: "CONSERVATIVE WARDEN",
-                    threat: "TURTLE / MEDIUM",
-                    color: "#00aaff",
-                    tags: ["TURTLE", "COUNTER-PUSH", "SPELL-CYCLE", "PATIENT"],
-                    analysis: "防守反擊的極致信徒。極少主動發起進攻，總是等待你先出牌，然後利用完美的防守賺取費用差，步步為營。",
-                    weakness: "缺乏主動終結比賽的爆發力。如果對手同樣不進攻，或使用能跨半場消耗的陣容，其防禦體系將失去意義。",
-                    tactic: "進入『消耗戰』節奏。不要投入過多費用進行無效進攻被抓反擊。利用法術消耗塔血，或使用礦工、飛桶等卡牌進行零星消耗。"
+                    tags: ["WAVE-COLLAPSE", "NON-LINEAR", "ENTROPY-BURST"],
+                    analysis: "對手的進攻模式完全脫離線性邏輯。他們可能在毫無徵兆的情況下交出致命組合，將戰場拖入高度混亂的波函數坍縮狀態。",
+                    weakness: "高度的不可預測性意味著資源調配極不穩定。只要能撐過他們最混亂的一波『熵爆發』，其防線會自動瓦解。",
+                    tactic: "不要試圖用傳統的『記牌』與『算費』去預測他們。保持最穩固的防守陣型，以靜制動，讓他們在混亂中自行耗盡資源。"
                 },
                 {
                     type: "STABLE",
                     score: ((100 - tilt_prob) * 1.5) + (cfi * 1.0) + (tdr * 0.5),
-                    archetype: "STABLE ANCHOR",
+                    archetype: "EUCLIDEAN ANCHOR",
                     threat: "BALANCED / HIGH",
                     color: "#00fa9a",
-                    tags: ["FUNDAMENTALS", "CONSISTENT", "ADAPTIVE", "NO-TILT"],
-                    analysis: "心態與操作皆無懈可擊的均衡型玩家。不輕易犯錯，能冷靜應對各種突發狀況，勝率與表現極其穩定。",
+                    tags: ["CLASSICAL-LOGIC", "CONSISTENT", "ADAPTIVE", "NO-TILT"],
+                    analysis: "心態與操作皆符合古典歐幾里得幾何的完美邏輯。不輕易犯錯，能冷靜應對各種突發狀況，勝率與表現極其穩定。",
                     weakness: "打法通常較為常規與公式化，依賴卡牌標準的克制關係。對於非主流的怪異牌組或突然的極端變速適應力稍慢。",
                     tactic: "這是一場基本功的比拼。勝負取決於誰能在常規的卡牌交換中累積優勢。可以嘗試在單倍與雙倍聖水期切換截然不同的進攻節奏來干擾其判斷。"
                 }
@@ -396,8 +366,8 @@
 
             let psy_label = "COGNITIVE STABLE";
             let psy_color = "#00fa9a";
-            if (tilt_prob > 65) { psy_label = "TILT WARNING"; psy_color = "#ff0055"; } 
-            else if (focus_level > 85) { psy_label = "FLOW STATE"; psy_color = "#00e5ff"; }
+            if (tilt_prob > 65) { psy_label = "ENTROPY OVERFLOW"; psy_color = "#ff0055"; } 
+            else if (focus_level > 85) { psy_label = "QUANTUM FLOW"; psy_color = "#00e5ff"; }
 
             rc.style.borderTopColor = target.color;
             rc.style.boxShadow = `inset 0 0 30px rgba(0,0,0,0.8), 0 10px 20px ${target.color}30`;
@@ -425,7 +395,7 @@
                         <div class="module-content">
                             <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:2px;">
                                 <span style="color:${psy_color}; font-weight:bold;">${psy_label}</span>
-                                <span>TILT RISK: ${tilt_prob.toFixed(0)}%</span>
+                                <span>CHAOS RISK: ${tilt_prob.toFixed(0)}%</span>
                             </div>
                             <div class="bar-container"><div class="bar-fill" style="width: ${tilt_prob}%; background: ${psy_color};"></div></div>
                         </div>
@@ -445,22 +415,22 @@
                         <div class="module-content">${target.analysis}</div>
                     </div>
 
-                    <div class="report-module module-full" style="border: 1px solid rgba(0, 250, 154, 0.3); background: rgba(0, 250, 154, 0.03);">
-                        <div class="module-title" style="color: var(--stat-primary);">DYNAMIC_COUNTER (動態反制策略)</div>
+                    <div class="report-module module-full" style="border: 1px solid rgba(179, 136, 255, 0.3); background: rgba(179, 136, 255, 0.03);">
+                        <div class="module-title" style="color: var(--stat-void);">DYNAMIC_COUNTER (動態反制策略)</div>
                         <div class="module-content" style="color: #f1f5f9; font-weight: 500;">
                             ${target.tactic}
                         </div>
                     </div>
                 </div>
             `;
-            writeLog("CORE", `終極分析完成：目標鎖定為 [${target.type}]。`);
+            writeLog("CORE", `抽象分析完成：目標鎖定為 [${target.type}]。`);
         }
 
         function writeLog(tag, msg) {
             const feed = document.getElementById('log-feed');
             const div = document.createElement('div'); div.className = 'log-line';
             const now = new Date(); const ts = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
-            let tagClass = 'tag-sys'; if(tag === 'PRED') tagClass = 'tag-pred'; if(tag === 'ERR') tagClass = 'tag-err';
+            let tagClass = 'tag-sys'; if(tag === 'PRED') tagClass = 'tag-pred'; if(tag === 'ERR') tagClass = 'tag-err'; if(tag === 'VOID') tagClass = 'tag-void';
             div.innerHTML = `<span class="log-ts">${ts}</span><span class="log-tag ${tagClass}">${tag}</span> ${msg}`;
             feed.prepend(div);
             if(feed.children.length > LOG_LIMIT) feed.lastChild.remove();

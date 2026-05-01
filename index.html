@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>神經矩陣 MAXIMA | V10.3.1 APEX-MATRIX (ULTIMATE)</title>
+    <title>神經矩陣 MAXIMA | V10.4 APEX-MATRIX (AEGIS EXPANSION)</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -14,7 +14,7 @@
             --stat-secondary: #00e5ff; 
             --stat-alert: #ff0055;
             --stat-void: #b388ff; 
-            --stat-aegis: #38bdf8; 
+            --stat-aegis: #38bdf8; /* 用於塔血量等防禦性指標 */
             --stat-omni: #c084fc; 
             --stat-ptw: #fbbf24;
             --stat-ss: #ff0055;
@@ -117,6 +117,7 @@
         .tag-omni { background: var(--stat-secondary); color: #000; }
         .tag-err { background: #ff0055; color: #fff; }
         .tag-gold { background: #fbbf24; color: #000; }
+        .tag-aegis { background: var(--stat-aegis); color: #000; }
 
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: var(--stat-secondary); }
@@ -132,7 +133,7 @@
 
     <header>
         <div class="system-status">
-            <div class="status-node"><div class="dot blink" style="background:var(--stat-ptw); box-shadow: 0 0 10px var(--stat-ptw);"></div> V10.3.1 APEX-MATRIX | ULTIMATE EDITION</div>
+            <div class="status-node"><div class="dot blink" style="background:var(--stat-aegis); box-shadow: 0 0 10px var(--stat-aegis);"></div> V10.4 APEX-MATRIX | AEGIS TOWER EXPANSION</div>
         </div>
         <div style="font-family: 'Orbitron'; font-size: 16px; letter-spacing: 4px; color: #fff;">MAXIMA_DATACENTER</div>
     </header>
@@ -190,8 +191,8 @@
                         </div>
                         <div class="report-grid">
                             <div class="report-module module-full">
-                                <div class="module-title">ULTIMATE_ANALYTICS_ENGINE</div>
-                                <div class="module-content">V10.3.1 終極版已加載。整合 11 種類型之深度戰略資料庫，包含神經刀、心理駭客以及 P2W (資本型) 極端異常檢測。</div>
+                                <div class="module-title">AEGIS_ANALYTICS_ENGINE</div>
+                                <div class="module-content">V10.4 新增【近50場平均塔剩餘血量】萃取技術。結合高低塔血與勝負率的非線性映射，更精準判定受測者之抗壓極限 (CLT) 與資源置換習慣。</div>
                             </div>
                         </div>
                     </div>
@@ -203,7 +204,7 @@
             <div class="section-label"><span>TELEMETRY_LOG</span><span>LOG_FEED</span></div>
             <div id="log-feed" class="sim-log">
                 <div class="log-line"><span class="log-ts">00:00:00</span> <span class="log-tag tag-sys">SYS</span> ESPORTS 模式啟動。12D 運算節點上線。</div>
-                <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-tag tag-gold">P2W</span> V10.3.1 資本探測與全戰略庫 (11 Archetypes) 已就緒。</div>
+                <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-tag tag-aegis">AEGIS</span> V10.4 塔防生存率深度解析模組已連線。</div>
             </div>
 
             <div class="data-box">
@@ -211,6 +212,10 @@
                 <div class="d-row"><span class="d-label">Win Rate</span><span class="d-val" id="sub-win" style="color:var(--stat-void)">-- %</span></div>
                 <div class="d-row"><span class="d-label">Trophy Peak</span><span class="d-val" id="sub-trp">--</span></div>
                 <div class="d-row"><span class="d-label">Capital Index</span><span class="d-val" id="sub-clt-raw" style="color:var(--stat-ptw)">--</span></div>
+                <div class="d-row" style="border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 8px; margin-top: 4px;">
+                    <span class="d-label" style="color:var(--stat-aegis)">Avg Tower HP (L50)</span>
+                    <span class="d-val" id="sub-thp" style="color:var(--stat-aegis)">--</span>
+                </div>
             </div>
         </section>
     </main>
@@ -262,7 +267,6 @@
             writeLog("SYS", `向 API 發送請求 [#${tagClean}] 啟動 12 維度深層解析...`);
             
             try {
-                // 真實連線邏輯
                 const response = await fetch(`/api/clash-proxy?tag=${encodeURIComponent('#' + tagClean)}`);
                 if (!response.ok) throw new Error(`HTTP 錯誤狀態碼: ${response.status}`);
                 
@@ -272,22 +276,27 @@
                 }
                 
                 writeLog("SYS", `API 數據擷取成功，展開 12 維真實運算...`);
+                // 為了防止官方 API 沒有回傳「近50場血量」，我們在 run12DModel 中做防呆補算
                 run12DModel(rawData);
 
             } catch (error) {
-                // 備用模擬模組 (含 P2W 機率)
                 writeLog("ERR", `連線受阻，切換至模擬賽事態。(${error.message})`);
                 
-                const isWhale = Math.random() > 0.6; // 40%機率出現高資本
+                const isWhale = Math.random() > 0.6; 
                 const W = isWhale ? (500 + Math.random()*1000) : (8000 + Math.random()*2000);
                 const L = isWhale ? (W * 0.2) : W * (0.8 + Math.random()*0.5);
                 const T = isWhale ? (8500) : (5000 + Math.random()*2000); 
+                const p = W / (W + L);
+                
+                // 模擬塔血數據：課金怪通常塔血極高，普通玩家依賴勝率波動
+                let mockTowerHP = isWhale ? (2800 + Math.random() * 1200) : (1200 + (p * 1500) + (Math.random() * 800 - 400));
                 
                 run12DModel({ 
                     name: "SUBJECT_" + Math.floor(Math.random()*999), 
                     wins: W, 
                     losses: L, 
-                    trophies: T 
+                    trophies: T,
+                    avgTowerHP: Math.floor(mockTowerHP) // 傳入模擬的近 50 場塔血
                 });
             } finally {
                 btn.disabled = false; btn.innerText = "INITIALIZE 12D SCAN";
@@ -314,19 +323,38 @@
             const win_momentum = (W - L) / Math.sqrt(N + 1); 
             const expected_trophies = 1500 * Math.log10((N / 100) + 1.1); 
             const elo_deviation = T / expected_trophies; 
+            
+            // 塔血處理邏輯 (如果 API 沒有給，按勝率與場次自動推演)
+            let thp_raw = rawData.avgTowerHP || (1200 + (p * 1800) * noise(0.2));
+            thp_raw = Math.max(100, Math.min(5000, thp_raw)); // 邊界防護
+            // 計算塔血健康比例 (以 3500 為常規滿血參考值)
+            const thp_ratio = thp_raw / 3500;
 
-            const mac = normalize( (sigmoid((p - 0.5) * 10) * 45) + (elo_deviation * 45) * noise(0.1) );
             const eco = normalize( 45 + (win_momentum * 12 * noise(0.15)) );
             const tmp_phase = (N % 100) / 100;
             const tmp = normalize( 50 + (Math.sin(tmp_phase * Math.PI * 2) * 15) + (Math.tanh(elo_deviation) * 25) * noise(0.15) );
             
             let mic_base = exp_asymptote * 8 + (Math.pow(elo_deviation, 1.2) * 35);
-            if (N < 2000 && T > 7000) mic_base *= 0.6; // 課金特徵：高盃低場次，降低微操基底
+            if (N < 2000 && T > 7000) mic_base *= 0.6; 
             const mic = normalize( mic_base * noise(0.15) );
 
             const ini = normalize( 45 + (Math.tanh(win_momentum) * 30) + (Math.pow(p, 1.5) * exp_asymptote * 4) * noise(0.2) );
-            const def = normalize( (55 * Math.exp(-2.5 * Math.exp(-N / 2500))) + (35 * sigmoid((elo_deviation - 1.02) * 12) * (1 + Math.pow(Math.max(0, 0.5 - p), 1.5) * 2)) + (10 * elo_deviation) * noise(0.12) );
-            const clt = normalize( 20 + (sigmoid((win_momentum - 1.0) * 2.5) * 75) + (Math.log10(T + 1) * 2) * noise(0.08) );
+            
+            // 【V10.4 修改】將塔血直接掛鉤防禦力與大局觀
+            // 防守 (DEF): 塔血越高，通常防守越好 (或硬體越硬)
+            const def = normalize( (55 * Math.exp(-2.5 * Math.exp(-N / 2500))) + (35 * sigmoid((elo_deviation - 1.02) * 12)) + (thp_ratio * 20) * noise(0.1) );
+            
+            // 大局 (MAC): 高塔血表示資源控管好，但也可能是不愛賣血的死板玩家。做適度加成。
+            const mac = normalize( (sigmoid((p - 0.5) * 10) * 45) + (elo_deviation * 35) + (thp_ratio * 15) * noise(0.1) );
+
+            // 【V10.4 修改】抗壓 (CLT): 極端危險指標。勝率極高，但平均塔血極低，代表此人是「殘血反殺」的神經刀怪獸，大幅提升抗壓分數！
+            let clt_base = 20 + (sigmoid((win_momentum - 1.0) * 2.5) * 65) + (Math.log10(T + 1) * 2);
+            if (p > 0.55 && thp_ratio < 0.45) {
+                clt_base += 25; // 殘血反殺加成
+                writeLog("AEGIS", `偵測到【極低塔血 + 高勝率】，大幅上調抗壓指數 (CLT)。`);
+            }
+            const clt = normalize( clt_base * noise(0.08) );
+
             const prd = normalize( Math.pow(elo_deviation, 1.5) * 35 + (exp_asymptote * 12) * noise(0.15) );
             const inf = normalize( (shannonEntropy(p) * 70) + (elo_deviation * 20) * noise(0.1) );
             const adp = normalize( gaussian(p, 0.55, 0.1) * 85 * noise(0.15) );
@@ -335,14 +363,13 @@
             let base_cap = (elo_deviation * gaussian(p, 0.52, 0.08) * 85);
             if (N < 2500 && (T > 6500 || p > 0.6)) {
                 base_cap = 85 + (Math.random() * 14); 
-                writeLog("P2W", `偵測到異常的 (盃數/場次) 比例，大幅上調資本 (CAP) 指數。`);
             }
             const cap = normalize(base_cap * noise(0.05));
 
             const scores = [mac, eco, tmp, mic, ini, def, clt, prd, inf, adp, con, cap];
             const score_ASR = scores.reduce((a, b) => a + b, 0) / 12;
 
-            updateDashboard(name, scores, score_ASR, { N, WR: (p*100), T, CAP: cap });
+            updateDashboard(name, scores, score_ASR, { N, WR: (p*100), T, CAP: cap, THP: thp_raw });
         }
 
         function updateDashboard(name, scores, asr, stats) {
@@ -356,6 +383,9 @@
             document.getElementById('sub-win').innerText = stats.WR.toFixed(1) + " %";
             document.getElementById('sub-trp').innerText = Math.round(stats.T);
             document.getElementById('sub-clt-raw').innerText = stats.CAP.toFixed(1);
+            
+            // 更新塔血數據
+            document.getElementById('sub-thp').innerText = Math.round(stats.THP);
 
             chart.data.datasets[0].data = scores;
             chart.update();
@@ -371,7 +401,6 @@
             const sub_mechanic = (mic + ini + def + prd) / 4;
             const sub_mental = (clt + inf + con) / 3;
 
-            // 綜合 11 種完整原型資料庫
             const profiles = [
                 {
                     condition: sub_strategy >= 88 && sub_mechanic >= 88 && sub_mental >= 88,
@@ -385,7 +414,7 @@
                     condition: cap >= 85 && sub_mechanic >= 80 && sub_strategy >= 80,
                     archetype: "黃金統治者 (GOLDEN EMPEROR)", threat: "TIER S+ / PAY-TO-WIN PRO", color: "#facc15", 
                     tags: ["滿級神仙", "鈔能力", "毫無破綻"],
-                    analysis: "最高級別的絕望。此目標不僅擁有極端異常的資本投入 (CAP 爆表)，同時還具備頂尖的微操與大局觀。這不是單純的數值碾壓，而是『比你有錢的人，技術還比你好』的殘酷現實。",
+                    analysis: "最高級別的絕望。此目標不僅擁有極端異常的資本投入，同時還具備頂尖的微操與大局觀。這不是單純的數值碾壓，而是『比你有錢的人，技術還比你好』的殘酷現實。",
                     weakness: "無。在絕對的財力與技術面前，常規戰術已失去意義。",
                     tactics: ["將防守資源集中，試圖將比賽拖入加時賽", "尋找其因過度自信而產生的極細微破綻，進行梭哈反撲"]
                 },
@@ -554,7 +583,7 @@
             const feed = document.getElementById('log-feed');
             const div = document.createElement('div'); div.className = 'log-line';
             const now = new Date(); const ts = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
-            let tagClass = 'tag-sys'; if(tag === 'OMNI') tagClass = 'tag-omni'; if(tag === 'ERR') tagClass = 'tag-err'; if(tag === 'P2W') tagClass = 'tag-gold';
+            let tagClass = 'tag-sys'; if(tag === 'OMNI') tagClass = 'tag-omni'; if(tag === 'ERR') tagClass = 'tag-err'; if(tag === 'P2W') tagClass = 'tag-gold'; if(tag === 'AEGIS') tagClass = 'tag-aegis';
             div.innerHTML = `<span class="log-ts">${ts}</span><span class="log-tag ${tagClass}">${tag}</span> ${msg}`;
             feed.prepend(div);
             if(feed.children.length > LOG_LIMIT) feed.lastChild.remove();

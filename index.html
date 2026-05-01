@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>神經矩陣 MAXIMA | V8.0 OMNI-MATRIX (PROD)</title>
+    <title>神經矩陣 MAXIMA | V8.5 MORTAL-MATRIX (PROD)</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -15,7 +15,8 @@
             --stat-alert: #ff0055;
             --stat-void: #b388ff; 
             --stat-aegis: #38bdf8; 
-            --stat-omni: #c084fc; /* V8 全知專屬紫金 */
+            --stat-omni: #c084fc; 
+            --stat-ptw: #fbbf24; /* 課金專屬黃金閃耀色 */
             --text-main: #f1f5f9;
             --text-dim: #475569;
             --border-glow: rgba(192, 132, 252, 0.2);
@@ -30,7 +31,7 @@
             min-height: 100vh; overflow-x: hidden; display: flex; flex-direction: column;
             background-image: 
                 radial-gradient(circle at 15% 25%, rgba(192, 132, 252, 0.04) 0%, transparent 40%),
-                radial-gradient(circle at 85% 75%, rgba(56, 189, 248, 0.04) 0%, transparent 40%),
+                radial-gradient(circle at 85% 75%, rgba(251, 191, 36, 0.04) 0%, transparent 40%),
                 linear-gradient(rgba(0, 250, 154, 0.02) 1px, transparent 1px), 
                 linear-gradient(90deg, rgba(0, 250, 154, 0.02) 1px, transparent 1px);
             background-size: 100% 100%, 100% 100%, 30px 30px, 30px 30px;
@@ -50,30 +51,30 @@
         .hero-value { font-family: 'Orbitron'; font-size: 72px; font-weight: 900; color: #fff; line-height: 0.8; margin-bottom: 10px; text-shadow: 0 0 20px rgba(192, 132, 252, 0.4); }
         .hero-name { font-family: 'Orbitron'; font-size: 18px; color: var(--stat-omni); letter-spacing: 4px; font-weight: bold;}
 
+        /* 改為 3x2 Grid 以容納 5+1(系統狀態) 模組 */
         .data-matrix { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: rgba(192, 132, 252, 0.1); }
         .cell { background: var(--bg-deep); padding: 15px 5px; text-align: center; position: relative; transition: 0.3s; }
         .cell:hover { background: #04120f; }
         .cell-label { font-size: 10px; color: #64748b; margin-bottom: 4px; letter-spacing: 0.5px; font-weight: bold; }
         .cell-val { font-family: 'Orbitron'; font-size: 22px; color: #fff; }
         
-        .highlight-synth::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--stat-void); }
-        .highlight-synth .cell-val { color: var(--stat-void); text-shadow: 0 0 10px rgba(179, 136, 255, 0.3); }
-        .highlight-aegis::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--stat-aegis); }
-        .highlight-aegis .cell-val { color: var(--stat-aegis); text-shadow: 0 0 10px rgba(56, 189, 248, 0.3); }
+        .highlight-ptw::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--stat-ptw); }
+        .highlight-ptw .cell-val { color: var(--stat-ptw); text-shadow: 0 0 10px rgba(251, 191, 36, 0.4); }
         .highlight-alert::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--stat-alert); }
         .highlight-alert .cell-val { color: var(--stat-alert); text-shadow: 0 0 10px rgba(255, 0, 85, 0.3); }
+        .highlight-aegis::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--stat-aegis); }
+        .highlight-aegis .cell-val { color: var(--stat-aegis); text-shadow: 0 0 10px rgba(56, 189, 248, 0.3); }
 
         .vis-container { flex: 1; display: flex; flex-direction: column; padding: 20px; position: relative; min-height: 450px; }
         #radarWrapper { flex: 1; min-height: 340px; }
 
-        /* V8.0 Report Overlay 升級樣式 */
         .report-overlay { background: rgba(1, 10, 8, 0.95); border: 1px solid var(--stat-omni); padding: 20px; margin-top: 5px; font-size: 13px; border-top: 4px solid var(--stat-omni); box-shadow: inset 0 0 30px rgba(0,0,0,0.8), 0 10px 20px rgba(0,0,0,0.5); backdrop-filter: blur(10px); display: flex; flex-direction: column; gap: 15px; transition: 0.5s; position: relative; overflow: hidden;}
         .report-overlay::before { content: ""; position: absolute; top: 0; right: 0; width: 100%; height: 100%; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(192, 132, 252, 0.02) 2px, rgba(192, 132, 252, 0.02) 4px); pointer-events: none; z-index: 0; }
         .report-content-wrapper { position: relative; z-index: 1; }
 
         .report-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px; margin-bottom: 5px; }
         .header-main { display: flex; flex-direction: column; gap: 4px; }
-        #ui-archetype { font-family: 'Orbitron'; font-size: 24px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; line-height: 1; }
+        #ui-archetype { font-family: 'Orbitron', 'Noto Sans TC'; font-size: 24px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; line-height: 1.2; }
         #ui-apm { font-family: 'Share Tech Mono'; font-size: 11px; color: #94a3b8; letter-spacing: 1px; }
         .threat-badge { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
         .threat-level { font-family: 'Orbitron'; font-size: 14px; padding: 5px 12px; border-radius: 2px; font-weight: bold; letter-spacing: 1px; background: rgba(255,255,255,0.05); }
@@ -81,17 +82,15 @@
         .report-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 12px; }
         .report-module { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); padding: 12px; position: relative; }
         .module-full { grid-column: span 2; }
-        .module-flex { display: flex; gap: 15px; }
         
         .corner-tl { position: absolute; top: -1px; left: -1px; width: 8px; height: 8px; border-top: 2px solid; border-left: 2px solid; }
         .corner-br { position: absolute; bottom: -1px; right: -1px; width: 8px; height: 8px; border-bottom: 2px solid; border-right: 2px solid; }
 
-        .module-title { font-family: 'Share Tech Mono'; color: var(--text-main); font-size: 11px; margin-bottom: 8px; letter-spacing: 1px; display: flex; align-items: center; gap: 5px; text-transform: uppercase; font-weight: bold; opacity: 0.9; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 4px; }
+        .module-title { font-family: 'Share Tech Mono', 'Noto Sans TC'; color: var(--text-main); font-size: 11px; margin-bottom: 8px; letter-spacing: 1px; display: flex; align-items: center; gap: 5px; font-weight: bold; opacity: 0.9; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 4px; }
         .module-title::before { content: "▶"; font-size: 9px; }
         .module-content { color: #cbd5e1; line-height: 1.5; font-size: 12px; text-align: justify; }
 
-        /* V8 新增：微觀數據條與戰術列表 */
-        .micro-stat-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; font-size: 10px; font-family: 'Orbitron'; }
+        .micro-stat-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; font-size: 10px; font-family: 'Orbitron', 'Noto Sans TC'; }
         .micro-stat-label { color: #94a3b8; letter-spacing: 0.5px; width: 40%; }
         .bar-container { flex: 1; background: rgba(255,255,255,0.1); height: 4px; border-radius: 2px; margin: 0 10px; position: relative; overflow: hidden; }
         .bar-fill { height: 100%; transition: width 1s ease-in-out; }
@@ -102,7 +101,7 @@
         .tactic-list li::before { content: "■"; position: absolute; left: 0; top: 1px; font-size: 8px; color: currentColor; opacity: 0.7; }
         .highlight-text { font-weight: bold; color: #fff; padding: 0 2px; border-bottom: 1px solid; }
 
-        .trait-tag { display: inline-block; padding: 3px 8px; border: 1px solid currentColor; font-size: 10px; font-family: 'Orbitron'; margin-right: 5px; margin-top: 5px; border-radius: 2px; background: rgba(255,255,255,0.05); text-shadow: none; font-weight: 500;}
+        .trait-tag { display: inline-block; padding: 3px 8px; border: 1px solid currentColor; font-size: 10px; font-family: 'Orbitron', 'Noto Sans TC'; margin-right: 5px; margin-top: 5px; border-radius: 2px; background: rgba(255,255,255,0.05); text-shadow: none; font-weight: 500;}
 
         .io-panel { padding: 15px; border-top: 1px solid var(--border-glow); background: rgba(0,0,0,0.4); }
         input { width: 100%; background: #010a08; border: 1px solid #1e293b; padding: 12px; color: #fff; font-family: 'Orbitron'; font-size: 14px; outline: none; transition: 0.3s; text-align: center; letter-spacing: 2px; }
@@ -115,7 +114,6 @@
         .log-ts { color: #475569; margin-right: 10px; font-size: 10px; }
         .log-tag { padding: 2px 5px; border-radius: 2px; font-size: 9px; margin-right: 8px; text-transform: uppercase; font-weight: bold; color:#000; }
         .tag-sys { background: #475569; color: #fff; }
-        .tag-pred { background: var(--stat-alert); color: #fff; }
         .tag-omni { background: var(--stat-omni); color: #000; }
         .tag-err { background: #ff0055; color: #fff; }
 
@@ -133,42 +131,38 @@
 
     <header>
         <div class="system-status">
-            <div class="status-node"><div class="dot blink"></div> V8.0 OMNI-MATRIX | COMPREHENSIVE_MODE</div>
+            <div class="status-node"><div class="dot blink"></div> V8.5 MORTAL-MATRIX | REALITY_CHECK</div>
         </div>
         <div style="font-family: 'Orbitron'; font-size: 16px; letter-spacing: 4px; color: #fff;">MAXIMA_DATACENTER</div>
     </header>
 
     <main>
         <section class="column">
-            <div class="section-label"><span>NEURAL_METRICS</span><span>DATA_STREAM</span></div>
+            <div class="section-label"><span>BEHAVIORAL_TRAITS</span><span>DATA_STREAM</span></div>
             <div class="hero-stats">
                 <div class="hero-value" id="ui-mvi">00</div>
                 <div class="hero-name" id="ui-name">AWAITING_INPUT</div>
-                <div style="font-size: 10px; color: var(--text-dim); margin-top: 5px;">APEX SYNTHESIS INDEX (ASI)</div>
+                <div style="font-size: 10px; color: var(--text-dim); margin-top: 5px;">MORTAL SYNTHESIS INDEX (MSI)</div>
             </div>
 
             <div class="data-matrix">
-                <div class="cell highlight-synth"><div class="cell-label">SOR (進攻)</div><div class="cell-val" id="val-sor">--</div></div>
-                <div class="cell highlight-aegis"><div class="cell-label">TDR (防守)</div><div class="cell-val" id="val-tdr">--</div></div>
-                <div class="cell"><div class="cell-label">MCR (微操)</div><div class="cell-val" id="val-mcr">--</div></div>
+                <div class="cell highlight-aegis"><div class="cell-label">保守 (CSV)</div><div class="cell-val" id="val-csv">--</div></div>
+                <div class="cell highlight-alert"><div class="cell-label">激進 (AGR)</div><div class="cell-val" id="val-agr">--</div></div>
+                <div class="cell"><div class="cell-label">穩定 (STB)</div><div class="cell-val" id="val-stb">--</div></div>
                 
-                <div class="cell"><div class="cell-label">RCE (轉化)</div><div class="cell-val" id="val-rce">--</div></div>
-                <div class="cell"><div class="cell-label">TPG (拓樸)</div><div class="cell-val" id="val-tpg">--</div></div>
-                <div class="cell"><div class="cell-label">CFI (抗壓)</div><div class="cell-val" id="val-cfi">--</div></div>
-                
-                <div class="cell highlight-alert"><div class="cell-label">PRD (預判)</div><div class="cell-val" id="val-prd">--</div></div>
-                <div class="cell"><div class="cell-label">BCF (自信)</div><div class="cell-val" id="val-bcf">--</div></div>
-                <div class="cell"><div class="cell-label">OEI (基數)</div><div class="cell-val" id="val-oei">--</div></div>
+                <div class="cell highlight-ptw"><div class="cell-label">課金 (PTW)</div><div class="cell-val" id="val-ptw">--</div></div>
+                <div class="cell"><div class="cell-label">控制 (CTR)</div><div class="cell-val" id="val-ctr">--</div></div>
+                <div class="cell"><div class="cell-label">系統 (SYS)</div><div class="cell-val" id="val-sys" style="color:var(--text-dim); font-size:16px; margin-top:4px;">IDLE</div></div>
             </div>
 
             <div class="io-panel">
                 <input type="text" id="tagInput" placeholder="PLAYER TAG (#...)" spellcheck="false">
-                <button class="btn-prime" id="btn-engage" onclick="fetchAndAnalyze()">INITIATE OMNI SCAN</button>
+                <button class="btn-prime" id="btn-engage" onclick="fetchAndAnalyze()">INITIATE BEHAVIOR SCAN</button>
             </div>
         </section>
 
         <section class="column">
-            <div class="section-label"><span>9D_NEURAL_MAP</span><span>RADAR_PLOT</span></div>
+            <div class="section-label"><span>5D_PERSONALITY_MAP</span><span>RADAR_PLOT</span></div>
             <div class="vis-container">
                 <div id="radarWrapper">
                     <canvas id="mainChart"></canvas>
@@ -179,7 +173,7 @@
                         <div class="report-header">
                             <div class="header-main">
                                 <div id="ui-archetype" style="color: #475569;">SYSTEM IDLE</div>
-                                <div id="ui-apm">ESTIMATED APM: --</div>
+                                <div id="ui-apm">WAITING FOR TARGET DATA...</div>
                             </div>
                             <div class="threat-badge">
                                 <div class="threat-level" style="color: #475569; border: 1px solid #475569;">STANDBY</div>
@@ -187,8 +181,8 @@
                         </div>
                         <div class="report-grid">
                             <div class="report-module module-full">
-                                <div class="module-title">OMNI_ENGINE_STATUS</div>
-                                <div class="module-content">V8.0 全知矩陣 (Omni-Matrix) 已加載。等待目標數據進行全維度綜合剖析。</div>
+                                <div class="module-title">BEHAVIORAL_ENGINE_STATUS</div>
+                                <div class="module-content">V8.5 世俗矩陣 (Mortal-Matrix) 已加載。已降維至 5 軸現實性格指標：保守、激進、穩定、課金、控制。</div>
                             </div>
                         </div>
                     </div>
@@ -199,15 +193,15 @@
         <section class="column">
             <div class="section-label"><span>BEHAVIORAL_LOG</span><span>LOG_FEED</span></div>
             <div id="log-feed" class="sim-log">
-                <div class="log-line"><span class="log-ts">00:00:00</span> <span class="log-tag tag-sys">SYS</span> PROD 模式啟動。全景分析面板已部署。</div>
-                <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-tag tag-sys">SYS</span> 等待輸入座標啟動高階戰術運算。</div>
+                <div class="log-line"><span class="log-ts">00:00:00</span> <span class="log-tag tag-sys">SYS</span> PROD 模式啟動。降維打擊面板已部署。</div>
+                <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-tag tag-sys">SYS</span> 等待輸入座標，準備扒出對手的真實嘴臉。</div>
             </div>
 
             <div class="data-box">
                 <div class="d-row"><span class="d-label">Total Matches</span><span class="d-val" id="sub-mtc" style="color:var(--stat-secondary)">--</span></div>
                 <div class="d-row"><span class="d-label">Win Rate</span><span class="d-val" id="sub-win" style="color:var(--stat-void)">-- %</span></div>
                 <div class="d-row"><span class="d-label">Current Trophies</span><span class="d-val" id="sub-trp">--</span></div>
-                <div class="d-row"><span class="d-label">System Entropy</span><span class="d-val" id="sub-prd-raw" style="color:var(--stat-alert)">-- %</span></div>
+                <div class="d-row"><span class="d-label">Capital Index (資金力)</span><span class="d-val" id="sub-prd-raw" style="color:var(--stat-ptw)">--</span></div>
             </div>
         </section>
     </main>
@@ -221,10 +215,11 @@
             chart = new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: ['進攻(SOR)', '微操(MCR)', '轉化(RCE)', '拓樸(TPG)', '抗壓(CFI)', '預判(PRD)', '防守(TDR)', '自信(BCF)', '基數(OEI)'],
+                    // 更新為 5 軸
+                    labels: ['保守(CSV)', '激進(AGR)', '穩定(STB)', '課金(PTW)', '控制(CTR)'],
                     datasets: [{
-                        label: 'NEURAL_VECTOR',
-                        data: [0,0,0,0,0,0,0,0,0],
+                        label: 'BEHAVIOR_VECTOR',
+                        data: [0,0,0,0,0],
                         backgroundColor: 'rgba(192, 132, 252, 0.1)',
                         borderColor: '#c084fc',
                         borderWidth: 2,
@@ -239,7 +234,7 @@
                         r: {
                             angleLines: { color: 'rgba(255, 255, 255, 0.1)' },
                             grid: { color: 'rgba(255, 255, 255, 0.1)' },
-                            pointLabels: { color: '#94a3b8', font: { family: 'Share Tech Mono', size: 11, weight: 'bold' } },
+                            pointLabels: { color: '#94a3b8', font: { family: 'Noto Sans TC', size: 12, weight: 'bold' } },
                             ticks: { display: false, max: 100, min: 0 }
                         }
                     },
@@ -253,31 +248,33 @@
             if(!tagRaw) return writeLog("SYS", "請輸入座標參數。");
 
             const btn = document.getElementById('btn-engage');
-            btn.disabled = true; btn.innerText = "COMPILING OMNI DOSSIER...";
+            btn.disabled = true; btn.innerText = "EXTRACTING BEHAVIOR...";
 
             let tagClean = tagRaw.replace('#', '');
-            writeLog("SYS", `向 API 發送請求 [#${tagClean}] 啟動全知掃描...`);
+            writeLog("SYS", `向 API 發送請求 [#${tagClean}] 啟動性格解構...`);
             
             try {
-                // 正式環境下的真實 API 呼叫點
                 const response = await fetch(`/api/clash-proxy?tag=${encodeURIComponent('#'+tagClean)}`);
                 if (!response.ok) throw new Error(`HTTP 錯誤狀態碼: ${response.status}`);
                 const rawData = await response.json();
                 if (!rawData || (!rawData.wins && rawData.wins !== 0)) throw new Error("API 回傳格式異常或查無此玩家。");
                 
-                writeLog("SYS", `API 數據擷取成功，載入全知矩陣。`);
-                runNeuralModel(rawData);
+                writeLog("SYS", `API 數據擷取成功，載入世俗矩陣。`);
+                runBehaviorModel(rawData);
             } catch (error) {
-                writeLog("ERR", `環境斷線，切換至模擬實戰態。(${error.message})`);
-                const W = 3000 + Math.random()*2000;
-                runNeuralModel({ name: "SUBJECT_" + Math.floor(Math.random()*999), wins: W, losses: W*(0.8+Math.random()*0.4), trophies: 6000+Math.random()*3000 });
+                writeLog("ERR", `環境斷線，切換至模擬性格態。(${error.message})`);
+                // 模擬數據：有時生成課長，有時生成肝帝
+                const isWhale = Math.random() > 0.7;
+                const W = isWhale ? (500 + Math.random()*500) : (3000 + Math.random()*5000);
+                const T = isWhale ? (8000 + Math.random()*2000) : (6000 + Math.random()*3000);
+                runBehaviorModel({ name: "SUBJECT_" + Math.floor(Math.random()*999), wins: W, losses: W*(0.7+Math.random()*0.6), trophies: T });
             } finally {
-                btn.disabled = false; btn.innerText = "INITIATE OMNI SCAN";
+                btn.disabled = false; btn.innerText = "INITIATE BEHAVIOR SCAN";
             }
         }
 
-        function runNeuralModel(rawData) {
-            writeLog("OMNI", "啟動 V8.0 Omni-Matrix (全知矩陣) 戰術解構...");
+        function runBehaviorModel(rawData) {
+            writeLog("OMNI", "啟動 V8.5 世俗矩陣 (Mortal-Matrix) 戰術性格降維解構...");
 
             const name = rawData.name || "UNKNOWN";
             const W = rawData.wins || 0; 
@@ -286,117 +283,137 @@
             const N = W + L || 1; 
             let p = W / N; 
 
-            const rand = () => 0.8 + (Math.random() * 0.4);
+            // 引入微小亂數模擬實戰起伏
+            const rand = () => 0.85 + (Math.random() * 0.3);
+            const mapScore = (val) => Math.min(99.9, Math.max(1.0, val));
 
-            const theta = (W + 50) / (N + 100);
-            const WLB = Math.max(0, (p + 1.92/N - 1.96*Math.sqrt((p*(1-p))/N + 0.96/(N*N))) / (1 + 3.84/N));
-            const OEI_raw = (Math.log10(T > 10 ? T : 10) / 4.0) * (1 + (W - L) / N);
-            const H1 = Math.min(1.0, ((L * Math.log(N + 1)) / ((T > 0 ? T : 1) + 100)) * 0.1); 
+            // ==========================================
+            // [V8.5 世俗演算法: 5 軸性格換算]
+            // ==========================================
+            
+            // 1. 保守 (CSV): 勝率極高，代表不打沒把握的仗；但也受限於場次，不愛冒險。
+            const csv_score = mapScore( (p * 100) * (1 - (L/N)*0.5) * rand() );
 
-            // 進攻 (SOR)
+            // 2. 激進 (AGR): 勝負接近 (混亂度高)、場次多，代表喜歡拼刺刀換血。
             const p_win = p === 0 ? 0.001 : (p === 1 ? 0.999 : p);
-            const p_loss = 1 - p_win;
-            const entropy = -(p_win * Math.log2(p_win) + p_loss * Math.log2(p_loss));
-            const phi = 1.6180339887;
-            const void_volume = Math.log(N + phi) / Math.log(phi);
-            const phase_sor = Math.sin(p_win * Math.PI) * Math.cos((W - L) / N * (Math.PI / 2));
-            const raw_sor = Math.abs(phase_sor) * Math.exp(2.0 - entropy) * void_volume * 3.5;
+            const entropy = -(p_win * Math.log2(p_win) + (1-p_win) * Math.log2(1-p_win)); // 0~1
+            const agr_score = mapScore( entropy * 95 * rand() + (N > 5000 ? 15 : 0) );
 
-            // 防守 (TDR) - 沿用 V7 客觀硬核基底
-            const raw_tdr = (p_win * 50) + ((Math.log10(T > 0 ? T + 1 : 1) / 4.5) * 25) + ((Math.log10(N > 0 ? N + 1 : 1) / 5.0) * 25);
+            // 3. 穩定 (STB): 單純看總場次 (Log轉換)，肝帝專屬指標。
+            const stb_score = mapScore( (Math.log10(N > 0 ? N : 1) / 5.0) * 100 * rand() );
 
-            const mapScore = (val, max) => Math.min(99.9, Math.max(0.1, (val / max) * 100));
+            // 4. 課金 (PTW - Pay to Win): 核心抓猴算法。盃數異常高但勝場極少 (代表卡牌等級極端壓制)。
+            // 假設 1000 勝有 5000 盃算正常 (係數5)。如果 500 勝有 6000 盃 (係數12)，PTW爆表。
+            const ptw_ratio = N > 0 ? (T / N) : 0;
+            let ptw_score = mapScore( (ptw_ratio / 5.0) * 60 * rand() );
+            if (N < 1000 && T > 5000) ptw_score = mapScore(ptw_score * 1.5); // 新手神豪加成
 
-            const scores = [
-                mapScore(raw_sor * rand(), 100), // SOR
-                mapScore((W / (L + 1)) * Math.log(T + 1) * 1.5 * rand(), 25), // MCR
-                mapScore((T / (N + 1)) * p * 15 * rand(), 12), // RCE
-                mapScore(Math.exp(-4.5 * H1) * rand(), 1.0), // TPG
-                mapScore((WLB / (p || 1)) * Math.exp(-4 * H1) * 100 * rand(), 95), // CFI
-                mapScore(entropy * 100 * rand(), 1.0), // PRD
-                mapScore(raw_tdr * rand(), 100), // TDR
-                mapScore(Math.max(0.1, 1 - (1.96 * Math.sqrt((theta * (1 - theta)) / (N + 100)))) * rand(), 1.0), // BCF
-                mapScore(OEI_raw * rand(), 1.2) // OEI
-            ];
+            // 5. 控制 (CTR): 勝場遠大於敗場的淨值掌控力。
+            const ctr_score = mapScore( (W / (L > 0 ? L : 1)) * 40 * rand() );
 
-            const score_ASI = (scores[0]*0.1) + (scores[1]*0.1) + (scores[5]*0.25) + (scores[4]*0.15) + (scores[3]*0.1) + (scores[6]*0.1) + (scores[8]*0.1) + (scores[2]*0.1);
+            const scores = [csv_score, agr_score, stb_score, ptw_score, ctr_score];
+            
+            // 綜合戰術指數 (MSI)
+            const score_MSI = (stb_score*0.3) + (ctr_score*0.3) + (csv_score*0.2) + (agr_score*0.1) + (ptw_score*0.1);
 
-            updateDashboard(name, scores, score_ASI, { N, WR: (p*100), T, ENTROPY: (entropy * 100) });
+            updateDashboard(name, scores, score_MSI, { N, WR: (p*100), T, PTW: ptw_score });
         }
 
-        function updateDashboard(name, scores, asi, stats) {
-            document.getElementById('ui-mvi').innerText = Math.round(asi);
+        function updateDashboard(name, scores, msi, stats) {
+            document.getElementById('ui-mvi').innerText = Math.round(msi);
             document.getElementById('ui-name').innerText = name.toUpperCase();
             
-            const ids = ['sor', 'mcr', 'rce', 'tpg', 'cfi', 'prd', 'tdr', 'bcf', 'oei'];
+            const ids = ['csv', 'agr', 'stb', 'ptw', 'ctr'];
             ids.forEach((id, i) => document.getElementById(`val-${id}`).innerText = scores[i].toFixed(1));
+            
+            document.getElementById('val-sys').innerText = "SYNC";
+            document.getElementById('val-sys').style.color = "var(--stat-primary)";
 
             document.getElementById('sub-mtc').innerText = Math.round(stats.N);
             document.getElementById('sub-win').innerText = stats.WR.toFixed(1) + " %";
             document.getElementById('sub-trp').innerText = Math.round(stats.T);
-            document.getElementById('sub-prd-raw').innerText = stats.ENTROPY.toFixed(1) + " %";
+            document.getElementById('sub-prd-raw').innerText = "LV." + Math.round(stats.PTW / 10);
 
             chart.data.datasets[0].data = scores;
             chart.update();
 
-            generateOmniReport(scores, stats);
+            generateMortalReport(scores, stats);
         }
 
-        function generateOmniReport(scores, stats) {
+        function generateMortalReport(scores, stats) {
             const rc = document.getElementById('report-container');
-            const [sor, mcr, rce, tpg, cfi, prd, tdr, bcf, oei] = scores;
-            
-            // 衍生綜合指標
-            const tilt_prob = Math.max(2.0, 100 - cfi - (bcf * 0.15)); 
-            const focus_level = Math.min(99.9, (mcr * 0.5) + (prd * 0.5)); 
-            const est_apm = Math.round(60 + (mcr * 1.2) + (prd * 0.5));
-            
-            // V8 戰術副指標
-            const stat_lethality = Math.min(99.9, (sor * 0.6) + (rce * 0.4)); // 致死率
-            const stat_resilience = Math.min(99.9, (tdr * 0.7) + (cfi * 0.3)); // 韌性
-            const stat_adaptability = Math.min(99.9, (tpg * 0.5) + (prd * 0.5)); // 適應力
+            const [csv, agr, stb, ptw, ctr] = scores;
 
             const profiles = [
                 {
-                    type: "AEGIS_PHALANX",
-                    score: (tdr * 1.8) + (cfi * 0.8),
-                    archetype: "IRONCLAD SYNTHESIS",
-                    threat: "CLASS-A / FORTIFIED",
-                    color: "#38bdf8",
-                    tags: ["STATISTICAL-WALL", "LOW-RISK", "ATTRITION-WAR"],
-                    analysis: "目標的戰鬥邏輯高度依賴<span class='highlight-text' style='border-color:#38bdf8'>防守反擊與資源轉換</span>。他們鮮少主動發起具風險的進攻，而是透過極高的抗壓性（CFI）與防守（TDR）吸收傷害，將對手的失誤轉化為勝勢。",
-                    weakness: "過度仰賴後手導致『主動創造機會』的能力薄弱。面對非典型的冷門戰術時，適應力（Adaptability）容易出現空窗。",
+                    condition: ptw > 80 && ptw > stb,
+                    archetype: "黃金神壕 (WHALE OVERLORD)",
+                    threat: "PAY-TO-WIN / BRUTE FORCE",
+                    color: "#fbbf24",
+                    tags: ["鈔能力壓制", "數值輾壓", "不講武德"],
+                    analysis: "偵測到極度異常的<span class='highlight-text' style='border-color:#fbbf24'>「總盃數 / 場次比」</span>。這名對手極高機率是課金玩家，他們不需要精妙的微操或拓樸學，他們只相信信用卡額度帶來的卡牌等級壓制。",
+                    weakness: "戰術深度通常極淺。一旦等級優勢被抹平（如錦標賽等級上限），或遇到極端剋制的陣型，就會瞬間崩盤。",
                     tactics: [
-                        "避免在其防守舒適區內進行常規換血",
-                        "利用高機動性單位進行雙線拉扯，破壞其陣型",
-                        "在加時賽前扣留一張『非線性爆發』的王牌底牌"
+                        "避免與其核心滿等卡牌進行正面數值碰撞",
+                        "利用拉扯與低費卡組賺取聖水差",
+                        "深呼吸，不要因為被卡牌等級壓制而心態炸裂"
                     ]
                 },
                 {
-                    type: "QUANTUM_ASSAULT",
-                    score: (sor * 1.8) + ((100 - prd) * 0.5),
-                    archetype: "ABSTRACT ANOMALY",
-                    threat: "CLASS-S / VOLATILE",
-                    color: "#b388ff",
-                    tags: ["ENTROPY-BURST", "HIGH-RISK", "NON-LINEAR"],
-                    analysis: "這是一名具備高度<span class='highlight-text' style='border-color:#b388ff'>不可預測性與爆發力</span>的對手。進攻意識（SOR）遠大於防守，極度擅長在系統資訊熵最高（戰局混亂）時發動致命一擊。",
-                    weakness: "高風險打法伴隨極高的崩盤機率。其心理狀態（CHAOS RISK）極度不穩定，一旦第一波攻勢受挫，後續防守極易出現破綻。",
+                    condition: csv > 75 && ctr > 70,
+                    archetype: "鐵壁龜王 (TURTLE DEFENDER)",
+                    threat: "ATTRITION WARFARE",
+                    color: "#38bdf8",
+                    tags: ["極度保守", "防守反擊", "心理折磨"],
+                    analysis: "高勝率伴隨著極低的激進指數。對手的戰鬥邏輯是典型的<span class='highlight-text' style='border-color:#38bdf8'>「後手反擊」</span>。他們絕對不會主動虧費下牌，宛如縮在殼裡的烏龜，耐心等待你犯下第一個失誤。",
+                    weakness: "因為打法過於保守，遇到完全不發動攻勢、專注於法術消耗（斬殺）的陣容時，往往會因為不敢組織有效進攻而慢性死亡。",
                     tactics: [
-                        "開局保持防守姿態，保留費用以吸收首波衝擊",
+                        "比他更龜，強迫他先手下牌",
+                        "在雙倍聖水期前不要交出核心進攻組合",
+                        "預留法術，準備迎接加時賽的無聊消耗戰"
+                    ]
+                },
+                {
+                    condition: agr > 80 && stb > 60,
+                    archetype: "激進狂犬 (RABID BERSERKER)",
+                    threat: "HIGH ENTROPY / CHAOS",
+                    color: "#ff0055",
+                    tags: ["無腦衝鋒", "換血狂魔", "高風險"],
+                    analysis: "資訊熵與激進指數爆表！這名對手不跟你講什麼營運，他們追求的是<span class='highlight-text' style='border-color:#ff0055'>極致的混亂與換血快感</span>。開局橋頭ALL-IN是家常便飯，將戰局拖入亂鬥是他們的專長。",
+                    weakness: "極度容易虧損聖水。一波攻勢被完美化解後，基本上等於門戶洞開，防守端形同虛設。",
+                    tactics: [
+                        "開局保持最高警戒，預留防守費用",
                         "在其攻勢間隙進行『精準且致命』的單點反打",
                         "維持盤面清潔，剝奪其利用殘局製造混亂的空間"
+                    ]
+                },
+                {
+                    condition: stb > 85 && ctr > 80,
+                    archetype: "絕對控場 (STABLE MASTER)",
+                    threat: "CLASS-S / ALGORITHMIC",
+                    color: "#00fa9a",
+                    tags: ["肝帝", "萬場老手", "大局觀"],
+                    analysis: "上萬場的歷練賦予了對手機器人般的穩定度。他們對節奏的<span class='highlight-text' style='border-color:#00fa9a'>掌控力（Control）</span>極佳，無論優勢劣勢，都能按照自己的劇本穩扎穩打，是真正憑實力爬分的強者。",
+                    weakness: "由於肌肉記憶過於深刻，打法可能偏向公式化。非傳統的奇招或極度冷門的卡組有時能打亂他們的演算邏輯。",
+                    tactics: [
+                        "藏好底牌，在關鍵時刻打亂對方的算牌節奏",
+                        "不要試圖在常規運營中拼贏他，尋找非線性突破口"
                     ]
                 }
             ];
 
-            profiles.sort((a, b) => b.score - a.score);
-            const target = profiles[0];
+            // 預設為均衡型
+            let target = {
+                archetype: "常規路人 (STANDARD NPC)", threat: "AVERAGE / BALANCED", color: "#c084fc",
+                tags: ["中規中矩", "隨波逐流", "凡人"],
+                analysis: "雷達圖呈現標準的五邊形分布。這是一名前面四種極端性格都不具備的普通玩家，打法隨著心情與對手而定，沒有特別鮮明的致命威脅，也沒有明顯的漏洞。",
+                weakness: "缺乏一擊必殺的核心戰術體系，在僵持局容易因為失去耐心而自亂陣腳。",
+                tactics: ["穩扎穩打，發揮你自己的卡組優勢即可", "注意對方的隨機失誤並擴大優勢"]
+            };
 
-            // 動態心理狀態標籤
-            let psy_label = "COGNITIVE STABLE";
-            let psy_color = "#00fa9a";
-            if (tilt_prob > 65) { psy_label = "ENTROPY OVERFLOW"; psy_color = "#ff0055"; } 
-            else if (focus_level > 85) { psy_label = "HYPER-FOCUS"; psy_color = "#00e5ff"; }
+            for (let profile of profiles) {
+                if (profile.condition) { target = profile; break; }
+            }
 
             // 更新 UI 色彩
             rc.style.borderTopColor = target.color;
@@ -414,7 +431,7 @@
                     <div class="report-header">
                         <div class="header-main">
                             <div id="ui-archetype" style="text-shadow: 0 0 15px ${target.color}80; color: ${target.color};">${target.archetype}</div>
-                            <div id="ui-apm">E-APM: <span style="color:#fff; font-weight:bold;">${est_apm}</span> | CHAOS RISK: <span style="color:${psy_color}; font-weight:bold;">${tilt_prob.toFixed(0)}%</span></div>
+                            <div id="ui-apm">PRIMARY TRAIT DETECTED</div>
                             <div>${tagsHtml}</div>
                         </div>
                         <div class="threat-badge">
@@ -426,30 +443,29 @@
                         <div style="display: flex; flex-direction: column; gap: 12px;">
                             <div class="report-module">
                                 <div class="corner-tl" style="border-color: #cbd5e1;"></div>
-                                <div class="module-title" style="color: #cbd5e1;">TACTICAL_METRICS (微觀指標)</div>
+                                <div class="module-title" style="color: #cbd5e1;">TRAIT_BALANCE (性向極值)</div>
                                 <div class="module-content">
                                     <div class="micro-stat-row">
-                                        <span class="micro-stat-label">LETHALITY (致死率)</span>
-                                        <div class="bar-container"><div class="bar-fill" style="width: ${stat_lethality}%; background: #ff0055;"></div></div>
-                                        <span class="micro-stat-val">${stat_lethality.toFixed(0)}</span>
+                                        <span class="micro-stat-label">龜縮係數</span>
+                                        <div class="bar-container"><div class="bar-fill" style="width: ${csv}%; background: #38bdf8;"></div></div>
+                                        <span class="micro-stat-val">${csv.toFixed(0)}</span>
                                     </div>
                                     <div class="micro-stat-row">
-                                        <span class="micro-stat-label">RESILIENCE (韌性)</span>
-                                        <div class="bar-container"><div class="bar-fill" style="width: ${stat_resilience}%; background: #38bdf8;"></div></div>
-                                        <span class="micro-stat-val">${stat_resilience.toFixed(0)}</span>
+                                        <span class="micro-stat-label">瘋狗係數</span>
+                                        <div class="bar-container"><div class="bar-fill" style="width: ${agr}%; background: #ff0055;"></div></div>
+                                        <span class="micro-stat-val">${agr.toFixed(0)}</span>
                                     </div>
                                     <div class="micro-stat-row">
-                                        <span class="micro-stat-label">ADAPTABILITY (適應力)</span>
-                                        <div class="bar-container"><div class="bar-fill" style="width: ${stat_adaptability}%; background: #fbbf24;"></div></div>
-                                        <span class="micro-stat-val">${stat_adaptability.toFixed(0)}</span>
+                                        <span class="micro-stat-label">鈔能力係數</span>
+                                        <div class="bar-container"><div class="bar-fill" style="width: ${ptw}%; background: #fbbf24;"></div></div>
+                                        <span class="micro-stat-val">${ptw.toFixed(0)}</span>
                                     </div>
                                 </div>
                             </div>
                             
-                            <div class="report-module" style="flex: 1; border-color: ${psy_color}40; background: ${psy_color}05;">
-                                <div class="module-title" style="color: ${psy_color};">PSYCH_PROFILING</div>
+                            <div class="report-module" style="flex: 1; border-color: ${target.color}40; background: ${target.color}05;">
+                                <div class="module-title" style="color: ${target.color};">FATAL_WEAKNESS</div>
                                 <div class="module-content" style="font-size: 11px;">
-                                    系統判定當前心理模組為 <strong style="color:${psy_color}">${psy_label}</strong>。<br>
                                     ${target.weakness}
                                 </div>
                             </div>
@@ -458,13 +474,13 @@
                         <div style="display: flex; flex-direction: column; gap: 12px;">
                             <div class="report-module" style="background: linear-gradient(135deg, ${target.color}08, transparent); border-left: 3px solid ${target.color}; flex: 1;">
                                 <div class="corner-tr" style="border-color: ${target.color};"></div>
-                                <div class="module-title" style="color: ${target.color};">BEHAVIORAL_PROFILE (深度剖析)</div>
+                                <div class="module-title" style="color: ${target.color};">REALITY_CHECK (實境嘴臉分析)</div>
                                 <div class="module-content">${target.analysis}</div>
                             </div>
 
                             <div class="report-module" style="border: 1px solid rgba(255, 255, 255, 0.1);">
                                 <div class="corner-br" style="border-color: #fff;"></div>
-                                <div class="module-title" style="color: #fff;">ACTIONABLE_COUNTER (執行綱領)</div>
+                                <div class="module-title" style="color: #fff;">ACTIONABLE_COUNTER (針對性打擊)</div>
                                 <div class="module-content">
                                     <ul class="tactic-list">
                                         ${tacticsHtml}
@@ -475,7 +491,7 @@
                     </div>
                 </div>
             `;
-            writeLog("OMNI", `全知矩陣部署完成：綜合情報與行動綱領已生成。`);
+            writeLog("OMNI", `性格解構完成：目標已被分類為 [${target.archetype}]。`);
         }
 
         function writeLog(tag, msg) {

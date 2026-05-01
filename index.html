@@ -13,6 +13,8 @@
             --purple: #bc13fe;
             --red: #ff2a2a;
             --gold: #ffb700;
+            --blood: #ff003c;
+            --shield: #00ffcc;
             --bg-dark: #05070f;
             --panel-bg: rgba(12, 15, 26, 0.85);
             --disabled: #555555;
@@ -94,12 +96,23 @@
         .player-name { font-size: 2rem; font-family: 'Orbitron', sans-serif; font-weight: bold; color: #fff; text-transform: uppercase; word-break: break-all; }
         .player-tag { color: var(--cyan); font-size: 1.1rem; letter-spacing: 2px; }
 
+        /* 激進具象化能量槽 */
+        .radical-bars { display: flex; flex-direction: column; gap: 15px; margin-top: 10px; padding-top: 15px; border-top: 1px dashed rgba(255,255,255,0.1); }
+        .bar-container { display: flex; flex-direction: column; gap: 5px; }
+        .bar-header { display: flex; justify-content: space-between; align-items: flex-end; }
+        .bar-label { font-family: 'Orbitron', sans-serif; font-size: 0.85rem; font-weight: bold; letter-spacing: 1px; }
+        .bar-label.atk-label { color: var(--blood); text-shadow: 0 0 5px rgba(255,0,60,0.5); }
+        .bar-label.def-label { color: var(--shield); text-shadow: 0 0 5px rgba(0,255,204,0.5); }
+        .bar-val { font-family: 'Orbitron', sans-serif; font-size: 1.2rem; font-weight: 900; }
+        .bar-bg { width: 100%; height: 12px; background: rgba(0,0,0,0.8); border: 1px solid #333; border-radius: 6px; overflow: hidden; position: relative; }
+        .bar-fill { height: 100%; width: 0%; transition: width 1.5s cubic-bezier(0.2, 0.8, 0.2, 1); box-shadow: inset 0 0 10px rgba(255,255,255,0.3); }
+        .atk-fill { background: linear-gradient(90deg, #550000, var(--blood)); }
+        .def-fill { background: linear-gradient(90deg, #003333, var(--shield)); }
+
         .stat-group { background: rgba(255,255,255,0.02); padding: 12px; border-radius: 8px; border-left: 3px solid var(--cyan); }
         .stat-label { font-size: 0.85rem; color: #888; text-transform: uppercase; margin-bottom: 3px; }
         .stat-value { font-size: 1.8rem; font-weight: bold; color: #fff; display: flex; align-items: baseline; gap: 5px; }
         .stat-unit { font-size: 0.9rem; color: var(--cyan); }
-        
-        /* 勝率脫鉤專用樣式 */
         .decoupled-stat { border-left-color: var(--disabled); opacity: 0.7; }
         .decoupled-tag { font-size: 0.65rem; color: var(--red); background: rgba(255,0,0,0.1); padding: 2px 6px; border-radius: 4px; margin-left: 8px; vertical-align: middle; }
 
@@ -137,7 +150,24 @@
                 <div class="player-name" id="ui-name">PLAYER NAME</div>
             </div>
 
-            <div class="stat-group decoupled-stat">
+            <div class="radical-bars">
+                <div class="bar-container">
+                    <div class="bar-header">
+                        <div class="bar-label atk-label">ANNIHILATION YIELD (ATK)</div>
+                        <div class="bar-val" style="color: var(--blood);" id="txt-atk">0</div>
+                    </div>
+                    <div class="bar-bg"><div class="bar-fill atk-fill" id="bar-atk"></div></div>
+                </div>
+                <div class="bar-container">
+                    <div class="bar-header">
+                        <div class="bar-label def-label">EVENT HORIZON (DEF)</div>
+                        <div class="bar-val" style="color: var(--shield);" id="txt-def">0</div>
+                    </div>
+                    <div class="bar-bg"><div class="bar-fill def-fill" id="bar-def"></div></div>
+                </div>
+            </div>
+
+            <div class="stat-group decoupled-stat" style="margin-top: 15px;">
                 <div class="stat-label">OBSERVED WIN RATE <span class="decoupled-tag">0% WEIGHT</span></div>
                 <div class="stat-value"><span id="ui-win">0</span> <span class="stat-unit">%</span></div>
             </div>
@@ -145,11 +175,6 @@
             <div class="stat-group">
                 <div class="stat-label">PHASE VELOCITY (ELIXIR)</div>
                 <div class="stat-value"><span id="ui-elixir">0.0</span> <span class="stat-unit">λ</span></div>
-            </div>
-
-            <div class="stat-group" style="border-left-color: #555;">
-                <div class="stat-label">OBSERVATIONS (BATTLES)</div>
-                <div class="stat-value"><span id="ui-battles">0</span> <span class="stat-unit">STATES</span></div>
             </div>
         </div>
 
@@ -167,12 +192,6 @@
             box.innerText = `[SYSTEM ERROR] ${msg}`;
         }
         function hideAlert() { document.getElementById('alert-box').style.display = 'none'; }
-
-        function getTagHash(tag) {
-            let hash = 0;
-            for (let i = 0; i < tag.length; i++) hash = tag.charCodeAt(i) + ((hash << 5) - hash);
-            return Math.abs(hash);
-        }
 
         function calculateStandardDeviation(arr, mean) {
             if (!arr || arr.length === 0) return 0;
@@ -211,6 +230,10 @@
             btn.innerText = "COMPUTING TENSORS...";
             btn.style.pointerEvents = "none";
 
+            // Reset bars
+            document.getElementById('bar-atk').style.width = '0%';
+            document.getElementById('bar-def').style.width = '0%';
+
             try {
                 const targetUrl = new URL('/api/clash-proxy', window.location.origin);
                 targetUrl.searchParams.append('tag', cleanTag);
@@ -231,14 +254,9 @@
             }
         }
 
-        // ==========================================
-        // 絕對張量不變量引擎 (Absolute Tensor Invariant Engine)
-        // 核心理念：徹底捨棄結果論(勝率)，100%專注於物理操作維度
-        // ==========================================
         function updateUI(data) {
             document.getElementById('dashboard').style.display = "flex";
             
-            // 勝率僅保留作為 UI 面板的觀測展示，【嚴禁】參與任何維度的計算
             const rawWinR = data.winRate || 0;
             const battleCount = Math.max(1, data.battleCount || 1);
             const displayThreeCrownR = (data.threeCrownRate || 0) * 100;
@@ -246,7 +264,6 @@
             document.getElementById('ui-tag').innerText = `#${data.tag}`;
             document.getElementById('ui-name').innerText = data.name;
             document.getElementById('ui-win').innerText = rawWinR.toFixed(1);
-            document.getElementById('ui-battles').innerText = battleCount;
             document.getElementById('ui-elixir').innerText = data.avgDeckElixir || 'N/A';
 
             // 提取純粹物理觀測數據
@@ -259,80 +276,71 @@
             const crownsLost = parseFloat(data.avgCrownsLost) || 0;
             const hpPercent = (avgTowerHP / 8500); 
 
+            // ==========================================
+            // 激進攻防引擎 (Radical Combat Kinematics)
+            // ==========================================
+            
+            // 【攻擊】動能殲滅當量 (ATK)
+            // 皇冠獲取數三次方放大，徹底粉碎軟弱打法的分數。搭配三冠率直接加成。
+            const annihilationYield = (Math.pow(crownsEarned, 3.0) * 6) + (displayThreeCrownR * 0.8);
+            const ATK = clamp(annihilationYield);
+
+            // 【防禦】絕對事件視界 (DEF)
+            // 塔血平方極化，掉冠數啟動自然指數懲罰，非完美防禦者將被無情制裁。
+            const breachSeverity = Math.exp(crownsLost * 1.2) * 3; 
+            const eventHorizon = (Math.pow(hpPercent, 2) * 120) - breachSeverity;
+            const DEF = clamp(eventHorizon);
+
+            // 更新具象化能量槽動畫
+            setTimeout(() => {
+                document.getElementById('bar-atk').style.width = `${ATK}%`;
+                document.getElementById('bar-def').style.width = `${DEF}%`;
+                animateValue("txt-atk", 0, Math.round(ATK), 1500);
+                animateValue("txt-def", 0, Math.round(DEF), 1500);
+            }, 100);
+
             // 1. SKL (Absolute Complexity / 絕對複雜度)
-            // 完全由聖水偏離度與殘血操作頻率決定。就算你輸了，只要你能在逆境中瘋狂極限操作，SKL 依然破表。
             const baseEnergyLevel = 3.3; 
             const elixirDeviation = Math.pow(avgElixir - baseEnergyLevel, 2); 
             const complexityTensor = 50 * (1 + elixirDeviation * 0.6) * (1 + lowHpClutchR * 3.0);
             const SKL = clamp(sigmoid(complexityTensor, 75, 0.035));
 
             // 2. SPD (Absolute Velocity / 絕對相速度)
-            // 純粹測量手速與反應力。輪轉頻率與極限反應的完美結合。
             const baseCycleFreq = 3.8 / Math.max(1.8, avgElixir); 
             const reactionKinematics = 1 + (clutchR * 2.5) + (lowHpClutchR * 4.0); 
             const absoluteVelocity = baseCycleFreq * reactionKinematics * 40; 
             const SPD = clamp(sigmoid(absoluteVelocity, 75, 0.04));
 
             // 3. STA (Coefficient of Variation / 變異係數熵減)
-            // 純粹的統計學穩定度
             const coefficientOfVariation = hpStdDev / avgTowerHP;
-            const stabilityMatrix = 100 - (coefficientOfVariation * 150);
-            const STA = clamp(stabilityMatrix);
+            const STA = clamp(100 - (coefficientOfVariation * 150));
 
             // 4. CLT (Critical Survival / 臨界生存力)
-            // 純看逆轉與殘血求生操作次數
             const survivalProbability = (lowHpClutchR * 6 + clutchR * 2) * 100;
             const CLT = clamp(20 + (Math.log(survivalProbability + 1) * 15));
 
             // 5. INT (Information Density / 戰場資訊密度)
-            // 塔血量保留百分比與牌組深度的純物理相乘
-            const informationDensity = hpPercent * 50 * Math.log(avgElixir + 2.5);
-            const INT = clamp(sigmoid(informationDensity, 35, 0.08));
-
-            // 6. DEF (L2 Defense Impedance / L2 護盾阻抗)
-            // 由掉冠率與總塔血防護力構成
-            const tunnelingProb = crownsLost / 3.0; 
-            const impedance = (1 - Math.pow(tunnelingProb, 1.5)) * hpPercent * 100;
-            const DEF = clamp(impedance * 1.2);
-
-            // 7. ATK (Structural Momentum / 結構破壞動量)
-            // 純粹衡量拿塔的破壞力，不受遊戲勝負結算影響
-            const momentum = Math.pow(crownsEarned, 2.5) * 10;
-            const ATK = clamp(sigmoid(momentum, 45, 0.1));
+            const INT = clamp(sigmoid(hpPercent * 50 * Math.log(avgElixir + 2.5), 35, 0.08));
 
             // 8. CRT (Structural Excitation / 結構躍遷能階)
-            // 衡量三冠摧毀力與牌組均費的關係
             const CRT = clamp(sigmoid(displayThreeCrownR * (5.0 / Math.max(2.0, avgElixir)), 12, 0.15));
 
             // 9. END (Asymptotic Decay Resistance / 漸進衰變抗性)
-            // 純看戰鬥場次帶來的經驗值與極限操作抗壓性
-            const asymptote = Math.log10(battleCount + 1) * 12;
-            const END = clamp(20 + asymptote + (clutchR * 100 * 0.5));
+            const END = clamp(20 + (Math.log10(battleCount + 1) * 12) + (clutchR * 100 * 0.5));
 
             // 10. ACC (Nash Equilibrium Delta / 納許均衡淨值)
-            // 純看皇冠淨勝差，不管最終輸贏
-            const nashDelta = crownsEarned - crownsLost;
-            const ACC = clamp(sigmoid(nashDelta, 0.0, 1.2));
+            const ACC = clamp(sigmoid(crownsEarned - crownsLost, 0.0, 1.2));
 
             // 11. AGI (Hilbert Projection / 希爾伯特空間投影)
-            // 綜合物理動能投影
-            const projection = (SPD * 0.4) + (SKL * 0.3) + (CLT * 0.3);
-            const AGI = clamp(projection);
+            const AGI = clamp((SPD * 0.4) + (SKL * 0.3) + (CLT * 0.3));
 
             // 12. LUK (Gaussian Quantum Decoherence / 高斯退相干噪聲)
-            // 真實物理環境的白噪聲
-            const gaussianNoise = boxMullerTransform() * 8; 
-            const LUK = clamp(50 + gaussianNoise + (clutchR * 100 * 0.2));
+            const LUK = clamp(50 + (boxMullerTransform() * 8) + (clutchR * 100 * 0.2));
 
-            // 將所有維度寫入張量矩陣，這裡已經沒有任何勝率的影子了
             const metrics = [DEF, ATK, SKL, CRT, END, CLT, SPD, ACC, LUK, STA, AGI, INT];
 
-            // ==========================================
-            // 絕對 L2 範數結算 (Absolute Tensor Score)
-            // ==========================================
+            // 絕對 L2 範數結算
             const tensorMagnitude = calculateL2Norm(metrics);
-            
-            // 理論極限滿分萬分制
             const rawScore = Math.round((tensorMagnitude / 346.41) * 10000); 
             
             let rank = 'D-'; let rankColor = '#aaa';
@@ -376,7 +384,7 @@
             myChart = new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: ['DEF (護盾阻抗)', 'ATK (結構動量)', 'SKL (絕對複雜度)', 'CRT (結構躍遷)', 'END (衰變抗性)', 'CLT (臨界生存)', 'SPD (絕對相速度)', 'ACC (納許均衡)', 'LUK (高斯噪聲)', 'STA (變異係數)', 'AGI (空間投影)', 'INT (資訊密度)'],
+                    labels: ['DEF (絕對事件視界)', 'ATK (動能殲滅當量)', 'SKL (絕對複雜度)', 'CRT (結構躍遷)', 'END (衰變抗性)', 'CLT (臨界生存)', 'SPD (絕對相速度)', 'ACC (納許均衡)', 'LUK (高斯噪聲)', 'STA (變異係數)', 'AGI (空間投影)', 'INT (資訊密度)'],
                     datasets: [{
                         label: 'ABSOLUTE STATES',
                         data: dataValues,

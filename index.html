@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MAXIMA 12D - QUANTUM TACTICAL HUD</title>
+    <title>MAXIMA 12D - QUANTUM TACTICAL HUD V2.1</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700;900&display=swap');
@@ -125,7 +125,7 @@
 
     <header>
         <h1>MAXIMA 12D</h1>
-        <div class="sys-status" id="sys-status">/// ABSOLUTE TENSOR INVARIANT ENGINE ///</div>
+        <div class="sys-status" id="sys-status">/// PHYSICAL ARMOR MATRIX V2.1 ///</div>
     </header>
 
     <div class="control-hub">
@@ -139,7 +139,7 @@
         <div class="panel side-panel">
             
             <div class="rating-box" id="rating-container">
-                <div class="rating-label">ABSOLUTE EIGENSTATE</div>
+                <div class="rating-label">ARMOR EIGENSTATE</div>
                 <div class="rating-rank" id="ui-rank">--</div>
                 <div class="rating-score">EIGENVALUE: <span class="score-num" id="ui-score">0000</span></div>
             </div>
@@ -226,7 +226,7 @@
 
             hideAlert();
             dashboard.style.display = "none";
-            btn.innerText = "COMPUTING TENSORS...";
+            btn.innerText = "CALIBRATING TENSORS...";
             btn.style.pointerEvents = "none";
 
             document.getElementById('bar-atk').style.width = '0%';
@@ -274,29 +274,30 @@
             const hpPercent = (avgTowerHP / 8500); 
 
             // ==========================================
-            // 【攻擊】動能殲滅當量 V2 (Hyperbolic Tangent Asymptote)
+            // 【攻擊】動能殲滅當量 V2
             // ==========================================
             const atkEnergy = (0.3 * Math.pow(crownsEarned, 2)) + (0.015 * displayThreeCrownR);
             const ATK = clamp(100 * Math.tanh(atkEnergy));
 
             // ==========================================
-            // 【防禦】實體裝甲矩陣 (Physical Armor Matrix) - 客觀具象化算法
+            // 【防禦】實體裝甲矩陣 V2.0 (Non-Linear Dynamic Weights)
             // ==========================================
             
-            // 1. 建築完整度 (Fortress Integrity - 40%): 直接反映未掉冠的物理比例
-            const fortressIntegrity = 40 * Math.max(0, 1.0 - (crownsLost / 3.0));
+            // 1. 防衛縱深 (Defense Depth - 45%): 1.5 次方非線性衰減，模擬防線崩潰效應
+            const defenseDepth = 45 * Math.pow(Math.max(0, 1.0 - (crownsLost / 3.0)), 1.5);
             
-            // 2. 核心裝甲值 (Core Armor - 40%): 直觀反映主堡平均剩餘血量比例
-            const coreArmor = 40 * hpPercent;
+            // 2. 核心裝甲保留 (Core Armor - 35%): 平方根平滑，保留 50% 血量仍具備顯著防禦力
+            const coreArmor = 35 * Math.sqrt(Math.max(0.01, hpPercent));
             
-            // 3. 陣線穩定係數 (Line Stability - 20%): 衡量每場防禦表現的落差 (變異係數)
-            const lineStability = 20 * Math.max(0, 1.0 - (hpStdDev / avgTowerHP));
+            // 3. 陣線抗擾度 (Line Robustness - 20%): 指數衰減，嚴懲極端不穩定的防守表現
+            const fluctuationRatio = hpStdDev / avgTowerHP;
+            const lineRobustness = 20 * Math.exp(-1.5 * fluctuationRatio);
 
-            // 4. 偏導護盾加成 (Deflector Shield): 具象化殘血求生能力，作為額外附加護甲
-            const deflectorShield = Math.min(15, lowHpClutchR * 25);
+            // 4. 偏導護盾加成 (Deflector Shield - Max +15): 透過 tanh 轉換殘血反殺率為額外裝甲
+            const deflectorShield = 15 * Math.tanh(lowHpClutchR * 3.5);
 
             // 客觀實體防禦總值結算
-            const DEF = clamp(fortressIntegrity + coreArmor + lineStability + deflectorShield);
+            const DEF = clamp(defenseDepth + coreArmor + lineRobustness + deflectorShield);
 
             setTimeout(() => {
                 document.getElementById('bar-atk').style.width = `${ATK}%`;
@@ -305,22 +306,22 @@
                 animateValue("txt-def", 0, Math.round(DEF), 1500);
             }, 100);
 
-            // 其餘 10 維度計算保持絕對張量不變量引擎邏輯
+            // 其餘 10 維度張量計算
             const baseEnergyLevel = 3.3; 
             const elixirDeviation = Math.pow(avgElixir - baseEnergyLevel, 2); 
             const SKL = clamp(sigmoid(50 * (1 + elixirDeviation * 0.6) * (1 + lowHpClutchR * 3.0), 75, 0.035));
-
             const baseCycleFreq = 3.8 / Math.max(1.8, avgElixir); 
             const reactionKinematics = 1 + (clutchR * 2.5) + (lowHpClutchR * 4.0); 
             const SPD = clamp(sigmoid(baseCycleFreq * reactionKinematics * 40, 75, 0.04));
-
-            const STA = clamp(100 - ((hpStdDev / avgTowerHP) * 150));
+            const STA = clamp(100 - (fluctuationRatio * 150));
             const CLT = clamp(20 + (Math.log((lowHpClutchR * 6 + clutchR * 2) * 100 + 1) * 15));
             const INT = clamp(sigmoid(hpPercent * 50 * Math.log(avgElixir + 2.5), 35, 0.08));
             const CRT = clamp(sigmoid(displayThreeCrownR * (5.0 / Math.max(2.0, avgElixir)), 12, 0.15));
             const END = clamp(20 + (Math.log10(battleCount + 1) * 12) + (clutchR * 100 * 0.5));
             const ACC = clamp(sigmoid(crownsEarned - crownsLost, 0.0, 1.2));
             const AGI = clamp((SPD * 0.4) + (SKL * 0.3) + (CLT * 0.3));
+            
+            // 幸運值 (LUK) 包含量子漲落 (如需固定，可移除 boxMuller)
             const LUK = clamp(50 + (boxMullerTransform() * 8) + (clutchR * 100 * 0.2));
 
             const metrics = [DEF, ATK, SKL, CRT, END, CLT, SPD, ACC, LUK, STA, AGI, INT];
@@ -370,9 +371,9 @@
             myChart = new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: ['DEF (實體裝甲矩陣)', 'ATK (動能殲滅當量)', 'SKL (絕對複雜度)', 'CRT (結構躍遷)', 'END (衰變抗性)', 'CLT (臨界生存)', 'SPD (絕對相速度)', 'ACC (納許均衡)', 'LUK (高斯噪聲)', 'STA (變異係數)', 'AGI (空間投影)', 'INT (資訊密度)'],
+                    labels: ['DEF (實體裝甲)', 'ATK (爆發當量)', 'SKL (絕對複雜度)', 'CRT (結構躍遷)', 'END (衰變抗性)', 'CLT (臨界生存)', 'SPD (絕對相速度)', 'ACC (納許均衡)', 'LUK (機率擾動)', 'STA (變異係數)', 'AGI (空間投影)', 'INT (資訊密度)'],
                     datasets: [{
-                        label: 'ABSOLUTE STATES',
+                        label: 'PHYSICAL MATRIX',
                         data: dataValues,
                         backgroundColor: `${mainColor}25`,
                         borderColor: mainColor,

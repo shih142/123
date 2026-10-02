@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAXIMA 12D - QUANTUM TACTICAL HUD V4.0</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700;900&display=swap');
+
+        :root {
+            --cyan: #00f2ff;
+            --purple: #bc13fe;
+            --red: #ff2a2a;
+            --gold: #ffb700;
+            --blood: #ff003c;
+            --shield: #00ffcc;
+            --green: #00ff88;
+            --bg-dark: #05070f;
+            --panel-bg: rgba(12, 15, 26, 0.88);
+            --disabled: #555555;
+            --deck-bg: rgba(0, 242, 255, 0.05);
+            --border-glow: rgba(0, 242, 255, 0.3);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                linear-gradient(rgba(0, 242, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 242, 255, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+            color: #fff;
+            font-family: 'Rajdhani', sans-serif;
+            display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 30px 15px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Scanline Overlay Effect */
+        body::before {
+            content: " ";
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+            background-size: 100% 3px, 6px 100%;
+            pointer-events: none;
+            z-index: 999;
+            opacity: 0.7;
+        }
+
+        /* Top Tools Bar */
+        .top-toolbar {
+            width: 100%;
+            max-width: 1100px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .tool-btn {
+            background: rgba(0, 242, 255, 0.1);
+            border: 1px solid var(--border-glow);
+            color: var(--cyan);
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            font-family: 'Orbitron', sans-serif;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .tool-btn:hover {
+            background: rgba(0, 242, 255, 0.25);
+            box-shadow: 0 0 10px var(--cyan);
+        }
+        .tool-btn.active {
+            background: var(--cyan);
+            color: #000;
+            font-weight: bold;
+        }
+
+        header { text-align: center; margin-bottom: 25px; text-transform: uppercase; }
+        .version-badge {
+            display: inline-block;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75rem;
+            color: var(--gold);
+            background: rgba(255, 183, 0, 0.12);
+            border: 1px solid var(--gold);
+            padding: 2px 8px;
+            border-radius: 4px;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+        h1 { 
+            font-family: 'Orbitron', sans-serif; 
+            font-weight: 900; 
+            font-size: 2.8rem; 
+            color: var(--cyan); 
+            letter-spacing: 6px; 
+            text-shadow: 0 0 20px rgba(0,242,255,0.4); 
+            margin-bottom: 5px; 
+        }
+        .sys-status { font-size: 0.95rem; color: var(--gold); letter-spacing: 3px; font-weight: bold; }
+
+        /* Search Section */
+        .control-hub-wrapper {
+            width: 100%;
+            max-width: 650px;
+            margin-bottom: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .control-hub {
+            background: var(--panel-bg); 
+            border: 1px solid var(--border-glow); 
+            padding: 15px; 
+            border-radius: 12px;
+            display: flex; 
+            gap: 12px; 
+            width: 100%;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8), inset 0 0 15px rgba(0,242,255,0.05);
+            backdrop-filter: blur(10px);
+        }
+
+        .input-group {
+            flex: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .input-prefix {
+            position: absolute;
+            left: 14px;
+            color: var(--cyan);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+        input {
+            width: 100%;
+            background: rgba(0,0,0,0.6); 
+            border: 1px solid var(--cyan); 
+            color: var(--cyan);
+            padding: 14px 14px 14px 34px; 
+            border-radius: 6px; 
+            font-family: 'Orbitron', sans-serif; 
+            font-size: 1.1rem; 
+            outline: none; 
+            transition: 0.3s;
+        }
+        input:focus { box-shadow: 0 0 15px rgba(0, 242, 255, 0.4); }
+        input::placeholder { color: rgba(0, 242, 255, 0.3); font-size: 0.95rem; }
+
+        button.primary-btn {
+            background: var(--cyan); 
+            color: #000; 
+            border: none; 
+            padding: 0 25px; 
+            border-radius: 6px;
+            font-family: 'Orbitron', sans-serif; 
+            font-weight: 700; 
+            font-size: 1rem; 
+            cursor: pointer; 
+            transition: 0.3s; 
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+        button.primary-btn:hover { 
+            background: #fff; 
+            box-shadow: 0 0 20px var(--cyan); 
+            transform: scale(1.02); 
+        }
+
+        /* Preset & History Pills */
+        .quick-access-bar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+        }
+        .quick-label {
+            color: #888;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+        }
+        .tag-pill {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ccc;
+            padding: 4px 10px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: 0.2s;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: bold;
+        }
+        .tag-pill:hover {
+            border-color: var(--cyan);
+            color: var(--cyan);
+            background: rgba(0, 242, 255, 0.1);
+        }
+        .tag-pill.preset {
+            border-color: rgba(188, 19, 254, 0.5);
+            color: #d88eff;
+        }
+        .tag-pill.preset:hover {
+            border-color: var(--purple);
+            background: rgba(188, 19, 254, 0.2);
+            color: #fff;
+        }
+
+        /* Alert and Fallback Prompt */
+        #alert-box { 
+            display: none; 
+            width: 100%; 
+            max-width: 650px; 
+            padding: 16px; 
+            background: rgba(255, 42, 42, 0.12); 
+            border: 1px solid var(--red); 
+            border-left: 6px solid var(--red); 
+            color: #fff; 
+            margin-bottom: 20px; 
+            border-radius: 8px; 
+        }
+        .alert-title {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--red);
+            font-size: 1rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .alert-body {
+            font-size: 0.95rem;
+            color: #ccc;
+            margin-bottom: 12px;
+        }
+        .alert-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .alert-btn {
+            background: rgba(255, 42, 42, 0.2);
+            border: 1px solid var(--red);
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            transition: 0.2s;
+        }
+        .alert-btn:hover {
+            background: var(--red);
+        }
+        .alert-btn.fallback-btn {
+            background: rgba(0, 242, 255, 0.2);
+            border: 1px solid var(--cyan);
+            color: var(--cyan);
+        }
+        .alert-btn.fallback-btn:hover {
+            background: var(--cyan);
+            color: #000;
+        }
+
+        /* Dashboard Container */
+        .dashboard-container {
+            display: none; 
+            width: 100%; 
+            max-width: 1100px; 
+            flex-direction: column; 
+            gap: 25px; 
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+
+        .dashboard-top { display: flex; gap: 25px; align-items: stretch; width: 100%; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .panel {
+            background: var(--panel-bg); 
+            border: 1px solid rgba(0, 242, 255, 0.2); 
+            border-radius: 15px;
+            padding: 28px; 
+            backdrop-filter: blur(10px); 
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+            position: relative;
+        }
+
+        .side-panel { flex: 1; display: flex; flex-direction: column; gap: 18px; }
+        .radar-panel { 
+            flex: 1.5; 
+            display: flex; 
+            flex-direction: column;
+            justify-content: center; 
+            align-items: center; 
+            position: relative; 
+            min-height: 480px; 
+        }
+
+        .radar-header-controls {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .radar-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            color: var(--cyan);
+            letter-spacing: 2px;
+        }
+        .chart-toggle-group {
+            display: flex;
+            gap: 8px;
+        }
+        .chart-toggle-btn {
+            background: rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #888;
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            transition: 0.2s;
+        }
+        .chart-toggle-btn.active {
+            border-color: var(--cyan);
+            color: var(--cyan);
+            background: rgba(0, 242, 255, 0.15);
+        }
+
+        .radar-canvas-container {
+            width: 100%;
+            height: 400px;
+            position: relative;
+        }
+        
+        /* Tactical Deck Panel */
+        .deck-panel { 
+            width: 100%; 
+            padding: 25px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 15px; 
+            border-top: 3px solid var(--purple); 
+        }
+        .deck-panel-title { 
+            font-family: 'Orbitron', sans-serif; 
+            color: var(--purple); 
+            font-size: 1.2rem; 
+            letter-spacing: 3px; 
+            text-shadow: 0 0 10px rgba(188, 19, 254, 0.5); 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between;
+        }
+        .deck-title-text {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .deck-title-text::before { 
+            content: ''; 
+            display: inline-block; 
+            width: 10px; 
+            height: 10px; 
+            background: var(--purple); 
+            box-shadow: 0 0 10px var(--purple); 
+        }
+
+        .deck-panel-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .deck-metrics-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); 
+            gap: 18px; 
+            margin-top: 5px; 
+        }
+        .deck-metric-card { 
+            background: var(--deck-bg); 
+            border: 1px solid rgba(188, 19, 254, 0.3); 
+            padding: 16px; 
+            border-radius: 8px; 
+            position: relative; 
+            overflow: hidden; 
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .deck-metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+        .deck-metric-card::before { 
+            content: ''; 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 4px; 
+            height: 100%; 
+            background: var(--purple); 
+        }
+        .deck-metric-label { font-size: 0.85rem; color: #aaa; text-transform: uppercase; font-weight: bold; margin-bottom: 5px; }
+        .deck-metric-val { font-family: 'Orbitron', sans-serif; font-size: 1.45rem; font-weight: 900; color: #fff; text-transform: uppercase; }
+        .deck-metric-sub { font-size: 0.8rem; color: var(--cyan); margin-top: 5px; opacity: 0.85; }
+
+        /* Diagnostics & Advice Accordion */
+        .diagnostic-panel {
+            width: 100%;
+            background: var(--panel-bg);
+            border: 1px solid rgba(0, 242, 255, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            border-top: 3px solid var(--cyan);
+        }
+        .diagnostic-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        .diag-title {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--cyan);
+            font-size: 1.15rem;
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .diag-title::before {
+            content: '';
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: var(--cyan);
+            box-shadow: 0 0 10px var(--cyan);
+        }
+        .diag-toggle-icon {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--cyan);
+            font-size: 1.2rem;
+            transition: transform 0.3s;
+        }
+        .diag-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .diag-card {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .diag-card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .diag-tag {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        .diag-score {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            font-weight: 900;
+        }
+        .diag-desc {
+            font-size: 0.9rem;
+            color: #ddd;
+            line-height: 1.4;
+        }
+        .diag-advice {
+            font-size: 0.85rem;
+            color: var(--gold);
+            border-left: 2px solid var(--gold);
+            padding-left: 8px;
+            margin-top: 4px;
+        }
+
+        /* Rating Box */
+        .rating-box {
+            background: rgba(0, 0, 0, 0.6); 
+            border: 2px solid var(--gold); 
+            border-radius: 10px; 
+            padding: 20px; 
+            text-align: center;
+            box-shadow: 0 0 20px rgba(255, 183, 0, 0.2), inset 0 0 15px rgba(255, 183, 0, 0.1);
+            position: relative; 
+            overflow: hidden; 
+            transition: border-color 0.5s ease;
+        }
+        .rating-box::before {
+            content: ''; 
+            position: absolute; 
+            top: -50%; 
+            left: -50%; 
+            width: 200%; 
+            height: 200%;
+            background: conic-gradient(transparent, transparent, transparent, currentColor);
+            animation: rotate 4s linear infinite; 
+            opacity: 0.1; 
+            z-index: 0;
+        }
+        @keyframes rotate { 100% { transform: rotate(360deg); } }
+        .rating-label { font-size: 0.95rem; color: #aaa; font-weight: bold; letter-spacing: 2px; position: relative; z-index: 1; }
+        .rating-rank { 
+            font-family: 'Orbitron', sans-serif; 
+            font-size: 3.8rem; 
+            font-weight: 900; 
+            line-height: 1.1; 
+            margin: 5px 0;
+            text-shadow: 0 0 20px currentColor; 
+            position: relative; 
+            z-index: 1; 
+            transition: color 0.5s ease;
+        }
+        .rating-score { font-size: 1.1rem; color: #fff; font-family: 'Orbitron', sans-serif; position: relative; z-index: 1; }
+        .score-num { color: var(--cyan); font-weight: bold; }
+
+        .player-header { border-bottom: 2px solid var(--purple); padding-bottom: 10px; margin-bottom: 5px; }
+        .player-name { font-size: 1.8rem; font-family: 'Orbitron', sans-serif; font-weight: bold; color: #fff; text-transform: uppercase; word-break: break-all; }
+        .player-tag { color: var(--cyan); font-size: 1.05rem; letter-spacing: 2px; }
+
+        .radical-bars { display: flex; flex-direction: column; gap: 14px; margin-top: 8px; padding-top: 14px; border-top: 1px dashed rgba(255,255,255,0.1); }
+        .bar-container { display: flex; flex-direction: column; gap: 5px; }
+        .bar-header { display: flex; justify-content: space-between; align-items: flex-end; }
+        .bar-label { font-family: 'Orbitron', sans-serif; font-size: 0.82rem; font-weight: bold; letter-spacing: 1px; }
+        .bar-label.atk-label { color: var(--blood); text-shadow: 0 0 5px rgba(255,0,60,0.5); }
+        .bar-label.def-label { color: var(--shield); text-shadow: 0 0 5px rgba(0,255,204,0.5); }
+        .bar-val { font-family: 'Orbitron', sans-serif; font-size: 1.15rem; font-weight: 900; }
+        .bar-bg { width: 100%; height: 12px; background: rgba(0,0,0,0.8); border: 1px solid #333; border-radius: 6px; overflow: hidden; position: relative; }
+        .bar-fill { height: 100%; width: 0%; transition: width 1.5s cubic-bezier(0.2, 0.8, 0.2, 1); box-shadow: inset 0 0 10px rgba(255,255,255,0.3); }
+        .atk-fill { background: linear-gradient(90deg, #550000, var(--blood)); }
+        .def-fill { background: linear-gradient(90deg, #003333, var(--shield)); }
+
+        .stat-grid-duo {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 10px;
+        }
+        .stat-group { background: rgba(255,255,255,0.02); padding: 12px; border-radius: 8px; border-left: 3px solid var(--cyan); }
+        .stat-label { font-size: 0.8rem; color: #888; text-transform: uppercase; margin-bottom: 3px; }
+        .stat-value { font-size: 1.6rem; font-weight: bold; color: #fff; display: flex; align-items: baseline; gap: 4px; }
+        .stat-unit { font-size: 0.85rem; color: var(--cyan); }
+
+        /* Toast notification */
+        #toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(12, 15, 26, 0.95);
+            border: 1px solid var(--cyan);
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 6px;
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.4);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1rem;
+            font-weight: bold;
+            display: none;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        @media (max-width: 900px) {
+            .dashboard-top { flex-direction: column; }
+            .radar-panel { min-height: 400px; }
+            .radar-canvas-container { height: 320px; }
+            h1 { font-size: 2.1rem; }
+            .control-hub { flex-direction: column; }
+            button.primary-btn { padding: 12px 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Tools -->
+    <div class="top-toolbar">
+        <button class="tool-btn" id="sfx-toggle" onclick="toggleSFX()" title="切換戰術提示音效">
+            <span id="sfx-icon">🔊</span> AUDIO: <span id="sfx-state">ON</span>
+        </button>
+        <button class="tool-btn" onclick="exportReport()" title="複製戰術情報純文字報告">
+            📋 匯出情報 (EXPORT INTEL)
+        </button>
+    </div>
+
+    <header>
+        <div class="version-badge">MAXIMA 12D TACTICAL HUD V4.0 // ENHANCED</div>
+        <h1>MAXIMA 12D</h1>
+        <div class="sys-status" id="sys-status">/// TACTICAL DECK ARCHITECTURE INTEGRATED ///</div>
+    </header>
+
+    <div class="control-hub-wrapper">
+        <div class="control-hub">
+            <div class="input-group">
+                <span class="input-prefix">#</span>
+                <input type="text" id="playerTag" placeholder="PLAYER TAG (e.g. P8RR2P, 8L9L80PB)" autocomplete="off">
+            </div>
+            <button onclick="runScan()" id="scanBtn" class="primary-btn">INITIATE</button>
+        </div>
+
+        <!-- Quick Access: Presets & Recent Searches -->
+        <div class="quick-access-bar" id="presets-container">
+            <span class="quick-label">⚡ 流派速測:</span>
+            <span class="tag-pill preset" onclick="loadPreset('2.6_CYCLE')">2.6 極速輪轉</span>
+            <span class="tag-pill preset" onclick="loadPreset('BEATDOWN')">暗夜重裝推進</span>
+            <span class="tag-pill preset" onclick="loadPreset('SIEGE')">迫擊自閉控場</span>
+            <span class="tag-pill preset" onclick="loadPreset('BRIDGE_SPAM')">皮卡刺客突進</span>
+        </div>
+
+        <div class="quick-access-bar" id="history-container" style="display: none; margin-top: 5px;">
+            <span class="quick-label">🕒 歷史查詢:</span>
+            <div id="history-pills" style="display: inline-flex; gap: 6px; flex-wrap: wrap;"></div>
+        </div>
+    </div>
+
+    <!-- Alert Box with Fallback Trigger -->
+    <div id="alert-box">
+        <div class="alert-title" id="alert-title">[SYSTEM ALERT]</div>
+        <div class="alert-body" id="alert-msg"></div>
+        <div class="alert-actions" id="alert-actions">
+            <button class="alert-btn fallback-btn" onclick="runSimulatedScan()">⚡ 載入量子模擬戰術數據 (DEMO SIM)</button>
+            <button class="alert-btn" onclick="hideAlert()">關閉</button>
+        </div>
+    </div>
+
+    <div class="dashboard-container" id="dashboard-container">
+        
+        <div class="dashboard-top">
+            <div class="panel side-panel">
+                <div class="rating-box" id="rating-container">
+                    <div class="rating-label">ARMOR EIGENSTATE</div>
+                    <div class="rating-rank" id="ui-rank">--</div>
+                    <div class="rating-score">EIGENVALUE: <span class="score-num" id="ui-score">0000</span></div>
+                </div>
+
+                <div class="player-header">
+                    <div class="player-tag" id="ui-tag">#TAG</div>
+                    <div class="player-name" id="ui-name">PLAYER NAME</div>
+                </div>
+
+                <div class="radical-bars">
+                    <div class="bar-container">
+                        <div class="bar-header">
+                            <div class="bar-label atk-label">ANNIHILATION YIELD (ATK)</div>
+                            <div class="bar-val" style="color: var(--blood);" id="txt-atk">0</div>
+                        </div>
+                        <div class="bar-bg"><div class="bar-fill atk-fill" id="bar-atk"></div></div>
+                    </div>
+                    <div class="bar-container">
+                        <div class="bar-header">
+                            <div class="bar-label def-label">PHYSICAL ARMOR (DEF)</div>
+                            <div class="bar-val" style="color: var(--shield);" id="txt-def">0</div>
+                        </div>
+                        <div class="bar-bg"><div class="bar-fill def-fill" id="bar-def"></div></div>
+                    </div>
+                </div>
+
+                <div class="stat-grid-duo">
+                    <div class="stat-group">
+                        <div class="stat-label">WIN RATE</div>
+                        <div class="stat-value"><span id="ui-win">0</span> <span class="stat-unit">%</span></div>
+                    </div>
+                    
+                    <div class="stat-group">
+                        <div class="stat-label">ELIXIR VELOCITY</div>
+                        <div class="stat-value"><span id="ui-elixir">0.0</span> <span class="stat-unit">λ</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel radar-panel">
+                <div class="radar-header-controls">
+                    <div class="radar-title">12D QUANTUM MATRIX</div>
+                    <div class="chart-toggle-group">
+                        <button class="chart-toggle-btn active" id="btn-chart-player" onclick="toggleOverlay('player')">玩家實體</button>
+                        <button class="chart-toggle-btn" id="btn-chart-benchmark" onclick="toggleOverlay('benchmark')">+天梯基準線</button>
+                    </div>
+                </div>
+                <div class="radar-canvas-container">
+                    <canvas id="radarChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- 牌組深度分析區塊 -->
+        <div class="panel deck-panel">
+            <div class="deck-panel-title">
+                <div class="deck-title-text">TACTICAL DECK DEPTH ANALYSIS</div>
+            </div>
+            <div class="deck-metrics-grid">
+                
+                <div class="deck-metric-card" style="border-left-color: var(--cyan);">
+                    <div class="deck-metric-label">Archetype Classifier</div>
+                    <div class="deck-metric-val" id="deck-archetype">ANALYZING...</div>
+                    <div class="deck-metric-sub">系統識別之牌組戰術流派</div>
+                </div>
+
+                <div class="deck-metric-card" style="border-left-color: var(--gold);">
+                    <div class="deck-metric-label">Synergy Quotient (SQ)</div>
+                    <div class="deck-metric-val" id="deck-synergy">0.0</div>
+                    <div class="deck-metric-sub">攻防與勝率之共鳴幾何乘積</div>
+                </div>
+
+                <div class="deck-metric-card" style="border-left-color: var(--blood);">
+                    <div class="deck-metric-label">Lethality per Elixir</div>
+                    <div class="deck-metric-val" id="deck-lethality">0.0</div>
+                    <div class="deck-metric-sub">每滴聖水轉化之致死破壞力</div>
+                </div>
+
+                <div class="deck-metric-card" style="border-left-color: var(--shield);">
+                    <div class="deck-metric-label">Structural Resilience</div>
+                    <div class="deck-metric-val" id="deck-resilience">0.0</div>
+                    <div class="deck-metric-sub">牌組抗壓與容錯閾值</div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- 12維度戰術深度解析與弱點診斷 -->
+        <div class="panel diagnostic-panel">
+            <div class="diagnostic-header" onclick="toggleDiagnostics()">
+                <div class="diag-title">TACTICAL DIAGNOSTICS & ADVICE // 戰術弱點與弱項處方針斷</div>
+                <div class="diag-toggle-icon" id="diag-arrow">▼</div>
+            </div>
+            <div class="diag-grid" id="diag-grid-container">
+                <!-- Dynamically generated diagnostic cards -->
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast"></div>
+
+    <script>
+        let myChart = null;
+        let currentMetrics = null;
+        let currentPlayerData = null;
+        let showBenchmark = false;
+        let sfxEnabled = true;
+
+        // Audio Context (Synthesized Cyber SFX)
+        let audioCtx = null;
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playSound(type) {
+            if (!sfxEnabled) return;
+            try {
+                initAudio();
+                const now = audioCtx.currentTime;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                if (type === 'scan') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(300, now);
+                    osc.frequency.exponentialRampToValueAtTime(1200, now + 0.35);
+                    gain.gain.setValueAtTime(0.08, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.35);
+                    osc.start(now);
+                    osc.stop(now + 0.35);
+                } else if (type === 'success') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(587.33, now); // D5
+                    osc.frequency.setValueAtTime(880, now + 0.1); // A5
+                    gain.gain.setValueAtTime(0.12, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.4);
+                    osc.start(now);
+                    osc.stop(now + 0.4);
+                } else if (type === 'error') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(200, now);
+                    osc.frequency.linearRampToValueAtTime(100, now + 0.25);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.25);
+                    osc.start(now);
+                    osc.stop(now + 0.25);
+                }
+            } catch(e) {
+                console.log("Audio not allowed yet:", e);
+            }
+        }
+
+        function toggleSFX() {
+            sfxEnabled = !sfxEnabled;
+            document.getElementById('sfx-state').innerText = sfxEnabled ? 'ON' : 'OFF';
+            document.getElementById('sfx-icon').innerText = sfxEnabled ? '🔊' : '🔇';
+            showToast(sfxEnabled ? '音效已開啟' : '音效已靜音');
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 2400);
+        }
+
+        // Enter key submission
+        document.getElementById('playerTag').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                runScan();
+            }
+        });
+
+        // Search History Management
+        function saveSearchHistory(tag, name) {
+            let history = JSON.parse(localStorage.getItem('maxima_history') || '[]');
+            history = history.filter(item => item.tag !== tag);
+            history.unshift({ tag, name: name || tag });
+            if (history.length > 5) history.pop();
+            localStorage.setItem('maxima_history', JSON.stringify(history));
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const history = JSON.parse(localStorage.getItem('maxima_history') || '[]');
+            const container = document.getElementById('history-container');
+            const pillsBox = document.getElementById('history-pills');
+            
+            if (!history || history.length === 0) {
+                container.style.display = 'none';
+                return;
+            }
+            container.style.display = 'flex';
+            pillsBox.innerHTML = '';
+            history.forEach(item => {
+                const pill = document.createElement('span');
+                pill.className = 'tag-pill';
+                pill.innerText = `${item.name} (#${item.tag})`;
+                pill.onclick = () => {
+                    document.getElementById('playerTag').value = item.tag;
+                    runScan();
+                };
+                pillsBox.appendChild(pill);
+            });
+        }
+        renderHistory();
+
+        function showAlert(msg, isApiFailure = false) {
+            const box = document.getElementById('alert-box');
+            const title = document.getElementById('alert-title');
+            const body = document.getElementById('alert-msg');
+            box.style.display = 'block';
+            title.innerText = `[SYSTEM ERROR]`;
+            body.innerHTML = `${msg}${isApiFailure ? '<br><small style="color:#aaa; display:block; margin-top:6px;">⚠️ 提示：若因 Supercell API 限制（如 IP 白名單或玩家無近期戰績），您可點擊下方按鈕以「量子模擬」快速預覽所有戰術計算成果！</small>' : ''}`;
+            playSound('error');
+        }
+        function hideAlert() { document.getElementById('alert-box').style.display = 'none'; }
+
+        // Presets Data
+        const PRESETS = {
+            '2.6_CYCLE': {
+                tag: 'CYC26P',
+                name: 'KRAFT (2.6 HOG)',
+                winRate: 68.4,
+                battleCount: 25,
+                avgDeckElixir: '2.6',
+                avgTowerHP: 2450,
+                hpHistory: [2800, 2200, 2450, 1950, 2600, 2100],
+                lowHpClutchRate: 0.38,
+                clutchRate: 0.28,
+                avgCrownsEarned: 1.25,
+                avgCrownsLost: 0.45,
+                threeCrownRate: 0.08
+            },
+            'BEATDOWN': {
+                tag: 'GOLEM99',
+                name: 'TITAN (GOLEM NW)',
+                winRate: 64.2,
+                battleCount: 25,
+                avgDeckElixir: '4.3',
+                avgTowerHP: 1850,
+                hpHistory: [1200, 1900, 2400, 1600, 1400],
+                lowHpClutchRate: 0.15,
+                clutchRate: 0.42,
+                avgCrownsEarned: 2.65,
+                avgCrownsLost: 1.15,
+                threeCrownRate: 0.62
+            },
+            'SIEGE': {
+                tag: 'MORTAR7',
+                name: 'SENTRY (SIEGE CONTROL)',
+                winRate: 61.5,
+                battleCount: 25,
+                avgDeckElixir: '3.1',
+                avgTowerHP: 3100,
+                hpHistory: [3300, 2900, 3100, 3050, 3200],
+                lowHpClutchRate: 0.22,
+                clutchRate: 0.18,
+                avgCrownsEarned: 1.10,
+                avgCrownsLost: 0.20,
+                threeCrownRate: 0.04
+            },
+            'BRIDGE_SPAM': {
+                tag: 'PEKKA88',
+                name: 'VANGUARD (P.E.K.K.A SPAM)',
+                winRate: 66.8,
+                battleCount: 25,
+                avgDeckElixir: '3.9',
+                avgTowerHP: 2200,
+                hpHistory: [2100, 2500, 1800, 2400, 2300],
+                lowHpClutchRate: 0.25,
+                clutchRate: 0.32,
+                avgCrownsEarned: 1.85,
+                avgCrownsLost: 0.75,
+                threeCrownRate: 0.28
+            }
+        };
+
+        function loadPreset(key) {
+            const data = PRESETS[key];
+            if (!data) return;
+            document.getElementById('playerTag').value = data.tag;
+            hideAlert();
+            playSound('scan');
+            updateUI(data);
+            saveSearchHistory(data.tag, data.name);
+            showToast(`已載入預設流派: ${data.name}`);
+        }
+
+        function runSimulatedScan() {
+            const currentTag = document.getElementById('playerTag').value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase() || 'P8RR2P';
+            hideAlert();
+            // Generate a balanced realistic simulation for this tag
+            const simData = {
+                tag: currentTag,
+                name: `AGENT-${currentTag}`,
+                winRate: 58.5 + (Math.random() * 15),
+                battleCount: 25,
+                avgDeckElixir: (2.8 + Math.random() * 1.4).toFixed(1),
+                avgTowerHP: Math.round(2100 + Math.random() * 1200),
+                hpHistory: [2200, 2600, 1950, 2800, 2400],
+                lowHpClutchRate: 0.2 + (Math.random() * 0.2),
+                clutchRate: 0.25 + (Math.random() * 0.2),
+                avgCrownsEarned: (1.2 + Math.random() * 1.0).toFixed(2),
+                avgCrownsLost: (0.4 + Math.random() * 0.7).toFixed(2),
+                threeCrownRate: 0.15 + (Math.random() * 0.25)
+            };
+            playSound('scan');
+            updateUI(simData);
+            saveSearchHistory(simData.tag, simData.name);
+            showToast(`已透過量子模擬演算載入: #${simData.tag}`);
+        }
+
+        function calculateStandardDeviation(arr, mean) {
+            if (!arr || arr.length === 0) return 0;
+            const variance = arr.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / arr.length;
+            return Math.sqrt(variance);
+        }
+
+        function clamp(val) { return Math.max(15, Math.min(99, val)); }
+        function clampMax(val, max) { return Math.max(0, Math.min(max, val)); }
+
+        function sigmoid(val, x0, k) {
+            return 100 / (1 + Math.exp(-k * (val - x0)));
+        }
+
+        function boxMullerTransform() {
+            let u = 0, v = 0;
+            while(u === 0) u = Math.random();
+            while(v === 0) v = Math.random();
+            return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+        }
+
+        function calculateL2Norm(vector) {
+            const sumOfSquares = vector.reduce((acc, val) => acc + Math.pow(val, 2), 0);
+            return Math.sqrt(sumOfSquares);
+        }
+
+        // ==========================================
+        // 牌組深度分析引擎 (Deck Analysis Engine)
+        // ==========================================
+        function analyzeDeckDepth(avgElixir, winRate, ATK, DEF, threeCrownRate, hpStdDev, avgTowerHP) {
+            let archetype = "UNKNOWN";
+            if (avgElixir <= 2.9) {
+                archetype = "HYPER CYCLE"; // 極速輪轉
+            } else if (avgElixir > 2.9 && avgElixir <= 3.3) {
+                archetype = "TACTICAL CONTROL"; // 戰術控制
+            } else if (avgElixir > 3.3 && avgElixir <= 3.8) {
+                archetype = "MIDRANGE SPAM"; // 中速突進
+            } else if (avgElixir > 3.8 && avgElixir <= 4.2) {
+                archetype = "HEAVY BEATDOWN"; // 重裝推進
+            } else {
+                archetype = "SIEGE / MASSIVE"; // 極重火力/防陣
+            }
+
+            const synergy = clampMax(100 * (winRate / 50.0) * Math.sqrt((ATK * DEF) / 10000), 99.9);
+            const lethality = clampMax((ATK * (1.0 + threeCrownRate)) / Math.max(1.0, avgElixir), 99.9);
+            const fluctuationRatio = hpStdDev / avgTowerHP;
+            const resilience = clampMax(DEF * Math.exp(-1.0 * fluctuationRatio), 99.9);
+
+            document.getElementById('deck-archetype').innerText = archetype;
+            animateValueFloat("deck-synergy", 0, synergy, 1500, 1);
+            animateValueFloat("deck-lethality", 0, lethality, 1500, 1);
+            animateValueFloat("deck-resilience", 0, resilience, 1500, 1);
+
+            return { archetype, synergy, lethality, resilience };
+        }
+
+        // ==========================================
+        // 12 維度診斷卡片生成器
+        // ==========================================
+        function generateDiagnostics(metrics) {
+            const [DEF, ATK, SKL, CRT, END, CLT, SPD, ACC, LUK, STA, AGI, INT] = metrics;
+            const container = document.getElementById('diag-grid-container');
+            container.innerHTML = '';
+
+            const items = [
+                {
+                    key: 'DEF (實體裝甲)', val: DEF, color: 'var(--shield)',
+                    desc: '衡量主塔保留血量與被奪冠抑制率。',
+                    advice: DEF < 50 ? '⚠️ 護甲過低：後場防守頻繁失血，建議配置拉扯小兵或低費防禦建築。' : '🛡️ 鐵壁防護：防禦網嚴密，具備極強殘局守塔能力。'
+                },
+                {
+                    key: 'ATK (爆發當量)', val: ATK, color: 'var(--blood)',
+                    desc: '衡量破塔強度與奪冠火力。',
+                    advice: ATK < 50 ? '⚠️ 火力匱乏：難以突破對手防線，建議強化反擊爆發點或斬殺法術。' : '🔥 殲滅火力：進攻穿透力極高，對手極難完美防守。'
+                },
+                {
+                    key: 'SKL (絕對複雜度)', val: SKL, color: 'var(--purple)',
+                    desc: '衡量極限殘血翻盤操作與非標準費用調度技巧。',
+                    advice: SKL < 45 ? '⚠️ 容錯依賴數值：面對快節奏多線牽制容易出現操作失誤。' : '⚡ 微操卓越：善於精準下牌與殘血極限拉扯。'
+                },
+                {
+                    key: 'SPD (絕對相速度)', val: SPD, color: 'var(--cyan)',
+                    desc: '衡量卡牌輪轉頻率與攻防切換反應動能。',
+                    advice: SPD < 45 ? '⏱️ 節奏遲緩：容易被速轉體系拖入節奏劣勢。' : '🚀 疾速節奏：過牌速度極快，能持續施加施壓鏈。'
+                },
+                {
+                    key: 'CLT (臨界生存)', val: CLT, color: 'var(--gold)',
+                    desc: '衡量血量 < 500HP 時的驚天逆轉能力。',
+                    advice: CLT < 40 ? '⚠️ 崩盤臨界低：陷入劣勢時抗壓逆轉率不足。' : '👑 逆轉專家：多次在瀕死狀態完成絕地反擊。'
+                },
+                {
+                    key: 'STA (變異係數)', val: STA, color: 'var(--green)',
+                    desc: '衡量各場次防守掉血波動幅度（越穩定分數越高）。',
+                    advice: STA < 50 ? '⚠️ 穩定度欠佳：狀態大起大落，容易受卡序或對局相剋影響。' : '💎 磐石穩定：防守體系千錘百鍊，極少出現意外崩盤。'
+                }
+            ];
+
+            items.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'diag-card';
+                card.innerHTML = `
+                    <div class="diag-card-top">
+                        <span class="diag-tag" style="color: ${item.color}">${item.key}</span>
+                        <span class="diag-score" style="color: ${item.color}">${Math.round(item.val)}</span>
+                    </div>
+                    <div class="diag-desc">${item.desc}</div>
+                    <div class="diag-advice">${item.advice}</div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function toggleDiagnostics() {
+            const grid = document.getElementById('diag-grid-container');
+            const arrow = document.getElementById('diag-arrow');
+            if (grid.style.display === 'none') {
+                grid.style.display = 'grid';
+                arrow.innerText = '▼';
+            } else {
+                grid.style.display = 'none';
+                arrow.innerText = '▶';
+            }
+        }
+
+        async function runScan() {
+            const tagInput = document.getElementById('playerTag').value;
+            const btn = document.getElementById('scanBtn');
+            const dashboard = document.getElementById('dashboard-container');
+            
+            const cleanTag = tagInput.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+            if (!cleanTag) return showAlert("請輸入有效的玩家標籤 (例如 P8RR2P)");
+
+            hideAlert();
+            dashboard.style.display = "none";
+            btn.innerText = "CALIBRATING...";
+            btn.style.pointerEvents = "none";
+            playSound('scan');
+
+            document.getElementById('bar-atk').style.width = '0%';
+            document.getElementById('bar-def').style.width = '0%';
+
+            try {
+                const targetUrl = new URL('/api/clash-proxy', window.location.origin);
+                targetUrl.searchParams.append('tag', cleanTag);
+
+                const response = await fetch(targetUrl.toString(), { method: 'GET', headers: { 'Accept': 'application/json' } });
+                const data = await response.json();
+                
+                if (!response.ok) throw new Error(data.details || data.error || "連線或 API 回傳異常");
+
+                saveSearchHistory(cleanTag, data.name);
+                updateUI(data);
+                
+            } catch (error) {
+                console.error("Scan Failed:", error);
+                showAlert(`無法從 Clash Royale API 取得玩家 #${cleanTag} 之戰報：${error.message}`, true);
+            } finally {
+                btn.innerText = "INITIATE";
+                btn.style.pointerEvents = "auto";
+            }
+        }
+
+        function updateUI(data) {
+            currentPlayerData = data;
+            document.getElementById('dashboard-container').style.display = "flex";
+            
+            const rawWinR = parseFloat(data.winRate) || 0;
+            const battleCount = Math.max(1, data.battleCount || 1);
+            const displayThreeCrownR = parseFloat(data.threeCrownRate) || 0; 
+            
+            document.getElementById('ui-tag').innerText = `#${data.tag}`;
+            document.getElementById('ui-name').innerText = data.name;
+            document.getElementById('ui-win').innerText = rawWinR.toFixed(1);
+            document.getElementById('ui-elixir').innerText = data.avgDeckElixir || 'N/A';
+
+            const avgElixir = parseFloat(data.avgDeckElixir) || 3.5; 
+            const avgTowerHP = Math.max(1, parseFloat(data.avgTowerHP) || 3000); 
+            const hpStdDev = calculateStandardDeviation(data.hpHistory, avgTowerHP);
+            const lowHpClutchR = parseFloat(data.lowHpClutchRate) || 0; 
+            const clutchR = parseFloat(data.clutchRate) || 0; 
+            const crownsEarned = parseFloat(data.avgCrownsEarned) || 0;
+            const crownsLost = parseFloat(data.avgCrownsLost) || 0;
+            const hpPercent = (avgTowerHP / 8500); 
+
+            // 【攻擊】動能殲滅當量 V2
+            const atkEnergy = (0.3 * Math.pow(crownsEarned, 2)) + (0.015 * (displayThreeCrownR * 100));
+            const ATK = clamp(100 * Math.tanh(atkEnergy));
+
+            // 【防禦】實體裝甲矩陣 V2.0 
+            const defenseDepth = 45 * Math.pow(Math.max(0, 1.0 - (crownsLost / 3.0)), 1.5);
+            const coreArmor = 35 * Math.sqrt(Math.max(0.01, hpPercent));
+            const fluctuationRatio = hpStdDev / avgTowerHP;
+            const lineRobustness = 20 * Math.exp(-1.5 * fluctuationRatio);
+            const deflectorShield = 15 * Math.tanh(lowHpClutchR * 3.5);
+            const DEF = clamp(defenseDepth + coreArmor + lineRobustness + deflectorShield);
+
+            // 觸發牌組深度分析模組
+            const deckStats = analyzeDeckDepth(avgElixir, rawWinR, ATK, DEF, displayThreeCrownR, hpStdDev, avgTowerHP);
+
+            setTimeout(() => {
+                document.getElementById('bar-atk').style.width = `${ATK}%`;
+                document.getElementById('bar-def').style.width = `${DEF}%`;
+                animateValue("txt-atk", 0, Math.round(ATK), 1500);
+                animateValue("txt-def", 0, Math.round(DEF), 1500);
+            }, 100);
+
+            // 其餘 10 維度張量計算
+            const baseEnergyLevel = 3.3; 
+            const elixirDeviation = Math.pow(avgElixir - baseEnergyLevel, 2); 
+            const SKL = clamp(sigmoid(50 * (1 + elixirDeviation * 0.6) * (1 + lowHpClutchR * 3.0), 75, 0.035));
+            const baseCycleFreq = 3.8 / Math.max(1.8, avgElixir); 
+            const reactionKinematics = 1 + (clutchR * 2.5) + (lowHpClutchR * 4.0); 
+            const SPD = clamp(sigmoid(baseCycleFreq * reactionKinematics * 40, 75, 0.04));
+            const STA = clamp(100 - (fluctuationRatio * 150));
+            const CLT = clamp(20 + (Math.log((lowHpClutchR * 6 + clutchR * 2) * 100 + 1) * 15));
+            const INT = clamp(sigmoid(hpPercent * 50 * Math.log(avgElixir + 2.5), 35, 0.08));
+            const CRT = clamp(sigmoid((displayThreeCrownR*100) * (5.0 / Math.max(2.0, avgElixir)), 12, 0.15));
+            const END = clamp(20 + (Math.log10(battleCount + 1) * 12) + (clutchR * 100 * 0.5));
+            const ACC = clamp(sigmoid(crownsEarned - crownsLost, 0.0, 1.2));
+            const AGI = clamp((SPD * 0.4) + (SKL * 0.3) + (CLT * 0.3));
+            const LUK = clamp(50 + (boxMullerTransform() * 8) + (clutchR * 100 * 0.2));
+
+            const metrics = [DEF, ATK, SKL, CRT, END, CLT, SPD, ACC, LUK, STA, AGI, INT];
+            currentMetrics = metrics;
+
+            // 產生診斷卡片
+            generateDiagnostics(metrics);
+
+            // 絕對 L2 範數結算
+            const tensorMagnitude = calculateL2Norm(metrics);
+            const rawScore = Math.round((tensorMagnitude / 346.41) * 10000); 
+            
+            let rank = 'D-'; let rankColor = '#aaa';
+            if (rawScore >= 8800) { rank = 'Ω (OMEGA)'; rankColor = '#ffb700'; } 
+            else if (rawScore >= 7800) { rank = 'Δ (DELTA)'; rankColor = '#ff2a2a'; } 
+            else if (rawScore >= 6800) { rank = 'Σ (SIGMA)'; rankColor = '#bc13fe'; }  
+            else if (rawScore >= 5800) { rank = 'α (ALPHA)'; rankColor = '#00f2ff'; }  
+            else if (rawScore >= 4800) { rank = 'β (BETA)'; rankColor = '#00ff44'; }  
+            else if (rawScore >= 3800) { rank = 'γ (GAMMA)'; rankColor = '#fff'; }     
+
+            const uiRank = document.getElementById('ui-rank');
+            const ratingContainer = document.getElementById('rating-container');
+            
+            uiRank.innerText = rank;
+            uiRank.style.color = rankColor;
+            ratingContainer.style.borderColor = rankColor;
+            
+            animateValue("ui-score", 0, rawScore, 1000);
+            drawChart(metrics, rankColor);
+            playSound('success');
+        }
+
+        function toggleOverlay(mode) {
+            if (mode === 'benchmark') {
+                showBenchmark = !showBenchmark;
+                document.getElementById('btn-chart-benchmark').classList.toggle('active', showBenchmark);
+            }
+            if (currentMetrics) {
+                const rankColor = document.getElementById('ui-rank').style.color || '#00f2ff';
+                drawChart(currentMetrics, rankColor);
+            }
+        }
+
+        function animateValue(id, start, end, duration) {
+            const obj = document.getElementById(id);
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                obj.innerHTML = Math.floor(progress * (end - start) + start);
+                if (progress < 1) window.requestAnimationFrame(step); 
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        function animateValueFloat(id, start, end, duration, decimals) {
+            const obj = document.getElementById(id);
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const current = (progress * (end - start) + start).toFixed(decimals);
+                obj.innerHTML = current;
+                if (progress < 1) window.requestAnimationFrame(step); 
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        function drawChart(dataValues, mainColor) {
+            const ctx = document.getElementById('radarChart').getContext('2d');
+            if (myChart) myChart.destroy(); 
+            
+            Chart.defaults.color = '#888';
+            Chart.defaults.font.family = 'Orbitron';
+
+            const datasets = [{
+                label: 'PHYSICAL MATRIX (玩家實體)',
+                data: dataValues,
+                backgroundColor: `${mainColor}28`,
+                borderColor: mainColor,
+                borderWidth: 2,
+                pointBackgroundColor: '#fff',
+                pointBorderColor: mainColor,
+                pointHoverBackgroundColor: mainColor,
+                pointHoverBorderColor: '#fff',
+                pointRadius: 3.5,
+                pointHoverRadius: 6
+            }];
+
+            if (showBenchmark) {
+                // Top Ladder Pro Benchmark (Avg 75 across all metrics)
+                datasets.push({
+                    label: 'BENCHMARK (天梯巔峰標準線)',
+                    data: [78, 80, 82, 65, 75, 72, 85, 76, 55, 80, 82, 78],
+                    backgroundColor: 'rgba(255, 183, 0, 0.12)',
+                    borderColor: 'rgba(255, 183, 0, 0.8)',
+                    borderWidth: 1.5,
+                    borderDash: [4, 4],
+                    pointRadius: 2,
+                    pointBackgroundColor: 'var(--gold)'
+                });
+            }
+
+            myChart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: [
+                        'DEF (實體裝甲)', 'ATK (爆發當量)', 'SKL (絕對複雜度)', 
+                        'CRT (結構躍遷)', 'END (衰變抗性)', 'CLT (臨界生存)', 
+                        'SPD (絕對相速度)', 'ACC (納許均衡)', 'LUK (機率擾動)', 
+                        'STA (變異係數)', 'AGI (空間投影)', 'INT (資訊密度)'
+                    ],
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true, 
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: 'rgba(0, 242, 255, 0.15)', lineWidth: 1 },
+                            grid: { color: 'rgba(255, 255, 255, 0.08)', circular: true },
+                            pointLabels: { 
+                                color: (ctx) => {
+                                    return '#aaa';
+                                },
+                                font: { size: 10, weight: 'bold' } 
+                            },
+                            ticks: { display: false, min: 0, max: 100 }
+                        }
+                    },
+                    plugins: { 
+                        legend: { 
+                            display: showBenchmark,
+                            labels: {
+                                color: '#ccc',
+                                font: { size: 11, family: 'Rajdhani' }
+                            }
+                        }, 
+                        tooltip: { 
+                            backgroundColor: 'rgba(5,7,15,0.95)', 
+                            titleColor: varColor('--cyan'), 
+                            bodyFont: { size: 13, family: 'Rajdhani' },
+                            borderColor: varColor('--cyan'),
+                            borderWidth: 1
+                        } 
+                    }
+                }
+            });
+        }
+
+        function varColor(name) {
+            return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+        }
+
+        // Export Report to Clipboard
+        function exportReport() {
+            if (!currentPlayerData || !currentMetrics) {
+                return showToast('請先進行戰術掃描以取得情報！');
+            }
+            const rank = document.getElementById('ui-rank').innerText;
+            const score = document.getElementById('ui-score').innerText;
+            const archetype = document.getElementById('deck-archetype').innerText;
+            const synergy = document.getElementById('deck-synergy').innerText;
+            const lethality = document.getElementById('deck-lethality').innerText;
+            const resilience = document.getElementById('deck-resilience').innerText;
+
+            const report = `=========================================
+⚡ MAXIMA 12D - QUANTUM TACTICAL REPORT ⚡
+=========================================
+PLAYER : ${currentPlayerData.name} (#${currentPlayerData.tag})
+EIGENSTATE : ${rank} (EIGENVALUE: ${score})
+WIN RATE   : ${currentPlayerData.winRate}% | ELIXIR: ${currentPlayerData.avgDeckElixir}λ
+-----------------------------------------
+[TACTICAL DECK PROFILE]
+- Archetype : ${archetype}
+- Synergy Q : ${synergy}
+- Lethality : ${lethality}
+- Resilience: ${resilience}
+-----------------------------------------
+[12D MATRIX OVERVIEW]
+DEF: ${Math.round(currentMetrics[0])} | ATK: ${Math.round(currentMetrics[1])} | SKL: ${Math.round(currentMetrics[2])}
+CRT: ${Math.round(currentMetrics[3])} | END: ${Math.round(currentMetrics[4])} | CLT: ${Math.round(currentMetrics[5])}
+SPD: ${Math.round(currentMetrics[6])} | ACC: ${Math.round(currentMetrics[7])} | LUK: ${Math.round(currentMetrics[8])}
+STA: ${Math.round(currentMetrics[9])} | AGI: ${Math.round(currentMetrics[10])} | INT: ${Math.round(currentMetrics[11])}
+=========================================
+Generated by MAXIMA 12D HUD V4.0`;
+
+            navigator.clipboard.writeText(report).then(() => {
+                showToast('✅ 戰術情報報告已複製至剪貼簿！');
+            }).catch(() => {
+                showToast('❌ 複製失敗，請手動選取');
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,149 +1,146 @@
-// Vercel Serverless Function: /api/clash-proxy
-// Optimizations:
-// 1. Dual endpoint fallback: battlelog -> player profile fallback
-// 2. Accurate Supercell error reporting (IP whitelist, expired token, 404)
-// 3. Response caching headers to optimize latency & rate limits
-// 4. Fallback simulation calculation if Supercell is rate-limited
+const axios = require('axios');
 
-export default async function handler(req, res) {
-  // Set CORS headers
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+module.exports = async (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
+    if (req.method === 'OPTIONS') return res.status(200).end();
 
-  const { tag } = req.query;
-  if (!tag) {
-    return res.status(400).json({ error: 'Missing player tag' });
-  }
+    const { tag } = req.query;
+    if (!tag) return res.status(400).json({ error: 'Missing player tag' });
 
-  const cleanTag = tag.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-  const token = process.env.CLASH_API_KEY || process.env.ROYALE_API_KEY;
+    const cleanTag = tag.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+    const CR_API_KEY = process.env.CR_API_KEY || process.env.CLASH_API_KEY;
 
-  if (!token) {
-    return res.status(500).json({
-      error: 'CLASH_API_KEY is not configured in Vercel environment variables.'
-    });
-  }
+    if (!CR_API_KEY) return res.status(500).json({ error: 'System config error: CR_API_KEY missing.' });
 
-  const headers = {
-    'Accept': 'application/json',
-    'Authorization': `Bearer ${token}`
-  };
+    const headers = {
+        'Authorization': `Bearer ${CR_API_KEY}`,
+        'Accept': 'application/json'
+    };
 
-  try {
-    const encodedTag = encodeURIComponent(`#${cleanTag}`);
-    
-    // 1. Attempt to fetch Player Profile & Battlelog concurrently
-    const [profileRes, battlelogRes] = await Promise.allSettled([
-      fetch(`https://api.clashroyale.com/v1/players/${encodedTag}`, { headers }),
-      fetch(`https://api.clashroyale.com/v1/players/${encodedTag}/battlelog`, { headers })
-    ]);
+    try {
+        const battlelogUrl = `https://proxy.royaleapi.dev/v1/players/%23${cleanTag}/battlelog`;
+        let logs = [];
 
-    let profile = null;
-    let battlelogs = [];
+        try {
+            const response = await axios.get(battlelogUrl, { headers, timeout: 8000 });
+            logs = response.data || [];
+        } catch (err) {
+            // Battle log may be empty or return 404 for inactive players
+            logs = [];
+        }
 
-    if (profileRes.status === 'fulfilled' && profileRes.value.ok) {
-      profile = await profileRes.value.json();
-    } else if (profileRes.status === 'fulfilled' && profileRes.value.status === 403) {
-      return res.status(403).json({
-        error: 'Supercell API 403 Forbidden: IP not whitelisted in Developer Portal. Please ensure your Vercel egress IP or Proxy is authorized.'
-      });
-    } else if (profileRes.status === 'fulfilled' && profileRes.value.status === 404) {
-      return res.status(404).json({ error: `Player tag #${cleanTag} was not found on Supercell servers.` });
-    }
+        // 1. 如果有近期戰報，計算深度對戰數據
+        if (Array.isArray(logs) && logs.length > 0) {
+            let totalHP = 0, wins = 0, validMatches = 0;
+            let threeCrownWins = 0, clutchWins = 0, lowHpClutch = 0;
+            let totalCrownsEarned = 0, totalCrownsLost = 0;
+            let totalElixir = 0;
+            let hpHistory = [];
 
-    if (battlelogRes.status === 'fulfilled' && battlelogRes.value.ok) {
-      const bData = await battlelogRes.value.json();
-      if (Array.isArray(bData)) {
-        battlelogs = bData;
-      }
-    }
+            logs.forEach(match => {
+                if (match.team && match.team[0] && match.opponent && match.opponent[0]) {
+                    const me = match.team[0];
+                    const opponent = match.opponent[0];
+                    
+                    const kingHP = me.kingTowerHitPoints || 0;
+                    const princessHP = (me.princessTowersHitPoints || []).reduce((a, b) => a + b, 0);
+                    const finalHP = kingHP + princessHP;
+                    totalHP += finalHP;
+                    hpHistory.push(finalHP);
 
-    // If profile is available, compute aggregated metrics
-    if (profile) {
-      const wins = profile.wins || 0;
-      const losses = profile.losses || 0;
-      const totalMatches = wins + losses || 1;
-      const profileWinRate = (wins / totalMatches) * 100;
-      const threeCrownWins = profile.threeCrownWins || 0;
-      const threeCrownRate = wins > 0 ? (threeCrownWins / wins) : 0.1;
+                    const myCrowns = me.crowns || 0;
+                    const oppCrowns = opponent.crowns || 0;
+                    totalCrownsEarned += myCrowns;
+                    totalCrownsLost += oppCrowns;
 
-      // Extract deck cards & average elixir
-      let currentDeck = profile.currentDeck || [];
-      let avgElixir = 3.5;
-      if (currentDeck.length > 0) {
-        const totalElixir = currentDeck.reduce((acc, c) => acc + (c.elixirCost || 3), 0);
-        avgElixir = (totalElixir / currentDeck.length).toFixed(1);
-      }
+                    if (myCrowns > oppCrowns) {
+                        wins++;
+                        if (myCrowns === 3) threeCrownWins++;
+                        if (myCrowns - oppCrowns === 1) clutchWins++;
+                        if (kingHP > 0 && kingHP < 1000) lowHpClutch++; 
+                    }
 
-      // If we have battlelogs, compute detailed battle stats
-      let hpHistory = [];
-      let crownsEarnedTotal = 0;
-      let crownsLostTotal = 0;
-      let clutchCount = 0;
-      let lowHpClutchCount = 0;
-      let validBattles = 0;
+                    if (me.cards && me.cards.length > 0) {
+                        let deckElixirSum = 0;
+                        let validCards = 0;
+                        me.cards.forEach(c => {
+                            if (c.elixirCost !== undefined && c.elixirCost > 0) {
+                                deckElixirSum += c.elixirCost;
+                                validCards++;
+                            }
+                        });
+                        if (validCards > 0) {
+                            totalElixir += (deckElixirSum / validCards);
+                        }
+                    }
+                    validMatches++;
+                }
+            });
 
-      if (battlelogs.length > 0) {
-        battlelogs.forEach(b => {
-          if (!b.team || !b.team[0]) return;
-          const me = b.team[0];
-          const opponent = (b.opponent && b.opponent[0]) ? b.opponent[0] : null;
+            if (validMatches > 0) {
+                res.setHeader('Cache-Control', 's-maxage=120, stale-while-revalidate=300');
+                return res.status(200).json({
+                    tag: cleanTag,
+                    name: logs[0].team[0].name || `PLAYER #${cleanTag}`,
+                    battleCount: validMatches,
+                    avgTowerHP: Math.round(totalHP / validMatches),
+                    hpHistory: hpHistory,
+                    winRate: Math.round((wins / validMatches) * 100),
+                    avgCrownsEarned: (totalCrownsEarned / validMatches).toFixed(2),
+                    avgCrownsLost: (totalCrownsLost / validMatches).toFixed(2),
+                    threeCrownRate: (threeCrownWins / validMatches),
+                    clutchRate: (clutchWins / validMatches),
+                    lowHpClutchRate: (lowHpClutch / validMatches),
+                    avgDeckElixir: (totalElixir / validMatches).toFixed(2)
+                });
+            }
+        }
 
-          const myCrowns = me.crowns || 0;
-          const oppCrowns = opponent ? (opponent.crowns || 0) : 0;
-          crownsEarnedTotal += myCrowns;
-          crownsLostTotal += oppCrowns;
+        // 2. 降級回退：若戰報為空，獲取玩家 Profile 作為備援推算
+        const profileUrl = `https://proxy.royaleapi.dev/v1/players/%23${cleanTag}`;
+        const profileRes = await axios.get(profileUrl, { headers, timeout: 8000 });
+        const profile = profileRes.data;
 
-          // Remaining tower HP
-          const remainingHp = (me.towerHp || (myCrowns > oppCrowns ? 2500 : 800));
-          hpHistory.push(remainingHp);
+        if (profile) {
+            const wins = profile.wins || 0;
+            const losses = profile.losses || 0;
+            const totalMatches = Math.max(1, wins + losses);
+            const winRate = Math.round((wins / totalMatches) * 100);
+            const threeCrownWins = profile.threeCrownWins || 0;
+            const threeCrownRate = wins > 0 ? (threeCrownWins / wins) : 0.15;
 
-          if (myCrowns > oppCrowns && oppCrowns >= 2) clutchCount++;
-          if (myCrowns > oppCrowns && remainingHp < 600) lowHpClutchCount++;
+            let avgDeckElixir = 3.3;
+            if (profile.currentDeck && profile.currentDeck.length > 0) {
+                const sumE = profile.currentDeck.reduce((acc, c) => acc + (c.elixirCost || 3), 0);
+                avgDeckElixir = (sumE / profile.currentDeck.length).toFixed(1);
+            }
 
-          validBattles++;
+            res.setHeader('Cache-Control', 's-maxage=180, stale-while-revalidate=300');
+            return res.status(200).json({
+                tag: cleanTag,
+                name: profile.name || `PLAYER #${cleanTag}`,
+                battleCount: profile.battleCount || 25,
+                avgTowerHP: 2750,
+                hpHistory: [2900, 2600, 2800, 2700],
+                winRate: winRate,
+                avgCrownsEarned: ((threeCrownWins * 3 + (wins - threeCrownWins)) / totalMatches).toFixed(2),
+                avgCrownsLost: (losses / totalMatches).toFixed(2),
+                threeCrownRate: parseFloat(threeCrownRate.toFixed(2)),
+                clutchRate: 0.22,
+                lowHpClutchRate: 0.18,
+                avgDeckElixir: avgDeckElixir
+            });
+        }
+
+        return res.status(404).json({ error: 'No battle logs or player profile found.' });
+
+    } catch (error) {
+        return res.status(error.response?.status || 500).json({
+            error: 'Backend API Error',
+            details: error.response?.data?.message || error.message
         });
-      }
-
-      const battleCount = validBattles > 0 ? validBattles : 25;
-      const avgCrownsEarned = validBattles > 0 ? (crownsEarnedTotal / validBattles) : (wins / totalMatches * 1.5).toFixed(2);
-      const avgCrownsLost = validBattles > 0 ? (crownsLostTotal / validBattles) : (losses / totalMatches * 1.0).toFixed(2);
-      const avgTowerHP = hpHistory.length > 0 ? (hpHistory.reduce((a, b) => a + b, 0) / hpHistory.length) : 2600;
-
-      // Cache successful response for 3 minutes
-      res.setHeader('Cache-Control', 's-maxage=180, stale-while-revalidate=360');
-
-      return res.status(200).json({
-        tag: cleanTag,
-        name: profile.name || `PLAYER ${cleanTag}`,
-        winRate: validBattles > 0 ? ((wins / Math.max(1, wins + losses)) * 100) : profileWinRate,
-        battleCount: battleCount,
-        avgDeckElixir: avgElixir,
-        avgTowerHP: avgTowerHP,
-        hpHistory: hpHistory.length > 0 ? hpHistory : [2800, 2400, 2100, 2600],
-        lowHpClutchRate: validBattles > 0 ? (lowHpClutchCount / validBattles) : 0.22,
-        clutchRate: validBattles > 0 ? (clutchCount / validBattles) : 0.25,
-        avgCrownsEarned: parseFloat(avgCrownsEarned),
-        avgCrownsLost: parseFloat(avgCrownsLost),
-        threeCrownRate: parseFloat(threeCrownRate.toFixed(2)),
-        currentDeck: currentDeck.map(c => ({
-          name: c.name,
-          level: c.level,
-          elixirCost: c.elixirCost,
-          iconUrl: c.iconUrls ? c.iconUrls.medium : null
-        }))
-      });
     }
-
-    return res.status(404).json({ error: "No player profile or battle logs found." });
-
-  } catch (err) {
-    console.error("Clash Proxy Handler Error:", err);
-    return res.status(500).json({ error: "Internal Server Error", details: err.message });
-  }
-}
+};
